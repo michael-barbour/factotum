@@ -1,7 +1,7 @@
-from django.test import TestCase
+from django.test import TestCase, SimpleTestCase
 from django.core.urlresolvers import resolve
 from django.http import HttpRequest
-from .views import index
+from dashboard.views import index
 
 
 class IndexTestPage(TestCase):
@@ -22,8 +22,16 @@ class IndexTestPage(TestCase):
 		request = HttpRequest()
 		response = index(request)
 		# using CDN ensure that css and js for bootstrap is loaded.
-		self.assertIn(b'<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">', response.content)
-		self.assertIn(b'<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>', response.content)
+		self.assertIn(b'<link rel="stylesheet" href="/static/css/bootstrap.min.css"', response.content)
+		self.assertIn(b'<script src="/static/js/jquery-3.2.1.min.js"', response.content)
 		self.assertIn(b'<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>', response.content)
-		self.assertIn(b'<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>', response.content)
+		self.assertIn(b'<script src="/static/js/bootstrap.min.js', response.content)
+
+class AuthorizationTest(TestCase):
+
+	def test_dashboard_not_signed_in_resolves_to_login(self):
+		# if you go to the root page (index) and are not signed in you are redirected
+		# to login page
+		request = HttpRequest()
+		response = index(request)
 

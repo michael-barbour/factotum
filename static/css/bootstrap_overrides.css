@@ -12,14 +12,34 @@ body > .container {
 code {
   font-size: 80%;
 }
+
+/* change the background color */
+.navbar-custom {
+    background-color: #0071bc;
+}
+/* change the brand and text color */
+.navbar-custom .navbar-brand,
+.navbar-custom .navbar-text {
+    color: rgba(255,255,255,.8);
+}
+/* change the link color */
+.navbar-custom .navbar-nav .nav-link {
+    color: rgba(255,255,255,.5);
+}
+/* change the color of active or hovered links */
+.navbar-custom .nav-item.active .nav-link,
+.navbar-custom .nav-item:hover .nav-link {
+    color: #ffffff;
+}
+
 .footer {
   position: absolute;
   bottom: 0;
   width: 100%;
   /* Set the fixed height of the footer here */
-  height: 60px;
-  line-height: 60px; /* Vertically center the text there */
-  background-color: #f5f5f5;
+  height: 40px;
+  line-height: 40px; /* Vertically center the text there */
+  background-color: #0071bc;
 }
 .footer > .container {
   padding-right: 15px;

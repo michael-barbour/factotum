@@ -1,0 +1,21 @@
+-   model: dashboard.sourcetype
+    pk: 1
+    fields: {title: msds/sds, description: Material Safety Data Sheet (msds) or Safety
+            Data Sheet (sds). These documents are normally in pdf format., created_at: !!timestamp '2017-10-06
+            13:27:47+00:00', updated_at: null}
+-   model: dashboard.sourcetype
+    pk: 2
+    fields: {title: product, description: An item sold or purchased in a store, created_at: !!timestamp '2017-10-06
+            13:28:49+00:00', updated_at: null}
+-   model: dashboard.datasource
+    pk: 1
+    fields: {title: Walmart MSDS, url: 'http://msds.walmartstores.com/', type: 1,
+        description: Walmart self serve msds/sds site. Vendors are able to upload
+            msds/sds which show up live. There are up to 50 new msds/sds added daily.
+            Also has information linking to UPC, created_at: !!timestamp '2017-10-06
+            13:29:35+00:00', updated_at: null}
+-   model: dashboard.datasource
+    pk: 2
+    fields: {title: Walmart Labs, url: 'http://walmartlabs.com', type: 2, description: API
+            for Walmart products., created_at: !!timestamp '2017-10-06 13:31:34+00:00',
+        updated_at: null}

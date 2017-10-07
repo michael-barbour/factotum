@@ -2,9 +2,16 @@ from django.test import TestCase, SimpleTestCase
 from django.core.urlresolvers import resolve
 from django.http import HttpRequest
 from dashboard.views import index
+from django.contrib.auth.models import User
 
 
 class IndexTestPage(TestCase):
+
+	def setUp(self):
+		# Every test needs access to the request factory.
+		self.factory = RequestFactory()
+		self.user = User.objects.create_user(
+			username='jdoe', email='jon.doe@epa.gov', password='Sup3r_secret')
 
 	def test_root_url_resolves_to_dashboard(self):
 		found = resolve('/')

@@ -11,16 +11,14 @@ class SimpleTest(TestCase):
             username='jdoe', email='jon.doe@epa.gov', password='Sup3r_secret')
 
     def test_login_goes_to_index(self):
-        request = self.factory.get('/index')
+        request = self.factory.get('/')
         request.user = self.user
         response = index(request)
         self.assertEqual(response.status_code, 200)
 
     def test_anonymous_goes_to_login(self):
-        request = self.factory.get('/index')
+        request = self.factory.get('/')
         request.user = AnonymousUser()
         response = index(request)
         self.assertEqual(response.status_code, 302)
-
-
-
+        self.assertIn(response.content, b'Please sign in')

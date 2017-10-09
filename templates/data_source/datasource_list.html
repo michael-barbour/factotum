@@ -2,21 +2,33 @@
 
 {% block content %}
 
-<h1>Data Sources</h1>
-<ul>
-    {% for data_source in object_list %}
-        <li>{{ data_source.title }} :
-            {{ data_source.url }} :
-            <a class="btn btn-primary btn-sm" role="button" href="{% url "data_source_detail" data_source.id %}">
-                <span class="oi oi-info"></span> </a>
-            <a class="btn btn-info btn-sm" role="button" href="{% url "data_source_edit" data_source.id %}">
-                <span class="oi oi-pencil"></span> </a>
-            <a class="btn btn-danger btn-sm" role="button" href="{% url "data_source_delete" data_source.id %}">
-                <span class="oi oi-trash"></span> </a>
-        </li>
-    {% endfor %}
-</ul>
+    <h1>
+        <span>Data Sources</span>
+        <a class="btn btn-primary float-lg-right" role="button" href="{% url "data_source_new" %}">New Data Source</a>
+    </h1>
 
-<a href="{% url "data_source_new" %}">New</a>
+    <table class="table table-sm table-bordered table-striped">
+        <thead class="thead-inverse">
+        <th>Source Name</th>
+        <th>Source URL</th>
+        <th></th>
+        </thead>
+        <tbody>
+        {% for data_source in object_list %}
+            <tr>
+                <td>{{ data_source.title }}</td>
+                <td>{{ data_source.url }}</td>
+                <td class="float-sm-right">
+                    <a class="btn btn-info btn-sm" role="button" href="{% url "data_source_detail" data_source.id %}">
+                        <span class="oi oi-info"></span> </a>
+                    <a class="btn btn-success btn-sm" role="button" href="{% url "data_source_edit" data_source.id %}">
+                        <span class="oi oi-pencil"></span> </a>
+                    <a class="btn btn-danger btn-sm" role="button" href="{% url "data_source_delete" data_source.id %}">
+                        <span class="oi oi-trash"></span> </a>
+                </td>
+            </tr>
+        {% endfor %}
 
+        </tbody>
+    </table>
 {% endblock %}

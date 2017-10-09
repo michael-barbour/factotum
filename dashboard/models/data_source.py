@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils import timezone
 from .source_type import SourceType
+from django.core.urlresolvers import reverse
+
 
 class DataSource(models.Model):
 	title = models.CharField(max_length=50)
@@ -12,3 +14,9 @@ class DataSource(models.Model):
 
 	def __str__(self):
 		return self.title
+
+	def __unicode__(self):
+		return self.title
+
+	def get_absolute_url(self):
+		return reverse('data_source_edit', kwargs={'pk': self.pk})

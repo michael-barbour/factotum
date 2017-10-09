@@ -1,0 +1,13 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+    <h1>{{ object.title }}</h1>
+    <ul>
+        <li><a href="{{ object.url }}" target="_blank">{{ object.url }}</a></li>
+        <li>{{ object.description }}</li>
+    </ul>
+
+
+
+{% endblock %}

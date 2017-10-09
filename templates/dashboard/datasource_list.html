@@ -1,0 +1,22 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+<h1>Data Sources</h1>
+<ul>
+    {% for data_source in object_list %}
+        <li>{{ data_source.title }} :
+            {{ data_source.url }} :
+            <a class="btn btn-primary btn-sm" role="button" href="{% url "data_source_detail" data_source.id %}">
+                <span class="oi oi-info"></span> </a>
+            <a class="btn btn-info btn-sm" role="button" href="{% url "data_source_edit" data_source.id %}">
+                <span class="oi oi-pencil"></span> </a>
+            <a class="btn btn-danger btn-sm" role="button" href="{% url "data_source_delete" data_source.id %}">
+                <span class="oi oi-trash"></span> </a>
+        </li>
+    {% endfor %}
+</ul>
+
+<a href="{% url "data_source_new" %}">New</a>
+
+{% endblock %}

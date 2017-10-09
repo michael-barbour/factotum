@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.AddField(
-            model_name='datasource',
+            model_name='data_source',
             name='type',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='dashboard.SourceType'),
         ),

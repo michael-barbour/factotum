@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 class DataSource(models.Model):
 	title = models.CharField(max_length=50)
 	url = models.CharField(max_length=150)
+	estimated_records = models.PositiveIntegerField(default=0)
 	type = models.ForeignKey(SourceType, on_delete=models.CASCADE)
 	description = models.TextField(null=True, blank=True)
 	created_at = models.DateTimeField(default=timezone.now)

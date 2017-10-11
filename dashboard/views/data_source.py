@@ -9,7 +9,7 @@ from datetime import datetime
 class DataSourceForm(ModelForm):
 	class Meta:
 		model = DataSource
-		fields = ['title', 'url', 'type', 'description']
+		fields = ['title', 'url', 'estimated_records', 'type', 'description']
 
 
 @login_required()

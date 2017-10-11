@@ -29,5 +29,6 @@ class IndexTestPage(TestCase):
 		# using CDN ensure that css and js for bootstrap is loaded.
 		self.assertIn(b'<link rel="stylesheet" href="/static/css/bootstrap.min.css"', response.content)
 		self.assertIn(b'<script src="/static/js/jquery-3.2.1.min.js"', response.content)
-		self.assertIn(b'<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js', response.content)
+		self.assertIn(b'<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js',
+					  response.content)
 		self.assertIn(b'<script src="/static/js/bootstrap.min.js', response.content)

@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import ModelForm
+from django.contrib.auth.decorators import login_required
 from dashboard.views import *
 from dashboard.models import DataSource
 from datetime import datetime
+
 
 class DataSourceForm(ModelForm):
 	class Meta:
@@ -10,6 +12,7 @@ class DataSourceForm(ModelForm):
 		fields = ['title', 'url', 'type', 'description']
 
 
+@login_required()
 def data_source_list(request, template_name='data_source/datasource_list.html'):
 	datasource = DataSource.objects.all()
 	data = {}
@@ -17,11 +20,13 @@ def data_source_list(request, template_name='data_source/datasource_list.html'):
 	return render(request, template_name, data)
 
 
+@login_required()
 def data_source_detail(request, pk, template_name='data_source/datasource_detail.html'):
-	datasource = get_object_or_404(DataSource, pk=pk)
+	datasource = get_object_or_404(DataSource, pk=pk, )
 	return render(request, template_name, {'object': datasource})
 
 
+@login_required()
 def data_source_create(request, template_name='data_source/datasource_form.html'):
 	form = DataSourceForm(request.POST or None)
 	if form.is_valid():
@@ -30,6 +35,7 @@ def data_source_create(request, template_name='data_source/datasource_form.html'
 	return render(request, template_name, {'form': form})
 
 
+@login_required()
 def data_source_update(request, pk, template_name='data_source/datasource_form.html'):
 	datasource = get_object_or_404(DataSource, pk=pk)
 	form = DataSourceForm(request.POST or None, instance=datasource)
@@ -40,6 +46,7 @@ def data_source_update(request, pk, template_name='data_source/datasource_form.h
 	return render(request, template_name, {'form': form})
 
 
+@login_required()
 def data_source_delete(request, pk, template_name='data_source/datasource_confirm_delete.html'):
 	datasource = get_object_or_404(DataSource, pk=pk)
 	if request.method == 'POST':

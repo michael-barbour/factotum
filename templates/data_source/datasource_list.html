@@ -9,22 +9,31 @@
 
     <table class="table table-sm table-bordered table-striped">
         <thead class="thead-inverse">
-        <th>Source Name</th>
-        <th>Source URL</th>
+        <th>Name</th>
+        <th>URL</th>
+        <th>Type</th>
         <th></th>
         </thead>
         <tbody>
         {% for data_source in object_list %}
             <tr>
                 <td>{{ data_source.title }}</td>
-                <td>{{ data_source.url }}</td>
+                <td>
+                    <a href="{{ data_source.url }}" title="Link to {{ data_source.title }}">{{ data_source.url }}</a>
+                </td>
+                <td>{{ data_source.type }}</td>
                 <td class="float-sm-right">
-                    <a class="btn btn-info btn-sm" role="button" href="{% url "data_source_detail" data_source.id %}">
+                    <div class="btn-group">
+                    <a class="btn btn-info btn-sm" role="button" title="details"
+                       href="{% url "data_source_detail" data_source.id %}">
                         <span class="oi oi-info"></span> </a>
-                    <a class="btn btn-success btn-sm" role="button" href="{% url "data_source_edit" data_source.id %}">
+                    <a class="btn btn-success btn-sm" role="button" title="edit"
+                       href="{% url "data_source_edit" data_source.id %}">
                         <span class="oi oi-pencil"></span> </a>
-                    <a class="btn btn-danger btn-sm" role="button" href="{% url "data_source_delete" data_source.id %}">
+                    <a class="btn btn-danger btn-sm" role="button" title="delete"
+                       href="{% url "data_source_delete" data_source.id %}">
                         <span class="oi oi-trash"></span> </a>
+                    </div>
                 </td>
             </tr>
         {% endfor %}

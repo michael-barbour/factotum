@@ -22,7 +22,7 @@
 <body>
 <!-- Fixed navbar -->
 <nav class="navbar navbar-expand-md navbar-custom fixed-top py-0">
-    <a class="navbar-brand" href="#">factotum</a>
+    <a class="navbar-brand" href="#" title="an employee who does all kinds of work">factotum</a>
     {% if user.is_authenticated %}
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
                 aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,9 +35,6 @@
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{% url 'data_source_list' %}">Data Sources</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link disabled" href="#">Disabled</a>
         </li>
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"

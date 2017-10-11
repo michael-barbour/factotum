@@ -2,12 +2,34 @@
 
 {% block content %}
 
-    <h1>{{ object.title }}</h1>
-    <ul>
-        <li><a href="{{ object.url }}" target="_blank">{{ object.url }}</a></li>
-        <li>{{ object.description }}</li>
-    </ul>
+    <h1>
+        <span>{{ object.title }}</span>
+        <div class="btn-group float-lg-right" role="group" aria-label="Datasource Modification">
+            <a class="btn btn-info btn-sm" role="button" title="list" href="{% url "data_source_list" %}">
+                <span class="oi oi-list"></span> </a>
+            <a class="btn btn-success btn-sm" role="button" title="edit" href="{% url "data_source_edit" object.id %}">
+                <span class="oi oi-pencil"></span> </a>
+            <a class="btn btn-danger btn-sm" role="button" title="delete"
+               href="{% url "data_source_delete" object.id %}">
+                <span class="oi oi-trash"></span> </a>
+        </div>
+    </h1>
 
-
+    <dl class="row">
+        <dt class="col-sm-3">Description</dt>
+        <dd class="col-sm-9">{{ object.description }}</dd>
+        <dt class="col-sm-3"><abbr title="Uniform Resource Locator">url</abbr></dt>
+        <dd class="col-sm-9">
+            <a href="{{ object.url }}" target="_blank">{{ object.url }}</a>
+        </dd>
+        <dt class="col-sm-3">Type</dt>
+        <dd class="col-sm-9">{{ object.type }}</dd>
+        <dt class="col-sm-3">Created</dt>
+        <dd class="col-sm-9">{{ object.created_at }}</dd>
+        {% if object.updated_at %}
+            <dt class="col-sm-3">Last updated</dt>
+            <dd class="col-sm-9">{{ object.updated_at }}</dd>
+        {% endif %}
+    </dl>
 
 {% endblock %}

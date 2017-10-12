@@ -134,3 +134,4 @@ ENV/
 
 /db.sqlite3
 /factotum/settings_secret.py
+/.coveralls.yml

@@ -67,7 +67,11 @@
 <!-- Fixed Footer -->
 <footer class="footer">
     <div class="container">
-        <span class="text-muted">{% block footer %}Footer content here!{% endblock %}</span>
+        <span class="text-muted float-lg-right" >{% block footer %}
+            <a href='https://coveralls.io/github/HumanExposure/factotum?branch=master'><img
+                    src='https://coveralls.io/repos/github/HumanExposure/factotum/badge.svg?branch=master'
+                    alt='Coverage Status'/></a>
+        {% endblock %}</span>
     </div>
 </footer>
 

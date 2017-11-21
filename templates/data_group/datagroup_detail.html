@@ -17,20 +17,20 @@
     </h1>
 
     <dl class="row">
+        <dt class="col-sm-3">Name</dt>
+        <dd class="col-sm-9">{{ object.name }}</dd>
         <dt class="col-sm-3">Description</dt>
         <dd class="col-sm-9">{{ object.description }}</dd>
-        <dt class="col-sm-3"><abbr title="Uniform Resource Locator">url</abbr></dt>
+        <dt class="col-sm-3">Downloaded by</dt>
+        <dd class="col-sm-9">{{ object.downloaded_by }}</dd>
+        <dt class="col-sm-3">Downloaded at</dt>
+        <dd class="col-sm-9">{{ object.downloaded_at }}</dd>
+        <dt class="col-sm-3"><abbr title="Script source repository">Script URL</abbr></dt>
         <dd class="col-sm-9">
-            <a href="{{ object.url }}" target="_blank">{{ object.url }}</a>
+            <a href="{{ object.extraction_script }}" target="_blank">{{ object.extraction_script }}</a>
         </dd>
-        <dt class="col-sm-3">Type</dt>
-        <dd class="col-sm-9">{{ object.type }}</dd>
-        <dt class="col-sm-3">State</dt>
-        <dd class="col-sm-9">{{ object.get_state_display }}</dd>
-        <dt class="col-sm-3">Estimated Records</dt>
-        <dd class="col-sm-9">{{ object.estimated_records | intcomma }}</dd>
-        <dt class="col-sm-3">Created</dt>
-        <dd class="col-sm-9">{{ object.created_at }}</dd>
+        <dt class="col-sm-3">Data Source</dt>
+        <dd class="col-sm-9">{{ object.data_source }}</dd>
         {% if object.updated_at %}
             <dt class="col-sm-3">Last updated</dt>
             <dd class="col-sm-9">{{ object.updated_at }}</dd>

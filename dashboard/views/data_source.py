@@ -25,6 +25,8 @@ def data_source_list(request, template_name='data_source/datasource_list.html'):
 def data_source_detail(request, pk, template_name='data_source/datasource_detail.html'):
 	datasource = get_object_or_404(DataSource, pk=pk, )
 	datagroup_list = DataGroup.objects.filter(data_source=pk)
+	request.session['datasource_title'] = datasource.title
+	request.session['datasource_pk'] = datasource.pk
 	context = {
 		'object': datasource,
 		'datagroups': list(DataSource.objects.all()),

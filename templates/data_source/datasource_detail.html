@@ -43,16 +43,18 @@
                 <thead class="thead-inverse">
                 <th>Name</th>
                 <th>Downloaded by</th>
-                <th>Downloaded on</th>
+                <th>Downloaded at</th>
                 <th>Script URL</th>
-                <th></th>
+                <th><a class="btn btn-primary btn-sm" role="button" title="create"
+                    href="{% url "data_group_new" %}"><span class="oi "></span>Add New Data Group</a>
+                </th>
                 </thead>
                 <tbody>
                 {% for data_group in datagroup_list %}
                     <tr>
                         <td>{{ data_group.name }}</td>
                         <td>{{ data_group.downloaded_by }}</td>
-                        <td>{{ data_group.downloaded_on }}</td>
+                        <td>{{ data_group.downloaded_at }}</td>
                         <td>
                             <a href="{{ data_group.extraction_script }}" title="Link to {{ data_group.name }}">{{ data_group.extraction_script }}</a>
                         </td>

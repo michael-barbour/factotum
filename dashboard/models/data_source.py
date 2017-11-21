@@ -3,7 +3,6 @@ from django.utils import timezone
 from .source_type import SourceType
 from django.core.urlresolvers import reverse
 
-
 class DataSource(models.Model):
 	STATE_CHOICES = (
 	('AT','Awaiting Triage'),
@@ -16,8 +15,8 @@ class DataSource(models.Model):
 	estimated_records = models.PositiveIntegerField(default=0)
 	type = models.ForeignKey(SourceType, on_delete=models.CASCADE)
 	state = models.CharField(max_length=2,
-					        choices=STATE_CHOICES,
-					        default='AT')
+							choices=STATE_CHOICES,
+							default='AT')
 	description = models.TextField(null=True, blank=True)
 	created_at = models.DateTimeField(default=timezone.now)
 	updated_at = models.DateTimeField(null=True, blank=True)

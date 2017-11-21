@@ -1,16 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import ModelForm
+from django.forms import inlineformset_factory
 from django.contrib.auth.decorators import login_required
 from dashboard.views import *
 from dashboard.models import DataSource
+from dashboard.models import DataGroup
 from datetime import datetime
-
+from .data_group import DataGroupForm
 
 class DataSourceForm(ModelForm):
 	class Meta:
 		model = DataSource
 		fields = ['title', 'url', 'estimated_records', 'state', 'type', 'description']
-
 
 @login_required()
 def data_source_list(request, template_name='data_source/datasource_list.html'):
@@ -23,7 +24,13 @@ def data_source_list(request, template_name='data_source/datasource_list.html'):
 @login_required()
 def data_source_detail(request, pk, template_name='data_source/datasource_detail.html'):
 	datasource = get_object_or_404(DataSource, pk=pk, )
-	return render(request, template_name, {'object': datasource})
+	datagroup_list = DataGroup.objects.filter(data_source=pk)
+	context = {
+		'object': datasource,
+		'datagroups': list(DataSource.objects.all()),
+		'datagroup_list':datagroup_list,
+		}
+	return render(request, template_name, context)
 
 
 @login_required()

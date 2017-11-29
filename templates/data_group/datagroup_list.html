@@ -4,7 +4,6 @@
 
     <h1>
         <span>Data groups</span>
-        <a class="btn btn-primary float-lg-right" role="button" href="{% url "data_group_new" %}">New Data group</a>
     </h1>
 
     <table class="table table-sm table-bordered table-striped">
@@ -14,7 +13,8 @@
         <th>Downloaded by</th>
         <th>Downloaded at</th>
         <th>Script URL</th>
-        <th></th>
+        <th><a class="btn btn-primary float-lg-right" role="button" href="{% url "data_group_new" %}">New Data group</a>
+        </th>
         </thead>
         <tbody>
         {% for data_group in object_list %}
@@ -24,7 +24,7 @@
                     href="{% url "data_source_detail" data_group.data_source.id %}">{{ data_group.data_source }} 
                      <span class="oi oi-info"></span> </a></td>
                 <td>{{ data_group.downloaded_by }}</td>
-                <td>{{ data_group.downloaded_at }}</td>
+                <td>{{ data_group.downloaded_at | date:"M d, Y" }}</td>
                 <td>
                     <a href="{{ data_group.extraction_script }}" title="Link to {{ data_group.name }}">{{ data_group.extraction_script }}</a>
                 </td>

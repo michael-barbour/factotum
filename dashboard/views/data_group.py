@@ -48,8 +48,8 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
 	else:
 		form = DataGroupForm(user=request.user, initial=initial_values)
 	if form.is_valid():
-		form.save()
-		return redirect('data_group_list')
+		datagroup = form.save()
+		return redirect('data_group_detail', pk=datagroup.id)
 	return render(request, template_name, {'form': form})
 
 @login_required()

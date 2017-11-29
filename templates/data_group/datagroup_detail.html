@@ -1,0 +1,60 @@
+{% extends 'core/base.html' %}
+{% load humanize %}
+
+{% block content %}
+
+    <h1>
+        <span>{{ object.name }}</span>
+        <div class="btn-group float-lg-right" role="group" aria-label="Data Group Modification">
+            <a class="btn btn-info btn-sm" role="button" title="list" href="{% url "data_group_list" %}">
+                <span class="oi oi-list"></span> </a>
+            <a class="btn btn-success btn-sm" role="button" title="edit" href="{% url "data_group_edit" object.id %}">
+                <span class="oi oi-pencil"></span> </a>
+            <a class="btn btn-danger btn-sm" role="button" title="delete"
+               href="{% url "data_group_delete" object.id %}">
+                <span class="oi oi-trash"></span> </a>
+        </div>
+    </h1>
+
+    <dl class="row">
+        <dt class="col-sm-3">Description</dt>
+        <dd class="col-sm-9">{{ object.description }}</dd>
+        <dt class="col-sm-3">Downloaded by</dt>
+        <dd class="col-sm-9">{{ object.downloaded_by }}</dd>
+        <dt class="col-sm-3">Date Downloaded</dt>
+        <dd class="col-sm-9">{{ object.downloaded_at }}</dd>
+        <dt class="col-sm-3"><abbr title="Script source repository">Scraper Script URL</abbr></dt>
+        <dd class="col-sm-9">
+            <a href="{{ object.extraction_script }}" target="_blank">{{ object.extraction_script }}</a>
+        </dd>
+        <dt class="col-sm-3">Data Source</dt>
+        <dd class="col-sm-9">{{ object.data_source }}</dd>
+        {% if object.updated_at %}
+            <dt class="col-sm-3">Last updated</dt>
+            <dd class="col-sm-9">{{ object.updated_at }}</dd>
+        {% endif %}
+    </dl>
+    <div class=".col-md-4">
+        <span class="oi oi-file"></span><a href='./registered_records.csv'>registered_records.csv</a>
+    </div>
+    <div class=".col-md-4">
+            <button type="button" class="btn btn-primary">Register Documents</button>
+            <button type="button" class="btn btn-primary"  disabled>Upload Documents</button>
+            <button type="button" class="btn btn-primary"  disabled>Download PDF Documents</button>
+            <button type="button" class="btn btn-primary"  disabled>Upload Extracted Text</button>
+    </div>
+    <div class=".col-md-2"><p></p></div>
+    <div class=".col-md-4"></div>
+    <button type="button" class="btn btn-secondary">
+        <span class="oi oi-file"></span>Registered Records CSV Template 
+    </button>
+    <button type="button" class="btn btn-secondary"  disabled>
+        <span class="oi oi-file"></span>Extracted Text CSV Template 
+    </button>
+    </div>
+
+ 
+
+{% endblock %}
+
+

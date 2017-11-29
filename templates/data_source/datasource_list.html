@@ -12,6 +12,7 @@
         <th>Name</th>
         <th>URL</th>
         <th>Type</th>
+        <th>State</th>
         <th></th>
         </thead>
         <tbody>
@@ -22,6 +23,7 @@
                     <a href="{{ data_source.url }}" title="Link to {{ data_source.title }}">{{ data_source.url }}</a>
                 </td>
                 <td>{{ data_source.type }}</td>
+                <td>{{ data_source.get_state_display }}</td>
                 <td class="float-sm-right">
                     <div class="btn-group">
                     <a class="btn btn-info btn-sm" role="button" title="details"

@@ -1,22 +1,13 @@
 from django.db import models
-from django.utils import timezone
 from django.core.urlresolvers import reverse
 
 
 class DataDocument(models.Model):
 
-	PCAT_CHOICES = (
-	('','Uncategorized'),
-	('cleaner','cleaner'),
-	('lawn treatment','lawn treatment'),
-    ('hair care','hair care')
-    )
-
-	title = models.CharField(max_length=600)
-	url = models.CharField(null=True, blank=True, max_length=600)
-	product_category = models.CharField(max_length=2,
-							choices=PCAT_CHOICES,
-							default='')
+	filename = models.CharField(max_length=100)
+	title = models.CharField(max_length=100)
+	url = models.CharField(null=True, blank=True, max_length=200)
+	product_category = models.CharField(null=True, blank=True , max_length=50)
 	data_group = models.ForeignKey('DataGroup', on_delete=models.CASCADE)
 	matched    = models.BooleanField(default=False)
 	extracted    = models.BooleanField(default=False)

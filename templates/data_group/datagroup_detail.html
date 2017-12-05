@@ -34,35 +34,19 @@
       {% endif %}
   </dl>
   <br>
-  <form method="post" novalidate>
-      {% csrf_token %}
-      {% include 'core/bs4_form.html' with form=form %}
-      <button type="submit" class="btn btn-primary">Submit</button>
-      <a class="btn btn-secondary" href="{% url 'data_group_list' %}">Cancel</a>
-  </form>
-  <br>
+
   {% if documents %}
   <div class=".col-md-4">
       <span class="oi oi-file"></span><a href='./registered_records.csv'>registered_records.csv</a>
   </div>
   {% endif %}
   <div class=".col-md-4">
-    {% if documents %}
-      <button class="btn btn-primary" {% if documents %}disabled{% endif %}>Register Documents</button>
-    {% else %}
-      <a href='{% url "data_doc_upload" %}' class="btn btn-primary">Register Documents</a>
-    {% endif %}
     <button type="button" class="btn btn-primary" {% if not documents %}disabled{% endif %}>Upload Documents</button>
     <button type="button" class="btn btn-primary"  disabled>Download PDF Documents</button>
     <button type="button" class="btn btn-primary"  disabled>Upload Extracted Text</button>
   </div>
   <div class="col-md-2"><p></p></div>
   <div class="row-md-8 btn-group">
-    <form method="get" action="{% static 'csv/register_records.csv' %}">
-      <button type="button submit" class="btn btn-secondary">
-          <span class="oi oi-file"></span>Registered Records CSV Template
-      </button>
-    </form>
     <div class="col-md-5"></div>
     <button type="button" class="btn btn-secondary"  disabled>
         <span class="oi oi-file"></span>Extracted Text CSV Template

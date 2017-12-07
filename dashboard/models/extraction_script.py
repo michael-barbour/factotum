@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.core.urlresolvers import reverse
-
+from django.core.validators import URLValidator
 
 class ExtractionScript(models.Model):
 

@@ -136,3 +136,4 @@ ENV/
 /factotum/settings_secret.py
 /.coveralls.yml
 .DS_Store
+nuke_and_pave.sh

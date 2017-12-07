@@ -1,4 +1,7 @@
 {% load widget_tweaks %}
+{% if file_check %}
+<p class="form-control is-invalid">CSV is missing a filename in row {{file_check}}. Please fix this before uploading.</p>
+{% endif %}
 
 {% for hidden_field in form.hidden_fields %}
   {{ hidden_field }}

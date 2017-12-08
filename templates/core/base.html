@@ -30,10 +30,10 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav justify-content-lg-between">
-        <li class="nav-item active">
+        <li class="nav-item {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
             <a class="nav-link" href="{% url 'index' %}">Dashboard</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item {% if request.resolver_match.url_name == 'data_source_list' %}active{% endif %}">
             <a class="nav-link" href="{% url 'data_source_list' %}">Data Sources</a>
         </li>
         <li class="nav-item dropdown">

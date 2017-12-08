@@ -4,6 +4,8 @@
 
     <h1>
         <span>Data groups</span>
+        <a class="btn btn-primary btn-sm float-lg-right" role="button" title="create"
+        href="{% url "data_group_new" %}"><span class="oi "></span>New Data Group</a>
     </h1>
 
     <table class="table table-sm table-bordered table-striped">
@@ -13,8 +15,7 @@
         <th>Downloaded by</th>
         <th>Downloaded at</th>
         <th>Script URL</th>
-        <th><a class="btn btn-primary float-lg-right" role="button" href="{% url "data_group_new" %}">New Data group</a>
-        </th>
+        <th></th>
         </thead>
         <tbody>
         {% for data_group in object_list %}

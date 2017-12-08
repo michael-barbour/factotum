@@ -19,9 +19,10 @@ class DataGroup(models.Model):
 	downloaded_by = models.ForeignKey('auth.User', on_delete=models.CASCADE)
 	downloaded_at = models.DateTimeField()
 	extraction_script = models.CharField(max_length=250, null=True, blank=True)
+	# extraction_script = models.ForeignKey('ExtractionScript', on_delete=models.CASCADE, null=True)
 	data_source = models.ForeignKey('DataSource', on_delete=models.CASCADE)
 	updated_at = models.DateTimeField(default=timezone.now, null=True, blank=True)
-	csv = models.FileField(upload_to='')
+	csv = models.FileField(upload_to='', null=True)
 
 	def __str__(self):
 		return self.name

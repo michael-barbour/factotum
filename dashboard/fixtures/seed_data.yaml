@@ -22,8 +22,8 @@
 -   model: dashboard.datagroup
     pk: 1
     fields: {name: walmart_msds_1, description: MSDS from Walmart group 1, downloaded_by: 1, downloaded_at: !!timestamp '2017-10-06 13:39:34+00:00',
-        extraction_script: 'https://github.com/HumanExposure/MSDS_scraper_script.rmd' , data_source: 1, updated_at: '2017-10-07 13:49:34+00:00'}
+        extraction_script: 'https://github.com/HumanExposure/MSDS_scraper_script.rmd' , data_source: 1, updated_at: '2017-10-07 13:49:34+00:00', csv='_.csv'}
 -   model: dashboard.datagroup
     pk: 2
     fields: {name: walmart_msds_2, description: MSDS from Walmart group 2, downloaded_by: 1, downloaded_at: !!timestamp '2017-10-06 13:45:34+00:00',
-        extraction_script: 'https://github.com/HumanExposure/MSDS_scraper_script.rmd' , data_source: 1, updated_at: '2017-10-07 13:45:34+00:00'}
+        extraction_script: 'https://github.com/HumanExposure/MSDS_scraper_script.rmd' , data_source: 1, updated_at: '2017-10-07 13:45:34+00:00'csv='_.csv'}

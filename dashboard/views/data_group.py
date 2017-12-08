@@ -1,3 +1,4 @@
+import csv
 from datetime import datetime
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -56,34 +57,38 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
 		if form.is_valid():
 			datagroup = form.save()
 			print(datagroup.pk)
-			dg_pk = datagroup.pk
-			info = datagroup.csv.readlines()
-			text = ['DataDocument_id,' + info[0].decode('ascii')]
+			info = [x.decode('ascii') for x in datagroup.csv.readlines()]
+			table = csv.DictReader(info)
+			if not table.fieldnames == ['filename','title','product','url']:
+				datagroup.delete()
+				return render(request, template_name,
+								{'field_error': table.fieldnames,
+									'form': form})
+			text = ['DataDocument_id,' + ','.join(table.fieldnames)+'\n']
+			errors = []
 			count = 0
-			for line in info[1:]: # read every csv line, create docs for each
-				count += 1
-				line = line.decode('ascii')
-				data = line.split(',')
-				if data[0] == '':
-					datagroup.csv.close()
-					datagroup.delete()
-					# count object tracks the row number w/o header
-					return render(request, template_name, {'file_check': count,
-															'form': form})
-				if data[1] == '': # updates title in line object
-					data[1] = data[0].split('.')[0]
-				doc=DataDocument(filename=data[0],
-								title=data[1],
-								product_category=data[2],
-								url=data[3],
+			for line in table: # read every csv line, create docs for each
+				count+=1
+				if line['filename'] == '':
+					errors.append(count)
+				if line['title'] == '': # updates title in line object
+					line['title'] = line['filename'].split('.')[0]
+				doc=DataDocument(filename=line['filename'],
+								title=line['title'],
+								product_category=line['product'],
+								url=line['url'],
 								data_group=datagroup)
 				doc.save()
 				# update line to hold the pk for writeout
-				text.append(str(doc.pk)+','+ ','.join(data))
+				text.append(str(doc.pk)+','+ ','.join(line.values())+'\n')
+			if errors:
+				#datagroup.csv.close() # still need to close?? check
+				datagroup.delete()
+				return render(request, template_name, {'line_errors': errors,
+														'form': form})
 			with open(datagroup.csv.path,'w') as f:
 			    myfile = File(f)
 			    myfile.write(''.join(text))
-
 			return redirect('data_group_detail', pk=datagroup.id)
 	else:
 		form = DataGroupForm(user=request.user, initial=initial_values)

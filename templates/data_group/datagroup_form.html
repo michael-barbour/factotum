@@ -1,6 +1,21 @@
 {% extends 'core/base.html' %}
 {% load staticfiles %}
+
 {% block content %}
+
+  {% if field_error %}
+  <p class="form-control is-invalid">CSV column headers are incorrect for upload.
+     {{field_error}}, should read ['filename', 'title','product','url']</p>
+  {% endif %}
+
+  {% if line_errors %}
+  <p class="form-control is-invalid">CSV is missing a <b>filename</b> in row/s:
+     {% for error in line_errors %}
+        {{error}}
+     {% endfor %}
+     Please fix this before uploading.</p>
+  {% endif %}
+
     <form method="post" enctype="multipart/form-data" novalidate>
         {% csrf_token %}
         {% include 'core/bs4_form.html' with form=form %}

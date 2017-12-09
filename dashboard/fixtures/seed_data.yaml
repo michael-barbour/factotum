@@ -1,29 +1,55 @@
--   model: dashboard.sourcetype
-    pk: 1
-    fields: {title: msds/sds, description: Material Safety Data Sheet (msds) or Safety
-            Data Sheet (sds). These documents are normally in pdf format., created_at: !!timestamp '2017-10-06
-            13:27:47+00:00', updated_at: null}
--   model: dashboard.sourcetype
-    pk: 2
-    fields: {title: product, description: An item sold or purchased in a store, created_at: !!timestamp '2017-10-06
-            13:28:49+00:00', updated_at: null}
--   model: dashboard.datasource
-    pk: 1
-    fields: {title: Walmart MSDS, url: 'http://msds.walmartstores.com/', type: 1,
-        description: Walmart self serve msds/sds site. Vendors are able to upload
-            msds/sds which show up live. There are up to 50 new msds/sds added daily.
-            Also has information linking to UPC, created_at: !!timestamp '2017-10-06
-            13:29:35+00:00', updated_at: null}
--   model: dashboard.datasource
-    pk: 2
-    fields: {title: Walmart Labs, url: 'http://walmartlabs.com', type: 2, description: API
-            for Walmart products., created_at: !!timestamp '2017-10-06 13:31:34+00:00',
-        updated_at: null}
--   model: dashboard.datagroup
-    pk: 1
-    fields: {name: walmart_msds_1, description: MSDS from Walmart group 1, downloaded_by: 1, downloaded_at: !!timestamp '2017-10-06 13:39:34+00:00',
-        extraction_script: 'https://github.com/HumanExposure/MSDS_scraper_script.rmd' , data_source: 1, updated_at: '2017-10-07 13:49:34+00:00', csv='_.csv'}
--   model: dashboard.datagroup
-    pk: 2
-    fields: {name: walmart_msds_2, description: MSDS from Walmart group 2, downloaded_by: 1, downloaded_at: !!timestamp '2017-10-06 13:45:34+00:00',
-        extraction_script: 'https://github.com/HumanExposure/MSDS_scraper_script.rmd' , data_source: 1, updated_at: '2017-10-07 13:45:34+00:00'csv='_.csv'}
+- model: dashboard.sourcetype
+  pk: 1
+  fields: {title: msds/sds, description: Material Safety Data Sheet (msds) or Safety
+      Data Sheet (sds). These documents are normally in pdf format., created_at: ! '2017-10-06
+      17:27:47+00:00', updated_at: null}
+- model: dashboard.sourcetype
+  pk: 2
+  fields: {title: product, description: An item sold or purchased in a store, created_at: ! '2017-10-06
+      17:28:49+00:00', updated_at: null}
+- model: dashboard.datasource
+  pk: 1
+  fields: {title: Walmart MSDS, url: 'http://msds.walmartstores.com/', estimated_records: 0,
+    type: 1, state: AT, description: Walmart self serve msds/sds site. Vendors are
+      able to upload msds/sds which show up live. There are up to 50 new msds/sds
+      added daily. Also has information linking to UPC, created_at: ! '2017-10-06
+      17:29:35+00:00', updated_at: null}
+- model: dashboard.datasource
+  pk: 2
+  fields: {title: Walmart Labs, url: 'http://walmartlabs.com', estimated_records: 0,
+    type: 2, state: AT, description: API for Walmart products., created_at: ! '2017-10-06
+      17:31:34+00:00', updated_at: null}
+- model: dashboard.datagroup
+  pk: 2
+  fields: {name: Walmart MSDS 1, description: MSDS from Walmart group 1, downloaded_by: 1,
+    downloaded_at: ! '2017-12-09 18:05:53+00:00', extraction_script: 'https://github.com/HumanExposure/MSDS_scraper_script.rmd',
+    data_source: 1, updated_at: ! '2017-12-09 18:05:53+00:00', csv: sample_data_group_list_PuIwh6e.csv}
+- model: dashboard.datagroup
+  pk: 3
+  fields: {name: Walmart MSDS 2, description: MSDS from Walmart group 2, downloaded_by: 1,
+    downloaded_at: ! '2017-10-06 17:45:34+00:00', extraction_script: 'https://github.com/HumanExposure/MSDS_scraper_script.rmd',
+    data_source: 1, updated_at: ! '2017-10-07 17:45:34+00:00', csv: sample_data_group_list.csv}
+- model: dashboard.datadocument
+  pk: 1
+  fields: {filename: adams_flea_tick_shampoo.pdf, title: Flea and Tick Shampoo, url: '',
+    product_category: pet shampoo, data_group: 2, matched: false, extracted: false}
+- model: dashboard.datadocument
+  pk: 2
+  fields: {filename: raid_ant_killer.pdf, title: Ant Killer, url: '', product_category: pesticide,
+    data_group: 2, matched: false, extracted: false}
+- model: dashboard.datadocument
+  pk: 3
+  fields: {filename: raid_msds.pdf, title: Raid bug killer, url: '', product_category: pesticide,
+    data_group: 2, matched: false, extracted: false}
+- model: dashboard.datadocument
+  pk: 4
+  fields: {filename: adams_flea_tick_shampoo.pdf, title: Flea and Tick Shampoo, url: '',
+    product_category: pet shampoo, data_group: 3, matched: false, extracted: false}
+- model: dashboard.datadocument
+  pk: 5
+  fields: {filename: raid_ant_killer.pdf, title: Ant Killer, url: '', product_category: pesticide,
+    data_group: 3, matched: false, extracted: false}
+- model: dashboard.datadocument
+  pk: 6
+  fields: {filename: raid_msds.pdf, title: Raid bug killer, url: '', product_category: pesticide,
+    data_group: 3, matched: false, extracted: false}

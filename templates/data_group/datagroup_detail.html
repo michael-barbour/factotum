@@ -34,50 +34,65 @@
       {% endif %}
   </dl>
   <br>
-
   {% if documents %}
-  <div class=".col-md-4">
-      <span class="oi oi-file"></span><a href=/media/{{ object.csv }}>Download Registered CSV</a>
-  </div>
+  <h4>{{ documents|length }} documents registered</h4>
+  <table class="table table-sm table-bordered table-striped table-hover">
+    <thead class="thead-inverse">
+    <th>Title</th>
+    <th>URL</th>
+    <th>Product Category</th>
+    <th>Matched</th>
+    <th>Extracted</th>
+    </thead>
+    <tbody>
+    {% for doc in documents %}
+      <tr>
+        <td>{{ doc.title }}</td>
+        <td>
+            <a href="{{ doc.url }}" title="Link to {{ doc.title }}">{{ doc.url }}</a>
+        </td>
+        <td>{{ doc.product_category }}</td>
+        <td align="center"><input type="checkbox" name="vehicle" value="Bike" {% if doc.matched %}checked{% endif %}></td>
+        <td align="center"><input type="checkbox" name="vehicle" value="Bike" {% if doc.extracted %}checked{% endif %}></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
   {% endif %}
+
+
+  <div class=".col-md-4 btn-group">
+        <form enctype="multipart/form-data" action="" method="post">
+            <h5>Upload data source documents:</h5>
+            {% csrf_token %}
+            <input type="file" class="btn btn-light" name="multifiles" multiple {% if not documents %}disabled{% endif %}>
+            <input type="submit" class="btn btn-primary" name="upload" value="Upload" {% if not documents %}disabled{% endif %}>
+        </form>
+    </div>
+    <br>    
+    <div class=".col-md-4">
+        <ul class="list-group pre-scrollable" style="max-height: 30vh">
+            {% for docfile in doclist %}
+            <li class="list-group-item"><a href="/media/{{object.id}}/{{ docfile }}">{{ docfile }}</a></li>
+            {% endfor %}
+        </ul>
+        <button type="button" class="btn btn-primary"  disabled>Download All PDF Documents</button>        
+    </div>
+    <br>
+    
   <div class=".col-md-4">
-    <button type="button" class="btn btn-primary" {% if not documents %}disabled{% endif %}>Upload Documents</button>
-    <button type="button" class="btn btn-primary"  disabled>Download PDF Documents</button>
+    <h5>Work with uploaded documents:</h5>
+    <button type="button" class="btn btn-secondary"  disabled><span class="oi oi-file"></span>Extracted Text CSV Template</button>
     <button type="button" class="btn btn-primary"  disabled>Upload Extracted Text</button>
-  </div>
-  <div class="col-md-2"><p></p></div>
-  <div class="row-md-8 btn-group">
-    <div class="col-md-5"></div>
-    <button type="button" class="btn btn-secondary"  disabled>
-        <span class="oi oi-file"></span>Extracted Text CSV Template
-    </button>
+    {% if documents %}
+    <div class=".col-md-4">
+        <span class="oi oi-file"></span><a href=/media/{{ object.csv }}>Download Registered CSV</a>
+    </div>
+    {% endif %}
   </div>
   <br>
   <br>
-{% if documents %}
-<h4>{{ documents|length }} records registered</h4>
-<table class="table table-sm table-bordered table-striped table-hover">
-  <thead class="thead-inverse">
-  <th>Title</th>
-  <th>URL</th>
-  <th>Product Category</th>
-  <th>Matched</th>
-  <th>Extracted</th>
-  </thead>
-  <tbody>
-  {% for doc in documents %}
-    <tr>
-      <td>{{ doc.title }}</td>
-      <td>
-          <a href="{{ doc.url }}" title="Link to {{ doc.title }}">{{ doc.url }}</a>
-      </td>
-      <td>{{ doc.product_category }}</td>
-      <td align="center"><input type="checkbox" name="vehicle" value="Bike" {% if doc.matched %}checked{% endif %}></td>
-      <td align="center"><input type="checkbox" name="vehicle" value="Bike" {% if doc.extracted %}checked{% endif %}></td>
-    </tr>
-  {% endfor %}
-  </tbody>
-</table>
-{% endif %}
+
+
 
 {% endblock %}

@@ -1,12 +1,13 @@
 import csv
 from datetime import datetime
-
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import ModelForm
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
+import os
 
 from dashboard.views import *
 from dashboard.models import DataGroup, DataDocument
@@ -36,8 +37,24 @@ def data_group_detail(request, pk,
 						template_name='data_group/datagroup_detail.html'):
 	datagroup = get_object_or_404(DataGroup, pk=pk, )
 	docs = DataDocument.objects.filter(data_group_id=pk)
+	doclist = '' # this will be the raw list of files in the /media/[datagroup.pk] directory
+	if request.method == 'POST':
+		files = request.FILES.getlist('multifiles')
+		for f in files:
+			# create the folder for the datagroup if it does not already exist
+			fs = FileSystemStorage(settings.MEDIA_URL + str(datagroup.pk))
+			fs.save(f.name, f)
+			# check to see if the file name matches the name of a registered document in the data group
+			matchdocs = DataDocument.objects.filter(filename = f.name, data_group = datagroup.pk)
+			if matchdocs.count() > 0:
+				# set the Matched value of each registered record to True
+				DataDocument.objects.filter(filename = f.name, data_group = datagroup.pk).update(matched = True)
+	if os.path.isdir( settings.MEDIA_URL + str(datagroup.pk) ):	
+		doclist =os.listdir(settings.MEDIA_URL + str(datagroup.pk))
 	return render(request, template_name, {'object': datagroup,
+											'doclist':doclist,
 											'documents':docs,})
+
 
 
 @login_required()
@@ -112,3 +129,4 @@ def data_group_delete(request, pk, template_name='data_source/datasource_confirm
 		datagroup.delete()
 		return redirect('data_group_list')
 	return render(request, template_name, {'object': datagroup})
+

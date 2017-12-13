@@ -24,6 +24,9 @@ class DataGroup(models.Model):
 	updated_at = models.DateTimeField(default=timezone.now, null=True, blank=True)
 	csv = models.FileField(upload_to=update_filename, null=True)
 
+	def matched_docs(self):
+		return self.datadocument_set.filter(matched = True).count()
+	
 	def __str__(self):
 		return self.name
 

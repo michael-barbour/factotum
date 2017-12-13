@@ -37,7 +37,10 @@
         {% endif %}
     </dl>
 
-    <h3>Data Groups</h3>
+    <h3><span>Data Groups</span>
+        <a class="btn btn-primary btn-sm float-lg-right" role="button" title="create"
+        href="{% url "data_group_new" %}"><span class="oi "></span>New Data Group</a>
+    </h3>
 
         <table class="table table-sm table-bordered table-striped">
                 <thead class="thead-inverse">
@@ -45,8 +48,7 @@
                 <th>Downloaded by</th>
                 <th>Downloaded at</th>
                 <th>Script URL</th>
-                <th><a class="btn btn-primary btn-sm" role="button" title="create"
-                    href="{% url "data_group_new" %}"><span class="oi "></span>Add New Data Group</a>
+                <th>
                 </th>
                 </thead>
                 <tbody>

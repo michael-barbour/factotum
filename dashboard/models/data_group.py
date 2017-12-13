@@ -5,12 +5,12 @@ from django.utils import timezone
 from django.core.urlresolvers import reverse
 from django.dispatch import receiver
 
-# # could be used for dynamically creating filename on instantiation
-# # in the 'upload_to' param on th FileField
-# def update_filename(instance, filename):
-# 	name_fill_space = instance.name.replace(' ','_')
-# 	name = name_fill_space + '/' + filename # potential space errors in name
-# 	return name
+# could be used for dynamically creating filename on instantiation
+# in the 'upload_to' param on th FileField
+def update_filename(instance, filename):
+	name_fill_space = instance.name.replace(' ','_')
+	name = '{}_{}'.format(name_fill_space,filename) # potential space errors in name
+	return name
 
 class DataGroup(models.Model):
 
@@ -22,7 +22,7 @@ class DataGroup(models.Model):
 	# extraction_script = models.ForeignKey('ExtractionScript', on_delete=models.CASCADE, null=True)
 	data_source = models.ForeignKey('DataSource', on_delete=models.CASCADE)
 	updated_at = models.DateTimeField(default=timezone.now, null=True, blank=True)
-	csv = models.FileField(upload_to='', null=True)
+	csv = models.FileField(upload_to=update_filename, null=True)
 
 	def __str__(self):
 		return self.name

@@ -1,12 +1,13 @@
 import csv
 from datetime import datetime
-
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import ModelForm
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
+import os
 
 from dashboard.views import *
 from dashboard.models import DataGroup, DataDocument
@@ -36,9 +37,35 @@ def data_group_detail(request, pk,
 						template_name='data_group/datagroup_detail.html'):
 	datagroup = get_object_or_404(DataGroup, pk=pk, )
 	docs = DataDocument.objects.filter(data_group_id=pk)
-	return render(request, template_name, {'object': datagroup,
-											'documents':docs,})
+	err = False
+	if request.method == 'POST':
+		files = request.FILES.getlist('multifiles')
+		# match filename to pdf name
+		proc_files = [f for d in docs for f in files if f.name == d.filename]
+		if not proc_files:
+			err = True
+		while proc_files:
+			pdf = proc_files.pop(0)
+			# set the Matched value of each registered record to True
+			doc = DataDocument.objects.get(filename=pdf.name,
+												data_group=datagroup.pk)
+			if doc.matched: # skip if already matched
+				continue
+			doc.matched = True
+			doc.save()
+			# create the folder for the datagroup if it does not already exist
+			fs = FileSystemStorage(settings.MEDIA_URL+str(datagroup.pk))
+			fs.save(pdf.name, pdf)
+	# refresh docs object if POST'd
+	docs = DataDocument.objects.filter(data_group_id=pk)
+	inc_upload = all([d.matched for d in docs])
+	return render(request, template_name, {'datagroup'  : datagroup,
+											'documents' : docs,
+											'inc_upload': inc_upload,
+											'err'       : err})
 
+# raid_ant_killer.pdf
+# raid_msds.pdf
 
 @login_required()
 def data_group_create(request, template_name='data_group/datagroup_form.html'):

@@ -13,6 +13,7 @@ from dashboard.views import *
 from dashboard.models import DataGroup, DataDocument
 
 class DataGroupForm(ModelForm):
+	required_css_class = 'required' # adds to label tag
 	class Meta:
 		model = DataGroup
 		fields = ['name', 'description', 'downloaded_by', 'downloaded_at', 'extraction_script','data_source','updated_at','csv']

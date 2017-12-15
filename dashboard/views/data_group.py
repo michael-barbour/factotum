@@ -84,7 +84,7 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
 		if form.is_valid():
 			datagroup = form.save()
 			print(datagroup.pk)
-			info = [x.decode('ascii') for x in datagroup.csv.readlines()]
+			info = [x.decode('ascii', 'ignore') for x in datagroup.csv.readlines()]
 			table = csv.DictReader(info)
 			if not table.fieldnames == ['filename','title','product','url']:
 				datagroup.delete()

@@ -9,6 +9,7 @@ from datetime import datetime
 from .data_group import DataGroupForm
 
 class DataSourceForm(ModelForm):
+	required_css_class = 'required'
 	class Meta:
 		model = DataSource
 		fields = ['title', 'url', 'estimated_records', 'state', 'type', 'description']

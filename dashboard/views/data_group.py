@@ -23,6 +23,7 @@ class DataGroupForm(ModelForm):
 	def __init__(self, *args, **kwargs):
 		self.user = kwargs.pop('user', None)
 		super(DataGroupForm, self).__init__(*args, **kwargs)
+		self.fields['csv'].widget.attrs.update({'accept':'.csv'})
 
 @login_required()
 def data_group_list(request, template_name='data_group/datagroup_list.html'):

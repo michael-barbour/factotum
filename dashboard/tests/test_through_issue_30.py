@@ -15,9 +15,10 @@ class BasicTestCase(TestCase):
 
 class TestThroughIssue30(TestCase):
     def setUp(self):
-        'Populate database'
+        # Populate database
         populate_test_db()
 
+<<<<<<< HEAD
         #resp = self.client.post('/login/', {'username': 'admin', 'password': 't0ps3cret'})
 
     def test_good_login(self):
@@ -68,3 +69,13 @@ class TestThroughIssue30(TestCase):
         #print(resp.content)
         self.assertEqual(resp.status_code, 200)
 
+=======
+    def test_data_group_matched_docs(self):
+        # Confirm that the DataGroup with no related documents returns zero for matched_docs
+        dg = DataGroup.objects.get(pk=1)
+        self.assertEquals(dg.matched_docs(), 0)
+
+        # Confirm that the DataGroup WITH related documents returns greater than zero for matched_docs
+        dg = DataGroup.objects.get(pk=2)
+        self.assertGreater(dg.matched_docs(), 0)
+>>>>>>> 1c097efc05f2b887a37be640c529b22063f576d3

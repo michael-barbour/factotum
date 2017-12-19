@@ -138,3 +138,5 @@ ENV/
 .DS_Store
 nuke_and_pave.sh
 /media/
+chromedriver
+.vscode/launch.json

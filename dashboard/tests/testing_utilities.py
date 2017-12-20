@@ -39,12 +39,7 @@ def populate_test_db():
         data_source = DataSource.objects.get(pk=1),
         csv = '',
         zip_file = ''
-<<<<<<< HEAD
     )
-    
-=======
-        )
-
 
     DataGroup.objects.create(
         pk = 2,
@@ -63,4 +58,3 @@ def populate_test_db():
         matched = 1,
         data_group = DataGroup.objects.get(pk=2),
     )
->>>>>>> 1c097efc05f2b887a37be640c529b22063f576d3

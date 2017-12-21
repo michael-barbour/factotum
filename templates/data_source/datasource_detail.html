@@ -25,6 +25,11 @@
         </dd>
         <dt class="col-sm-3">Type</dt>
         <dd class="col-sm-9">{{ object.type }}</dd>
+        <dt class="col-sm-3">Priority</dt>
+        <dd class="col-sm-9">    <form method="post" novalidate>
+                                    {% csrf_token %}
+                                    {{ form }}
+                                 </form></dd>
         <dt class="col-sm-3">State</dt>
         <dd class="col-sm-9">{{ object.get_state_display }}</dd>
         <dt class="col-sm-3">Estimated Records</dt>
@@ -36,6 +41,7 @@
             <dd class="col-sm-9">{{ object.updated_at }}</dd>
         {% endif %}
     </dl>
+
 
     <h3><span>Data Groups</span>
         <a class="btn btn-primary btn-sm float-lg-right" role="button" title="create"
@@ -75,11 +81,9 @@
                             </td>
                     </tr>
                 {% endfor %}
-        
+
                 </tbody>
             </table>
 
 
 {% endblock %}
-
-

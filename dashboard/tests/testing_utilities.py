@@ -1,12 +1,8 @@
-import json
-from selenium import webdriver
-from django.test import TestCase, RequestFactory
 from dashboard.models import DataSource
 from dashboard.models import SourceType
 from dashboard.models import DataGroup, DataDocument
 from django.contrib.auth.models import User
-from django.utils import timezone
-from django.test import Client
+
 
 def populate_test_db():
     """

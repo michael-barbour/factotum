@@ -29,19 +29,25 @@ class PriorityForm(forms.ModelForm):
             'onchange': 'form.submit();'
 			})
 
-
+headers = {'priority':'asc'}
 @login_required()
 def data_source_list(request, template_name='data_source/datasource_list.html'):
 	datasources = DataSource.objects.all()
+	sort = request.GET.get('sort')
+	if sort is not None:
+		datasources = datasources.order_by(sort)
+		if headers[sort] == "des":
+			datasources = datasources.reverse()
+			headers[sort] = "asc"
+		else:
+			headers[sort] = "des"
 	ds_list, frm_list = [], []
 	for ds in datasources:
 		ds_list.append(ds)
 		frm_list.append(PriorityForm(request.POST or None, instance=ds))
 	out = zip(ds_list, frm_list)
 	if request.method == 'POST':
-		print(request.POST)
 		datasource = DataSource.objects.get(pk=request.POST['ds_pk'])
-		print(datasource)
 		form = PriorityForm(request.POST or None, instance=datasource)
 		if form.is_valid():
 			priority = form.cleaned_data['priority']
@@ -63,11 +69,9 @@ def data_source_detail(request, pk, template_name='data_source/datasource_detail
 	datagroup_list = DataGroup.objects.filter(data_source=pk)
 	request.session['datasource_title'] = datasource.title
 	request.session['datasource_pk'] = datasource.pk
-	context = 	{
-				'object': 			datasource,
+	context = 	{'object': 			datasource,
 				'datagroup_list':	datagroup_list,
-				'form': 			form,
-				}
+				'form': 			form}
 	return render(request, template_name, context)
 
 

@@ -35,10 +35,11 @@ class DataGroup(models.Model):
 
 @receiver(models.signals.post_delete, sender=DataGroup)
 def auto_delete_file_on_delete(sender, instance, **kwargs):
-    """
-    Deletes file from filesystem
-    when corresponding `csv` object is deleted.
-    """
-    if instance.csv:
-        if os.path.isfile(instance.csv.path):
-            os.remove(instance.csv.path)
+	"""
+	Deletes file from filesystem
+	when corresponding `csv` object is deleted.
+	"""
+
+	if instance.csv:
+		if os.path.isfile(instance.csv.path):
+			os.remove(instance.csv.path)

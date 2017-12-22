@@ -2,6 +2,7 @@ from django.test import LiveServerTestCase
 from selenium import webdriver
 from django.conf import settings
 from django.contrib.auth.models import User
+import time
 
 
 class TestAuthInBrowser(LiveServerTestCase):
@@ -22,9 +23,12 @@ class TestAuthInBrowser(LiveServerTestCase):
 		username_input.send_keys('Karyn')
 		password_input = self.browser.find_element_by_name("password")
 		password_input.send_keys('specialP@55word')
+		time.sleep(2)
 		self.browser.find_element_by_class_name('btn').click()
 		self.browser.get(self.live_server_url + '/')
 		body = self.browser.find_element_by_tag_name('body')
 		self.assertIn('Welcome to Factotum', body.text)
+		time.sleep(3)
+
 
 

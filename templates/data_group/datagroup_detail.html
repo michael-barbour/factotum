@@ -46,24 +46,27 @@
           <dd class="col-sm-9">{{ datagroup.updated_at }}</dd>
       {% endif %}
   </dl>
-  <br>
+
+  <button type="button" class="btn btn-secondary" onclick="location.href = '/media/{{ datagroup.csv }}';">
+      <span class="oi oi-spreadsheet"></span>  Download Registered CSV
+  </button>
   {% if not inc_upload %}
-  <div class=".col-md-4 btn-group">
+  <div class=".col-md-4 btn-group border rounded float-right">
       <form enctype="multipart/form-data" action="" method="post">
-          <h5>Upload data group PDFs:</h5>
+          <h5 align="center">Upload data group PDFs:</h5>
           {% csrf_token %}
           <input type="file" id="files" class="btn btn-light" name="multifiles" webkitdirectory  multiple  >
           <input type="submit" class="btn btn-primary" name="upload" value="Upload">
       </form>
   </div>
   {% endif %}
-
+  <button class="btn btn-secondary" onclick="location.href = '/{{ datagroup.zip_file }}';" {% if datagroup.matched_docs == 0 %}disabled{% endif %}>
+        <span class="oi oi-data-transfer-download"></span>  Download All PDF Documents
+  </button>
   {% if documents %}
-  <div class=".col-md-4">
-      <span class="oi oi-file"></span>
-      <a href="/media/{{ datagroup.csv }}">Download CSV</a>
-  </div>
-  <h4>{{ documents|length }} documents registered</h4>
+  <br>
+  <br>
+  <h4>{{ documents|length }} documents registered, {{ datagroup.matched_docs }} matched</h4>
   <table class="table table-sm table-bordered table-striped table-hover">
     <thead class="thead-inverse">
     <th>Title</th>
@@ -102,8 +105,9 @@
           <li class="list-group-item"><a href="/media/{{datagroup.id}}/{{ docfile }}">{{ docfile }}</a></li>
           {% endfor %}
       </ul>
-      <button type="button" class="btn btn-primary"  disabled>Download All PDF Documents</button>
   </div>
+
+  <br>
   <br>
   <div class=".col-md-4">
     <h5>Work with uploaded documents:</h5>

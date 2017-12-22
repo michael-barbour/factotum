@@ -6,17 +6,17 @@
     <a class="btn btn-primary float-lg-right" role="button" href="{% url "data_source_new" %}">New Data Source</a>
 </h1>
 <table class="table table-sm table-bordered table-striped table-sortable">
-  <thead class="thead-inverse">
-  <th>Name</th>
-  <th>URL</th>
-  <th class="asc">Priority
-    <a href="?sort=priority" style="float:right">
-      <img src="{% static 'font/open-iconic-master/png/sort-ascending-2x.png' %}" alt="">
-    </a>
-  </th>
-  <th>Type</th>
-  <th>State</th>
-  <th></th>
+  <thead class="table-primary">
+      <th>Name</th>
+      <th>URL</th>
+      <th class="asc">Priority
+        <a href="?sort=priority" style="float:right">
+          <img src="{% static 'font/open-iconic-master/png/sort-ascending-2x.png' %}" alt="">
+        </a>
+      </th>
+      <th>Type</th>
+      <th>State</th>
+      <th></th>
   </thead>
   <tbody>
   {% for data_source, form in object_list %}

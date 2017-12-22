@@ -10,11 +10,13 @@ from dashboard.models import DataSource
 from dashboard.models import DataGroup
 from .data_group import DataGroupForm
 
+
 class DataSourceForm(forms.ModelForm):
 	required_css_class = 'required'
 	class Meta:
 		model = DataSource
 		fields = ['title', 'url', 'estimated_records', 'state', 'priority', 'type', 'description']
+
 
 class PriorityForm(forms.ModelForm):
 
@@ -28,8 +30,9 @@ class PriorityForm(forms.ModelForm):
 		self.fields['priority'].widget.attrs.update({
             'onchange': 'form.submit();'
 			})
-
 headers = {'priority':'asc'}
+
+
 @login_required()
 def data_source_list(request, template_name='data_source/datasource_list.html'):
 	datasources = DataSource.objects.all()

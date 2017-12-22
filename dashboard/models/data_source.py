@@ -5,10 +5,16 @@ from django.core.urlresolvers import reverse
 
 class DataSource(models.Model):
 	STATE_CHOICES = (
-	('AT','Awaiting Triage'),
-	('IP','In Progress'),
-	('CO','Complete'),
-	('ST','Stale'))
+					('AT','Awaiting Triage'),
+					('IP','In Progress'),
+					('CO','Complete'),
+					('ST','Stale'))
+
+	PRIORITY_CHOICES = (
+						('HI', 'High'),
+						('MD', 'Medium'),
+						('LO', 'Low')
+						)
 
 	title = models.CharField(max_length=50)
 	url = models.CharField(max_length=150)
@@ -20,6 +26,9 @@ class DataSource(models.Model):
 	description = models.TextField(null=True, blank=True)
 	created_at = models.DateTimeField(default=timezone.now)
 	updated_at = models.DateTimeField(null=True, blank=True)
+	priority = models.CharField(max_length=2,
+							choices=PRIORITY_CHOICES,
+							default='HI')
 
 	def __str__(self):
 		return self.title

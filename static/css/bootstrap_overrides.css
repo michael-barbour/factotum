@@ -46,7 +46,15 @@ code {
   padding-left: 15px;
 }
 
-.form-control:required{
+/*.form-control:required{
   background-color: #f7d5d8
+}*/
+
+.required {
+/*background-color: #f7d5d8;*/
+font-weight: bold;
 }
 
+.required::after {
+content:" *";
+}

@@ -12,7 +12,7 @@
     {% endfor %}
   </div>
 {% endif %}
-
+<label for=""><b>* required</b></label>
 {% for field in form.visible_fields %}
   <div class="form-group col-md-5">
     {{ field.label_tag }}

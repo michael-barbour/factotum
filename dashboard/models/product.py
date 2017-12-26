@@ -1,9 +1,11 @@
 from django.db import models
+from .data_source import DataSource
 from django.utils import timezone
 from django.core.urlresolvers import reverse
 
 
 class Product(models.Model):
+	data_source = models.ForeignKey(DataSource, on_delete=models.CASCADE)
 	title = models.TextField()
 	upc = models.CharField(db_index=True, max_length=40, null=False, blank=False, unique=True)
 	url = models.CharField(max_length=255, null=True, blank=True)

@@ -23,6 +23,7 @@ class DataSource(models.Model):
 	state = models.CharField(max_length=2,
 							choices=STATE_CHOICES,
 							default='AT')
+
 	description = models.TextField(null=True, blank=True)
 	created_at = models.DateTimeField(default=timezone.now)
 	updated_at = models.DateTimeField(null=True, blank=True)

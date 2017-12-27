@@ -7,4 +7,5 @@ admin.site.register(DataSource)
 admin.site.register(DataGroup)
 admin.site.register(SourceType)
 admin.site.register(Product)
+admin.site.register(SourceCategory)
 

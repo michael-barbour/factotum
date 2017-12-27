@@ -1,12 +1,14 @@
 from django.db import models
 from .data_source import DataSource
+from .source_category import SourceCategory
 from django.utils import timezone
 from django.core.urlresolvers import reverse
 
 
 class Product(models.Model):
 	data_source = models.ForeignKey(DataSource, on_delete=models.CASCADE)
-	title = models.TextField()
+	source_category = models.ForeignKey(SourceCategory, on_delete=models.CASCADE)
+	title = models.CharField(max_length=400)
 	upc = models.CharField(db_index=True, max_length=40, null=False, blank=False, unique=True)
 	url = models.CharField(max_length=255, null=True, blank=True)
 	brand_name = models.CharField(db_index=True, max_length=200, null=True, blank=True)
@@ -27,3 +29,6 @@ class Product(models.Model):
 
 	def __unicode__(self):
 		return self.title
+
+	def get_absolute_url(self):
+		return reverse('product_edit', kwargs={'pk': self.pk})

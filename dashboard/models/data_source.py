@@ -17,7 +17,7 @@ class DataSource(models.Model):
 						)
 
 	title = models.CharField(max_length=50)
-	url = models.CharField(max_length=150)
+	url = models.CharField(max_length=150, blank=True)
 	estimated_records = models.PositiveIntegerField(default=0)
 	type = models.ForeignKey(SourceType, on_delete=models.CASCADE)
 	state = models.CharField(max_length=2,

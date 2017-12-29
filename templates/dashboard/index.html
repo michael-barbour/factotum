@@ -1,4 +1,31 @@
 {% extends 'core/base.html' %}
 
-{% block content %}<h1><span class="oi oi-wrench" title="factotum" aria-hidden="true"></span>
-Welcome to Factotum</h1>{% endblock %}
+{% block content %}
+    <h1><span class="oi oi-wrench" title="factotum" aria-hidden="true"></span>
+Welcome to Factotum</h1>
+    <br>
+
+    <div class="card-deck">
+      <div class="card text-center bg-light">
+          <div class="card-body">
+            <h3 class="card-title">Sources</h3>
+            <div class="card-text">{{ source_count }} </div>
+          </div>
+      </div>
+      <div class="card text-center bg-light">
+          <div class="card-body">
+            <h3 class="card-title">Groups</h3>
+            <div class="card-text">{{ group_count }} </div>
+          </div>
+      </div>
+      <div class="card text-center bg-light">
+          <div class="card-body">
+              <h3 class="card-title">Documents</h3>
+              <div class="card-text">{{ document_count }} </div>
+          </div>
+
+      </div>
+    </div>
+
+{% endblock %}
+

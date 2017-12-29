@@ -15,10 +15,13 @@ class SourceCategory(models.Model):
 	updated_at = models.DateTimeField(null=True, blank=True)
 
 	def __str__(self):
-		return self.title
+		return self.path
 
 	def __unicode__(self):
-		return self.title
+		return self.path
 
 	def get_absolute_url(self):
 		return reverse('source_category_edit', kwargs={'pk': self.pk})
+
+	class Meta:
+		verbose_name_plural = 'Source categories'

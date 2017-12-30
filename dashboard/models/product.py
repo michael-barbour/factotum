@@ -1,5 +1,6 @@
 from django.db import models
 from .data_source import DataSource
+from .data_document import DataDocument
 from .source_category import SourceCategory
 from django.utils import timezone
 from django.core.urlresolvers import reverse
@@ -7,7 +8,8 @@ from django.core.urlresolvers import reverse
 
 class Product(models.Model):
 	data_source = models.ForeignKey(DataSource, on_delete=models.CASCADE)
-	source_category = models.ForeignKey(SourceCategory, on_delete=models.CASCADE)
+	documents = models.ManyToManyField(DataDocument, through='ProductDocument')
+	source_category = models.ForeignKey(SourceCategory, on_delete=models.CASCADE, null=True, blank=True)
 	title = models.CharField(max_length=400)
 	upc = models.CharField(db_index=True, max_length=40, null=False, blank=False, unique=True)
 	url = models.CharField(max_length=255, null=True, blank=True)

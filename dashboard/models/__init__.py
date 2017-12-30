@@ -5,3 +5,4 @@ from .data_document import DataDocument
 from .extraction_script import ExtractionScript
 from .product import Product
 from .source_category import SourceCategory
+from .product_document import ProductDocument

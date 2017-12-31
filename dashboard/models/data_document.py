@@ -9,8 +9,9 @@ class DataDocument(models.Model):
 	url = models.CharField(null=True, blank=True, max_length=200)
 	product_category = models.CharField(null=True, blank=True , max_length=50)
 	data_group = models.ForeignKey('DataGroup', on_delete=models.CASCADE)
-	matched    = models.BooleanField(default=False)
-	extracted    = models.BooleanField(default=False)
+	products = models.ManyToManyField('Product', through='ProductDocument')
+	matched = models.BooleanField(default=False)
+	extracted = models.BooleanField(default=False)
 
 	def __str__(self):
 		return self.title

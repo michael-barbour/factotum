@@ -22,7 +22,7 @@ class IndexTestPage(TestCase):
 		# Setting up valid HTML
 		self.assertTrue(response.content.startswith(b'<!DOCTYPE html>'))
 		self.assertIn(b'<title>factotum</title>', response.content)
-		self.assertTrue(response.content.endswith(b'</html>'))
+		self.assertTrue(response.content.strip().endswith(b'</html>'))
 
 	def test_dashboard_has_bootstrap(self):
 		response = self.client.get('/', follow=True)

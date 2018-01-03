@@ -36,6 +36,9 @@ class DataGroup(models.Model):
 	def __unicode__(self):
 		return self.title
 
+	def dgurl(self):
+		return self.name.replace(' ', '_')
+
 	def get_absolute_url(self):
 		return reverse('data_group_edit', kwargs={'pk': self.pk})
 

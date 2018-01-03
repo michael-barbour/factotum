@@ -33,9 +33,6 @@ class DataGroup(models.Model):
 	def __str__(self):
 		return self.name
 
-	def __unicode__(self):
-		return self.title
-
 	def dgurl(self):
 		return self.name.replace(' ', '_')
 

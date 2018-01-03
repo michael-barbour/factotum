@@ -1,4 +1,5 @@
 import os
+import shutil
 
 from django.db import models
 from django.utils import timezone
@@ -9,8 +10,9 @@ from django.dispatch import receiver
 # in the 'upload_to' param on th FileField
 def update_filename(instance, filename):
 	name_fill_space = instance.name.replace(' ','_')
-	name = '{}_{}'.format(name_fill_space,filename) # potential space errors in name
+	name = '{0}/{0}_{1}'.format(name_fill_space,filename) # potential space errors in name
 	return name
+
 
 class DataGroup(models.Model):
 
@@ -23,22 +25,27 @@ class DataGroup(models.Model):
 	data_source = models.ForeignKey('DataSource', on_delete=models.CASCADE)
 	updated_at = models.DateTimeField(default=timezone.now, null=True, blank=True)
 	csv = models.FileField(upload_to=update_filename, null=True)
+	zip_file = models.CharField(max_length=100)
+
+	def matched_docs(self):
+		return self.datadocument_set.filter(matched = True).count()
 
 	def __str__(self):
 		return self.name
 
-	def __unicode__(self):
-		return self.title
+	def dgurl(self):
+		return self.name.replace(' ', '_')
 
 	def get_absolute_url(self):
 		return reverse('data_group_edit', kwargs={'pk': self.pk})
 
+
 @receiver(models.signals.post_delete, sender=DataGroup)
 def auto_delete_file_on_delete(sender, instance, **kwargs):
-    """
-    Deletes file from filesystem
-    when corresponding `csv` object is deleted.
-    """
-    if instance.csv:
-        if os.path.isfile(instance.csv.path):
-            os.remove(instance.csv.path)
+	"""
+	Deletes datagroup directory from filesystem
+	when datagroup instance is deleted.
+	"""
+	dg_folder = os.path.split(instance.csv.path)[0]
+	if os.path.isdir(dg_folder):
+		shutil.rmtree(dg_folder)

@@ -8,7 +8,8 @@
 <table class="table table-sm table-bordered table-striped table-sortable">
   <thead class="table-primary">
       <th>Name</th>
-      <th>URL</th>
+      <th>Registered</th>
+      <th>Uploaded</th>
       <th class="asc">Priority
         <a href="?sort=priority" style="float:right">
           <img src="{% static 'font/open-iconic-master/png/sort-ascending-2x.png' %}" alt="">
@@ -22,9 +23,8 @@
   {% for data_source, form in object_list %}
     <tr>
       <td>{{ data_source.title }}</td>
-      <td>
-          <a href="{{ data_source.url }}" title="Link to {{ data_source.title }}">{{ data_source.url }}</a>
-      </td>
+      <td>{{ data_source.registered }} %</td>
+      <td>{{ data_source.uploaded }} %</td>
       <td>
         <form method="post" novalidate>
           {% csrf_token %}

@@ -15,7 +15,8 @@ class DataSourceForm(forms.ModelForm):
 	required_css_class = 'required'
 	class Meta:
 		model = DataSource
-		fields = ['title', 'url', 'estimated_records', 'state', 'priority', 'type', 'description']
+		fields = ['title', 'url', 'estimated_records', 'state', 'priority',
+					'type', 'description']
 
 
 class PriorityForm(forms.ModelForm):
@@ -30,12 +31,13 @@ class PriorityForm(forms.ModelForm):
 		self.fields['priority'].widget.attrs.update({
             'onchange': 'form.submit();'
 			})
-headers = {'priority':'asc'}
 
+headers = {'priority':'asc'}
 
 @login_required()
 def data_source_list(request, template_name='data_source/datasource_list.html'):
 	datasources = DataSource.objects.all()
+	docs = DataDocument.objects.all()
 	sort = request.GET.get('sort')
 	if sort is not None:
 		datasources = datasources.order_by(sort)
@@ -46,6 +48,15 @@ def data_source_list(request, template_name='data_source/datasource_list.html'):
 			headers[sort] = "des"
 	ds_list, frm_list = [], []
 	for ds in datasources:
+		ds.registered = (len([d
+							for d in docs
+							if d.data_group.data_source_id == ds.pk
+							and d.matched == True
+							])/float(ds.estimated_records))*100
+		ds.uploaded = (len([d
+							for d in docs
+							if d.data_group.data_source_id == ds.pk
+							])/float(ds.estimated_records))*100
 		ds_list.append(ds)
 		frm_list.append(PriorityForm(request.POST or None, instance=ds))
 	out = zip(ds_list, frm_list)
@@ -61,8 +72,19 @@ def data_source_list(request, template_name='data_source/datasource_list.html'):
 
 
 @login_required()
-def data_source_detail(request, pk, template_name='data_source/datasource_detail.html'):
+def data_source_detail(request, pk,
+ 						template_name='data_source/datasource_detail.html'):
 	datasource = get_object_or_404(DataSource, pk=pk, )
+	docs = DataDocument.objects.all()
+	datasource.registered = (len([d
+								for d in docs
+								if d.data_group.data_source_id == datasource.pk
+								and d.matched ==True
+								])/float(datasource.estimated_records))*100
+	datasource.uploaded = (len([d
+								for d in docs
+								if d.data_group.data_source_id == datasource.pk
+								])/float(datasource.estimated_records))*100
 	form = PriorityForm(request.POST or None, instance=datasource)
 	if request.method == 'POST':
 		if form.is_valid():
@@ -79,7 +101,8 @@ def data_source_detail(request, pk, template_name='data_source/datasource_detail
 
 
 @login_required()
-def data_source_create(request, template_name='data_source/datasource_form.html'):
+def data_source_create(request, template_name=('data_source/'
+												'datasource_form.html')):
 	form = DataSourceForm(request.POST or None)
 	if form.is_valid():
 		form.save()
@@ -88,7 +111,8 @@ def data_source_create(request, template_name='data_source/datasource_form.html'
 
 
 @login_required()
-def data_source_update(request, pk, template_name='data_source/datasource_form.html'):
+def data_source_update(request, pk, template_name=('data_source/'
+													'datasource_form.html')):
 	datasource = get_object_or_404(DataSource, pk=pk)
 	form = DataSourceForm(request.POST or None, instance=datasource)
 	if form.is_valid():
@@ -99,7 +123,9 @@ def data_source_update(request, pk, template_name='data_source/datasource_form.h
 
 
 @login_required()
-def data_source_delete(request, pk, template_name='data_source/datasource_confirm_delete.html'):
+def data_source_delete(request, pk,
+						template_name=('data_source/'
+										'datasource_confirm_delete.html')):
 	datasource = get_object_or_404(DataSource, pk=pk)
 	if request.method == 'POST':
 		datasource.delete()

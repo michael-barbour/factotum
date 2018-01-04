@@ -5,7 +5,6 @@ from django.utils import timezone
 
 
 class ProductDocument(models.Model):
-	upc = models.CharField(db_index=True, max_length=40, null=False, blank=False, unique=True)
 	product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
 	document = models.ForeignKey(DataDocument, on_delete=models.CASCADE)
 
@@ -13,9 +12,6 @@ class ProductDocument(models.Model):
 	updated_at = models.DateTimeField(null=True, blank=True)
 
 	def __str__(self):
-		return self.upc
-
-	def __unicode__(self):
 		return self.upc
 
 	def get_absolute_url(self):

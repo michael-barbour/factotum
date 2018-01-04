@@ -17,9 +17,6 @@ class SourceCategory(models.Model):
 	def __str__(self):
 		return self.data_source.title + ', ' + self.path
 
-	def __unicode__(self):
-		return self.data_source.title + ', ' + self.path
-
 	def get_absolute_url(self):
 		return reverse('source_category_edit', kwargs={'pk': self.pk})
 

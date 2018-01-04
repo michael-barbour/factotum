@@ -16,8 +16,5 @@ class DataDocument(models.Model):
 	def __str__(self):
 		return self.title
 
-	def __unicode__(self):
-		return self.title
-
 	def get_absolute_url(self):
 		return reverse('data_document_edit', kwargs={'pk': self.pk})

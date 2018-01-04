@@ -80,7 +80,7 @@
       <tr>
         {% if doc.matched %}
         <td>
-          <a href="/media/{{datagroup.id}}/{{ doc.filename }}" title="Link to {{ doc.filename }}" target = "_blank">{{ doc.title }}</a>
+          <a href="/media/{{ datagroup.dgurl }}/pdf/{{ doc.filename }}" title="Link to {{ doc.filename }}" target = "_blank">{{ doc.title }}</a>
         </td>
         {% else %}
         <td>{{ doc.title }}</td>

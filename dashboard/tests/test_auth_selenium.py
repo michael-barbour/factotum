@@ -1,16 +1,17 @@
-from django.test import LiveServerTestCase
-from selenium import webdriver
-from django.conf import settings
-from django.contrib.auth.models import User
 import time
+from selenium import webdriver
+
+from django.test import LiveServerTestCase
+from django.contrib.auth.models import User
 
 
 class TestAuthInBrowser(LiveServerTestCase):
 	def setUp(self):
-		self.browser = webdriver.Chrome(executable_path=settings.CHROMEDRIVER_PATH)
+		self.browser = webdriver.Chrome()
 		self.browser.implicitly_wait(5)
-		self.user = User.objects.create_user(username='Karyn', email='kats.karyn@epa.gov',
-											 password='specialP@55word')
+		self.user = User.objects.create_user(username='Karyn',
+											email='kats.karyn@epa.gov',
+											password='specialP@55word')
 
 	def tearDown(self):
 		self.browser.quit()
@@ -29,6 +30,3 @@ class TestAuthInBrowser(LiveServerTestCase):
 		body = self.browser.find_element_by_tag_name('body')
 		self.assertIn('Welcome to Factotum', body.text)
 		time.sleep(3)
-
-
-

@@ -13,6 +13,7 @@ def update_filename(instance, filename):
 	name = '{0}/{0}_{1}'.format(name_fill_space,filename) # potential space errors in name
 	return name
 
+
 class DataGroup(models.Model):
 
 	name = models.CharField(max_length=50)
@@ -32,11 +33,12 @@ class DataGroup(models.Model):
 	def __str__(self):
 		return self.name
 
-	def __unicode__(self):
-		return self.title
+	def dgurl(self):
+		return self.name.replace(' ', '_')
 
 	def get_absolute_url(self):
 		return reverse('data_group_edit', kwargs={'pk': self.pk})
+
 
 @receiver(models.signals.post_delete, sender=DataGroup)
 def auto_delete_file_on_delete(sender, instance, **kwargs):

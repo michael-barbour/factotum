@@ -3,7 +3,6 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 
-
 urlpatterns = [
 	url(r'^$', views.index, name='index'),
 	url(r'^datasources/$', views.data_source_list, name='data_source_list'),
@@ -18,6 +17,5 @@ urlpatterns = [
 	url(r'^datagroup/delete/(?P<pk>\d+)$', views.data_group_delete, name='data_group_delete'),
 ]
 
-
 if settings.DEBUG is True:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+	urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

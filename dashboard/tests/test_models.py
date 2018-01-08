@@ -10,6 +10,7 @@ def file_len(fname):
     with open(fname) as f:
         for i, l in enumerate(f):
             pass
+    f.closed
     return i + 1
 
 class DataGroupTest(TestCase):
@@ -28,6 +29,7 @@ class DataGroupTest(TestCase):
         
         # DataGroup
         self.dg = self.create_data_group(data_source=self.ds)
+        self.pdfs = self.upload_pdfs()
 
         # DataDocuments
         #self.dds = self.create_data_documents(data_group = self.dg)
@@ -46,6 +48,13 @@ class DataGroupTest(TestCase):
                                             downloaded_at=timezone.now(),
                                             csv=SimpleUploadedFile('register_records_matching.csv', source_csv.read() )
                                             )
+    
+    def upload_pdfs(self):
+        local_pdf = open('./sample_files/0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf', 'rb')
+        pdf1 = SimpleUploadedFile( 'media/' + self.dg.dgurl() + '/pdf/0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf', local_pdf.read() )
+        local_pdf = open('./sample_files/0c68ab16-2065-4d9b-a8f2-e428eb192465.pdf', 'rb')
+        pdf2 = SimpleUploadedFile( 'media/' + self.dg.dgurl() + '/pdf/0c68ab16-2065-4d9b-a8f2-e428eb192465.pdf', local_pdf.read() )
+
 
     def create_data_documents(self, data_group):
         info = [x.decode('ascii',
@@ -77,9 +86,12 @@ class DataGroupTest(TestCase):
         # DataGroup
         self.assertEqual(self.dg.__str__(), self.dg.name)
         self.assertEqual(self.dg.dgurl(), self.dg.name.replace(' ', '_'))
-        # The DataGroup's uploaded csv 
+        # The number of rows in the DataGroup's uploaded csv should match the rows in the local copy
         csv_there = file_len(self.dg.csv.path)
         csv_here  = file_len('./sample_files/register_records_matching.csv')
         self.assertEqual(csv_there, csv_here)
+        # Test a link to an uploaded pdf
+        
+
         
         

@@ -4,7 +4,7 @@
 {% block content %}
 
 <h1>
-  <span>{{ object.title }}</span>
+  <span name="title">{{ object.title }}</span>
   <div class="btn-group float-lg-right" role="group" aria-label="Datasource Modification">
     <a class="btn btn-info btn-sm" role="button" title="list" href="{% url "data_source_list" %}">
       <span class="oi oi-list"></span> </a>

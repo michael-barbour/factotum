@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from dashboard.models import DataSource, DataGroup, DataDocument, SourceType
-from dashboard.views import data_source
+from dashboard.views import data_source, data_group
 from django.test import TestCase, RequestFactory
 from django.utils import timezone
 import os 
@@ -130,8 +130,16 @@ class DataGroupTest(TestCase):
         self.assertIn(good_url, dg_response.content)
 
        
-    def test_data_source_view_with_client(self):
-        request = self.client.get(reverse('data_source_detail', args=[self.ds.pk]))
+    def test_data_source_view(self):
+        response = self.client.get(reverse('data_source_detail', args=[self.ds.pk]))
+        request = response.wsgi_request
         request.user = self.user
         response = data_source.data_source_detail(request, self.ds.pk)
+        self.assertEqual(response.status_code, 200)
+
+    def test_data_group_view(self):
+        response = self.client.get(reverse('data_group_detail', args=[self.dg.pk]))
+        request = response.wsgi_request
+        request.user = self.user
+        response = data_group.data_group_detail(request, self.dg.pk)
         self.assertEqual(response.status_code, 200)

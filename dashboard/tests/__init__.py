@@ -1,4 +1,5 @@
-from .test_templates import *
+# new test modules need to be added here.
 from .test_auth import *
-from .test_auth_selenium import *
-
+from .test_models import *
+from .test_templates import *
+from .functional_tests import *

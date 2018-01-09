@@ -33,8 +33,11 @@
         <li class="nav-item {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
             <a class="nav-link" href="{% url 'index' %}">Dashboard</a>
         </li>
-        <li class="nav-item {% if request.resolver_match.url_name == 'data_source_list' %}active{% endif %}">
+        <li class="nav-item {% if 'data_source' in request.resolver_match.url_name %}active{% endif %}">
             <a class="nav-link" href="{% url 'data_source_list' %}">Data Sources</a>
+        </li>
+        <li class="nav-item {% if 'product_curation' in request.resolver_match.url_name %}active{% endif %}">
+            <a class="nav-link" href="{% url 'product_curation' %}">Product Curation</a>
         </li>
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"

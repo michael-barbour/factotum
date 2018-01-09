@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from dashboard.models import DataSource, DataGroup, DataDocument, SourceType
+from dashboard.views import data_source
 from django.test import TestCase, RequestFactory
 from django.utils import timezone
 import os 
@@ -8,6 +9,7 @@ import collections
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.files.storage import FileSystemStorage
+from django.core.urlresolvers import reverse
 
 
 def file_len(fname):
@@ -126,4 +128,10 @@ class DataGroupTest(TestCase):
         # Test a link to an uploaded pdf
         good_url = b'Data_Group_for_Test/pdf/0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf'
         self.assertIn(good_url, dg_response.content)
-        
+
+       
+    def test_data_source_view_with_client(self):
+        request = self.client.get(reverse('data_source_detail', args=[self.ds.pk]))
+        request.user = self.user
+        response = data_source.data_source_detail(request, self.ds.pk)
+        self.assertEqual(response.status_code, 200)

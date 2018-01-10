@@ -2,12 +2,14 @@ from django.db import models
 from .data_source import DataSource
 from .data_document import DataDocument
 from .source_category import SourceCategory
+from .product_category import ProductCategory
 from django.utils import timezone
 from django.core.urlresolvers import reverse
 
 
 class Product(models.Model):
-	data_source = models.ForeignKey(DataSource, on_delete=models.CASCADE)
+	prod_cat = models.ForeignKey(ProductCategory, related_name='category', on_delete=models.CASCADE)
+	data_source = models.ForeignKey(DataSource, related_name='source', on_delete=models.CASCADE)
 	documents = models.ManyToManyField(DataDocument, through='ProductDocument')
 	source_category = models.ForeignKey(SourceCategory, on_delete=models.CASCADE, null=True, blank=True)
 	title = models.CharField(max_length=400)

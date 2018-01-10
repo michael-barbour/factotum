@@ -23,7 +23,11 @@
   <tbody>
   {% for data_source, form in object_list %}
     <tr>
-      <td>{{ data_source.title }}</td>
+      <td>
+        <a class="btn btn-info btn-sm" role="button" title="details"
+           href="{% url "data_source_detail" data_source.id %}"> {{ data_source.title }}
+         </a>
+      </td>
       <td>{{ data_source.registered | floatformat:0}} %</td>
       <td>{{ data_source.uploaded | floatformat:0 }} %</td>
       <td>
@@ -37,9 +41,6 @@
       <td>{{ data_source.get_state_display }}</td>
       <td class="float-sm-right">
         <div class="btn-group">
-          <a class="btn btn-info btn-sm" role="button" title="details"
-             href="{% url "data_source_detail" data_source.id %}">
-            <span class="oi oi-info"></span> </a>
           <a class="btn btn-success btn-sm" role="button" title="edit"
              href="{% url "data_source_edit" data_source.id %}">
             <span class="oi oi-pencil"></span> </a>

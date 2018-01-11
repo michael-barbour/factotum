@@ -6,7 +6,7 @@ from django.test import LiveServerTestCase
 
 from dashboard.models import DataGroup
 
-val = len(DataGroup.objects.filter(data_source_id=1))
+# val = len(DataGroup.objects.filter(data_source_id=1))
 URL = 'http://127.0.0.1:8000'
 
 def log_karyn_in(object):
@@ -38,6 +38,8 @@ class TestAuthInBrowser(unittest.TestCase):
 		self.assertIn('Welcome to Factotum', body.text)
 
 class TestDataSource(LiveServerTestCase):
+
+	fixtures = ['seed_data']
 
 	def setUp(self):
 		self.browser = webdriver.Chrome()
@@ -77,7 +79,7 @@ class TestDataSource(LiveServerTestCase):
 								"//table[@id='data_group_table']/tbody/tr"))
 		# I'm getting vall from above, I can't seem to get the queryset to
 		# return inside of this function
-		self.assertEqual(val, row_count)
+		self.assertEqual(b, row_count)
 
 
 class TestDataGroup(unittest.TestCase):

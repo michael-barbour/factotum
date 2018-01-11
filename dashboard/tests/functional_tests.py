@@ -1,14 +1,18 @@
 import unittest
+import csv
+import collections
 from selenium import webdriver
 from selenium.webdriver.support.select import Select
 from django.utils import timezone
 from django.test import LiveServerTestCase
 
-from dashboard.models import DataGroup, DataSource
+from dashboard.models import DataGroup, DataSource, DataDocument
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.files.storage import FileSystemStorage
+from django.core.urlresolvers import reverse
+
 
 
 # val = len(DataGroup.objects.filter(data_source_id=1))
@@ -130,7 +134,6 @@ class TestDataGroup(LiveServerTestCase):
 		#pdfs
 		with open(data_group.csv.path) as dg_csv:
 			table = csv.DictReader(dg_csv)
-			text = ['DataDocument_id,' + ','.join(table.fieldnames)+'\n']
 			errors = []
 			count = 0
 			for line in table: # read every csv line, create docs for each
@@ -155,9 +158,18 @@ class TestDataGroup(LiveServerTestCase):
 		ds = DataSource.objects.get(pk=1)
 		self.dg = self.create_data_group(data_source=ds)
 		dg_count_after = DataGroup.objects.count()
-		self.assertEqual(dg_count_after, dg_count_before + 1) # the DataGroup object has been created
+		self.assertEqual(dg_count_after, dg_count_before + 1) # See if the DataGroup object has been created
 		self.pdfs = self.upload_pdfs()
-		#self.dds = self.create_data_documents(self.dg)
+		self.dds = self.create_data_documents(self.dg)
+
+		self.assertEqual(3, self.dg.pk) # Confirm the new object's pk is 3
+		# TODO: why can't I open a page for the newly added object?
+		self.browser.get(URL + '/datagroup/3')
+		# could also use 
+		# self.browser.get(URL + reverse('data_group_detail', kwargs={'pk': self.dg.pk}))
+		self.assertEqual('factotum', self.browser.title)
+		h1 = self.browser.find_element_by_name('title')
+		self.assertEqual('Walmart MSDS 3', h1.text)
 		
 		# deleting the DataGroup will clean up the file system
 		self.dg.delete()

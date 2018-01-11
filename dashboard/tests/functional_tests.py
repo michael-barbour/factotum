@@ -12,6 +12,7 @@ from django.core.files.storage import FileSystemStorage
 
 
 val = len(DataGroup.objects.filter(data_source_id=1))
+# val = len(DataGroup.objects.filter(data_source_id=1))
 URL = 'http://127.0.0.1:8000'
 
 def log_karyn_in(object):
@@ -82,8 +83,14 @@ class TestDataSource(LiveServerTestCase):
 		self.browser.get(URL + '/datasource/1')
 		row_count = len(self.browser.find_elements_by_xpath(
 								"//table[@id='data_group_table']/tbody/tr"))
+<<<<<<< HEAD
 		self.assertEqual(b, row_count)
 
+=======
+		# I'm getting vall from above, I can't seem to get the queryset to
+		# return inside of this function
+		self.assertEqual(b, row_count)
+>>>>>>> 1632a8beea6ea5927ce56a839e3de8581aba00c0
 
 class TestDataGroup(LiveServerTestCase):
 

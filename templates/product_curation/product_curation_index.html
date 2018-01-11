@@ -1,0 +1,31 @@
+{% extends 'core/base.html' %}
+{% load humanize %}
+
+{% block content %}
+
+
+<h1><span class="oi oi-wrench" title="factotum" aria-hidden="true"></span>
+Product Curation</h1>
+<br>
+
+<table class="table table-sm table-bordered table-striped table-sortable">
+  <thead class="table-primary">
+      <th>Name</th>
+      <th>Uploaded DataDocuments</th>
+      <th>Unlinked DataDocuments</th>
+  </thead>
+  <tbody>
+  {% for data_source in data_sources %}
+    <tr>
+      <td>
+          <a href="{% url "data_source_detail" data_source.id %}" title="Link to {{ data_source.title }}">{{ data_source.title }}</a>
+      </td>
+      <td>{{ data_source.uploaded }}</td>
+      <td>{{ data_source.unlinked }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+
+{% endblock %}

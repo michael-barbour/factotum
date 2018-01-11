@@ -1,5 +1,6 @@
 {% extends 'core/base.html' %}
 {% load staticfiles %}
+{% load humanize %}
 {% block content %}
 <h1>
     <span>Data Sources</span>
@@ -8,7 +9,8 @@
 <table class="table table-sm table-bordered table-striped table-sortable">
   <thead class="table-primary">
       <th>Name</th>
-      <th>URL</th>
+      <th>Registered</th>
+      <th>Uploaded</th>
       <th class="asc">Priority
         <a href="?sort=priority" style="float:right">
           <img src="{% static 'font/open-iconic-master/png/sort-ascending-2x.png' %}" alt="">
@@ -21,10 +23,13 @@
   <tbody>
   {% for data_source, form in object_list %}
     <tr>
-      <td>{{ data_source.title }}</td>
       <td>
-          <a href="{{ data_source.url }}" title="Link to {{ data_source.title }}">{{ data_source.url }}</a>
+        <a class="btn btn-info btn-sm" role="button" title="details"
+           href="{% url "data_source_detail" data_source.id %}"> {{ data_source.title }}
+         </a>
       </td>
+      <td>{{ data_source.registered | floatformat:0}} %</td>
+      <td>{{ data_source.uploaded | floatformat:0 }} %</td>
       <td>
         <form method="post" novalidate>
           {% csrf_token %}
@@ -36,9 +41,6 @@
       <td>{{ data_source.get_state_display }}</td>
       <td class="float-sm-right">
         <div class="btn-group">
-          <a class="btn btn-info btn-sm" role="button" title="details"
-             href="{% url "data_source_detail" data_source.id %}">
-            <span class="oi oi-info"></span> </a>
           <a class="btn btn-success btn-sm" role="button" title="edit"
              href="{% url "data_source_edit" data_source.id %}">
             <span class="oi oi-pencil"></span> </a>

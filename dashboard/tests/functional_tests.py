@@ -11,7 +11,6 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.files.storage import FileSystemStorage
 
 
-val = len(DataGroup.objects.filter(data_source_id=1))
 # val = len(DataGroup.objects.filter(data_source_id=1))
 URL = 'http://127.0.0.1:8000'
 

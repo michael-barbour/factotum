@@ -13,7 +13,7 @@
 
 {% block content %}
   <h1>
-      <span>{{ datagroup.name }}</span>
+      <span name="title">{{ datagroup.name }}</span>
       <div class="btn-group float-lg-right" role="group" aria-label="Data Group Modification">
           <a class="btn btn-info btn-sm" role="button" title="list" href="{% url "data_group_list" %}">
               <span class="oi oi-list"></span> </a>

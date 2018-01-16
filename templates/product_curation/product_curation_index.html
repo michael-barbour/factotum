@@ -23,7 +23,7 @@ Product Curation</h1>
       <td>{{ data_source.uploaded }}</td>
       <td>
         <a href="{% url "link_product_list" data_source.id %}" title="Link to {{ data_source.title }}">{{ data_source.unlinked }}</a>
-      </td>//make this clickable to list view!
+      </td>
     </tr>
   {% endfor %}
   </tbody>

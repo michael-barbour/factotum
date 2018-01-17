@@ -137,6 +137,5 @@ ENV/
 /.coveralls.yml
 .DS_Store
 nuke_and_pave.sh
-/media/
 .vscode/launch.json
 chromedriver

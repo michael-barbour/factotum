@@ -5,9 +5,38 @@
 
 
 <h1><span class="oi oi-wrench" title="factotum" aria-hidden="true"></span>
-Unlinked DS List</h1>
+Unlinked Document List</h1>
 <br>
-
+<table class="table table-sm table-bordered table-striped table-hover">
+  <thead class="thead-inverse">
+  <th>Title</th>
+  <th>URL</th>
+  <th>Product Category</th>
+  <th>Matched</th>
+  <th>Extracted</th>
+  </thead>
+  <tbody>
+  {% for doc in documents %}
+    <tr>
+      {% if doc.matched %}
+      <td>
+        <a href="/media/{{ doc.data_group.dgurl }}/pdf/{{ doc.filename }}" title="Link to {{ doc.filename }}" target = "_blank">{{ doc.title }}</a>
+      </td>
+      {% else %}
+      <td>{{ doc.title }}</td>
+      {% endif %}
+      <td>
+          <a href="{{ doc.url }}" title="Link to {{ doc.title }}">
+            {{ doc.url }}
+          </a>
+      </td>
+      <td>{{ doc.product_category }}</td>
+      <td align="center"><input type="checkbox" name="vehicle" value="Bike" {% if doc.matched %}checked{% endif %}></td>
+      <td align="center"><input type="checkbox" name="vehicle" value="Bike" {% if doc.extracted %}checked{% endif %}></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
 
 
 {% endblock %}

@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
 from dashboard.views import *
-from dashboard.models import DataSource, DataDocument
+from dashboard.models import DataSource, DataDocument, Product
 
 
 @login_required()
@@ -28,7 +28,23 @@ def product_curation_index(request, template_name='product_curation/product_cura
 
 @login_required()
 def link_product_list(request,  pk, template_name='product_curation/link_product_list.html'):
-	return render(request, template_name)
+	ds = DataSource.objects.get(pk=pk)
+	products = Product.objects.filter(data_source=ds)
+	[dd.pk for p in products for dd in p.datadocument_set.all()]
+
+
+
+	# list(set([dd.pk for dg in ds.datagroup_set.all() for dd in dg.datadocument_set.all()])-set([dd.pk for product in ds.product_set.all() for dd in product.datadocument_set.all()]))
+
+	unlinked_pks = list(set([dd.pk
+							for dg in ds.datagroup_set.all()
+							for dd in dg.datadocument_set.all()]
+					  )-set([dd.pk
+							for product in ds.product_set.all()
+							for dd in product.datadocument_set.all()]))
+	documents = DataDocument.objects.filter(pk__in=unlinked_pks)
+
+	return render(request, template_name, {'documents':documents})
 
 # len([d
 # for d in docs

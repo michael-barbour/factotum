@@ -1,10 +1,16 @@
 
+from django.forms import ModelForm
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
 from dashboard.views import *
-from dashboard.models import DataSource, DataDocument, Product
+from dashboard.models import DataSource, DataDocument, Product, ProductDocument
 
+class ProductForm(ModelForm):
+	required_css_class = 'required' # adds to label tag
+	class Meta:
+		model = Product
+		fields = ['title', 'brand_name']
 
 @login_required()
 def product_curation_index(request, template_name='product_curation/product_curation_index.html'):
@@ -29,12 +35,6 @@ def product_curation_index(request, template_name='product_curation/product_cura
 @login_required()
 def link_product_list(request,  pk, template_name='product_curation/link_product_list.html'):
 	ds = DataSource.objects.get(pk=pk)
-	products = Product.objects.filter(data_source=ds)
-	[dd.pk for p in products for dd in p.datadocument_set.all()]
-
-
-
-	# list(set([dd.pk for dg in ds.datagroup_set.all() for dd in dg.datadocument_set.all()])-set([dd.pk for product in ds.product_set.all() for dd in product.datadocument_set.all()]))
 
 	unlinked_pks = list(set([dd.pk
 							for dg in ds.datagroup_set.all()
@@ -47,13 +47,30 @@ def link_product_list(request,  pk, template_name='product_curation/link_product
 	return render(request, template_name, {'documents':documents})
 
 @login_required()
-def link_product_form(request,  pk, template_name='product_curation/link_product_form.html'):
+def link_product_form(request, pk, template_name=('product_curation/'
+													'link_product_form.html')):
 	doc = DataDocument.objects.get(pk=pk)
-
-
-
+	form = ProductForm(request.POST or None)
+	data_source_id = doc.data_group.data_source_id
+	if request.method == 'POST':
+		form = ProductForm(request.POST or None)
+		if form.is_valid():
+			title = form['title'].value()
+			brand_name = form['brand_name'].value()
+			try:
+				product = Product.objects.get(title=title)
+			except Product.DoesNotExist:
+				print('yay')
+			product = Product.objects.create(title=title,
+		 									brand_name=brand_name,
+											data_source_id=data_source_id)
+			print(product)
+			p = ProductDocument(product=product,document=doc)
+			p.save()
+		return redirect('link_product_list', pk=data_source_id)
 
 
 	# p = ProductDocument(product=b,document=a)
 
-	return render(request, template_name,{'document': doc})
+	return render(request, template_name,{'document': doc,
+											'form'  : form})

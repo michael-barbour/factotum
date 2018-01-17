@@ -7,7 +7,14 @@
 <h1><span class="oi oi-wrench" title="factotum" aria-hidden="true"></span>
 Link {{ document }} to Product</h1>
 <br>
-<a class="btn btn-info btn-sm" role="button" title="details"
- href="/media/{{ document.data_group.dgurl }}/pdf/{{ document.filename }}" target = "_blank">
-<span class="oi"></span>Open PDF</a>
+
+<form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {% include 'core/bs4_form.html' with form=form %}
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a class="btn btn-secondary" href="{% url 'link_product_list' document.data_group.data_source_id %}">Cancel</a>
+    <a class="btn btn-info btn-secondary" role="button" title="details"
+     href="/media/{{ document.data_group.dgurl }}/pdf/{{ document.filename }}" target = "_blank">
+    <span class="oi"></span>Open PDF</a>
+</form>
 {% endblock %}

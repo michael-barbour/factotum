@@ -46,8 +46,14 @@ def link_product_list(request,  pk, template_name='product_curation/link_product
 
 	return render(request, template_name, {'documents':documents})
 
-# len([d
-# for d in docs
-# if d.data_group.data_source_id == datasource.pk
-# and d.matched ==True
-# ])/float(datasource.estimated_records))*100
+@login_required()
+def link_product_form(request,  pk, template_name='product_curation/link_product_form.html'):
+	doc = DataDocument.objects.get(pk=pk)
+
+
+
+
+
+	# p = ProductDocument(product=b,document=a)
+
+	return render(request, template_name,{'document': doc})

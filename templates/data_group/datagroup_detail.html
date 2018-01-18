@@ -91,8 +91,8 @@
             </a>
         </td>
         <td>{{ doc.product_category }}</td>
-        <td align="center"><input type="checkbox" name="vehicle" value="Bike" {% if doc.matched %}checked{% endif %}></td>
-        <td align="center"><input type="checkbox" name="vehicle" value="Bike" {% if doc.extracted %}checked{% endif %}></td>
+        <td align="center"><input type="checkbox" name="matched" {% if doc.matched %}checked{% endif %}></td>
+        <td align="center"><input type="checkbox" name="extracted" {% if doc.extracted %}checked{% endif %}></td>
       </tr>
     {% endfor %}
     </tbody>

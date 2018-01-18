@@ -3,7 +3,6 @@ from django.core.urlresolvers import resolve
 from dashboard.views import index
 from django.contrib.auth.models import User
 
-
 class IndexTestPage(TestCase):
 
 	def setUp(self):

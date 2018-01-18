@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 
 
 class Product(models.Model):
-	prod_cat = models.ForeignKey(ProductCategory, related_name='category', on_delete=models.CASCADE)
+	prod_cat = models.ForeignKey(ProductCategory, related_name='category', on_delete=models.CASCADE, null=True, blank=True)
 	data_source = models.ForeignKey(DataSource, related_name='source', on_delete=models.CASCADE)
 	documents = models.ManyToManyField(DataDocument, through='ProductDocument')
 	source_category = models.ForeignKey(SourceCategory, on_delete=models.CASCADE, null=True, blank=True)

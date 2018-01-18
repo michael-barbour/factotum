@@ -6,11 +6,12 @@ from django.utils import timezone
 from django.core.urlresolvers import reverse
 from django.dispatch import receiver
 
+
 # could be used for dynamically creating filename on instantiation
 # in the 'upload_to' param on th FileField
 def update_filename(instance, filename):
-	name_fill_space = instance.name.replace(' ','_')
-	name = '{0}/{0}_{1}'.format(name_fill_space,filename) # potential space errors in name
+	name_fill_space = instance.name.replace(' ', '_')
+	name = '{0}/{0}_{1}'.format(name_fill_space, filename) # potential space errors in name
 	return name
 
 
@@ -28,7 +29,7 @@ class DataGroup(models.Model):
 	zip_file = models.CharField(max_length=100)
 
 	def matched_docs(self):
-		return self.datadocument_set.filter(matched = True).count()
+		return self.datadocument_set.filter(matched=True).count()
 
 	def __str__(self):
 		return self.name

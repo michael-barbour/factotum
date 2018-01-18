@@ -1,4 +1,3 @@
-
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
@@ -19,6 +18,6 @@ def product_curation_index(request, template_name='product_curation/product_cura
 		data_source.uploaded = sum([len(d.datadocument_set.all()) for d in data_source.datagroup_set.all()])
 		# Number of data documents for each source which are NOT linked
 		# to a product
-		data_source.unlinked = data_source.uploaded - sum([len(x.datadocument_set.all()) for x in data_source.product_set.all()])
+		# TODO data_source.unlinked = data_source.uploaded - sum([len(x.datadocument_set.all()) for x in data_source.product_set.all()])
 
 	return render(request, template_name, {'data_sources': data_sources})

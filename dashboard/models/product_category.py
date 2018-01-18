@@ -11,7 +11,7 @@ class ProductCategory(models.Model):
 	updated_at = models.DateTimeField(null=True, blank=True)
 
 	def __str__(self):
-		return self.gen_cat # this may need to change
+		return self.gen_cat  # this may need to change
 
 	class Meta:
 		verbose_name_plural = 'Product categories'

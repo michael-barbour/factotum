@@ -28,7 +28,7 @@ def product_curation_index(request, template_name='product_curation/product_cura
 		# to a product
 		data_source.unlinked = (data_source.uploaded -
 								sum([len(x.datadocument_set.all())
-								for x in data_source.product_set.all()]))
+								for x in data_source.source.all()]))
 
 	return render(request, template_name, {'data_sources': data_sources})
 
@@ -40,7 +40,7 @@ def link_product_list(request,  pk, template_name='product_curation/link_product
 							for dg in ds.datagroup_set.all()
 							for dd in dg.datadocument_set.all()]
 					  )-set([dd.pk
-							for product in ds.product_set.all()
+							for product in ds.source.all()
 							for dd in product.datadocument_set.all()]))
 	documents = DataDocument.objects.filter(pk__in=unlinked_pks)
 
@@ -61,9 +61,13 @@ def link_product_form(request, pk, template_name=('product_curation/'
 				product = Product.objects.get(title=title)
 			except Product.DoesNotExist:
 				print('yay')
-			product = Product.objects.create(title=title,
-		 									brand_name=brand_name,
-											data_source_id=data_source_id)
+				upc_stub = ('stub_' +
+							title +
+							(Product.objects.all().count() + 1))
+				product = Product.objects.create(title        = title,
+			 									brand_name    = brand_name,
+												upc           = upc_stub,
+												data_source_id= data_source_id)
 			print(product)
 			p = ProductDocument(product=product,document=doc)
 			p.save()

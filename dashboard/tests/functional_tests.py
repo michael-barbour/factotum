@@ -201,5 +201,5 @@ class TestProductCuration(LiveServerTestCase):
 		un_link = self.browser.find_elements_by_xpath(
 								'/html/body/div/table/tbody/tr[1]/td[3]/a')[0]
 		print(un_link.get_attribute("href"))
-		self.assertEqual(un_link.get_attribute("href").split('/')[-1],
+		self.assertEqual(un_link.get_attribute("href").split('/')[-1],str(ds.pk))
 																	str(ds.pk))

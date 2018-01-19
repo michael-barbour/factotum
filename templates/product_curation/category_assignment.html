@@ -1,0 +1,30 @@
+{% extends 'core/base.html' %}
+{% load humanize %}
+
+{% block content %}
+
+
+<h1><span class="oi oi-wrench" title="factotum" aria-hidden="true"></span>
+Product Curation</h1>
+<br>
+
+<table class="table table-sm table-bordered table-striped table-sortable">
+  <thead class="table-primary">
+      <th>Title</th>
+      <th>MSDS</th>
+      <th>Source Category</th>
+      <th>PUC</th>
+  </thead>
+  <tbody>
+  {% for product in products %}
+    <tr>
+      <td>{{ product.title }}</td>
+      <td>{{ product.upc }}</td>
+      <td>{{ product.url }}</td>
+      <td>{{ product.brand_name}}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

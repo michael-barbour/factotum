@@ -4,7 +4,7 @@
 {% block content %}
 
 <h1>
-  <span>{{ object.title }}</span>
+  <span name="title">{{ object.title }}</span>
   <div class="btn-group float-lg-right" role="group" aria-label="Datasource Modification">
     <a class="btn btn-info btn-sm" role="button" title="list" href="{% url "data_source_list" %}">
       <span class="oi oi-list"></span> </a>
@@ -33,14 +33,14 @@
      </form>
   </dd>
   <dt class="col-sm-3">State</dt>
-  <dd class="col-sm-9">{{ object.get_state_display }}</dd>
+  <dd class="col-sm-9" name="state">{{ object.get_state_display }}</dd>
   <dt class="col-sm-3">Estimated Records</dt>
   <dd class="col-sm-9">{{ object.estimated_records | intcomma }}</dd>
 
   <dt class="col-sm-3">% Registered</dt>
-  <dd class="col-sm-9">{{ object.registered }} %</dd>
+  <dd class="col-sm-9">{{ object.registered|floatformat:1 }} %</dd>
   <dt class="col-sm-3">% Uploaded</dt>
-  <dd class="col-sm-9">{{ object.uploaded }} %</dd>
+  <dd class="col-sm-9">{{ object.uploaded|floatformat:1 }} %</dd>
 
   <dt class="col-sm-3">Created</dt>
   <dd class="col-sm-9">{{ object.created_at }}</dd>
@@ -54,7 +54,7 @@
   <a class="btn btn-primary btn-sm float-lg-right" role="button" title="create"
   href="{% url "data_group_new" %}"><span class="oi "></span>New Data Group</a>
 </h3>
-<table class="table table-sm table-bordered table-striped">
+<table class="table table-sm table-bordered table-striped" id="data_group_table">
     <thead class="thead-inverse">
     <th>Name</th>
     <th>Downloaded by</th>
@@ -66,7 +66,9 @@
     <tbody>
     {% for data_group in datagroup_list %}
       <tr>
-        <td>{{ data_group.name }}</td>
+        <td><a class="btn btn-info btn-sm" role="button" title="details"
+           href="{% url "data_group_detail" data_group.id %}">
+          <span class="oi"></span> {{ data_group.name }}</a></td>
         <td>{{ data_group.downloaded_by }}</td>
         <td>{{ data_group.downloaded_at }}</td>
         <td>
@@ -74,15 +76,12 @@
         </td>
         <td class="float-sm-right">
           <div class="btn-group">
-          <a class="btn btn-info btn-sm" role="button" title="details"
-             href="{% url "data_group_detail" data_group.id %}">
-            <span class="oi oi-info"></span> </a>
-          <a class="btn btn-success btn-sm" role="button" title="edit"
-             href="{% url "data_group_edit" data_group.id %}">
-            <span class="oi oi-pencil"></span> </a>
-          <a class="btn btn-danger btn-sm" role="button" title="delete"
-             href="{% url "data_group_delete" data_group.id %}">
-            <span class="oi oi-trash"></span> </a>
+            <a class="btn btn-success btn-sm" role="button" title="edit"
+               href="{% url "data_group_edit" data_group.id %}">
+              <span class="oi oi-pencil"></span> </a>
+            <a class="btn btn-danger btn-sm" role="button" title="delete"
+               href="{% url "data_group_delete" data_group.id %}">
+              <span class="oi oi-trash"></span> </a>
           </div>
         </td>
       </tr>

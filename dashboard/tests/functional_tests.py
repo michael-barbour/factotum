@@ -29,7 +29,6 @@ def log_karyn_in(object):
 
 
 class TestAuthInBrowser(LiveServerTestCase):
-
 	fixtures = ['seed_data']
 
 	def setUp(self):
@@ -47,8 +46,8 @@ class TestAuthInBrowser(LiveServerTestCase):
 		body = self.browser.find_element_by_tag_name('body')
 		self.assertIn('Welcome to Factotum', body.text)
 
-class TestDataSource(LiveServerTestCase):
 
+class TestDataSource(LiveServerTestCase):
 	fixtures = ['seed_data']
 
 	def setUp(self):
@@ -109,6 +108,9 @@ class TestDataGroup(LiveServerTestCase):
 		pdflink = self.browser.find_elements_by_xpath(
 								'/html/body/div/table/tbody/tr[1]/td[1]/a')[0]
 		self.assertIn('shampoo.pdf',pdflink.get_attribute('href'))
+	
+	def create_data_group(self, data_source, testusername = 'Karyn', name='Walmart MSDS 3',
+						description='Another data group, added programatically'):
 
 	def create_data_group(self, data_source, testusername = 'Karyn', name='Walmart MSDS 3', description='Another data group, added programatically'):
 		source_csv = open('./sample_files/walmart_msds_3.csv','rb')
@@ -116,7 +118,7 @@ class TestDataGroup(LiveServerTestCase):
 										description=description, data_source = data_source,
 										downloaded_by=User.objects.get(username=testusername) ,
 										downloaded_at=timezone.now(),
-										csv=SimpleUploadedFile('walmart_msds_3.csv', source_csv.read() )
+										csv=SimpleUploadedFile('walmart_msds_3.csv', source_csv.read())
 										)
 
 	def upload_pdfs(self):

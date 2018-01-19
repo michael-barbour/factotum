@@ -14,3 +14,9 @@ class ExtractionScript(models.Model):
 
 	def get_absolute_url(self):
 		return reverse('extraction_script_edit', kwargs={'pk': self.pk})
+
+	def get_document_count(self):
+		return 100
+
+	def get_pct_checked(self):
+		return 0.5

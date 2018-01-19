@@ -10,7 +10,6 @@ class SourceCategory(models.Model):
 	source_id = models.CharField(max_length=255, null=True, blank=True)
 	source_parent_id = models.CharField(max_length=255, null=True, blank=True)
 	path = models.CharField(max_length=255, null=True, blank=True)
-
 	created_at = models.DateTimeField(default=timezone.now)
 	updated_at = models.DateTimeField(null=True, blank=True)
 

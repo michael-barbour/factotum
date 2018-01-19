@@ -123,6 +123,7 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
 				return render(request, template_name, {'line_errors': errors,
 														'form': form})
 			dg_dir = datagroup.name.replace(' ','_')
+			# os.mkdir('media/{0}'.format(dg_dir))
 			zf = zipfile.ZipFile('media/{0}/{0}.zip'.format(dg_dir), 'w',
 								zipfile.ZIP_DEFLATED)
 			datagroup.zip_file = zf.filename

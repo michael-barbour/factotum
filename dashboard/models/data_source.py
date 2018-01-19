@@ -3,6 +3,7 @@ from django.utils import timezone
 from .source_type import SourceType
 from django.core.urlresolvers import reverse
 
+
 class DataSource(models.Model):
 	STATE_CHOICES = (
 					('AT','Awaiting Triage'),

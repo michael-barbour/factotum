@@ -33,7 +33,7 @@ class TestAuthInBrowser(LiveServerTestCase):
 	fixtures = ['seed_data']
 
 	def setUp(self):
-		self.browser = webdriver.Firefox()
+		self.browser = webdriver.Chrome()
 
 	def tearDown(self):
 		self.browser.quit()
@@ -52,7 +52,7 @@ class TestDataSource(LiveServerTestCase):
 	fixtures = ['seed_data']
 
 	def setUp(self):
-		self.browser = webdriver.Firefox()
+		self.browser = webdriver.Chrome()
 		log_karyn_in(self)
 
 	def tearDown(self):
@@ -95,7 +95,7 @@ class TestDataGroup(LiveServerTestCase):
 	fixtures = ['seed_data']
 
 	def setUp(self):
-		self.browser = webdriver.Firefox()
+		self.browser = webdriver.Chrome()
 		log_karyn_in(self)
 
 	def tearDown(self):
@@ -186,7 +186,7 @@ class TestProductCuration(LiveServerTestCase):
 	fixtures = ['seed_data']
 
 	def setUp(self):
-		self.browser = webdriver.Firefox()
+		self.browser = webdriver.Chrome()
 		log_karyn_in(self)
 
 	def tearDown(self):

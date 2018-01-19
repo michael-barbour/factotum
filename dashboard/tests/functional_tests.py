@@ -14,6 +14,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 from dashboard.models import DataGroup, DataSource, DataDocument
 
+
 def log_karyn_in(object):
 	'''
 	Log user in for further testing.
@@ -32,16 +33,16 @@ class TestAuthInBrowser(LiveServerTestCase):
 	fixtures = ['seed_data']
 
 	def setUp(self):
-		self.browser = webdriver.Chrome()
+		self.browser = webdriver.Firefox()
 
 	def tearDown(self):
 		self.browser.quit()
 
 	def test_login(self):
-		self.browser.get(self.live_server_url )
+		self.browser.get(self.live_server_url)
 		body = self.browser.find_element_by_tag_name('body')
 		self.assertIn('Please sign in', body.text,
-						"Confirm that the login page is displayed")
+					  "Confirm that the login page is displayed")
 		log_karyn_in(self)
 		body = self.browser.find_element_by_tag_name('body')
 		self.assertIn('Welcome to Factotum', body.text)
@@ -51,7 +52,7 @@ class TestDataSource(LiveServerTestCase):
 	fixtures = ['seed_data']
 
 	def setUp(self):
-		self.browser = webdriver.Chrome()
+		self.browser = webdriver.Firefox()
 		log_karyn_in(self)
 
 	def tearDown(self):
@@ -65,8 +66,8 @@ class TestDataSource(LiveServerTestCase):
 	# When a new data source is entered, the data source is automatically
 	# assigned the state 'awaiting triage.'
 	def test_state_and_priority(self):
-		valid_states = ['Awaiting Triage','In Progress','Complete','Stale']
-		valid_priorities = ['High','Medium','Low']
+		valid_states = ['Awaiting Triage', 'In Progress', 'Complete', 'Stale']
+		valid_priorities = ['High', 'Medium', 'Low']
 		self.browser.get(self.live_server_url + '/datasource/1')
 		state = self.browser.find_element_by_name('state')
 		self.assertIn(state.text, valid_states)
@@ -86,16 +87,15 @@ class TestDataSource(LiveServerTestCase):
 		b = len(DataGroup.objects.filter(data_source_id=1))
 		self.browser.get(self.live_server_url + '/datasource/1')
 		row_count = len(self.browser.find_elements_by_xpath(
-								"//table[@id='data_group_table']/tbody/tr"))
+			"//table[@id='data_group_table']/tbody/tr"))
 		self.assertEqual(b, row_count)
 
 
 class TestDataGroup(LiveServerTestCase):
-
 	fixtures = ['seed_data']
 
 	def setUp(self):
-		self.browser = webdriver.Chrome()
+		self.browser = webdriver.Firefox()
 		log_karyn_in(self)
 
 	def tearDown(self):
@@ -106,20 +106,17 @@ class TestDataGroup(LiveServerTestCase):
 		h1 = self.browser.find_element_by_name('title')
 		self.assertIn('Walmart MSDS', h1.text)
 		pdflink = self.browser.find_elements_by_xpath(
-								'/html/body/div/table/tbody/tr[1]/td[1]/a')[0]
-		self.assertIn('shampoo.pdf',pdflink.get_attribute('href'))
-	
-	def create_data_group(self, data_source, testusername = 'Karyn', name='Walmart MSDS 3',
-						description='Another data group, added programatically'):
+			'/html/body/div/table/tbody/tr[1]/td[1]/a')[0]
+		self.assertIn('shampoo.pdf', pdflink.get_attribute('href'))
 
-	def create_data_group(self, data_source, testusername = 'Karyn', name='Walmart MSDS 3', description='Another data group, added programatically'):
-		source_csv = open('./sample_files/walmart_msds_3.csv','rb')
-		return DataGroup.objects.create(name=name,
-										description=description, data_source = data_source,
-										downloaded_by=User.objects.get(username=testusername) ,
-										downloaded_at=timezone.now(),
-										csv=SimpleUploadedFile('walmart_msds_3.csv', source_csv.read())
-										)
+	def create_data_group(self, data_source, testusername='Karyn', name='Walmart MSDS 3',
+						description='Another data group, added programatically'):
+			source_csv = open('./sample_files/walmart_msds_3.csv', 'rb')
+			return DataGroup.objects.create(name=name, description=description, data_source=data_source,
+											downloaded_by=User.objects.get(username=testusername),
+											downloaded_at=timezone.now(),
+											csv=SimpleUploadedFile('walmart_msds_3.csv', source_csv.read())
+											)
 
 	def upload_pdfs(self):
 		store = settings.MEDIA_URL + self.dg.dgurl()
@@ -135,25 +132,25 @@ class TestDataGroup(LiveServerTestCase):
 
 	def create_data_documents(self, data_group):
 		dds = []
-		#pdfs = [f for f in os.listdir('/media/' + self.dg.dgurl() + '/pdf') if f.endswith('.pdf')]
-		#pdfs
+		# pdfs = [f for f in os.listdir('/media/' + self.dg.dgurl() + '/pdf') if f.endswith('.pdf')]
+		# pdfs
 		with open(data_group.csv.path) as dg_csv:
 			table = csv.DictReader(dg_csv)
 			errors = []
 			count = 0
-			for line in table: # read every csv line, create docs for each
-					count+=1
-					if line['filename'] == '':
-						errors.append(count)
-					if line['title'] == '': # updates title in line object
-						line['title'] = line['filename'].split('.')[0]
-					dd = DataDocument.objects.create(filename=line['filename'],
-						title=line['title'],
-						product_category=line['product'],
-						url=line['url'],
-						matched = line['filename'] in self.pdfs,
-						data_group=data_group)
-					dds.append(dd)
+			for line in table:  # read every csv line, create docs for each
+				count += 1
+				if line['filename'] == '':
+					errors.append(count)
+				if line['title'] == '':  # updates title in line object
+					line['title'] = line['filename'].split('.')[0]
+				dd = DataDocument.objects.create(filename=line['filename'],
+												 title=line['title'],
+												 product_category=line['product'],
+												 url=line['url'],
+												 matched=line['filename'] in self.pdfs,
+												 data_group=data_group)
+				dds.append(dd)
 			return dds
 
 	# creation of another DataGroup from csv and pdf sources
@@ -170,7 +167,7 @@ class TestDataGroup(LiveServerTestCase):
 
 		# Use the browser layer to confirm that the object has been created
 		self.browser.get('%s%s' % (self.live_server_url, '/datagroup/3'))
-		self.assertEqual('factotum', self.browser.title,"Testing open of datagroup 3 show page")
+		self.assertEqual('factotum', self.browser.title, "Testing open of datagroup 3 show page")
 
 		self.browser.get(self.live_server_url + reverse('data_group_detail', kwargs={'pk': self.dg.pk}))
 		self.assertEqual('factotum', self.browser.title)
@@ -182,14 +179,14 @@ class TestDataGroup(LiveServerTestCase):
 		self.browser.get(self.live_server_url + '/datagroup/delete/3')
 		del_button = self.browser.find_elements_by_xpath('/html/body/div/form/input[2]')[0]
 		del_button.click()
-		self.assertEqual(DataGroup.objects.count(), dg_count_before , "Confirm the DataGroup object has been deleted")
+		self.assertEqual(DataGroup.objects.count(), dg_count_before, "Confirm the DataGroup object has been deleted")
+
 
 class TestProductCuration(LiveServerTestCase):
-
 	fixtures = ['seed_data']
 
 	def setUp(self):
-		self.browser = webdriver.Chrome()
+		self.browser = webdriver.Firefox()
 		log_karyn_in(self)
 
 	def tearDown(self):
@@ -198,10 +195,10 @@ class TestProductCuration(LiveServerTestCase):
 	def test_unlinked_documents(self):
 		self.browser.get(self.live_server_url + '/product_curation/')
 		src_title = self.browser.find_elements_by_xpath(
-								'/html/body/div/table/tbody/tr[1]/td[1]/a')[0]
+			'/html/body/div/table/tbody/tr[1]/td[1]/a')[0]
 		ds = DataSource.objects.get(title=src_title.text)
 		un_link = self.browser.find_elements_by_xpath(
-								'/html/body/div/table/tbody/tr[1]/td[3]/a')[0]
+			'/html/body/div/table/tbody/tr[1]/td[3]/a')[0]
 		print(un_link.get_attribute("href"))
 		self.assertEqual(un_link.get_attribute("href").split('/')[-1],
-																	str(ds.pk))
+						 str(ds.pk))

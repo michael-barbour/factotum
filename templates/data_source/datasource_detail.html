@@ -4,7 +4,7 @@
 {% block content %}
 
 <h1>
-  <span>{{ object.title }}</span>
+  <span name="title">{{ object.title }}</span>
   <div class="btn-group float-lg-right" role="group" aria-label="Datasource Modification">
     <a class="btn btn-info btn-sm" role="button" title="list" href="{% url "data_source_list" %}">
       <span class="oi oi-list"></span> </a>
@@ -33,7 +33,7 @@
      </form>
   </dd>
   <dt class="col-sm-3">State</dt>
-  <dd class="col-sm-9">{{ object.get_state_display }}</dd>
+  <dd class="col-sm-9" name="state">{{ object.get_state_display }}</dd>
   <dt class="col-sm-3">Estimated Records</dt>
   <dd class="col-sm-9">{{ object.estimated_records | intcomma }}</dd>
 
@@ -54,7 +54,7 @@
   <a class="btn btn-primary btn-sm float-lg-right" role="button" title="create"
   href="{% url "data_group_new" %}"><span class="oi "></span>New Data Group</a>
 </h3>
-<table class="table table-sm table-bordered table-striped">
+<table class="table table-sm table-bordered table-striped" id="data_group_table">
     <thead class="thead-inverse">
     <th>Name</th>
     <th>Downloaded by</th>

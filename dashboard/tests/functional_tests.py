@@ -14,9 +14,6 @@ from django.core.files.storage import FileSystemStorage
 from django.core.urlresolvers import reverse
 
 
-
-# val = len(DataGroup.objects.filter(data_source_id=1))
-
 def log_karyn_in(object):
 	'''
 	Log user in for further testing.
@@ -32,11 +29,10 @@ def log_karyn_in(object):
 
 
 class TestAuthInBrowser(LiveServerTestCase):
-
 	fixtures = ['seed_data']
 
 	def setUp(self):
-		self.browser = webdriver.Chrome()
+		self.browser = webdriver.Firefox()
 
 	def tearDown(self):
 		self.browser.quit()
@@ -49,12 +45,12 @@ class TestAuthInBrowser(LiveServerTestCase):
 		body = self.browser.find_element_by_tag_name('body')
 		self.assertIn('Welcome to Factotum', body.text)
 
-class TestDataSource(LiveServerTestCase):
 
+class TestDataSource(LiveServerTestCase):
 	fixtures = ['seed_data']
 
 	def setUp(self):
-		self.browser = webdriver.Chrome()
+		self.browser = webdriver.Firefox()
 		log_karyn_in(self)
 
 	def tearDown(self):
@@ -97,7 +93,7 @@ class TestDataGroup(LiveServerTestCase):
 	fixtures = ['seed_data']
 
 	def setUp(self):
-		self.browser = webdriver.Chrome()
+		self.browser = webdriver.Firefox()
 		log_karyn_in(self)
 
 	def tearDown(self):
@@ -110,13 +106,14 @@ class TestDataGroup(LiveServerTestCase):
 		pdflink = self.browser.find_elements_by_xpath('/html/body/div/table/tbody/tr[1]/td[1]/a')[0]
 		self.assertIn('shampoo.pdf',pdflink.get_attribute('href'))
 	
-	def create_data_group(self, data_source, testusername = 'Karyn', name='Walmart MSDS 3', description='Another data group, added programatically'):
+	def create_data_group(self, data_source, testusername = 'Karyn', name='Walmart MSDS 3',
+						description='Another data group, added programatically'):
 		source_csv = open('./sample_files/walmart_msds_3.csv','rb')
 		return DataGroup.objects.create(name=name, 
 										description=description, data_source = data_source,
 										downloaded_by=User.objects.get(username=testusername) ,
 										downloaded_at=timezone.now(),
-										csv=SimpleUploadedFile('walmart_msds_3.csv', source_csv.read() )
+										csv=SimpleUploadedFile('walmart_msds_3.csv', source_csv.read())
 										)
 	
 	def upload_pdfs(self):

@@ -18,3 +18,6 @@ class DataDocument(models.Model):
 
 	def get_absolute_url(self):
 		return reverse('data_document_edit', kwargs={'pk': self.pk})
+
+	def get_extraction_script(self):
+		return self__data_group.extraction_script

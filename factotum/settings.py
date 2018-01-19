@@ -31,7 +31,8 @@ INSTALLED_APPS = [
     'dashboard.apps.DashboardConfig',
     'widget_tweaks',
     'django.contrib.humanize',
-    'factotum'
+    'factotum',
+    'django_filters',
 ]
 
 MIDDLEWARE = [

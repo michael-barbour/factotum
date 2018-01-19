@@ -41,7 +41,8 @@ class TestAuthInBrowser(LiveServerTestCase):
 	def test_login(self):
 		self.browser.get(self.live_server_url )
 		body = self.browser.find_element_by_tag_name('body')
-		self.assertIn('Please sign in', body.text, "Confirm that the login page is displayed")
+		self.assertIn('Please sign in', body.text,
+						"Confirm that the login page is displayed")
 		log_karyn_in(self)
 		body = self.browser.find_element_by_tag_name('body')
 		self.assertIn('Welcome to Factotum', body.text)
@@ -62,7 +63,8 @@ class TestDataSource(LiveServerTestCase):
 		h1 = self.browser.find_element_by_name('title')
 		self.assertIn('Walmart MSDS', h1.text)
 
-	#When a new data source is entered, the data source is automatically assigned the state 'awaiting triage.'
+	# When a new data source is entered, the data source is automatically
+	# assigned the state 'awaiting triage.'
 	def test_state_and_priority(self):
 		valid_states = ['Awaiting Triage','In Progress','Complete','Stale']
 		valid_priorities = ['High','Medium','Low']
@@ -104,7 +106,8 @@ class TestDataGroup(LiveServerTestCase):
 		self.browser.get(self.live_server_url + '/datagroup/1')
 		h1 = self.browser.find_element_by_name('title')
 		self.assertIn('Walmart MSDS', h1.text)
-		pdflink = self.browser.find_elements_by_xpath('/html/body/div/table/tbody/tr[1]/td[1]/a')[0]
+		pdflink = self.browser.find_elements_by_xpath(
+								'/html/body/div/table/tbody/tr[1]/td[1]/a')[0]
 		self.assertIn('shampoo.pdf',pdflink.get_attribute('href'))
 
 	def create_data_group(self, data_source, testusername = 'Karyn', name='Walmart MSDS 3', description='Another data group, added programatically'):
@@ -178,3 +181,25 @@ class TestDataGroup(LiveServerTestCase):
 		del_button = self.browser.find_elements_by_xpath('/html/body/div/form/input[2]')[0]
 		del_button.click()
 		self.assertEqual(DataGroup.objects.count(), dg_count_before , "Confirm the DataGroup object has been deleted")
+
+class TestProductCuration(LiveServerTestCase):
+
+	fixtures = ['seed_data']
+
+	def setUp(self):
+		self.browser = webdriver.Chrome()
+		log_karyn_in(self)
+
+	def tearDown(self):
+		self.browser.quit()
+
+	def test_unlinked_documents(self):
+		self.browser.get(self.live_server_url + '/product_curation/')
+		src_title = self.browser.find_elements_by_xpath(
+								'/html/body/div/table/tbody/tr[1]/td[1]/a')[0]
+		ds = DataSource.objects.get(title=src_title.text)
+		un_link = self.browser.find_elements_by_xpath(
+								'/html/body/div/table/tbody/tr[1]/td[3]/a')[0]
+		print(un_link.get_attribute("href"))
+		self.assertEqual(un_link.get_attribute("href").split('/')[-1],
+																	str(ds.pk))

@@ -1,4 +1,4 @@
-
+from django.utils import timezone
 from django.forms import ModelForm
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -60,21 +60,17 @@ def link_product_form(request, pk, template_name=('product_curation/'
 			try:
 				product = Product.objects.get(title=title)
 			except Product.DoesNotExist:
-				print('yay')
 				upc_stub = ('stub_' +
 							title +
-							(Product.objects.all().count() + 1))
-				product = Product.objects.create(title        = title,
-			 									brand_name    = brand_name,
-												upc           = upc_stub,
-												data_source_id= data_source_id)
-			print(product)
+							str(Product.objects.all().count() + 1))
+				product = Product.objects.create(title         = title,
+			 									brand_name     = brand_name,
+												upc            = upc_stub,
+												data_source_id = data_source_id,
+												created_at     = timezone.now(),
+												updated_at     = timezone.now())
 			p = ProductDocument(product=product,document=doc)
 			p.save()
 		return redirect('link_product_list', pk=data_source_id)
-
-
-	# p = ProductDocument(product=b,document=a)
-
 	return render(request, template_name,{'document': doc,
 											'form'  : form})

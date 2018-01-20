@@ -242,3 +242,31 @@ class TestQAScoreboard(LiveServerTestCase):
 		model_doc_count = DataDocument.objects.filter(extractedtext__extraction_script = 1 ).count()
 		self.assertEqual(displayed_doc_count, str(model_doc_count), 'The displayed number of datadocuments should match the number of data documents whose related extracted text objects used the extraction script'
 			)
+		
+		displayed_pct_checked = self.browser.find_elements_by_xpath(
+			'//*[@id="extraction_script_table"]/tbody/tr/td[3]')[0].text
+		model_pct_checked = "{0:.0f}%".format(ExtractionScript.objects.get(pk=1).get_qa_complete_extractedtext_count() / ExtractionScript.objects.get(pk=1).get_datadocument_count())
+		self.assertEqual(displayed_pct_checked, model_pct_checked, 'The displayed percentage should match what is derived from the model'
+			)
+		
+		es = ExtractionScript.objects.get(pk=1)
+		self.assertEqual(es.get_qa_complete_extractedtext_count(), 0, 'The ExtractionScript object should return 0 qa_checked ExtractedText objects')
+
+		# Set the qa_checked property to True for one of the ExtractedText objects
+		self.assertEqual(ExtractedText.objects.get(pk=1).qa_checked , False)
+		et_change = ExtractedText.objects.get(pk=1)
+		et_change.qa_checked = True
+		et_change.save()
+		self.assertEqual(ExtractedText.objects.get(pk=1).qa_checked , True, 'The object should now have qa_checked = True')
+
+		es = ExtractionScript.objects.get(pk=1)
+		self.assertEqual(es.get_qa_complete_extractedtext_count(), 1, 'The ExtractionScript object should return 1 qa_checked ExtractedText object')
+
+		self.browser.refresh()
+
+		displayed_pct_checked = self.browser.find_elements_by_xpath(
+			'//*[@id="extraction_script_table"]/tbody/tr/td[3]')[0].text
+		model_pct_checked = "{0:.0f}%".format(ExtractionScript.objects.get(pk=1).get_qa_complete_extractedtext_count() / ExtractionScript.objects.get(pk=1).get_datadocument_count())
+		model_pct_checked = '50.0%'
+		self.assertEqual(displayed_pct_checked, model_pct_checked, 'The displayed percentage should reflect the increased percentage'
+			)

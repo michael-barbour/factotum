@@ -2,10 +2,10 @@ from .data_source import DataSource
 from .source_type import SourceType
 from .data_group import DataGroup
 from .data_document import DataDocument
-from .extraction_script import ExtractionScript
 from .product import Product
 from .source_category import SourceCategory
 from .product_document import ProductDocument
 from .product_category import ProductCategory
 from .extracted_text import ExtractedText
 from .extracted_chemical import ExtractedChemical
+from .extraction_script import ExtractionScript

@@ -2,6 +2,9 @@ from django.db import models
 from django.utils import timezone
 from django.core.urlresolvers import reverse
 from django.core.validators import URLValidator
+from django.db import models
+from dashboard.models import DataDocument 
+from dashboard.models import ExtractedText
 
 
 class ExtractionScript(models.Model):
@@ -16,10 +19,10 @@ class ExtractionScript(models.Model):
         return reverse('extraction_script_edit', kwargs={'pk': self.pk})
 
     def get_datadocument_count(self):
-        return self.datadocument_set.count()
+        return DataDocument.objects.filter(extractedtext__extraction_script=self.pk).count()
 
     def get_qa_complete_extractedtext_count(self):
-        return self.datadocument_set.filter(extraction_script=self.pk, extractedtext__qa_done=True).count()
+        return self.datadocument_set.filter(extractedtext__qa_done=True).count()
 
     def get_pct_checked(self):
         return 0

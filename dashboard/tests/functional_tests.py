@@ -236,3 +236,9 @@ class TestQAScoreboard(LiveServerTestCase):
 			"//table[@id='extraction_script_table']/tbody/tr"))
 		#time.sleep(10)
 		self.assertEqual(scriptcount, row_count, 'The seed data contains one ExtractionScript object that should appear in this table')
+
+		displayed_doc_count = self.browser.find_elements_by_xpath(
+			'//*[@id="extraction_script_table"]/tbody/tr/td[2]')[0].text
+		model_doc_count = DataDocument.objects.filter(extractedtext__extraction_script = 1 ).count()
+		self.assertEqual(displayed_doc_count, str(model_doc_count), 'The displayed number of datadocuments should match the number of data documents whose related extracted text objects used the extraction script'
+			)

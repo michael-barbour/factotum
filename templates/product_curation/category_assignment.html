@@ -19,8 +19,17 @@ Product Curation</h1>
   {% for product in products %}
     <tr>
       <td>{{ product.title }}</td>
-      <td>{{ product.upc }}</td>
-      <td>{{ product.url }}</td>
+      <td><a href="/media/{{ product.msds.data_group.dgurl }}/pdf/{{ product.msds.filename }}" title="Link to {{ product.msds.filename }}" target = "_blank">{{ product.msds.title }}</a></td>
+      <td>{% if product.prod_cat %}
+            {{ product.prod_cat }}
+          {% else %}
+            <a class="btn btn-warning btn-sm" role="button" title="delete"
+             href="#">
+              <span class="oi oi-link-intact"></span> Link Product Category</a>
+          {% endif %}
+
+
+      </td>
       <td>{{ product.brand_name }}</td>
     </tr>
   {% endfor %}

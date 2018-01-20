@@ -37,6 +37,11 @@ def category_assignment(request, pk, template_name=('product_curation/'
 												'category_assignment.html')):
 	ds = DataSource.objects.get(pk=pk)
 	products = ds.source.filter(prod_cat__isnull=True)
+	for product in products:
+		try:
+			product.msds = product.datadocument_set.all()[0]
+		except IndexError:
+			product.msds = 0
 	return render(request, template_name,{'products':products})
 
 @login_required()

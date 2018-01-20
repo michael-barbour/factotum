@@ -131,7 +131,7 @@ class TestDataGroup(LiveServerTestCase):
 		fs.save(pdf2_name, local_pdf)
 		return [pdf1_name, pdf2_name]
 
-	def create_data_documents(self, data_group):
+	def create_data_documents(self, data_group, data_source):
 		dds = []
 		#pdfs = [f for f in os.listdir('/media/' + self.dg.dgurl() + '/pdf') if f.endswith('.pdf')]
 		#pdfs
@@ -150,7 +150,8 @@ class TestDataGroup(LiveServerTestCase):
 						product_category=line['product'],
 						url=line['url'],
 						matched = line['filename'] in self.pdfs,
-						data_group=data_group)
+						data_group=data_group,
+						data_source=data_source)
 					dds.append(dd)
 			return dds
 
@@ -164,7 +165,7 @@ class TestDataGroup(LiveServerTestCase):
 		self.assertEqual(dg_count_after, dg_count_before + 1, "Confirm the DataGroup object has been created")
 		self.assertEqual(3, self.dg.pk, "Confirm the new DataGroup object's pk is 3")
 		self.pdfs = self.upload_pdfs()
-		self.dds = self.create_data_documents(self.dg)
+		self.dds = self.create_data_documents(self.dg, ds)
 
 		# Use the browser layer to confirm that the object has been created
 		self.browser.get('%s%s' % (self.live_server_url, '/datagroup/3'))
@@ -203,3 +204,13 @@ class TestProductCuration(LiveServerTestCase):
 		print(un_link.get_attribute("href"))
 		self.assertEqual(un_link.get_attribute("href").split('/')[-1],
 																	str(ds.pk))
+
+	def test_PUC_assignment(self):
+		self.browser.get(self.live_server_url + '/product_curation/')
+		src_title = self.browser.find_elements_by_xpath(
+								'/html/body/div/table/tbody/tr[1]/td[1]/a')[0]
+		ds = DataSource.objects.get(title=src_title.text)
+		puc_link = self.browser.find_elements_by_xpath(
+								'/html/body/div/table/tbody/tr[1]/td[4]/a')[0]
+		products_missing_PUC = str(len(ds.source.filter(prod_cat__isnull=True)))
+		self.assertEqual(puc_link.text, products_missing_PUC)

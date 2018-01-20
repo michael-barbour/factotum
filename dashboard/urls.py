@@ -17,6 +17,9 @@ urlpatterns = [
 	url(r'^datagroup/delete/(?P<pk>\d+)$', views.data_group_delete, name='data_group_delete'),
 	url(r'^product_curation/$', views.product_curation_index, name='product_curation'),
 	url(r'^category_assignment/(?P<pk>\d+)$', views.category_assignment, name='category_assignment'),
+	url(r'^link_product_list/(?P<pk>\d+)$', views.link_product_list, name='link_product_list'),
+	url(r'^link_product_form/(?P<pk>\d+)$', views.link_product_form, name='link_product_form'),
+
 ]
 
 if settings.DEBUG is True:

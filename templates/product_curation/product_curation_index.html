@@ -21,7 +21,7 @@ Product Curation
   {% for data_source in data_sources %}
     <tr>
       <td>
-          <a href="{% url "data_source_detail" data_source.id %}" title="Link to {{ data_source.title }}">{{ data_source.title }}</a>
+        <a href="{% url "data_source_detail" data_source.id %}" title="Link to {{ data_source.title }}">{{ data_source.title }}</a>
       </td>
       <td>{{ data_source.uploaded }}</td>
       <td>{{ data_source.unlinked }}</td>

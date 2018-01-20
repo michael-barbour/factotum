@@ -12,7 +12,6 @@ Product Curation</h1>
   <thead class="table-primary">
       <th>Title</th>
       <th>MSDS</th>
-      <th>Source Category</th>
       <th>PUC</th>
   </thead>
   <tbody>
@@ -25,12 +24,11 @@ Product Curation</h1>
           {% else %}
             <a class="btn btn-warning btn-sm" role="button" title="delete"
              href="#">
-              <span class="oi oi-link-intact"></span> Link Product Category</a>
+              <span class="oi oi-link-intact"></span> Assign PUC</a>
           {% endif %}
 
 
       </td>
-      <td>{{ product.brand_name }}</td>
     </tr>
   {% endfor %}
   </tbody>

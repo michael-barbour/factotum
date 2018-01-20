@@ -4,8 +4,7 @@
 {% block content %}
 
 
-<h1><span class="oi oi-wrench" title="factotum" aria-hidden="true"></span>
-Unlinked Document List</h1>
+<h1><span class="oi oi-wrench" title="factotum" aria-hidden="true"></span> Documents w/o Products</h1>
 <br>
 <table class="table table-sm table-bordered table-striped table-hover">
   <thead class="thead-inverse">
@@ -20,9 +19,9 @@ Unlinked Document List</h1>
       <td>{{ doc.title }}</td>
       {% if doc.matched %}
       <td>
-        <a class="btn btn-info btn-sm" role="button" title="link_product"
-         href="{% url 'link_product_form' doc.id %}" target = "_blank">
-        <span class="oi"></span>Link To Product</a>
+        <a class="btn btn-warning btn-sm" role="button" title="link_product"
+         href="{% url 'link_product_form' doc.id %}">
+        <span class="oi"></span>Create Product</a>
       </td>
       <td>
           <a class="btn btn-info btn-sm" role="button" title="pdf"

@@ -24,7 +24,7 @@ Product Curation
         <a href="{% url "data_source_detail" data_source.id %}" title="Link to {{ data_source.title }}">{{ data_source.title }}</a>
       </td>
       <td>{{ data_source.uploaded }}</td>
-      <td>{{ data_source.unlinked }}</td>
+      <td><a href="{% url "link_product_list" data_source.id %}" title="Link to {{ data_source.title }}">{{ data_source.unlinked }}</a></td>
       <td>{{ data_source.no_category }}{% if data_source.no_category %}<a class="btn btn-primary btn-sm float-lg-right" role="button" title="Assign Product Categories"
       href="{% url "category_assignment" data_source.pk %}"><span class="oi oi-link-intact"></span> Assign Product Categories</a>
       {% endif %}</td>

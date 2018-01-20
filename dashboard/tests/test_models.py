@@ -3,7 +3,7 @@ from dashboard.models import DataSource, DataGroup, DataDocument, SourceType
 from dashboard.views import data_source, data_group
 from django.test import TestCase, RequestFactory
 from django.utils import timezone
-import os 
+import os
 import csv
 import collections
 from django.conf import settings
@@ -33,14 +33,15 @@ class DataGroupTest(TestCase):
 
         # DataSource
         self.ds = self.create_data_source()
-        
+
         # DataGroup
         self.dg = self.create_data_group(data_source=self.ds)
         self.pdfs = self.upload_pdfs()
 
         # DataDocuments
-        self.dds = self.create_data_documents(data_group = self.dg)
-    
+        self.dds = self.create_data_documents(data_group = self.dg,
+                                              data_source= self.ds)
+
     def tearDown(self):
         del self.dg
 
@@ -51,14 +52,14 @@ class DataGroupTest(TestCase):
         return DataSource.objects.create(title=title, estimated_records=estimated_records, state=state, priority=priority, type=SourceType.objects.get(title=typetitle))
 
     def create_data_group(self, data_source, testusername = 'jdoe', name='Data Group for Test', description='Testing the DataGroup model'):
-            source_csv = open('./sample_files/register_records_matching.csv','rb')              
-            return DataGroup.objects.create(name=name, 
+            source_csv = open('./sample_files/register_records_matching.csv','rb')
+            return DataGroup.objects.create(name=name,
                                             description=description, data_source = data_source,
-                                            downloaded_by=User.objects.get(username=testusername), 
+                                            downloaded_by=User.objects.get(username=testusername),
                                             downloaded_at=timezone.now(),
                                             csv=SimpleUploadedFile('register_records_matching.csv', source_csv.read() )
                                             )
-    
+
     def upload_pdfs(self):
         store = settings.MEDIA_URL + self.dg.dgurl()
         pdf1_name = '0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf'
@@ -70,11 +71,11 @@ class DataGroupTest(TestCase):
         fs = FileSystemStorage(store + '/pdf')
         fs.save(pdf2_name, local_pdf)
         return [pdf1_name, pdf2_name]
-        
-        
-        
 
-    def create_data_documents(self, data_group):
+
+
+
+    def create_data_documents(self, data_group, data_source):
         dds = []
         #pdfs = [f for f in os.listdir('/media/' + self.dg.dgurl() + '/pdf') if f.endswith('.pdf')]
         #pdfs
@@ -94,7 +95,8 @@ class DataGroupTest(TestCase):
                     product_category=line['product'],
                     url=line['url'],
                     matched = line['filename'] in self.pdfs,
-                    data_group=data_group)
+                    data_group=data_group,
+                    data_source=data_source)
                 dds.append(dd)
             return dds
 
@@ -107,7 +109,7 @@ class DataGroupTest(TestCase):
         # Test properties of objects
         # DataSource
         self.assertEqual(self.ds.__str__(), self.ds.title)
-        
+
         # DataGroup
         self.assertEqual(self.dg.__str__(), self.dg.name)
         self.assertEqual(self.dg.dgurl(), self.dg.name.replace(' ', '_'))
@@ -115,7 +117,7 @@ class DataGroupTest(TestCase):
         csv_there = file_len(self.dg.csv.path)
         csv_here  = file_len('./sample_files/register_records_matching.csv')
         self.assertEqual(csv_there, csv_here)
-        
+
         # DataDocuments
         #The number of data documents created should match the number of rows in the csv file minus the header
         self.assertEqual(len(self.dds) , csv_there - 1)
@@ -129,7 +131,7 @@ class DataGroupTest(TestCase):
         good_url = b'Data_Group_for_Test/pdf/0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf'
         self.assertIn(good_url, dg_response.content)
 
-       
+
     def test_data_source_view(self):
         response = self.client.get(reverse('data_source_detail', args=[self.ds.pk]))
         request = response.wsgi_request

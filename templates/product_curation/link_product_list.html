@@ -4,30 +4,39 @@
 {% block content %}
 
 
-<h1><span class="oi oi-wrench" title="factotum" aria-hidden="true"></span>
-Unlinked Document List</h1>
+<h1><span class="oi oi-wrench" title="factotum" aria-hidden="true"></span> Documents w/o Products</h1>
 <br>
 <table class="table table-sm table-bordered table-striped table-hover">
   <thead class="thead-inverse">
   <th>Title</th>
+  <th></th>
   <th>PDF</th>
 
   </thead>
   <tbody>
   {% for doc in documents %}
     <tr>
+      <td>{{ doc.title }}</td>
       {% if doc.matched %}
       <td>
-        <a class="nav-link" href="{% url 'link_product_form' doc.id %}">{{ doc.title }}</a>
+        <a class="btn btn-warning btn-sm" role="button" title="link_product"
+         href="{% url 'link_product_form' doc.id %}">
+        <span class="oi"></span>Create Product</a>
       </td>
-      {% else %}
-      <td>{{ doc.title }}</td>
-      {% endif %}
       <td>
-          <a class="btn btn-info btn-sm" role="button" title="details"
+          <a class="btn btn-info btn-sm" role="button" title="pdf"
            href="/media/{{ doc.data_group.dgurl }}/pdf/{{ doc.filename }}" target = "_blank">
           <span class="oi"></span>Open PDF</a>
       </td>
+      {% else %}
+      <td></td>
+      <td>
+          <a class="btn btn-danger btn-sm" role="button" title="upload"
+           href="{% url "data_group_detail" doc.data_group_id %}">
+          <span class="oi"></span>Upload PDF</a>
+      </td>
+      {% endif %}
+
 
     </tr>
   {% endfor %}

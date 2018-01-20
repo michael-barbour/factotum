@@ -22,6 +22,9 @@
   pk: 2
   fields: {title: product, description: An item sold or purchased in a store, created_at: ! '2017-10-07
       01:28:49+00:00', updated_at: null}
+- model: dashboard.extractionscript
+  pk: 1
+  fields: {title: 'Default Extraction Script', url: 'https://github.com/HumanExposure/Extractors/DefaultScript.r'}
 - model: dashboard.datasource
   pk: 1
   fields: {title: Walmart MSDS, url: 'http://msds.walmartstores.com/', estimated_records: 100,

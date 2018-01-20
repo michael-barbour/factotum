@@ -1,4 +1,5 @@
 import csv
+import time
 import unittest
 import collections
 from selenium import webdriver
@@ -12,7 +13,7 @@ from django.core.urlresolvers import reverse
 from django.core.files.storage import FileSystemStorage
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from dashboard.models import DataGroup, DataSource, DataDocument
+from dashboard.models import DataGroup, DataSource, DataDocument, ExtractionScript, ExtractedText
 
 def log_karyn_in(object):
 	'''
@@ -214,3 +215,24 @@ class TestProductCuration(LiveServerTestCase):
 								'/html/body/div/table/tbody/tr[1]/td[4]/a')[0]
 		products_missing_PUC = str(len(ds.source.filter(prod_cat__isnull=True)))
 		self.assertEqual(puc_link.text, products_missing_PUC)
+
+class TestQAScoreboard(LiveServerTestCase):
+
+	fixtures = ['seed_data']
+
+	def setUp(self):
+		self.browser = webdriver.Chrome()
+		log_karyn_in(self)
+
+	def tearDown(self):
+		self.browser.quit()
+
+	def test_scoreboard(self):
+		
+		self.browser.get('%s%s' % (self.live_server_url, '/qa'))
+		scriptcount = ExtractionScript.objects.count()
+
+		row_count = len(self.browser.find_elements_by_xpath(
+			"//table[@id='extraction_script_table']/tbody/tr"))
+		#time.sleep(10)
+		self.assertEqual(scriptcount, row_count, 'The seed data contains one ExtractionScript object that should appear in this table')

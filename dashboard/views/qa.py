@@ -15,5 +15,5 @@ class ExtractionScriptFilter(django_filters.FilterSet):
 @login_required()
 def qa_index(request, template_name='qa/qa_index.html'):
 
-    f = ExtractionScriptFilter(request.GET, queryset=ExtractionScript.objects.all())
-    return render(request, template_name, {'filter': f})
+    extractionscripts = ExtractionScript.objects.all()
+    return render(request, template_name, {'extraction_scripts': extractionscripts})

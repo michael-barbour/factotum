@@ -21,7 +21,7 @@ urlpatterns = [
 	url(r'^category_assignment/(?P<pk>\d+)$', views.category_assignment, name='category_assignment'),
 	url(r'^link_product_list/(?P<pk>\d+)$', views.link_product_list, name='link_product_list'),
 	url(r'^link_product_form/(?P<pk>\d+)$', views.link_product_form, name='link_product_form'),
-
+#	url(r'^extractionscript/(?P<pk>\d+)$', views.extraction_script_detail, name='extraction_script_detail'),
 ]
 
 if settings.DEBUG is True:

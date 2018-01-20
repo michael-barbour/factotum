@@ -8,7 +8,7 @@
 QA</h1>
 <br>
 <a class="btn btn-secondary float-lg-right" role="button" href="">Show QA-Complete Extraction Scripts</a>
-<table class="table table-sm table-bordered table-striped table-sortable">
+<table class="table table-sm table-bordered table-striped table-sortable" id='extraction_script_table'> 
     <thead class="table-primary">
         <th>Extraction Script</th>
         <th>Documents</th>
@@ -18,8 +18,8 @@ QA</h1>
     {% for extraction_script in extraction_scripts %}
       <tr>
         <td>
-            <a href="{% url "extraction_script_detail" extraction_script.id %}" title="Link to {{ extraction_script.title }}">{{ extraction_script.title }}</a>
-        </td>
+            <a href="" title="Link to {{ extraction_script.title }}">{{ extraction_script.title }}</a>
+          </td>
         <td>{{ extraction_script.get_document_count }}</td>
         <td>{{ extraction_script.get_pct_checked }}</td>
       </tr>

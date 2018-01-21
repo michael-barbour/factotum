@@ -25,5 +25,5 @@ class ExtractionScript(models.Model):
         return DataDocument.objects.filter(extractedtext__qa_checked=True, extractedtext__extraction_script=self.pk).count()
 
     def get_pct_checked(self):
-        return "{0:.0f}%".format(0) if self.get_datadocument_count() == 0 else "{0:.0f}%".format(self.get_qa_complete_extractedtext_count() / self.get_datadocument_count())
+        return "{0:.0f}%".format(0) if self.get_datadocument_count() == 0 else "{0:.0f}%".format(self.get_qa_complete_extractedtext_count() / self.get_datadocument_count() * 100)
         

@@ -234,7 +234,6 @@ class TestQAScoreboard(LiveServerTestCase):
 
 		row_count = len(self.browser.find_elements_by_xpath(
 			"//table[@id='extraction_script_table']/tbody/tr"))
-		#time.sleep(10)
 		self.assertEqual(scriptcount, row_count, 'The seed data contains one ExtractionScript object that should appear in this table')
 
 		displayed_doc_count = self.browser.find_elements_by_xpath(
@@ -245,13 +244,13 @@ class TestQAScoreboard(LiveServerTestCase):
 		
 		displayed_pct_checked = self.browser.find_elements_by_xpath(
 			'//*[@id="extraction_script_table"]/tbody/tr/td[3]')[0].text
-		model_pct_checked = "{0:.0f}%".format(ExtractionScript.objects.get(pk=1).get_qa_complete_extractedtext_count() / ExtractionScript.objects.get(pk=1).get_datadocument_count())
+		model_pct_checked = ExtractionScript.objects.get(pk=1).get_pct_checked()
 		self.assertEqual(displayed_pct_checked, model_pct_checked, 'The displayed percentage should match what is derived from the model'
 			)
 		
 		es = ExtractionScript.objects.get(pk=1)
 		self.assertEqual(es.get_qa_complete_extractedtext_count(), 0, 'The ExtractionScript object should return 0 qa_checked ExtractedText objects')
-
+		self.assertEqual(model_pct_checked, '0%')
 		# Set the qa_checked property to True for one of the ExtractedText objects
 		self.assertEqual(ExtractedText.objects.get(pk=1).qa_checked , False)
 		et_change = ExtractedText.objects.get(pk=1)
@@ -261,12 +260,16 @@ class TestQAScoreboard(LiveServerTestCase):
 
 		es = ExtractionScript.objects.get(pk=1)
 		self.assertEqual(es.get_qa_complete_extractedtext_count(), 1, 'The ExtractionScript object should return 1 qa_checked ExtractedText object')
-
+		
+		self.assertEqual(1, es.get_qa_complete_extractedtext_count(), 'Check the numerator in the model layer')
+		self.assertEqual(2, es.get_datadocument_count(), 'Check the denominator in the model layer')
+		model_pct_checked = ExtractionScript.objects.get(pk=1).get_pct_checked()
+		self.assertEqual(model_pct_checked, '50%', 'The get_pct_checked() method should now return 50 pct from the model layer')
 		self.browser.refresh()
 
 		displayed_pct_checked = self.browser.find_elements_by_xpath(
 			'//*[@id="extraction_script_table"]/tbody/tr/td[3]')[0].text
-		model_pct_checked = "{0:.0f}%".format(ExtractionScript.objects.get(pk=1).get_qa_complete_extractedtext_count() / ExtractionScript.objects.get(pk=1).get_datadocument_count())
-		model_pct_checked = '50.0%'
-		self.assertEqual(displayed_pct_checked, model_pct_checked, 'The displayed percentage should reflect the increased percentage'
+		time.sleep(10)
+
+		self.assertEqual(displayed_pct_checked, model_pct_checked, 'The displayed percentage in the browser layer should reflect the newly checked extracted text object'
 			)

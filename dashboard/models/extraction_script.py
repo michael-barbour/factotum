@@ -11,6 +11,7 @@ class ExtractionScript(models.Model):
 
     title = models.CharField(max_length=50)
     url = models.TextField(null=True, blank=True, validators=[URLValidator()])
+    qa_begun = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title

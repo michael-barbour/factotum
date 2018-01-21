@@ -13,6 +13,7 @@ QA</h1>
         <th>Extraction Script</th>
         <th>Documents</th>
         <th>Percent QA Checked</th>
+        <th></th>
     </thead>
     <tbody>
     {% for extraction_script in extraction_scripts %}
@@ -22,6 +23,11 @@ QA</h1>
           </td>
         <td>{{ extraction_script.get_datadocument_count }}</td>
         <td>{{ extraction_script.get_pct_checked }}</td>
+        <td>
+          <a class="btn btn-info btn-sm" role="button" title="qa"
+           href=""> {{ extraction_script.qa_button_text }}
+         </a>
+        </td>
       </tr>
     {% endfor %}
     </tbody>

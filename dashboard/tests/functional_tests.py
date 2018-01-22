@@ -13,7 +13,8 @@ from django.core.urlresolvers import reverse
 from django.core.files.storage import FileSystemStorage
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from dashboard.models import DataGroup, DataSource, DataDocument, ExtractionScript, ExtractedText
+from dashboard.models import (DataGroup, DataSource, DataDocument,
+								ExtractionScript, ExtractedText)
 
 def log_karyn_in(object):
 	'''
@@ -111,14 +112,16 @@ class TestDataGroup(LiveServerTestCase):
 								'/html/body/div/table/tbody/tr[1]/td[1]/a')[0]
 		self.assertIn('shampoo.pdf',pdflink.get_attribute('href'))
 
-	def create_data_group(self, data_source, testusername = 'Karyn', name='Walmart MSDS 3', description='Another data group, added programatically'):
+	def create_data_group(self, data_source, testusername = 'Karyn',
+							name='Walmart MSDS 3',
+							description=('Another data group, '
+										 'added programatically')):
 		source_csv = open('./sample_files/walmart_msds_3.csv','rb')
 		return DataGroup.objects.create(name=name,
-										description=description, data_source = data_source,
-										downloaded_by=User.objects.get(username=testusername) ,
-										downloaded_at=timezone.now(),
-										csv=SimpleUploadedFile('walmart_msds_3.csv', source_csv.read() )
-										)
+				description=description, data_source = data_source,
+				downloaded_by=User.objects.get(username=testusername) ,
+				downloaded_at=timezone.now(),
+				csv=SimpleUploadedFile('walmart_msds_3.csv', source_csv.read()))
 
 	def upload_pdfs(self):
 		store = settings.MEDIA_URL + self.dg.dgurl()
@@ -163,16 +166,20 @@ class TestDataGroup(LiveServerTestCase):
 		ds = DataSource.objects.get(pk=1)
 		self.dg = self.create_data_group(data_source=ds)
 		dg_count_after = DataGroup.objects.count()
-		self.assertEqual(dg_count_after, dg_count_before + 1, "Confirm the DataGroup object has been created")
-		self.assertEqual(3, self.dg.pk, "Confirm the new DataGroup object's pk is 3")
+		self.assertEqual(dg_count_after, dg_count_before + 1,
+							"Confirm the DataGroup object has been created")
+		self.assertEqual(3, self.dg.pk,
+							"Confirm the new DataGroup object's pk is 3")
 		self.pdfs = self.upload_pdfs()
 		self.dds = self.create_data_documents(self.dg, ds)
 
 		# Use the browser layer to confirm that the object has been created
 		self.browser.get('%s%s' % (self.live_server_url, '/datagroup/3'))
-		self.assertEqual('factotum', self.browser.title,"Testing open of datagroup 3 show page")
+		self.assertEqual('factotum', self.browser.title,
+							"Testing open of datagroup 3 show page")
 
-		self.browser.get(self.live_server_url + reverse('data_group_detail', kwargs={'pk': self.dg.pk}))
+		self.browser.get(self.live_server_url + reverse('data_group_detail',
+													kwargs={'pk': self.dg.pk}))
 		self.assertEqual('factotum', self.browser.title)
 		h1 = self.browser.find_element_by_name('title')
 		self.assertEqual('Walmart MSDS 3', h1.text)
@@ -180,9 +187,11 @@ class TestDataGroup(LiveServerTestCase):
 		# Use the browser layer to delete the DataGroup object
 		# deleting the DataGroup should clean up the file system
 		self.browser.get(self.live_server_url + '/datagroup/delete/3')
-		del_button = self.browser.find_elements_by_xpath('/html/body/div/form/input[2]')[0]
+		del_button = self.browser.find_elements_by_xpath(('/html/body/div/form/'
+																'input[2]'))[0]
 		del_button.click()
-		self.assertEqual(DataGroup.objects.count(), dg_count_before , "Confirm the DataGroup object has been deleted")
+		self.assertEqual(DataGroup.objects.count(), dg_count_before ,
+							"Confirm the DataGroup object has been deleted")
 
 class TestProductCuration(LiveServerTestCase):
 
@@ -202,7 +211,6 @@ class TestProductCuration(LiveServerTestCase):
 		ds = DataSource.objects.get(title=src_title.text)
 		un_link = self.browser.find_elements_by_xpath(
 								'/html/body/div/table/tbody/tr[1]/td[3]/a')[0]
-		print(un_link.get_attribute("href"))
 		self.assertEqual(un_link.get_attribute("href").split('/')[-1],
 																	str(ds.pk))
 
@@ -214,7 +222,8 @@ class TestProductCuration(LiveServerTestCase):
 		puc_link = self.browser.find_elements_by_xpath(
 								'/html/body/div/table/tbody/tr[1]/td[4]/a')[0]
 		products_missing_PUC = str(len(ds.source.filter(prod_cat__isnull=True)))
-		self.assertEqual(puc_link.text, products_missing_PUC)
+		self.assertEqual(puc_link.text, products_missing_PUC, ('The Assign PUC '
+							'link should display # of Products without a PUC'))
 
 class TestQAScoreboard(LiveServerTestCase):
 	# Issue 35 https://github.com/HumanExposure/factotum/issues/35
@@ -233,48 +242,62 @@ class TestQAScoreboard(LiveServerTestCase):
 		self.browser.quit()
 
 	def test_scoreboard(self):
-		
+
 		self.browser.get('%s%s' % (self.live_server_url, '/qa'))
 		scriptcount = ExtractionScript.objects.count()
 
 		row_count = len(self.browser.find_elements_by_xpath(
 			"//table[@id='extraction_script_table']/tbody/tr"))
-		self.assertEqual(scriptcount, row_count, 'The seed data contains one ExtractionScript object that should appear in this table')
+		self.assertEqual(scriptcount, row_count, ('The seed data contains one '
+					'ExtractionScript object that should appear in this table'))
 
 		displayed_doc_count = self.browser.find_elements_by_xpath(
 			'//*[@id="extraction_script_table"]/tbody/tr/td[2]')[0].text
-		model_doc_count = DataDocument.objects.filter(extractedtext__extraction_script = 1 ).count()
-		self.assertEqual(displayed_doc_count, str(model_doc_count), 'The displayed number of datadocuments should match the number of data documents whose related extracted text objects used the extraction script'
-			)
-		
+		model_doc_count = DataDocument.objects.filter(
+									extractedtext__extraction_script=1).count()
+		self.assertEqual(displayed_doc_count, str(model_doc_count),
+						('The displayed number of datadocuments should match '
+						'the number of data documents whose related extracted '
+						'text objects used the extraction script'))
+
 		displayed_pct_checked = self.browser.find_elements_by_xpath(
 			'//*[@id="extraction_script_table"]/tbody/tr/td[3]')[0].text
 		model_pct_checked = ExtractionScript.objects.get(pk=1).get_pct_checked()
-		self.assertEqual(displayed_pct_checked, model_pct_checked, 'The displayed percentage should match what is derived from the model'
-			)
-		
+		self.assertEqual(displayed_pct_checked, model_pct_checked,
+						('The displayed percentage should match what is '
+						'derived from the model'))
+
 		es = ExtractionScript.objects.get(pk=1)
-		self.assertEqual(es.get_qa_complete_extractedtext_count(), 0, 'The ExtractionScript object should return 0 qa_checked ExtractedText objects')
+		self.assertEqual(es.get_qa_complete_extractedtext_count(), 0,
+						('The ExtractionScript object should return 0'
+						'qa_checked ExtractedText objects'))
 		self.assertEqual(model_pct_checked, '0%')
-		# Set the qa_checked property to True for one of the ExtractedText objects
+		# Set qa_checked property to True for one of the ExtractedText objects
 		self.assertEqual(ExtractedText.objects.get(pk=1).qa_checked , False)
 		et_change = ExtractedText.objects.get(pk=1)
 		et_change.qa_checked = True
 		et_change.save()
-		self.assertEqual(ExtractedText.objects.get(pk=1).qa_checked , True, 'The object should now have qa_checked = True')
+		self.assertEqual(ExtractedText.objects.get(pk=1).qa_checked , True,
+						'The object should now have qa_checked = True')
 
 		es = ExtractionScript.objects.get(pk=1)
-		self.assertEqual(es.get_qa_complete_extractedtext_count(), 1, 'The ExtractionScript object should return 1 qa_checked ExtractedText object')
-		
-		self.assertEqual(1, es.get_qa_complete_extractedtext_count(), 'Check the numerator in the model layer')
-		self.assertEqual(2, es.get_datadocument_count(), 'Check the denominator in the model layer')
+		self.assertEqual(es.get_qa_complete_extractedtext_count(), 1,
+						('The ExtractionScript object should return 1 '
+						'qa_checked ExtractedText object'))
+
+		self.assertEqual(1, es.get_qa_complete_extractedtext_count(),
+						'Check the numerator in the model layer')
+		self.assertEqual(2, es.get_datadocument_count(),
+						'Check the denominator in the model layer')
 		model_pct_checked = ExtractionScript.objects.get(pk=1).get_pct_checked()
-		self.assertEqual(model_pct_checked, '50%', 'The get_pct_checked() method should now return 50 pct from the model layer')
+		self.assertEqual(model_pct_checked, '50%',
+						('The get_pct_checked() method should now return 50 pct'
+						' from the model layer'))
 		self.browser.refresh()
 
 		displayed_pct_checked = self.browser.find_elements_by_xpath(
 			'//*[@id="extraction_script_table"]/tbody/tr/td[3]')[0].text
-		self.assertEqual(displayed_pct_checked, model_pct_checked, 'The displayed percentage in the browser layer should reflect the newly checked extracted text object'
-			)
 
-		
+		self.assertEqual(displayed_pct_checked, model_pct_checked,
+						('The displayed percentage in the browser layer should '
+						'reflect the newly checked extracted text object'))

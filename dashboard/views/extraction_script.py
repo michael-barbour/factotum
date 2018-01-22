@@ -35,6 +35,8 @@ def extraction_script_qa(request, pk,
                         template_name='qa/extraction_script.html'):
     es = get_object_or_404(ExtractionScript, pk=pk)
     ets = ExtractedText.objects.filter(extraction_script=pk)
+    es.qa_begun = True
+    es.save()
     return render(request, template_name, {'extractionscript'  : es,
 											'extractedtexts' : ets})
 

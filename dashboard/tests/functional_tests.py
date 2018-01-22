@@ -243,9 +243,16 @@ class TestQAScoreboard(LiveServerTestCase):
 
 	def test_scoreboard(self):
 
+		# A link in the nav bar to the QA Home page
+		self.browser.get('%s%s' % (self.live_server_url, ''))
+		nav_html = self.browser.find_element_by_xpath('//*[@id="navbarCollapse"]/ul').get_attribute('innerHTML')
+		self.assertIn('href="/qa/"', nav_html, 
+		'The link to /qa/ must be in the nav list')
+
 		self.browser.get('%s%s' % (self.live_server_url, '/qa'))
 		scriptcount = ExtractionScript.objects.count()
 
+		# A Table on the QA home page
 		row_count = len(self.browser.find_elements_by_xpath(
 			"//table[@id='extraction_script_table']/tbody/tr"))
 		self.assertEqual(scriptcount, row_count, ('The seed data contains one '
@@ -291,7 +298,7 @@ class TestQAScoreboard(LiveServerTestCase):
 						'Check the denominator in the model layer')
 		model_pct_checked = ExtractionScript.objects.get(pk=1).get_pct_checked()
 		self.assertEqual(model_pct_checked, '50%',
-						('The get_pct_checked() method should now return 50 pct'
+						('The get_pct_checked() method should return 50 pct'
 						' from the model layer'))
 		self.browser.refresh()
 
@@ -301,3 +308,36 @@ class TestQAScoreboard(LiveServerTestCase):
 		self.assertEqual(displayed_pct_checked, model_pct_checked,
 						('The displayed percentage in the browser layer should '
 						'reflect the newly checked extracted text object'))
+		# A button for each row that will take you to the script's QA page
+		# https://github.com/HumanExposure/factotum/issues/36
+		script_qa_link = self.browser.find_element_by_xpath(
+			'//*[@id="extraction_script_table"]/tbody/tr/td[4]/a'
+		)
+		# Before clicking the link, the script's qa_done property 
+		# should be false
+		self.assertEqual(ExtractionScript.objects.get(pk=1).qa_begun, False,
+		'The qa_done property of the ExtractionScript should be False')
+
+		script_qa_link.click()
+		# The link should open a page where the h1 text matches the title 
+		# of the ExtractionScript
+		h1 = self.browser.find_element_by_xpath('/html/body/div/h1').text
+		self.assertIn(ExtractionScript.objects.get(pk=1).title, h1, 
+		'The <h1> text should equal the .title of the ExtractionScript')
+
+		# Opening the ExtractionScript's QA page should set its qa_begun
+		# property to True
+		self.assertEqual(ExtractionScript.objects.get(pk=1).qa_begun, True,
+		'The qa_done property of the ExtractionScript should now be True')
+		# Go back to the QA index page to confirm
+		self.browser.get('%s%s' % (self.live_server_url, '/qa'))
+		script_qa_link = self.browser.find_element_by_xpath(
+			'//*[@id="extraction_script_table"]/tbody/tr/td[4]/a'
+		)
+		self.assertEqual(script_qa_link.text, 'Continue QA',
+		'The QA button should now say "Continue QA" instead of "Begin QA"')
+
+
+
+
+

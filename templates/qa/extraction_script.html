@@ -1,23 +1,45 @@
 {% extends 'core/base.html' %}
+{% load staticfiles %}
 {% load humanize %}
 
 {% block content %}
 
 
 <h1><span class="oi oi-task" title="factotum" aria-hidden="true"></span>
-{{ data }}</h1>
+{{ extractionscript.title }}</h1>
 <br>
 <table class="table table-sm table-bordered table-striped table-sortable" id='extracted_text_table'> 
     <thead class="table-primary">
-        <th>Extraction Script</th>
-        <th>Documents</th>
-        <th>Percent QA Checked</th>
-        <th></th>
+        <th>ID</th>
+        <th class='asc'>
+          Data Group
+          <a href="?sort=data_group" style="float:right">
+              <img src="{% static 'font/open-iconic-master/png/sort-ascending-2x.png' %}" alt="">
+            </a>
+        </th>
+        <th>Data Document</th>
+        <th class='asc'>
+          Document Date
+          <a href="?sort=doc_date" style="float:right">
+            <img src="{% static 'font/open-iconic-master/png/sort-ascending-2x.png' %}" alt="">
+          </a>
+        </th>
+        <th>Revision Number</th>
+        <th>QA Checked</th>
     </thead>
     <tbody>
-    {% for extracted_text in extracted_texts %}
+    {% for extractedtext in extractedtexts %}
       <tr>
-
+        <td>{{ extractedtext.id }}</td>
+        <td>
+          <a class="btn btn-info btn-sm" role="button" title="details"
+            href="{% url "data_group_detail" extractedtext.data_document.data_group.id %}"> {{ extractedtext.data_document.data_group.name }}
+          </a>
+        </td>
+        <td>{{ extractedtext.data_document }}</td>
+        <td>{{ extractedtext.doc_date }}</td>
+        <td>{{ extractedtext.rev_num }}</td>
+        <td>{{ extractedtext.qa_checked }}</td>
       </tr>
     {% endfor %}
     </tbody>

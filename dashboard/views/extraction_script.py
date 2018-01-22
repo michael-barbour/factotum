@@ -33,15 +33,15 @@ def extraction_script_list(request, template_name='qa/extraction_script_list.htm
 @login_required()
 def extraction_script_qa(request, pk,
                         template_name='qa/extraction_script.html'):
-    extractionscript = get_object_or_404(ExtractionScript, pk=pk)
-    et = ExtractedText.objects.filter(extraction_script=pk)
-    data = {}
-    data['object_list'] = et
-    return render(request, template_name, data)
+    es = get_object_or_404(ExtractionScript, pk=pk)
+    ets = ExtractedText.objects.filter(extraction_script=pk)
+    return render(request, template_name, {'extractionscript'  : es,
+											'extractedtexts' : ets})
 
 @login_required()
 def extraction_script_detail(request, pk,
                         template_name='extraction_script/extraction_script_detail.html'):
     extractionscript = get_object_or_404(ExtractionScript, pk=pk)
     data = {}
+    data['object_list'] = extractionscript
     return render(request, template_name, data)

@@ -27,4 +27,6 @@ class ExtractionScript(models.Model):
 
     def get_pct_checked(self):
         return "{0:.0f}%".format(0) if self.get_datadocument_count() == 0 else "{0:.0f}%".format(self.get_qa_complete_extractedtext_count() / self.get_datadocument_count() * 100)
-        
+    
+    def qa_button_text(self):
+        return "Begin QA" if not self.qa_begun else "Continue QA"

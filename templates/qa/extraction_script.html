@@ -1,0 +1,26 @@
+{% extends 'core/base.html' %}
+{% load humanize %}
+
+{% block content %}
+
+
+<h1><span class="oi oi-task" title="factotum" aria-hidden="true"></span>
+{{ data }}</h1>
+<br>
+<table class="table table-sm table-bordered table-striped table-sortable" id='extracted_text_table'> 
+    <thead class="table-primary">
+        <th>Extraction Script</th>
+        <th>Documents</th>
+        <th>Percent QA Checked</th>
+        <th></th>
+    </thead>
+    <tbody>
+    {% for extracted_text in extracted_texts %}
+      <tr>
+
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}

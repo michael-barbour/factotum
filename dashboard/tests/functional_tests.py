@@ -217,7 +217,12 @@ class TestProductCuration(LiveServerTestCase):
 		self.assertEqual(puc_link.text, products_missing_PUC)
 
 class TestQAScoreboard(LiveServerTestCase):
-
+	# Issue 35 https://github.com/HumanExposure/factotum/issues/35
+	# Definition of Done:
+	# A QA Home Page
+	# A link in the nav bar to the QA Home page
+	# A Table on the QA Home page
+	# A button for each row in the table that will take you to #36 (Not Implemented Yet)
 	fixtures = ['seed_data']
 
 	def setUp(self):
@@ -269,7 +274,7 @@ class TestQAScoreboard(LiveServerTestCase):
 
 		displayed_pct_checked = self.browser.find_elements_by_xpath(
 			'//*[@id="extraction_script_table"]/tbody/tr/td[3]')[0].text
-		time.sleep(10)
-
 		self.assertEqual(displayed_pct_checked, model_pct_checked, 'The displayed percentage in the browser layer should reflect the newly checked extracted text object'
 			)
+
+		

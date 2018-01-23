@@ -22,8 +22,8 @@ def product_curation_index(request, template_name='product_curation/product_cura
 
 	for data_source in data_sources:
 		# Number of data documents which have been matched for each source
-		data_source.uploaded = sum([len(d.datadocument_set.all())
-								for d in data_source.datagroup_set.all()])
+		data_source.uploaded = sum([len(d.datadocument_set.all()) for d in data_source.datagroup_set.all()])
+		data_source.no_category = len(data_source.source.filter(prod_cat__isnull=True))
 		# Number of data documents for each source which are NOT linked
 		# to a product
 		data_source.unlinked = (data_source.uploaded -
@@ -31,6 +31,18 @@ def product_curation_index(request, template_name='product_curation/product_cura
 								for x in data_source.source.all()]))
 
 	return render(request, template_name, {'data_sources': data_sources})
+
+@login_required()
+def category_assignment(request, pk, template_name=('product_curation/'
+												'category_assignment.html')):
+	ds = DataSource.objects.get(pk=pk)
+	products = ds.source.filter(prod_cat__isnull=True)
+	for product in products:
+		try:
+			product.msds = product.datadocument_set.all()[0]
+		except IndexError:
+			product.msds = 0
+	return render(request, template_name,{'products':products})
 
 @login_required()
 def link_product_list(request,  pk, template_name='product_curation/link_product_list.html'):

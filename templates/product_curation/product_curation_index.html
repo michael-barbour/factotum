@@ -5,14 +5,17 @@
 
 
 <h1><span class="oi oi-wrench" title="factotum" aria-hidden="true"></span>
-Product Curation</h1>
+Product Curation
+
+</h1>
 <br>
 
-<table class="table table-sm table-bordered table-striped table-sortable">
+<table class="table table-sm table-bordered table-striped table-sortable text-center">
   <thead class="table-primary">
-      <th>Name</th>
-      <th>Uploaded DataDocuments</th>
-      <th>Unlinked DataDocuments</th>
+      <th class="text-center">DataSource Name</th>
+      <th class="text-center">Uploaded DataDocuments</th>
+      <th class="text-center">DataDocuments  <> Products</th>
+      <th class="text-center">DataSource Products Missing PUC</th>
   </thead>
   <tbody>
   {% for data_source in data_sources %}
@@ -21,13 +24,21 @@ Product Curation</h1>
         <a href="{% url "data_source_detail" data_source.id %}" title="Link to {{ data_source.title }}">{{ data_source.title }}</a>
       </td>
       <td>{{ data_source.uploaded }}</td>
-      <td>
-        <a href="{% url "link_product_list" data_source.id %}" title="Link to {{ data_source.title }}">{{ data_source.unlinked }}</a>
-      </td>
+      <td>{% if data_source.unlinked %}
+            <a class="btn btn-warning btn-sm" role="button" title="Create Product"
+             href="{% url "link_product_list" data_source.id %}">
+              <span class="oi oi-link-intact"></span> Create Products for {{ data_source.unlinked }} Document{% if data_source.unlinked > 1 %}s{% endif %}</a>
+          {% else %}
+            <button class="btn btn-success btn-sm" disabled>All Documents Linked to Products</button>
+          {% endif %}
+
+
+      <td>{% if data_source.no_category %}<a class="btn btn-danger btn-sm" role="button" title="Assign Product Categories"
+      href="{% url "category_assignment" data_source.pk %}"><span class="oi oi-link-intact"></span> {{ data_source.no_category }}</a>
+      {% endif %}</td>
     </tr>
   {% endfor %}
   </tbody>
 </table>
-
 
 {% endblock %}

@@ -1,4 +1,5 @@
 import csv
+import time
 import unittest
 import collections
 from selenium import webdriver
@@ -12,8 +13,8 @@ from django.core.urlresolvers import reverse
 from django.core.files.storage import FileSystemStorage
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from dashboard.models import DataGroup, DataSource, DataDocument
-
+from dashboard.models import (DataGroup, DataSource, DataDocument,
+								ExtractionScript, ExtractedText)
 
 def log_karyn_in(object):
 	'''
@@ -30,6 +31,7 @@ def log_karyn_in(object):
 
 
 class TestAuthInBrowser(LiveServerTestCase):
+
 	fixtures = ['seed_data']
 
 	def setUp(self):
@@ -39,16 +41,16 @@ class TestAuthInBrowser(LiveServerTestCase):
 		self.browser.quit()
 
 	def test_login(self):
-		self.browser.get(self.live_server_url)
+		self.browser.get(self.live_server_url )
 		body = self.browser.find_element_by_tag_name('body')
 		self.assertIn('Please sign in', body.text,
-					  "Confirm that the login page is displayed")
+						"Confirm that the login page is displayed")
 		log_karyn_in(self)
 		body = self.browser.find_element_by_tag_name('body')
 		self.assertIn('Welcome to Factotum', body.text)
 
-
 class TestDataSource(LiveServerTestCase):
+
 	fixtures = ['seed_data']
 
 	def setUp(self):
@@ -66,8 +68,8 @@ class TestDataSource(LiveServerTestCase):
 	# When a new data source is entered, the data source is automatically
 	# assigned the state 'awaiting triage.'
 	def test_state_and_priority(self):
-		valid_states = ['Awaiting Triage', 'In Progress', 'Complete', 'Stale']
-		valid_priorities = ['High', 'Medium', 'Low']
+		valid_states = ['Awaiting Triage','In Progress','Complete','Stale']
+		valid_priorities = ['High','Medium','Low']
 		self.browser.get(self.live_server_url + '/datasource/1')
 		state = self.browser.find_element_by_name('state')
 		self.assertIn(state.text, valid_states)
@@ -87,11 +89,12 @@ class TestDataSource(LiveServerTestCase):
 		b = len(DataGroup.objects.filter(data_source_id=1))
 		self.browser.get(self.live_server_url + '/datasource/1')
 		row_count = len(self.browser.find_elements_by_xpath(
-			"//table[@id='data_group_table']/tbody/tr"))
+								"//table[@id='data_group_table']/tbody/tr"))
 		self.assertEqual(b, row_count)
 
 
 class TestDataGroup(LiveServerTestCase):
+
 	fixtures = ['seed_data']
 
 	def setUp(self):
@@ -106,17 +109,19 @@ class TestDataGroup(LiveServerTestCase):
 		h1 = self.browser.find_element_by_name('title')
 		self.assertIn('Walmart MSDS', h1.text)
 		pdflink = self.browser.find_elements_by_xpath(
-			'/html/body/div/table/tbody/tr[1]/td[1]/a')[0]
-		self.assertIn('shampoo.pdf', pdflink.get_attribute('href'))
+								'/html/body/div/table/tbody/tr[1]/td[1]/a')[0]
+		self.assertIn('shampoo.pdf',pdflink.get_attribute('href'))
 
-	def create_data_group(self, data_source, testusername='Karyn', name='Walmart MSDS 3',
-						description='Another data group, added programatically'):
-			source_csv = open('./sample_files/walmart_msds_3.csv', 'rb')
-			return DataGroup.objects.create(name=name, description=description, data_source=data_source,
-											downloaded_by=User.objects.get(username=testusername),
-											downloaded_at=timezone.now(),
-											csv=SimpleUploadedFile('walmart_msds_3.csv', source_csv.read())
-											)
+	def create_data_group(self, data_source, testusername = 'Karyn',
+							name='Walmart MSDS 3',
+							description=('Another data group, '
+										 'added programatically')):
+		source_csv = open('./sample_files/walmart_msds_3.csv','rb')
+		return DataGroup.objects.create(name=name,
+				description=description, data_source = data_source,
+				downloaded_by=User.objects.get(username=testusername) ,
+				downloaded_at=timezone.now(),
+				csv=SimpleUploadedFile('walmart_msds_3.csv', source_csv.read()))
 
 	def upload_pdfs(self):
 		store = settings.MEDIA_URL + self.dg.dgurl()
@@ -130,27 +135,28 @@ class TestDataGroup(LiveServerTestCase):
 		fs.save(pdf2_name, local_pdf)
 		return [pdf1_name, pdf2_name]
 
-	def create_data_documents(self, data_group):
+	def create_data_documents(self, data_group, data_source):
 		dds = []
-		# pdfs = [f for f in os.listdir('/media/' + self.dg.dgurl() + '/pdf') if f.endswith('.pdf')]
-		# pdfs
+		#pdfs = [f for f in os.listdir('/media/' + self.dg.dgurl() + '/pdf') if f.endswith('.pdf')]
+		#pdfs
 		with open(data_group.csv.path) as dg_csv:
 			table = csv.DictReader(dg_csv)
 			errors = []
 			count = 0
-			for line in table:  # read every csv line, create docs for each
-				count += 1
-				if line['filename'] == '':
-					errors.append(count)
-				if line['title'] == '':  # updates title in line object
-					line['title'] = line['filename'].split('.')[0]
-				dd = DataDocument.objects.create(filename=line['filename'],
-												 title=line['title'],
-												 product_category=line['product'],
-												 url=line['url'],
-												 matched=line['filename'] in self.pdfs,
-												 data_group=data_group)
-				dds.append(dd)
+			for line in table: # read every csv line, create docs for each
+					count+=1
+					if line['filename'] == '':
+						errors.append(count)
+					if line['title'] == '': # updates title in line object
+						line['title'] = line['filename'].split('.')[0]
+					dd = DataDocument.objects.create(filename=line['filename'],
+						title=line['title'],
+						product_category=line['product'],
+						url=line['url'],
+						matched = line['filename'] in self.pdfs,
+						data_group=data_group,
+						data_source=data_source)
+					dds.append(dd)
 			return dds
 
 	# creation of another DataGroup from csv and pdf sources
@@ -160,16 +166,20 @@ class TestDataGroup(LiveServerTestCase):
 		ds = DataSource.objects.get(pk=1)
 		self.dg = self.create_data_group(data_source=ds)
 		dg_count_after = DataGroup.objects.count()
-		self.assertEqual(dg_count_after, dg_count_before + 1, "Confirm the DataGroup object has been created")
-		self.assertEqual(3, self.dg.pk, "Confirm the new DataGroup object's pk is 3")
+		self.assertEqual(dg_count_after, dg_count_before + 1,
+							"Confirm the DataGroup object has been created")
+		self.assertEqual(3, self.dg.pk,
+							"Confirm the new DataGroup object's pk is 3")
 		self.pdfs = self.upload_pdfs()
-		self.dds = self.create_data_documents(self.dg)
+		self.dds = self.create_data_documents(self.dg, ds)
 
 		# Use the browser layer to confirm that the object has been created
 		self.browser.get('%s%s' % (self.live_server_url, '/datagroup/3'))
-		self.assertEqual('factotum', self.browser.title, "Testing open of datagroup 3 show page")
+		self.assertEqual('factotum', self.browser.title,
+							"Testing open of datagroup 3 show page")
 
-		self.browser.get(self.live_server_url + reverse('data_group_detail', kwargs={'pk': self.dg.pk}))
+		self.browser.get(self.live_server_url + reverse('data_group_detail',
+													kwargs={'pk': self.dg.pk}))
 		self.assertEqual('factotum', self.browser.title)
 		h1 = self.browser.find_element_by_name('title')
 		self.assertEqual('Walmart MSDS 3', h1.text)
@@ -177,12 +187,14 @@ class TestDataGroup(LiveServerTestCase):
 		# Use the browser layer to delete the DataGroup object
 		# deleting the DataGroup should clean up the file system
 		self.browser.get(self.live_server_url + '/datagroup/delete/3')
-		del_button = self.browser.find_elements_by_xpath('/html/body/div/form/input[2]')[0]
+		del_button = self.browser.find_elements_by_xpath(('/html/body/div/form/'
+																'input[2]'))[0]
 		del_button.click()
-		self.assertEqual(DataGroup.objects.count(), dg_count_before, "Confirm the DataGroup object has been deleted")
-
+		self.assertEqual(DataGroup.objects.count(), dg_count_before ,
+							"Confirm the DataGroup object has been deleted")
 
 class TestProductCuration(LiveServerTestCase):
+
 	fixtures = ['seed_data']
 
 	def setUp(self):
@@ -195,10 +207,137 @@ class TestProductCuration(LiveServerTestCase):
 	def test_unlinked_documents(self):
 		self.browser.get(self.live_server_url + '/product_curation/')
 		src_title = self.browser.find_elements_by_xpath(
-			'/html/body/div/table/tbody/tr[1]/td[1]/a')[0]
+								'/html/body/div/table/tbody/tr[1]/td[1]/a')[0]
 		ds = DataSource.objects.get(title=src_title.text)
 		un_link = self.browser.find_elements_by_xpath(
-			'/html/body/div/table/tbody/tr[1]/td[3]/a')[0]
-		print(un_link.get_attribute("href"))
+								'/html/body/div/table/tbody/tr[1]/td[3]/a')[0]
 		self.assertEqual(un_link.get_attribute("href").split('/')[-1],
-						 str(ds.pk))
+																	str(ds.pk))
+
+	def test_PUC_assignment(self):
+		self.browser.get(self.live_server_url + '/product_curation/')
+		src_title = self.browser.find_elements_by_xpath(
+								'/html/body/div/table/tbody/tr[1]/td[1]/a')[0]
+		ds = DataSource.objects.get(title=src_title.text)
+		puc_link = self.browser.find_elements_by_xpath(
+								'/html/body/div/table/tbody/tr[1]/td[4]/a')[0]
+		products_missing_PUC = str(len(ds.source.filter(prod_cat__isnull=True)))
+		self.assertEqual(puc_link.text, products_missing_PUC, ('The Assign PUC '
+							'link should display # of Products without a PUC'))
+
+class TestQAScoreboard(LiveServerTestCase):
+	# Issue 35 https://github.com/HumanExposure/factotum/issues/35
+	# Definition of Done:
+	# A QA Home Page
+	# A link in the nav bar to the QA Home page
+	# A Table on the QA Home page
+	# A button for each row in the table that will take you to #36 (Not Implemented Yet)
+	fixtures = ['seed_data']
+
+	def setUp(self):
+		self.browser = webdriver.Chrome()
+		log_karyn_in(self)
+
+	def tearDown(self):
+		self.browser.quit()
+
+	def test_scoreboard(self):
+
+		# A link in the nav bar to the QA Home page
+		self.browser.get('%s%s' % (self.live_server_url, ''))
+		nav_html = self.browser.find_element_by_xpath('//*[@id="navbarCollapse"]/ul').get_attribute('innerHTML')
+		self.assertIn('href="/qa/"', nav_html, 
+		'The link to /qa/ must be in the nav list')
+
+		self.browser.get('%s%s' % (self.live_server_url, '/qa'))
+		scriptcount = ExtractionScript.objects.count()
+
+		# A Table on the QA home page
+		row_count = len(self.browser.find_elements_by_xpath(
+			"//table[@id='extraction_script_table']/tbody/tr"))
+		self.assertEqual(scriptcount, row_count, ('The seed data contains one '
+					'ExtractionScript object that should appear in this table'))
+
+		displayed_doc_count = self.browser.find_elements_by_xpath(
+			'//*[@id="extraction_script_table"]/tbody/tr/td[2]')[0].text
+		model_doc_count = DataDocument.objects.filter(
+									extractedtext__extraction_script=1).count()
+		self.assertEqual(displayed_doc_count, str(model_doc_count),
+						('The displayed number of datadocuments should match '
+						'the number of data documents whose related extracted '
+						'text objects used the extraction script'))
+
+		displayed_pct_checked = self.browser.find_elements_by_xpath(
+			'//*[@id="extraction_script_table"]/tbody/tr/td[3]')[0].text
+		model_pct_checked = ExtractionScript.objects.get(pk=1).get_pct_checked()
+		self.assertEqual(displayed_pct_checked, model_pct_checked,
+						('The displayed percentage should match what is '
+						'derived from the model'))
+
+		es = ExtractionScript.objects.get(pk=1)
+		self.assertEqual(es.get_qa_complete_extractedtext_count(), 0,
+						('The ExtractionScript object should return 0'
+						'qa_checked ExtractedText objects'))
+		self.assertEqual(model_pct_checked, '0%')
+		# Set qa_checked property to True for one of the ExtractedText objects
+		self.assertEqual(ExtractedText.objects.get(pk=1).qa_checked , False)
+		et_change = ExtractedText.objects.get(pk=1)
+		et_change.qa_checked = True
+		et_change.save()
+		self.assertEqual(ExtractedText.objects.get(pk=1).qa_checked , True,
+						'The object should now have qa_checked = True')
+
+		es = ExtractionScript.objects.get(pk=1)
+		self.assertEqual(es.get_qa_complete_extractedtext_count(), 1,
+						('The ExtractionScript object should return 1 '
+						'qa_checked ExtractedText object'))
+
+		self.assertEqual(1, es.get_qa_complete_extractedtext_count(),
+						'Check the numerator in the model layer')
+		self.assertEqual(2, es.get_datadocument_count(),
+						'Check the denominator in the model layer')
+		model_pct_checked = ExtractionScript.objects.get(pk=1).get_pct_checked()
+		self.assertEqual(model_pct_checked, '50%',
+						('The get_pct_checked() method should return 50 pct'
+						' from the model layer'))
+		self.browser.refresh()
+
+		displayed_pct_checked = self.browser.find_elements_by_xpath(
+			'//*[@id="extraction_script_table"]/tbody/tr/td[3]')[0].text
+
+		self.assertEqual(displayed_pct_checked, model_pct_checked,
+						('The displayed percentage in the browser layer should '
+						'reflect the newly checked extracted text object'))
+		# A button for each row that will take you to the script's QA page
+		# https://github.com/HumanExposure/factotum/issues/36
+		script_qa_link = self.browser.find_element_by_xpath(
+			'//*[@id="extraction_script_table"]/tbody/tr/td[4]/a'
+		)
+		# Before clicking the link, the script's qa_done property 
+		# should be false
+		self.assertEqual(ExtractionScript.objects.get(pk=1).qa_begun, False,
+		'The qa_done property of the ExtractionScript should be False')
+
+		script_qa_link.click()
+		# The link should open a page where the h1 text matches the title 
+		# of the ExtractionScript
+		h1 = self.browser.find_element_by_xpath('/html/body/div/h1').text
+		self.assertIn(ExtractionScript.objects.get(pk=1).title, h1, 
+		'The <h1> text should equal the .title of the ExtractionScript')
+
+		# Opening the ExtractionScript's QA page should set its qa_begun
+		# property to True
+		self.assertEqual(ExtractionScript.objects.get(pk=1).qa_begun, True,
+		'The qa_done property of the ExtractionScript should now be True')
+		# Go back to the QA index page to confirm
+		self.browser.get('%s%s' % (self.live_server_url, '/qa'))
+		script_qa_link = self.browser.find_element_by_xpath(
+			'//*[@id="extraction_script_table"]/tbody/tr/td[4]/a'
+		)
+		self.assertEqual(script_qa_link.text, 'Continue QA',
+		'The QA button should now say "Continue QA" instead of "Begin QA"')
+
+
+
+
+

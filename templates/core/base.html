@@ -39,6 +39,9 @@
         <li class="nav-item {% if 'product_curation' in request.resolver_match.url_name %}active{% endif %}">
             <a class="nav-link" href="{% url 'product_curation' %}">Product Curation</a>
         </li>
+        <li class="nav-item {% if 'qa' in request.resolver_match.url_name %}active{% endif %}">
+            <a class="nav-link" href="{% url 'qa' %}">QA</a>
+        </li>
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

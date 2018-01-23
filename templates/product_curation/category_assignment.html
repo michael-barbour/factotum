@@ -7,6 +7,9 @@
 <h1><span class="oi oi-wrench" title="factotum" aria-hidden="true"></span>
 Link Product To Product Category</h1>
 <br>
+<h2><a href="{% url "data_source_detail" datasource.id %}" 
+  title="Link to {{ datasource.title }}">{{ datasource.title }}</a>
+</h2> 
 
 <table class="table table-sm table-bordered table-striped table-sortable">
   <thead class="table-primary">
@@ -20,14 +23,16 @@ Link Product To Product Category</h1>
       <td>{{ product.title }}</td>
       <td>
         {% if product.msds%}
-          <a href="/media/{{ product.msds.data_group.dgurl }}/pdf/{{ product.msds.filename }}" title="Link to {{ product.msds.filename }}" target = "_blank">{{ product.msds.title }}</a>
+          <a href="/media/{{ product.msds.data_group.dgurl }}/pdf/{{ product.msds.filename }}" 
+          title="Link to {{ product.msds.filename }}" 
+          target = "_blank">{{ product.msds.title }}</a>
         {% else %}
 
         {% endif %}
       </td>
       <td>
         <a class="btn btn-warning btn-sm" role="button" title="Category Assignment"
-         href="#"><span class="oi oi-link-intact"></span> Assign PUC</a>
+         href="{% url "product_puc" product.id %}"><span class="oi oi-link-intact"></span> Assign PUC</a>
       </td>
     </tr>
   {% endfor %}

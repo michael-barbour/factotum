@@ -35,6 +35,7 @@ def product_curation_index(request, template_name='product_curation/product_cura
 @login_required()
 def category_assignment(request, pk, template_name=('product_curation/'
 												'category_assignment.html')):
+	"""Deliver a datasource and its associated products"""
 	ds = DataSource.objects.get(pk=pk)
 	products = ds.source.filter(prod_cat__isnull=True)
 	for product in products:
@@ -42,7 +43,7 @@ def category_assignment(request, pk, template_name=('product_curation/'
 			product.msds = product.datadocument_set.all()[0]
 		except IndexError:
 			product.msds = 0
-	return render(request, template_name,{'products':products})
+	return render(request, template_name,{'datasource':ds, 'products':products})
 
 @login_required()
 def link_product_list(request,  pk, template_name='product_curation/link_product_list.html'):
@@ -86,3 +87,10 @@ def link_product_form(request, pk, template_name=('product_curation/'
 		return redirect('link_product_list', pk=data_source_id)
 	return render(request, template_name,{'document': doc,
 											'form'  : form})
+
+@login_required()
+def assign_puc_to_product(request, pk, template_name=('product_curation/'
+												'product_puc.html')):
+	"""Assign a PUC to a single product"""
+	p = Product.objects.get(pk=pk)
+	return render(request, template_name,{'product':p})

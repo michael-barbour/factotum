@@ -337,6 +337,24 @@ class TestQAScoreboard(LiveServerTestCase):
 		self.assertEqual(script_qa_link.text, 'Continue QA',
 		'The QA button should now say "Continue QA" instead of "Begin QA"')
 
+class TestPUCAssignment(LiveServerTestCase):
+	# Issue 80 https://github.com/HumanExposure/factotum/issues/80
+	#
+	fixtures = ['seed_data']
+
+	def setUp(self):
+		self.browser = webdriver.Chrome()
+		log_karyn_in(self)
+
+	def tearDown(self):
+		self.browser.quit()
+
+	def test_puc(self):
+
+		# 
+		self.browser.get('%s%s' % (self.live_server_url, 'category_assignment/1'))
+		
+
 
 
 

@@ -18,6 +18,7 @@ urlpatterns = [
 	url(r'^product_curation/$', views.product_curation_index, name='product_curation'),	
 	url(r'^product_curation/$', views.product_curation_index, name='product_curation'),
 	url(r'^category_assignment/(?P<pk>\d+)$', views.category_assignment, name='category_assignment'),
+	url(r'^product_puc/(?P<pk>\d+)$', views.assign_puc_to_product, name='product_puc'),
 	url(r'^link_product_list/(?P<pk>\d+)$', views.link_product_list, name='link_product_list'),
 	url(r'^link_product_form/(?P<pk>\d+)$', views.link_product_form, name='link_product_form'),
 	url(r'^qa/extractionscript/(?P<pk>\d+)$', views.extraction_script_qa, name='extraction_script_qa'),

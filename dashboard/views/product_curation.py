@@ -16,7 +16,10 @@ class ProductForm(ModelForm):
 class ProductPUCForm(forms.ModelForm):
     prod_cat = forms.ModelChoiceField(
         queryset=ProductCategory.objects.all(),
-        widget=autocomplete.ModelSelect2(url='puc-autocomplete')
+		label='Category',
+        widget=autocomplete.ModelSelect2(
+			url='puc-autocomplete', 
+          	attrs={'data-minimum-input-length': 3})
     )
 
     class Meta:

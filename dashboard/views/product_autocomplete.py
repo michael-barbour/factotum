@@ -9,6 +9,6 @@ class PUCAutocomplete(autocomplete.Select2QuerySetView):
             return ProductCategory.objects.none()
         qs = ProductCategory.objects.all()
         if self.q:
-            qs = qs.filter(gen_cat__istartswith=self.q)
+            qs = qs.filter(gen_cat__icontains=self.q)
 
         return qs

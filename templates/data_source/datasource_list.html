@@ -2,20 +2,19 @@
 {% load staticfiles %}
 {% load humanize %}
 {% block content %}
+{% block css %}
+<link rel="stylesheet" type="text/css" src="{% static 'css/jquery.dataTables.min.css' %}">
+{% endblock %}
 <h1>
     <span>Data Sources</span>
     <a class="btn btn-primary float-lg-right" role="button" href="{% url "data_source_new" %}">New Data Source</a>
 </h1>
-<table class="table table-sm table-bordered table-striped table-sortable">
+<table class="table table-sm table-bordered table-striped table-sortable" id="sources">
   <thead class="table-primary">
       <th>Name</th>
       <th>Registered</th>
       <th>Uploaded</th>
-      <th class="asc">Priority
-        <a href="?sort=priority" style="float:right">
-          <img src="{% static 'font/open-iconic-master/png/sort-ascending-2x.png' %}" alt="">
-        </a>
-      </th>
+      <th>Priority</th>
       <th>Type</th>
       <th>State</th>
       <th></th>
@@ -53,4 +52,27 @@
   {% endfor %}
   </tbody>
 </table>
+{% endblock %}
+{% block js %}
+  <script type="text/javascript" charset="utf8" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+        var table = $('#sources').DataTable({
+
+          "columnDefs": [
+              {
+                  "orderDataType": "dom-select",
+                  "targets": 3, // third column is select input
+                  "type": "string",
+              },
+          ],
+        });
+    });
+    // this grabs the val out of the select tag in the form
+    $.fn.dataTable.ext.order['dom-select'] = function (settings, col) {
+    return this.api().column(col, { order: 'index' }).nodes().map(function (td, i) {
+        return $('select', td).val();
+    });
+    }
+  </script>
 {% endblock %}

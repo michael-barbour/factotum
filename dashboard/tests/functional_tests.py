@@ -340,7 +340,7 @@ class TestQAScoreboard(LiveServerTestCase):
 class TestPUCAssignment(LiveServerTestCase):
 	# Issue 80 https://github.com/HumanExposure/factotum/issues/80
 	#
-	fixtures = ['seed_data']
+	fixtures = ['seed_data','seed_product_category.yaml']
 
 	def setUp(self):
 		self.browser = webdriver.Chrome()
@@ -352,7 +352,7 @@ class TestPUCAssignment(LiveServerTestCase):
 	def test_puc(self):
 
 		# 
-		self.browser.get('%s%s' % (self.live_server_url, 'category_assignment/1'))
+		self.browser.get('%s%s' % (self.live_server_url, '/category_assignment/1'))
 		
 
 

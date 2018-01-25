@@ -12,7 +12,7 @@ class ProductCategory(models.Model):
 	last_edited_by = models.ForeignKey('auth.User', on_delete=models.CASCADE)
 
 	def __str__(self):
-		return self.gen_cat  # this may need to change
+		return self.gen_cat + ' - ' + self.prod_fam + ' - ' + self.prod_type # this may need to change
 
 	class Meta:
 		verbose_name_plural = 'Product categories'

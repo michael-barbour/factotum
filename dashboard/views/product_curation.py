@@ -19,12 +19,11 @@ class ProductPUCForm(forms.ModelForm):
 		label='Category',
         widget=autocomplete.ModelSelect2(
 			url='puc-autocomplete', 
-          	attrs={'data-minimum-input-length': 3})
+          	attrs={'data-minimum-input-length': 3,})
     )
 
     class Meta:
         model = Product
-        #fields = ('__all__')
         fields = ['prod_cat']
 
 @login_required()

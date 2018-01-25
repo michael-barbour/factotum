@@ -111,6 +111,8 @@
   <br>
   <div class=".col-md-4">
     <h5>Work with uploaded documents:</h5>
+    <a href="{% static 'csv/extracted_text.csv' %}" class="btn btn-secondary"
+       {% if not doc.matched %}disabled{% endif %}><span class="oi oi-spreadsheet"></span>Extracted Text CSV Template</a>
     <button type="button" class="btn btn-secondary"  disabled><span class="oi oi-file"></span>Extracted Text CSV Template</button>
     <button type="button" class="btn btn-primary"  disabled>Upload Extracted Text</button>
 <!--     {% if documents %}

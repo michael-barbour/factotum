@@ -24,7 +24,7 @@ urlpatterns = [
 	url(r'^extractionscript/(?P<pk>\d+)$', views.extraction_script_detail, name='extraction_script_detail'),
 	url(r'^qa/$', views.qa_index, name='qa'),
 	url(r'^product_puc/(?P<pk>\d+)$', views.assign_puc_to_product, name='product_puc'),
-	url(r'^puc-autocomplete/$', views.product_autocomplete.PUCAutocomplete.as_view(create_field='gen_cat'), 
+	url(r'^puc-autocomplete/$', views.product_autocomplete.PUCAutocomplete.as_view(), 
 	name='puc-autocomplete')
 	# test with: /puc-autocomplete/?q=Art
 ]

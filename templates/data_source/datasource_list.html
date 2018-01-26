@@ -67,6 +67,7 @@
         extend: 'csv',
         title: 'Data_Sources_Factotum',
         exportOptions : {
+          columns: [ 0, 1, 2, 3, 4, 5 ],
           format: {
             body: function( data, row, col, node ) {
               if (col == 3) {
@@ -82,6 +83,7 @@
                     .nodes()
                     .to$()
                     .text()
+                    .replace(/\n/g, '')
                }
             }
           }

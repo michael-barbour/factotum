@@ -2,9 +2,7 @@
 {% load staticfiles %}
 {% load humanize %}
 {% block content %}
-{% block css %}
-<link rel="stylesheet" type="text/css" src="{% static 'css/jquery.dataTables.min.css' %}">
-{% endblock %}
+
 <h1>
     <span>Data Sources</span>
     <a class="btn btn-primary float-lg-right" role="button" href="{% url "data_source_new" %}">New Data Source</a>
@@ -54,19 +52,42 @@
 </table>
 {% endblock %}
 {% block js %}
-  <script type="text/javascript" charset="utf8" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
   <script type="text/javascript">
     $(document).ready(function () {
-        var table = $('#sources').DataTable({
-
-          "columnDefs": [
-              {
-                  "orderDataType": "dom-select",
-                  "targets": 3, // third column is select input
-                  "type": "string",
-              },
-          ],
-        });
+      var table = $('#sources').DataTable({
+      "columnDefs": [
+          {
+              "orderDataType": "dom-select",
+              "targets": 3, // third column is select input
+              "type": "string",
+          },
+      ],
+      dom: 'Bfrtip',
+      buttons: [{
+        extend: 'csv',
+        title: 'Data_Sources_Factotum',
+        exportOptions : {
+          format: {
+            body: function( data, row, col, node ) {
+              if (col == 3) {
+                return table
+                  .cell( {row: row, column: col} )
+                  .nodes()
+                  .to$()
+                  .find(':selected')
+                  .text()
+               } else {
+                  return table
+                    .cell( {row: row, column: col} )
+                    .nodes()
+                    .to$()
+                    .text()
+               }
+            }
+          }
+        },
+      }]
+      });
     });
     // this grabs the val out of the select tag in the form
     $.fn.dataTable.ext.order['dom-select'] = function (settings, col) {
@@ -74,5 +95,28 @@
         return $('select', td).val();
     });
     }
+
+
+
+    // me.dataTable_obj = $('#leads_table').DataTable({
+    //    "pageLength": per_page,
+    //     dom: 'Blfrtip',
+    //     buttons: [
+    //         'copy', 'csv', 'excel', 'pdf', 'print'
+    //     ],
+    //     "order": [order],
+    //     "ajax": {
+    //         url: route,
+    //         type: method,
+    //         data: filtering_data,
+    //         "dataSrc": function (json) {
+    //             return me.setLeadsTableData(json);
+    //         }
+    //     },
+    //    "columns": columns_def,
+
+
+
+
   </script>
 {% endblock %}

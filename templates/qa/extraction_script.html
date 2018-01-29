@@ -3,34 +3,23 @@
 {% load humanize %}
 
 {% block content %}
-
-
-<h1><span class="oi oi-task" title="factotum" aria-hidden="true"></span>
+<h1 class="col-sm-12"><span class="oi oi-task" title="factotum" ></span>
 {{ extractionscript.title }}</h1>
 <br>
-<table class="table table-sm table-bordered table-striped table-sortable" id='extracted_text_table'> 
-    <thead class="table-primary">
+<table class="table table-sm table-bordered table-striped table-sortable" id='extracted_text_table'>
+    <thead class="table-inverse">
         <th>ID</th>
-        <th class='asc'>
-          Data Group
-          <a href="?sort=data_group" style="float:right">
-              <img src="{% static 'font/open-iconic-master/png/sort-ascending-2x.png' %}" alt="">
-            </a>
-        </th>
+        <th>Data Group</th>
         <th>Data Document</th>
-        <th class='asc'>
-          Document Date
-          <a href="?sort=doc_date" style="float:right">
-            <img src="{% static 'font/open-iconic-master/png/sort-ascending-2x.png' %}" alt="">
-          </a>
-        </th>
+        <th>Document Date</th>
         <th>Revision Number</th>
         <th>QA Checked</th>
     </thead>
     <tbody>
     {% for extractedtext in extractedtexts %}
       <tr>
-        <td>{{ extractedtext.id }}</td>
+
+        <td width="42">{{ extractedtext.id }}</td> <!-- added width for sort image -->
         <td>
           <a class="btn btn-info btn-sm" role="button" title="details"
             href="{% url "data_group_detail" extractedtext.data_document.data_group.id %}"> {{ extractedtext.data_document.data_group.name }}
@@ -45,4 +34,17 @@
     </tbody>
   </table>
 
+{% endblock %}
+{% block js %}
+  <script type="text/javascript">
+    $(document).ready(function () {
+      var table = $('#extracted_text_table').DataTable({
+      // "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
+
+      dom:"<'row'<'col-md-4 form-inline'l><'col-md-4 form-inline'f>>" +
+          "<'row'<'col-sm-12 text-center'tr>>" +
+          "<'row'<'col-sm-5'i><'col-sm-7'p>>", // order the control divs
+      });
+    });
+  </script>
 {% endblock %}

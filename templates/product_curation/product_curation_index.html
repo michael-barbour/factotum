@@ -4,13 +4,13 @@
 {% block content %}
 
 
-<h1><span class="oi oi-wrench" title="factotum" aria-hidden="true"></span>
+<h1 class="col-sm-12"><span class="oi oi-wrench" title="factotum" aria-hidden="true"></span>
 Product Curation
 
 </h1>
 <br>
 
-<table class="table table-sm table-bordered table-striped table-sortable text-center">
+<table class="table table-striped table-bordered dataTable no-footer" id="products">
   <thead class="table-primary">
       <th class="text-center">DataSource Name</th>
       <th class="text-center">Uploaded DataDocuments</th>
@@ -41,4 +41,22 @@ Product Curation
   </tbody>
 </table>
 
+{% endblock %}
+{% block js %}
+  <script type="text/javascript">
+    $(document).ready(function () {
+      var table = $('#products').DataTable({
+      // "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
+      "columnDefs": [
+          {
+              "targets": 2,
+              "orderable": false
+          },
+      ],
+      dom:"<'row'<'col-md-4 form-inline'l><'col-md-4 form-inline'f>>" +
+          "<'row'<'col-sm-12 text-center'tr>>" +
+          "<'row'<'col-sm-5'i><'col-sm-7'p>>", // order the control divs
+      });
+    });
+  </script>
 {% endblock %}

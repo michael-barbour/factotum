@@ -4,11 +4,11 @@
 {% block content %}
 
 
-<h1><span class="oi oi-wrench" title="factotum" aria-hidden="true"></span>
+<h1 class="col-sm-12"><span class="oi oi-wrench" title="factotum" aria-hidden="true"></span>
 Link Product To Product Category</h1>
 <br>
 
-<table class="table table-sm table-bordered table-striped table-sortable">
+<table class="table table-sm table-bordered table-striped table-sortable" id="category">
   <thead class="table-primary">
       <th>Title</th>
       <th>MSDS</th>
@@ -34,4 +34,17 @@ Link Product To Product Category</h1>
   </tbody>
 </table>
 
+{% endblock %}
+{% block js %}
+  <script type="text/javascript">
+    $(document).ready(function () {
+      var table = $('#category').DataTable({
+      // "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
+
+      dom:"<'row'<'col-md-4 form-inline'l><'col-md-4 form-inline'f>>" +
+          "<'row'<'col-sm-12 text-center'tr>>" +
+          "<'row'<'col-sm-5'i><'col-sm-7'p>>", // order the control divs
+      });
+    });
+  </script>
 {% endblock %}

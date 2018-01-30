@@ -69,7 +69,7 @@
     <h4>{{ documents|length }} documents registered, {{ datagroup.matched_docs }} matched</h4>
   </div>
   <table class="table table-sm table-bordered table-striped table-hover" id="d-docs">
-    <thead class="thead-inverse">
+    <thead class="table-primary">
     <th>Title</th>
     <th>URL</th>
     <th>Product Category</th>
@@ -124,7 +124,7 @@
       var table = $('#d-docs').DataTable({
       // "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
       dom:"<'row'<'col-md-4 form-inline'l><'col-md-4 form-inline'f><'col-md-4'B>>" +
-          "<'row'<'col-sm-12 text-center'tr>>" +
+          "<'row'<'col-sm-12'tr>>" +
           "<'row'<'col-sm-5'i><'col-sm-7'p>>", // order the control divs
       buttons: [{
         extend: 'csv',

@@ -19,7 +19,7 @@ class ProductPUCForm(forms.ModelForm):
 		label='Category',
         widget=autocomplete.ModelSelect2(
 			url='puc-autocomplete', 
-          	attrs={'data-minimum-input-length': 3,})
+          	attrs={'data-minimum-input-length': 3,  })
     )
 
     class Meta:

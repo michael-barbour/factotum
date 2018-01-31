@@ -4,6 +4,10 @@ import unittest
 import collections
 from selenium import webdriver
 from selenium.webdriver.support.select import Select
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+
 
 from django.conf import settings
 from django.utils import timezone
@@ -28,6 +32,8 @@ def log_karyn_in(object):
     password_input = object.browser.find_element_by_name("password")
     password_input.send_keys('specialP@55word')
     object.browser.find_element_by_class_name('btn').click()
+
+
 
 
 class TestAuthInBrowser(LiveServerTestCase):
@@ -337,6 +343,19 @@ class TestQAScoreboard(LiveServerTestCase):
         self.assertEqual(script_qa_link.text, 'Continue QA',
         'The QA button should now say "Continue QA" instead of "Begin QA"')
 
+
+
+def clean_label(self, label):
+    """Remove the "remove" character used in select2."""
+    return label.replace('\xd7', '')
+
+
+def wait_for_element(self, elm, by = 'id', timeout=10):
+    wait = WebDriverWait(self.browser, timeout)
+    wait.until(EC.presence_of_element_located((By.XPATH, elm)))
+    return self.browser.find_element_by_xpath(elm)
+
+
 class TestPUCAssignment(LiveServerTestCase):
     # Issue 80 https://github.com/HumanExposure/factotum/issues/80
     #
@@ -366,24 +385,34 @@ class TestPUCAssignment(LiveServerTestCase):
         self.assertIn(Product.objects.get(pk=1).title, h2, 
         'The <h2> text should equal the .title of the product')
 
-        puc_entry_menu = self.browser.find_element_by_xpath(
-            '//*[@id="id_prod_cat"]'
-        )
+        puc_before = Product.objects.get(pk=1).prod_cat 
 
-        puc_entry_menu.click()
-        self.browser.implicitly_wait(3)
+        puc_selector = self.browser.find_element_by_xpath('//*[@id="id_prod_cat"]')
+        puc_selector = self.browser.find_element_by_xpath('//*[@id="select2-id_prod_cat-container"]')
+        puc_sibling = self.browser.find_element_by_xpath('//*[@id="id_prod_cat"]/following::*')
+        puc_sibling.click()
 
-        puc_input = self.browser.find_element_by_xpath(
-            '/html/body/span/span/span[1]/input'
-        )
-        puc_input.send_keys('pet care')
-        puc_item = self.browser.find_element_by_xpath('//*[@id="select2-id_prod_cat-results"]/li[5]')
-        self.assertEqual(puc_item.text, 'Pet care - all pets - pet shampoo',
-        'The pet shampoo entry should appear in the list')
-        puc_item.click()
+        #wait_for_element(self, "select2-search__field", "class").click()
+        puc_input = self.browser.find_element_by_class_name('select2-search__field')
+        puc_input.send_keys('pet care')        
+        
+        # The driver cannot immediately type into the input box - it needs
+        # to load an element first, as explained here:
+        # https://stackoverflow.com/questions/34422274/django-selecting-autocomplete-light-choices-with-selenium
+
+        wait_for_element(self,
+            '//*[@id="select2-id_prod_cat-results"]/li[2]',
+            "xpath").click()
+        puc_selector = self.browser.find_element_by_xpath('//*[@id="select2-id_prod_cat-container"]')
+        self.assertEqual(puc_selector.text, 'Pet care - all pets -')
 
         submit_button = self.browser.find_element_by_xpath('/html/body/div/div/form/button')
         submit_button.click()
+        puc_after = Product.objects.get(pk=1).prod_cat 
+        # check the model layer for the change
+        self.assertNotEqual(puc_before, puc_after, "The object's prod_cat should have changed")
+        
+
 
 
 

@@ -23,6 +23,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Application definition
 
 INSTALLED_APPS = [
+    'dal',
+    'dal_select2',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -34,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'factotum',
     'django_filters',
+    'debug_toolbar',
     'webpack_loader',
 ]
 
@@ -45,6 +48,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'factotum.urls'
@@ -67,6 +71,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'factotum.wsgi.application'
+
+# IPs allowed to see django-debug-toolbar output.
+INTERNAL_IPS = ('127.0.0.1',)
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators

@@ -4,3 +4,4 @@ django-widget-tweaks==1.4.1
 pytz==2017.2
 PyYAML==3.12
 wincertstore==0.2
+django-autocomplete-light==3.2.10

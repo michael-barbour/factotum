@@ -22,6 +22,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Application definition
 
 INSTALLED_APPS = [
+    'dal',
+    'dal_select2',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -31,7 +33,9 @@ INSTALLED_APPS = [
     'dashboard.apps.DashboardConfig',
     'widget_tweaks',
     'django.contrib.humanize',
-    'factotum'
+    'factotum',
+    'django_filters',
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -42,6 +46,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'factotum.urls'
@@ -64,6 +69,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'factotum.wsgi.application'
+
+# IPs allowed to see django-debug-toolbar output.
+INTERNAL_IPS = ('127.0.0.1',)
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -95,8 +103,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
-
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/

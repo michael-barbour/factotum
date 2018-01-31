@@ -3,8 +3,8 @@
 
 {% block content %}
 
-<h1>
-  <span>{{ object.title }}</span>
+<h1 class="col-sm-12">
+  <span name="title">{{ object.title }}</span>
   <div class="btn-group float-lg-right" role="group" aria-label="Datasource Modification">
     <a class="btn btn-info btn-sm" role="button" title="list" href="{% url "data_source_list" %}">
       <span class="oi oi-list"></span> </a>
@@ -16,7 +16,7 @@
   </div>
 </h1>
 
-<dl class="row">
+<dl class="row col-sm-12">
   <dt class="col-sm-3">Description</dt>
   <dd class="col-sm-9">{{ object.description }}</dd>
   <dt class="col-sm-3"><abbr title="Uniform Resource Locator">url</abbr></dt>
@@ -33,14 +33,14 @@
      </form>
   </dd>
   <dt class="col-sm-3">State</dt>
-  <dd class="col-sm-9">{{ object.get_state_display }}</dd>
+  <dd class="col-sm-9" name="state">{{ object.get_state_display }}</dd>
   <dt class="col-sm-3">Estimated Records</dt>
   <dd class="col-sm-9">{{ object.estimated_records | intcomma }}</dd>
 
   <dt class="col-sm-3">% Registered</dt>
-  <dd class="col-sm-9">{{ object.registered }} %</dd>
+  <dd class="col-sm-9">{{ object.registered|floatformat:1 }} %</dd>
   <dt class="col-sm-3">% Uploaded</dt>
-  <dd class="col-sm-9">{{ object.uploaded }} %</dd>
+  <dd class="col-sm-9">{{ object.uploaded|floatformat:1 }} %</dd>
 
   <dt class="col-sm-3">Created</dt>
   <dd class="col-sm-9">{{ object.created_at }}</dd>
@@ -50,43 +50,69 @@
   {% endif %}
 </dl>
 
-<h3><span>Data Groups</span>
-  <a class="btn btn-primary btn-sm float-lg-right" role="button" title="create"
+<h3 class="col-sm-12"><span>Data Groups</span>
+  <a class="btn btn-primary btn-md float-lg-right" role="button" title="create"
   href="{% url "data_group_new" %}"><span class="oi "></span>New Data Group</a>
 </h3>
-<table class="table table-sm table-bordered table-striped">
-    <thead class="thead-inverse">
+<br>
+<table class="table table-striped table-bordered dataTable no-footer table-sm" id="groups">
+    <thead class="table-primary">
     <th>Name</th>
     <th>Downloaded by</th>
     <th>Downloaded at</th>
-    <th>Script URL</th>
+    <th>Script</th>
     <th>
     </th>
     </thead>
     <tbody>
     {% for data_group in datagroup_list %}
       <tr>
-        <td>{{ data_group.name }}</td>
+        <td><a title="details"
+           href="{% url "data_group_detail" data_group.id %}">
+           {{ data_group.name }}</a></td>
         <td>{{ data_group.downloaded_by }}</td>
         <td>{{ data_group.downloaded_at }}</td>
         <td>
-          <a href="{{ data_group.extraction_script }}" title="Link to {{ data_group.name }}">{{ data_group.extraction_script }}</a>
+          <a href="{{ data_group.download_script }}" title="Link to {{ data_group.download_script }}"><span class="oi oi-globe"></span></a>
         </td>
-        <td class="float-sm-right">
+        <td class="float-sm-center">
           <div class="btn-group">
-          <a class="btn btn-info btn-sm" role="button" title="details"
-             href="{% url "data_group_detail" data_group.id %}">
-            <span class="oi oi-info"></span> </a>
-          <a class="btn btn-success btn-sm" role="button" title="edit"
-             href="{% url "data_group_edit" data_group.id %}">
-            <span class="oi oi-pencil"></span> </a>
-          <a class="btn btn-danger btn-sm" role="button" title="delete"
-             href="{% url "data_group_delete" data_group.id %}">
-            <span class="oi oi-trash"></span> </a>
+            <a class="btn btn-success btn-sm" role="button" title="edit"
+               href="{% url "data_group_edit" data_group.id %}">
+              <span class="oi oi-pencil"></span> </a>
+            <a class="btn btn-danger btn-sm" role="button" title="delete"
+               href="{% url "data_group_delete" data_group.id %}">
+              <span class="oi oi-trash"></span> </a>
           </div>
         </td>
       </tr>
     {% endfor %}
     </tbody>
 </table>
+{% endblock %}
+{% block js %}
+  <script type="text/javascript">
+    $(document).ready(function () {
+      var table = $('#groups').DataTable({
+      // "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
+      "columnDefs": [
+          {
+              "targets": 4, // sixth column is edit/delete links
+              "orderable": false
+          },
+      ],
+      dom:"<'row'<'col-md-4 form-inline'l><'col-md-4 form-inline'f><'col-md-4'B>>" +
+          "<'row'<'col-sm-12'tr>>" +
+          "<'row'<'col-sm-5'i><'col-sm-7'p>>", // order the control divs
+      buttons: [{
+        extend: 'csv',
+        text: 'Download CSV',
+        title: 'Data_Groups_Factotum',
+        exportOptions : {
+          columns: [ 0, 1, 2, 3 ],
+          },
+        }]
+      });
+    });
+  </script>
 {% endblock %}

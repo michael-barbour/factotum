@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -25,8 +25,8 @@ urlpatterns = [
 	url(r'^qa/$', views.qa_index, name='qa'),
 	url(r'^product_puc/(?P<pk>\d+)$', views.assign_puc_to_product, name='product_puc'),
 	url(r'^puc-autocomplete/$', views.product_autocomplete.PUCAutocomplete.as_view(), 
-	name='puc-autocomplete')
-	# test with: /puc-autocomplete/?q=Art
+	name='puc-autocomplete'),
+    url(r'^search/', include('haystack.urls')),
 ]
 
 if settings.DEBUG is True:

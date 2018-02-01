@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'factotum',
     'django_filters',
     'debug_toolbar',
+    'haystack'
 ]
 
 MIDDLEWARE = [
@@ -69,6 +70,15 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'factotum.wsgi.application'
+
+# Haystack search
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'INDEX_NAME': 'haystack',
+    },
+}
 
 # IPs allowed to see django-debug-toolbar output.
 INTERNAL_IPS = ('127.0.0.1',)

@@ -1,0 +1,8 @@
+Collecting django-haystack
+Collecting Django<1.11 (from django-haystack)
+  Downloading Django-1.10.8-py2.py3-none-any.whl (6.8MB)
+Installing collected packages: Django, django-haystack
+  Found existing installation: Django 1.11.5
+    Uninstalling Django-1.11.5:
+      Successfully uninstalled Django-1.11.5
+Successfully installed Django-1.10.8 django-haystack-2.6.1

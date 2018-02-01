@@ -1,0 +1,4 @@
+<h2>{{ object.title }}</h2>
+{{ object.brand_name }}
+{{ object.short_description }}
+{{ object.long_description }}

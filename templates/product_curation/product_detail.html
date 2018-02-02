@@ -2,15 +2,6 @@
 {% load staticfiles %}
 {% load humanize %}
 
-
-{% block errors %}
-  {% if err %}
-  <div class="bg-warning text-white">
-    There were no matching records in the selected directory.
-  </div>
-  {% endif %}
-{% endblock %}
-
 {% block content %}
     <h1 class="col-sm-12">
         <span name="title">{{ product.title }}</span>

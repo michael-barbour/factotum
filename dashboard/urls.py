@@ -15,7 +15,7 @@ urlpatterns = [
 	url(r'^datagroup/new$', views.data_group_create, name='data_group_new'),
 	url(r'^datagroup/edit/(?P<pk>\d+)$', views.data_group_update, name='data_group_edit'),
 	url(r'^datagroup/delete/(?P<pk>\d+)$', views.data_group_delete, name='data_group_delete'),
-	url(r'^product_curation/$', views.product_curation_index, name='product_curation'),	
+	url(r'^product_curation/$', views.product_curation_index, name='product_curation'),
 	url(r'^product_curation/$', views.product_curation_index, name='product_curation'),
 	url(r'^category_assignment/(?P<pk>\d+)$', views.category_assignment, name='category_assignment'),
 	url(r'^link_product_list/(?P<pk>\d+)$', views.link_product_list, name='link_product_list'),
@@ -24,8 +24,9 @@ urlpatterns = [
 	url(r'^extractionscript/(?P<pk>\d+)$', views.extraction_script_detail, name='extraction_script_detail'),
 	url(r'^qa/$', views.qa_index, name='qa'),
 	url(r'^product_puc/(?P<pk>\d+)$', views.assign_puc_to_product, name='product_puc'),
-	url(r'^puc-autocomplete/$', views.product_autocomplete.PUCAutocomplete.as_view(), 
-	name='puc-autocomplete')
+	url(r'^puc-autocomplete/$', views.product_autocomplete.PUCAutocomplete.as_view(),
+	name='puc-autocomplete'),
+	url(r'^product/(?P<pk>\d+)$', views.product_detail, name='product')
 	# test with: /puc-autocomplete/?q=Art
 ]
 

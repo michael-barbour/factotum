@@ -2,33 +2,34 @@
 {% load humanize %}
 
 {% block content %}
-
-
 <h1 class="col-sm-12"><span class="oi oi-wrench" title="factotum" aria-hidden="true"></span>
 Link Product To Product Category</h1>
 <br>
-<h2><a href="{% url "data_source_detail" datasource.id %}" 
-  title="Link to {{ datasource.title }}">{{ datasource.title }}</a>
-</h2> 
-<h3>
-  Products without any category assignments:
-</h3> 
+<div class="col-sm-12">
+  <h2><a href="{% url "data_source_detail" datasource.id %}"
+    title="Link to {{ datasource.title }}">{{ datasource.title }}</a>
+  </h2>
+  <h3>
+    Products without any category assignments:
+  </h3>
+</div>
 
 <table class="table table-sm table-bordered table-striped table-sortable" id="category">
   <thead class="table-primary">
-      <th>Title</th>
+      <th>Product</th>
       <th>MSDS</th>
       <th>PUC</th>
   </thead>
   <tbody>
   {% for product in products %}
     <tr>
-      <td>{{ product.title }}</td>
+      <td><a href="{% url "product" product.id %}"
+      title="Link to {{ product.title }}">{{ product.title }}</a></td>
       <td>
         {% if product.msds%}
-          <a href="/media/{{ product.msds.data_group.dgurl }}/pdf/{{ product.msds.filename }}" 
-          title="Link to {{ product.msds.filename }}" 
-          target = "_blank">{{ product.msds.title }}</a>
+          <a class="btn btn-sm btn-info" role="button" href="/media/{{ product.msds.data_group.dgurl }}/pdf/{{ product.msds.filename }}"
+          title="Link to {{ product.msds.filename }}"
+          target = "_blank"><span class="oi oi-spreadsheet"></span> {{ product.msds.title }}</a>
         {% else %}
 
         {% endif %}

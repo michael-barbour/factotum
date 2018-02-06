@@ -35,7 +35,7 @@ class Product(models.Model):
 		return self.title
 
 	def get_absolute_url(self):
-		return reverse('product_detail', kwargs={'pk': self.pk})
+		return reverse('product', kwargs={'pk': self.pk})
 
 	def indexing(self):
 		obj = ProductIndex(

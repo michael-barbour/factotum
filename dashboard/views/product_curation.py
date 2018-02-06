@@ -63,7 +63,7 @@ def category_assignment(request, pk, template_name=('product_curation/'
             product.msds = product.datadocument_set.all()[0]
         except IndexError:
             product.msds = 0
-    return render(request, template_name,{'datasource':ds, 'products':products})
+    return render(request, template_name, {'datasource': ds, 'products': products})
 
 @login_required()
 def link_product_list(request,  pk, template_name='product_curation/link_product_list.html'):
@@ -94,19 +94,18 @@ def link_product_form(request, pk, template_name=('product_curation/'
                 product = Product.objects.get(title=title)
             except Product.DoesNotExist:
                 upc_stub = ('stub_' +
-                            title +
+                            # title +  ### Removed as title busts product UPC size limits
                             str(Product.objects.all().count() + 1))
-                product = Product.objects.create(title         = title,
-                                                 brand_name     = brand_name,
-                                                upc            = upc_stub,
-                                                data_source_id = data_source_id,
-                                                created_at     = timezone.now(),
-                                                updated_at     = timezone.now())
-            p = ProductDocument(product=product,document=doc)
+                product = Product.objects.create(title=title,
+                                                 brand_name=brand_name,
+                                                 upc=upc_stub,
+                                                 data_source_id=data_source_id,
+                                                 created_at=timezone.now(),
+                                                 updated_at=timezone.now())
+            p = ProductDocument(product=product, document=doc)
             p.save()
         return redirect('link_product_list', pk=data_source_id)
-    return render(request, template_name,{'document': doc,
-                                            'form'  : form})
+    return render(request, template_name,{'document': doc, 'form': form})
 
 @login_required()
 def assign_puc_to_product(request, pk, template_name=('product_curation/'
@@ -118,5 +117,5 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
         p.updated_at = datetime.now()
         form.save()
         return redirect('category_assignment', pk=p.data_source.id)
-    return render(request, template_name,{'product':p, 'form':form})
+    return render(request, template_name,{'product': p, 'form': form})
 

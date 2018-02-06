@@ -27,6 +27,12 @@ class ProductPUCForm(forms.ModelForm):
         fields = ['prod_cat']
 
 @login_required()
+def product_detail(request, pk,
+						template_name='product_curation/product_detail.html'):
+	product = get_object_or_404(Product, pk=pk, )
+	return render(request, template_name, {'product'  : product,})
+
+@login_required()
 def product_curation_index(request, template_name='product_curation/product_curation_index.html'):
     # List of all data sources which have had at least 1 data
     # document matched to a registered record

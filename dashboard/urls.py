@@ -26,6 +26,7 @@ urlpatterns = [
 	url(r'^product_puc/(?P<pk>\d+)$', views.assign_puc_to_product, name='product_puc'),
 	url(r'^puc-autocomplete/$', views.product_autocomplete.PUCAutocomplete.as_view(), 
 	name='puc-autocomplete'),
+    url(r'^product/(?P<pk>\d+)$', views.product_detail, name='product_detail'),
     url(r'^search/', include('haystack.urls')),
 ]
 

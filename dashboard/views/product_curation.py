@@ -14,8 +14,8 @@ class ProductForm(ModelForm):
         model = Product
         fields = ['title', 'brand_name']
 
-class ProductPUCForm(forms.ModelForm):
-    prod_cat = forms.ModelChoiceField(
+class ProductPUCForm(ModelForm):
+    prod_cat = ModelChoiceField(
         queryset=ProductCategory.objects.all(),
 		label='Category',
         widget=autocomplete.ModelSelect2(

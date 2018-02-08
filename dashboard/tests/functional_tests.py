@@ -18,7 +18,7 @@ from django.core.files.storage import FileSystemStorage
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from dashboard.models import (DataGroup, DataSource, DataDocument,
-                                ExtractionScript, ExtractedText, Product)
+                                Script, ExtractedText, Product)
 
 def log_karyn_in(object):
     '''
@@ -95,7 +95,7 @@ class TestDataSource(LiveServerTestCase):
         b = len(DataGroup.objects.filter(data_source_id=1))
         self.browser.get(self.live_server_url + '/datasource/1')
         row_count = len(self.browser.find_elements_by_xpath(
-                                "//table[@id='data_group_table']/tbody/tr"))
+                                "//table[@id='groups']/tbody/tr"))
         self.assertEqual(b, row_count)
 
 
@@ -252,11 +252,11 @@ class TestQAScoreboard(LiveServerTestCase):
         # A link in the nav bar to the QA Home page
         self.browser.get('%s%s' % (self.live_server_url, ''))
         nav_html = self.browser.find_element_by_xpath('//*[@id="navbarCollapse"]/ul').get_attribute('innerHTML')
-        self.assertIn('href="/qa/"', nav_html, 
+        self.assertIn('href="/qa/"', nav_html,
         'The link to /qa/ must be in the nav list')
 
         self.browser.get('%s%s' % (self.live_server_url, '/qa'))
-        scriptcount = ExtractionScript.objects.count()
+        scriptcount = Script.objects.filter(script_type='EX').count()
 
         # A Table on the QA home page
         row_count = len(self.browser.find_elements_by_xpath(
@@ -275,12 +275,13 @@ class TestQAScoreboard(LiveServerTestCase):
 
         displayed_pct_checked = self.browser.find_elements_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr/td[3]')[0].text
-        model_pct_checked = ExtractionScript.objects.get(pk=1).get_pct_checked()
+        #this assumes that pk=1 will be a script_type of 'EX'
+        model_pct_checked = Script.objects.get(pk=1).get_pct_checked()
         self.assertEqual(displayed_pct_checked, model_pct_checked,
                         ('The displayed percentage should match what is '
                         'derived from the model'))
 
-        es = ExtractionScript.objects.get(pk=1)
+        es = Script.objects.get(pk=1)
         self.assertEqual(es.get_qa_complete_extractedtext_count(), 0,
                         ('The ExtractionScript object should return 0'
                         'qa_checked ExtractedText objects'))
@@ -293,7 +294,7 @@ class TestQAScoreboard(LiveServerTestCase):
         self.assertEqual(ExtractedText.objects.get(pk=1).qa_checked , True,
                         'The object should now have qa_checked = True')
 
-        es = ExtractionScript.objects.get(pk=1)
+        es = Script.objects.get(pk=1)
         self.assertEqual(es.get_qa_complete_extractedtext_count(), 1,
                         ('The ExtractionScript object should return 1 '
                         'qa_checked ExtractedText object'))
@@ -302,7 +303,7 @@ class TestQAScoreboard(LiveServerTestCase):
                         'Check the numerator in the model layer')
         self.assertEqual(2, es.get_datadocument_count(),
                         'Check the denominator in the model layer')
-        model_pct_checked = ExtractionScript.objects.get(pk=1).get_pct_checked()
+        model_pct_checked = Script.objects.get(pk=1).get_pct_checked()
         self.assertEqual(model_pct_checked, '50%',
                         ('The get_pct_checked() method should return 50 pct'
                         ' from the model layer'))
@@ -319,21 +320,21 @@ class TestQAScoreboard(LiveServerTestCase):
         script_qa_link = self.browser.find_element_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr/td[4]/a'
         )
-        # Before clicking the link, the script's qa_done property 
+        # Before clicking the link, the script's qa_done property
         # should be false
-        self.assertEqual(ExtractionScript.objects.get(pk=1).qa_begun, False,
-        'The qa_done property of the ExtractionScript should be False')
+        self.assertEqual(Script.objects.get(pk=1).qa_begun, False,
+        'The qa_done property of the Script should be False')
 
         script_qa_link.click()
-        # The link should open a page where the h1 text matches the title 
-        # of the ExtractionScript
+        # The link should open a page where the h1 text matches the title
+        # of the Script
         h1 = self.browser.find_element_by_xpath('/html/body/div/h1').text
-        self.assertIn(ExtractionScript.objects.get(pk=1).title, h1, 
-        'The <h1> text should equal the .title of the ExtractionScript')
+        self.assertIn(Script.objects.get(pk=1).title, h1,
+        'The <h1> text should equal the .title of the Script')
 
         # Opening the ExtractionScript's QA page should set its qa_begun
         # property to True
-        self.assertEqual(ExtractionScript.objects.get(pk=1).qa_begun, True,
+        self.assertEqual(Script.objects.get(pk=1).qa_begun, True,
         'The qa_done property of the ExtractionScript should now be True')
         # Go back to the QA index page to confirm
         self.browser.get('%s%s' % (self.live_server_url, '/qa'))
@@ -375,27 +376,35 @@ class TestPUCAssignment(LiveServerTestCase):
         # So that I can more easily navigate through products if they are grouped.
 
         # From the assignment of product category
-        # Click button, form appears which shows you a pdf icon allowing you to view pdf, 
-        # product name (Product.title), auto complete box for PUC - when you start typing 
-        # auto complete looks at general, specific, product family to match what the user 
-        # is typing (auto complete should work like Google), expect minimum of three 
+        # Click button, form appears which shows you a pdf icon allowing you to view pdf,
+        # product name (Product.title), auto complete box for PUC - when you start typing
+        # auto complete looks at general, specific, product family to match what the user
+        # is typing (auto complete should work like Google), expect minimum of three
         # characters before auto complete appears
         self.browser.get('%s%s' % (self.live_server_url, '/product_puc/1'))
         h2 = self.browser.find_element_by_xpath('/html/body/div/h2').text
-        self.assertIn(Product.objects.get(pk=1).title, h2, 
+        self.assertIn(Product.objects.get(pk=1).title, h2,
         'The <h2> text should equal the .title of the product')
 
-        puc_before = Product.objects.get(pk=1).prod_cat 
+        puc_before = Product.objects.get(pk=1).prod_cat
 
         puc_selector = self.browser.find_element_by_xpath('//*[@id="id_prod_cat"]')
-        puc_selector = self.browser.find_element_by_xpath('//*[@id="select2-id_prod_cat-container"]')
-        puc_sibling = self.browser.find_element_by_xpath('//*[@id="id_prod_cat"]/following::*')
-        puc_sibling.click()
-
+        # puc_selector = self.browser.find_element_by_xpath('//form/span[@id="select2-id_prod_cat-container"]')
+        puc_selector = self.browser.find_element_by_xpath('//form/p[1]/select[@name="prod_cat"]')
+        # puc_selector = self.browser.find_element_by_xpath('//form/p[1]/span[@class name="select2-container--open"]')
+        # time.sleep(47)
+        # puc_selector = self.browser.find_element_by_css_selector('span.select2')
+        # puc_selector = wait_for_element(self, "select2", "class")
+        print(puc_selector)
+        puc_selector.click()
+        # puc_sibling = self.browser.find_element_by_xpath('//*[@id="id_prod_cat"]/following::*')
+        # puc_sibling.click()
+# ath("//form[@id='loginForm']")
         #wait_for_element(self, "select2-search__field", "class").click()
+        time.sleep(47)
         puc_input = self.browser.find_element_by_class_name('select2-search__field')
-        puc_input.send_keys('pet care')        
-        
+        puc_input.send_keys('pet care')
+
         # The driver cannot immediately type into the input box - it needs
         # to load an element first, as explained here:
         # https://stackoverflow.com/questions/34422274/django-selecting-autocomplete-light-choices-with-selenium
@@ -408,13 +417,6 @@ class TestPUCAssignment(LiveServerTestCase):
 
         submit_button = self.browser.find_element_by_xpath('/html/body/div/div/form/button')
         submit_button.click()
-        puc_after = Product.objects.get(pk=1).prod_cat 
+        puc_after = Product.objects.get(pk=1).prod_cat
         # check the model layer for the change
         self.assertNotEqual(puc_before, puc_after, "The object's prod_cat should have changed")
-        
-
-
-
-
-
-

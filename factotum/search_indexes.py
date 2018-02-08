@@ -4,8 +4,15 @@ from dashboard.models import DataDocument, DataGroup, Product, ProductCategory
 
 
 class ProductIndex(indexes.SearchIndex, indexes.Indexable):
-    text = indexes.CharField(document=True, use_template=True)
-    created_at = indexes.DateTimeField(model_attr='created_at')
+    text = indexes.EdgeNgramField(
+    document=True, use_template=True,
+    template_name='search/indexes/dashboard/product_text.txt')
+    title = indexes.EdgeNgramField(model_attr='title')
+    short_description = indexes.EdgeNgramField(model_attr="short_description", null=True)
+
+    prod_cat = indexes.CharField(
+    model_attr='prod_cat',
+    faceted=True)
 
     def get_model(self):
         return Product

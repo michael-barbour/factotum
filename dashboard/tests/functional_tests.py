@@ -16,6 +16,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.core.files.storage import FileSystemStorage
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from dashboard.models import (DataGroup, DataSource, DataDocument,
                                 ExtractionScript, ExtractedText, Product)
@@ -252,7 +253,7 @@ class TestQAScoreboard(LiveServerTestCase):
         # A link in the nav bar to the QA Home page
         self.browser.get('%s%s' % (self.live_server_url, ''))
         nav_html = self.browser.find_element_by_xpath('//*[@id="navbarCollapse"]/ul').get_attribute('innerHTML')
-        self.assertIn('href="/qa/"', nav_html, 
+        self.assertIn('href="/qa/"', nav_html,
         'The link to /qa/ must be in the nav list')
 
         self.browser.get('%s%s' % (self.live_server_url, '/qa'))
@@ -319,16 +320,16 @@ class TestQAScoreboard(LiveServerTestCase):
         script_qa_link = self.browser.find_element_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr/td[4]/a'
         )
-        # Before clicking the link, the script's qa_done property 
+        # Before clicking the link, the script's qa_done property
         # should be false
         self.assertEqual(ExtractionScript.objects.get(pk=1).qa_begun, False,
         'The qa_done property of the ExtractionScript should be False')
 
         script_qa_link.click()
-        # The link should open a page where the h1 text matches the title 
+        # The link should open a page where the h1 text matches the title
         # of the ExtractionScript
         h1 = self.browser.find_element_by_xpath('/html/body/div/h1').text
-        self.assertIn(ExtractionScript.objects.get(pk=1).title, h1, 
+        self.assertIn(ExtractionScript.objects.get(pk=1).title, h1,
         'The <h1> text should equal the .title of the ExtractionScript')
 
         # Opening the ExtractionScript's QA page should set its qa_begun
@@ -356,7 +357,7 @@ def wait_for_element(self, elm, by = 'id', timeout=10):
     return self.browser.find_element_by_xpath(elm)
 
 
-class TestPUCAssignment(LiveServerTestCase):
+class TestPUCAssignment(StaticLiveServerTestCase):
     # Issue 80 https://github.com/HumanExposure/factotum/issues/80
     #
     fixtures = ['seed_data','seed_product_category.yaml']
@@ -375,17 +376,17 @@ class TestPUCAssignment(LiveServerTestCase):
         # So that I can more easily navigate through products if they are grouped.
 
         # From the assignment of product category
-        # Click button, form appears which shows you a pdf icon allowing you to view pdf, 
-        # product name (Product.title), auto complete box for PUC - when you start typing 
-        # auto complete looks at general, specific, product family to match what the user 
-        # is typing (auto complete should work like Google), expect minimum of three 
+        # Click button, form appears which shows you a pdf icon allowing you to view pdf,
+        # product name (Product.title), auto complete box for PUC - when you start typing
+        # auto complete looks at general, specific, product family to match what the user
+        # is typing (auto complete should work like Google), expect minimum of three
         # characters before auto complete appears
         self.browser.get('%s%s' % (self.live_server_url, '/product_puc/1'))
         h2 = self.browser.find_element_by_xpath('/html/body/div/h2').text
-        self.assertIn(Product.objects.get(pk=1).title, h2, 
+        self.assertIn(Product.objects.get(pk=1).title, h2,
         'The <h2> text should equal the .title of the product')
 
-        puc_before = Product.objects.get(pk=1).prod_cat 
+        puc_before = Product.objects.get(pk=1).prod_cat
 
         puc_selector = self.browser.find_element_by_xpath('//*[@id="id_prod_cat"]')
         puc_selector = self.browser.find_element_by_xpath('//*[@id="select2-id_prod_cat-container"]')
@@ -394,8 +395,8 @@ class TestPUCAssignment(LiveServerTestCase):
 
         #wait_for_element(self, "select2-search__field", "class").click()
         puc_input = self.browser.find_element_by_class_name('select2-search__field')
-        puc_input.send_keys('pet care')        
-        
+        puc_input.send_keys('pet care')
+
         # The driver cannot immediately type into the input box - it needs
         # to load an element first, as explained here:
         # https://stackoverflow.com/questions/34422274/django-selecting-autocomplete-light-choices-with-selenium
@@ -408,13 +409,6 @@ class TestPUCAssignment(LiveServerTestCase):
 
         submit_button = self.browser.find_element_by_xpath('/html/body/div/div/form/button')
         submit_button.click()
-        puc_after = Product.objects.get(pk=1).prod_cat 
+        puc_after = Product.objects.get(pk=1).prod_cat
         # check the model layer for the change
         self.assertNotEqual(puc_before, puc_after, "The object's prod_cat should have changed")
-        
-
-
-
-
-
-

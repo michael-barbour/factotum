@@ -113,3 +113,9 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
         form.save()
         return redirect('category_assignment', pk=p.data_source.id)
     return render(request, template_name,{'product': p, 'form': form})
+
+@login_required()
+def product_detail(request, pk, template_name=('product_curation/'
+                                                'product_detail.html')):
+    p = Product.objects.get(pk=pk)
+    return render(request, template_name,{'product': p})

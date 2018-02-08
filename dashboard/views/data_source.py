@@ -5,7 +5,6 @@ from django.forms import inlineformset_factory
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 
-from dashboard.views import *
 from dashboard.models import DataSource
 from dashboard.models import DataGroup
 from .data_group import DataGroupForm

@@ -6,7 +6,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
 
-from dashboard.views import *
 from dashboard.models import (DataGroup, DataDocument, DataSource,
                               ExtractedText, Script)
 

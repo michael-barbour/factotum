@@ -1,9 +1,9 @@
+import django_filters
+
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
-from dashboard.views import *
-from dashboard.models import DataSource, DataDocument, Script
-import django_filters
+from dashboard.models import Script
 
 # we are not currently using this class
 class ExtractionScriptFilter(django_filters.FilterSet):

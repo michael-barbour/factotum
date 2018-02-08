@@ -24,6 +24,10 @@
       01:28:49+00:00', updated_at: null}
 - model: dashboard.script
   pk: 1
+  fields: {title: MSDS scraper script, url: 'https://github.com/HumanExposure/MSDS_scraper_script.rmd',
+    qa_begun: false, script_type: DL}
+- model: dashboard.script
+  pk: 2
   fields: {title: Default Extraction Script, url: 'https://github.com/HumanExposure/Extractors/DefaultScript.r',
     qa_begun: false, script_type: EX}
 - model: dashboard.datasource
@@ -61,7 +65,7 @@
     data_document: 4,
     doc_date: '2018-01-08',
     rev_num: 1,
-    extraction_script: 1
+    extraction_script: 2
   }
 - model: dashboard.datadocument
   pk: 5
@@ -74,12 +78,8 @@
     data_document: 5,
     doc_date: '2018-01-08',
     rev_num: 1,
-    extraction_script: 1
+    extraction_script: 2
   }
-- model: dashboard.script
-  pk: 1
-  fields: {title: MSDS scraper script, url: 'https://github.com/HumanExposure/MSDS_scraper_script.rmd',
-    qa_begun: false, script_type: DL}
 - model: dashboard.datagroup
   pk: 1
   fields: {name: Walmart MSDS 1, description: MSDS from Walmart group 1, downloaded_by: 1,

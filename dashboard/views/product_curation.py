@@ -1,10 +1,11 @@
+from dal import autocomplete
+
 from django.utils import timezone
 from django.forms import ModelForm, ModelChoiceField
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from dashboard.views import *
+
 from dashboard.models import DataSource, DataDocument, Product, ProductDocument, ProductCategory
-from dal import autocomplete
 
 
 class ProductForm(ModelForm):
@@ -18,7 +19,7 @@ class ProductPUCForm(forms.ModelForm):
         queryset=ProductCategory.objects.all(),
 		label='Category',
         widget=autocomplete.ModelSelect2(
-			url='puc-autocomplete', 
+			url='puc-autocomplete',
           	attrs={'data-minimum-input-length': 3,  })
     )
 
@@ -112,4 +113,3 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
         form.save()
         return redirect('category_assignment', pk=p.data_source.id)
     return render(request, template_name,{'product': p, 'form': form})
-

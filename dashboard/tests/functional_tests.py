@@ -389,19 +389,11 @@ class TestPUCAssignment(LiveServerTestCase):
         puc_before = Product.objects.get(pk=1).prod_cat
 
         puc_selector = self.browser.find_element_by_xpath('//*[@id="id_prod_cat"]')
-        # puc_selector = self.browser.find_element_by_xpath('//form/span[@id="select2-id_prod_cat-container"]')
-        puc_selector = self.browser.find_element_by_xpath('//form/p[1]/select[@name="prod_cat"]')
-        # puc_selector = self.browser.find_element_by_xpath('//form/p[1]/span[@class name="select2-container--open"]')
-        # time.sleep(47)
-        # puc_selector = self.browser.find_element_by_css_selector('span.select2')
-        # puc_selector = wait_for_element(self, "select2", "class")
-        print(puc_selector)
-        puc_selector.click()
-        # puc_sibling = self.browser.find_element_by_xpath('//*[@id="id_prod_cat"]/following::*')
-        # puc_sibling.click()
-# ath("//form[@id='loginForm']")
+        puc_selector = self.browser.find_element_by_xpath('//*[@id="select2-id_prod_cat-container"]')
+        puc_sibling = self.browser.find_element_by_xpath('//*[@id="id_prod_cat"]/following::*')
+        puc_sibling.click()
+
         #wait_for_element(self, "select2-search__field", "class").click()
-        time.sleep(47)
         puc_input = self.browser.find_element_by_class_name('select2-search__field')
         puc_input.send_keys('pet care')
 

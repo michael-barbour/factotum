@@ -18,6 +18,8 @@ class ProductIndex(DocType):
     long_description = Text()
     short_description = Text()
     prod_cat = Text(faceted=True)
+    upc = Text()
+    model_number = Text()
 
     class Meta:
         index = 'product-index'

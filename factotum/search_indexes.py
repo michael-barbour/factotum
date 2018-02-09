@@ -8,11 +8,20 @@ class ProductIndex(indexes.SearchIndex, indexes.Indexable):
     document=True, use_template=True,
     template_name='search/indexes/dashboard/product_text.txt')
     title = indexes.EdgeNgramField(model_attr='title')
+    
     short_description = indexes.EdgeNgramField(model_attr="short_description", null=True)
 
+    brand_name = indexes.CharField(
+        model_attr='brand_name',
+        faceted=True)
+
     prod_cat = indexes.CharField(
-    model_attr='prod_cat',
-    faceted=True)
+        model_attr='prod_cat',
+        faceted=True)
+    
+    source_category = indexes.CharField(
+        model_attr='source_category',
+        faceted=True)
 
     def get_model(self):
         return Product

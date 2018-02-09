@@ -44,6 +44,7 @@ class Product(models.Model):
 			brand_name=self.brand_name,
 			short_description=self.short_description,
 			long_description=self.long_description,
+            source_category=self.source_category
 		)
 		obj.save()
 		return obj.to_dict(include_meta=True)

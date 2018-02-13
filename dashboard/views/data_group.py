@@ -157,3 +157,9 @@ def data_group_delete(request, pk, template_name='data_source/datasource_confirm
 		datagroup.delete()
 		return redirect('data_group_list')
 	return render(request, template_name, {'object': datagroup})
+
+@login_required()
+def data_document_detail(request, pk,
+						template_name='data_group/data_document_detail.html'):
+	doc = get_object_or_404(DataDocument, pk=pk, )
+	return render(request, template_name, {'doc'  : doc,})

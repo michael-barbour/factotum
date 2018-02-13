@@ -7,39 +7,49 @@
 {% endblock %}
 {% block content %}
 <div class="container">
-        <div class="col-md-6">
-        <form class="search-form-container" action="/find/" method="get" >
-        <div class="form-group">
-        <div class="icon-addon addon-lg">
-        <input type="text" placeholder="what are you looking for ?" class="form-control" name="q" id="q" autocomplete="off">
-        <div id="selction-ajax"></div>
-        </div>
-        </div>
-        </form>
-      </div>
+
 <div class="row">
 {% if  page_obj.object_list %}
 <div class="col-md-3">
-	<h3>Filters</h3>
+
+        {% if facets.fields.facet_model_name %}
         <dl>
-        {% if facets.fields.prod_cat %}
-        <dt>Filter by Category</dt>
-        {% for prod_cat in facets.fields.prod_cat %}
-        {% if prod_cat.1 != 0 %}
-        <dd>
-        <input class="facet" id="{{prod_cat.0|cut:" "}}" type="checkbox" name="prod_cat" value="{{ prod_cat.0 }}" 
-        data-toggle="toggle" /> {{ prod_cat.0 }} ({{ prod_cat.1 }})
-        </dd>
-        {% endif %}
+        <dt>Filter by Object Type</dt>
+        {% for facet_model_name in facets.fields.facet_model_name %}
+            {% if facet_model_name.1 != 0 %}
+            <dd>
+            <input class="facet" id="{{facet_model_name.0|cut:" "}}" type="checkbox" name="facet_model_name" value="{{ facet_model_name.0 }}" 
+            data-toggle="toggle" /> {{ facet_model_name.0 }} ({{ facet_model_name.1 }})
+            </dd>
+            {% endif %}
         {% endfor %}
-        {% endif %}
         </dl>
         <div>
         <input class="btn btn-info btn-sm pull-right" type="submit" value="apply filter" onclick="return onFacetChangeApplied();" />
         </div>
+        {% endif %}
+
+
+	<h3>Product Filters</h3>
+        {% if facets.fields.prod_cat %}
         <dl>
+        <dt>Filter by Category</dt>
+        {% for prod_cat in facets.fields.prod_cat %}
+            {% if prod_cat.1 != 0 %}
+            <dd>
+            <input class="facet" id="{{prod_cat.0|cut:" "}}" type="checkbox" name="prod_cat" value="{{ prod_cat.0 }}" 
+            data-toggle="toggle" /> {{ prod_cat.0 }} ({{ prod_cat.1 }})
+            </dd>
+            {% endif %}
+        {% endfor %}
+        </dl>
+        <div>
+        <input class="btn btn-info btn-sm pull-right" type="submit" value="apply filter" onclick="return onFacetChangeApplied();" />
+        </div>
+        {% endif %}
 
         {% if facets.fields.brand_name %}
+        <dl>
         <dt>Filter by Brand</dt>
         {% for brand_name in facets.fields.brand_name %}
         {% if brand_name.1 != 0 %}
@@ -48,27 +58,49 @@
         </dd>
         {% endif %}
         {% endfor %}
-        {% endif %}
         </dl>
         <div>
         <input class="btn btn-info btn-sm pull-right" type="submit" value="apply filter" onclick="return onFacetChangeApplied();" />
         </div>
+        {% endif %}
 
-        {% if facets.fields.brand_name %}
+        {% if facets.fields.source_category %}
+        <dl>
         <dt>Filter by Source Category</dt>
-        {% for brand_name in facets.fields.source_category %}
+        {% for source_category in facets.fields.source_category %}
         {% if source_category.1 != 0 %}
         <dd>
         <input class="facet" id="{{source_category.0|cut:" "}}" type="checkbox" name="source_category" value="{{ source_category.0 }}" /> {{ source_category.0 }} ({{ source_category.1 }})
         </dd>
         {% endif %}
         {% endfor %}
-        {% endif %}
+        
         </dl>
         <div>
         <input class="btn btn-info btn-sm pull-right" type="submit" value="apply filter" onclick="return onFacetChangeApplied();" />
         </div>
-    </div>
+        {% endif %}
+
+        <h3>Data Document Filters</h3>
+        <p><code>Document Type will be a facet: not yet implemented in DataDocument model</code></p>
+        <!-- TODO: the doc_type field has not yet been added to the DataDocumentModel -->
+        {% if facets.fields.doc_type %}
+        <dl>
+        <dt>Filter by Document Type</dt>
+        {% for doc_type in facets.fields.doc_type %}
+            {% if doc_type.1 != 0 %}
+            <dd>
+            <input class="facet" id="{{doc_type.0|cut:" "}}" type="checkbox" name="doc_type" value="{{ doc_type.0 }}" 
+            data-toggle="toggle" /> {{ doc_type.0 }} ({{ doc_type.1 }})
+            </dd>
+            {% endif %}
+        {% endfor %}
+        </dl>
+        <div>
+        <input class="btn btn-info btn-sm pull-right" type="submit" value="apply filter" onclick="return onFacetChangeApplied();" />
+        </div>
+        {% endif %}
+</div>
 {% endif %}
 	<div class="col-md-9">
             <div class="row">
@@ -87,11 +119,11 @@
                 <ol class="row top20">
                     {% for result in page_obj.object_list %}
                         <div class="showcase col-sm-6 col-md-4">
+           <h3>{{result.object}}</h3>
 		   <a href="{{ result.object.get_absolute_url }}">
-		      <h3>{{result.object.title}}</h3>
-			            <img src="{{ result.object.image.url }}" class="img-responsive">
+		      <h4>{{result.object.title}}</h4>
 		   </a>
-		    <h4 class="text-center"><span class="label label-info">{{result.object.brand_name}}</span></h4>
+		    <p class="text-center"><span class="label label-info">{{result.object.brand_name}}</span></p>
 		    </div>
                     {% endfor %}
                 </ol>
@@ -123,4 +155,5 @@
 	</div>
 </div>
 </div>
+
 {% endblock %} 

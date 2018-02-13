@@ -18,7 +18,18 @@ class DataDocument(models.Model):
 		return self.title
 
 	def get_absolute_url(self):
-		return reverse('data_document_edit', kwargs={'pk': self.pk})
+		return reverse('data_document', kwargs={'pk': self.pk})
 
 	def get_download_script(self):
 		return self__data_group.download_script
+
+	def indexing(self):
+		obj = DataDocumentIndex(
+			meta={'id': self.id},
+			title=self.title,
+			filename=self.filename,
+			url=self.url,
+            facet_model_name='Data Document',
+		)
+		obj.save()
+		return obj.to_dict(include_meta=True)

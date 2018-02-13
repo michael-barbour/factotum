@@ -5,8 +5,6 @@ from .source_category import SourceCategory
 from .product_category import ProductCategory
 from django.utils import timezone
 from django.core.urlresolvers import reverse
-from factotum.search import ProductIndex
-
 
 
 class Product(models.Model):
@@ -36,15 +34,3 @@ class Product(models.Model):
 
 	def get_absolute_url(self):
 		return reverse('product', kwargs={'pk': self.pk})
-
-	def indexing(self):
-		obj = ProductIndex(
-			meta={'id': self.id},
-			title=self.title,
-			brand_name=self.brand_name,
-			short_description=self.short_description,
-			long_description=self.long_description,
-            source_category=self.source_category
-		)
-		obj.save()
-		return obj.to_dict(include_meta=True)

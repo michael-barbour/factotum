@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'factotum',
     'django_filters',
-    'debug_toolbar',
+#    'debug_toolbar',
     'haystack',
     'haystack_elasticsearch',
     'webpack_loader',
@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+#    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'factotum.urls'
@@ -126,6 +126,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
     os.path.join(BASE_DIR, 'assets'),
 ]
+
+DEBUG = True
 
 LOGIN_REDIRECT_URL = 'index'
 LOGIN_URL = 'login'

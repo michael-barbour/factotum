@@ -34,7 +34,7 @@ class ProductIndex(indexes.SearchIndex, indexes.Indexable):
         return self.get_model().objects.all()
 
     def prepare_facet_model_name(self, obj):
-        return "product"
+        return "Product"
 
 class DataDocumentIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.EdgeNgramField(
@@ -46,7 +46,7 @@ class DataDocumentIndex(indexes.SearchIndex, indexes.Indexable):
     filename = indexes.EdgeNgramField(model_attr="filename", null=True)
 
     def prepare_facet_model_name(self, obj):
-        return "datadocument"
+        return "Data Document"
 
 
 # The document type can't be properly indexed until it's added here:

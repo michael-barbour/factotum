@@ -13,62 +13,13 @@ from haystack import indexes
 connections.create_connection()
 
 
-
-class ProductIndex(DocType):
-    title = Text()
-    brand_name = Text(faceted=True)
-    long_description = Text()
-    short_description = Text()
-    prod_cat = Text(faceted=True)
-    upc = Text()
-    model_number = Text()
-    source_category=Text(faceted=True)
-
-    class Meta:
-        index = 'product-index'
-
-# 
-# 
-# 
-# 
-#    
-class DataDocumentIndex(indexes.SearchIndex, indexes.Indexable):
-    text = indexes.EdgeNgramField(
-    document=True, use_template=True,
-    template_name='search/indexes/dashboard/product_text.txt')
-    title = indexes.EdgeNgramField(model_attr='title')
-    facet_model_name = indexes.CharField(faceted=True)
-    
-    filename = indexes.EdgeNgramField(model_attr="filename", null=True)
-
-    def prepare_facet_model_name(self, obj):
-        return "datadocument"
-
-
-# The document type can't be properly indexed until it's added here:
-# https://github.com/HumanExposure/factotum/issues/125   
-#    document_type = indexes.CharField(
-#        model_attr='document_type',
-#        faceted=True)
-
-    def get_model(self):
-        return DataDocument
-
-    def index_queryset(self, using=None):
-        """Used when the entire index for model is updated."""
-        return self.get_model().objects.all()
-
-
-
-
-
-
 def bulk_indexing():
-
+# TODO: get bulk indexing to work
     ProductIndex.init()
     es = Elasticsearch()
     bulk(client=es, actions=(b.indexing() for b in models.Product.objects.all().iterator()))
-
+    DataDocumentIndex.init()
+    bulk(client=es, actions=(b.indexing() for b in models.DataDocument.objects.all().iterator()))
 
 class FacetedSearchView(BaseFacetedSearchView):
 

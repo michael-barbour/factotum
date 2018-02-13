@@ -119,7 +119,7 @@
                 <ol class="row top20">
                     {% for result in page_obj.object_list %}
                         <div class="showcase col-sm-6 col-md-4">
-           <h3>{{result.object}}</h3>
+           <h5>{{result.facet_model_name}}</h5>
 		   <a href="{{ result.object.get_absolute_url }}">
 		      <h4>{{result.object.title}}</h4>
 		   </a>

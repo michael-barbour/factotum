@@ -97,6 +97,7 @@
         </li>
         <ul class="nav navbar-nav ml-auto">
             <li class="nav-item {% if 'find' in request.resolver_match.url_name %}active{% endif %}">
+                <!-- TODO: the input form should contain the search query string -->
                 <form class="search-form-container" action="/find/" method="get" >
                     <div class="icon-addon addon-lg">
                     <input type="text" placeholder="search" class="form-control" name="q" id="q" autocomplete="off">

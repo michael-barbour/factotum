@@ -11,6 +11,9 @@
 <div class="row">
 {% if  page_obj.object_list %}
 <div class="col-md-3">
+        <div>
+                <input id="btn-apply-filters" class="btn btn-info btn-lg pull-right" type="submit" value="Apply Filters" onclick="return onFacetChangeApplied();" />
+        </div>
 
         {% if facets.fields.facet_model_name %}
         <dl>
@@ -24,9 +27,9 @@
             {% endif %}
         {% endfor %}
         </dl>
-        <div>
+        <!-- <div>
         <input class="btn btn-info btn-sm pull-right" type="submit" value="apply filter" onclick="return onFacetChangeApplied();" />
-        </div>
+        </div> -->
         {% endif %}
 
 
@@ -43,9 +46,9 @@
             {% endif %}
         {% endfor %}
         </dl>
-        <div>
+        <!-- <div>
         <input class="btn btn-info btn-sm pull-right" type="submit" value="apply filter" onclick="return onFacetChangeApplied();" />
-        </div>
+        </div> -->
         {% endif %}
 
         {% if facets.fields.brand_name %}
@@ -59,9 +62,9 @@
         {% endif %}
         {% endfor %}
         </dl>
-        <div>
+        <!-- <div>
         <input class="btn btn-info btn-sm pull-right" type="submit" value="apply filter" onclick="return onFacetChangeApplied();" />
-        </div>
+        </div> -->
         {% endif %}
 
         {% if facets.fields.source_category %}
@@ -76,9 +79,9 @@
         {% endfor %}
         
         </dl>
-        <div>
+        <!-- <div>
         <input class="btn btn-info btn-sm pull-right" type="submit" value="apply filter" onclick="return onFacetChangeApplied();" />
-        </div>
+        </div> -->
         {% endif %}
 
         <h3>Data Document Filters</h3>
@@ -96,10 +99,11 @@
             {% endif %}
         {% endfor %}
         </dl>
-        <div>
+        <!-- <div>
         <input class="btn btn-info btn-sm pull-right" type="submit" value="apply filter" onclick="return onFacetChangeApplied();" />
-        </div>
+        </div> -->
         {% endif %}
+
 </div>
 {% endif %}
 	<div class="col-md-9">

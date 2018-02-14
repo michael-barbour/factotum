@@ -7,6 +7,7 @@ from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 
 
 from django.conf import settings
@@ -395,3 +396,48 @@ class TestPUCAssignment(StaticLiveServerTestCase):
         puc_after = Product.objects.get(pk=1).prod_cat
         # check the model layer for the change
         self.assertNotEqual(puc_before, puc_after, "The object's prod_cat should have changed")
+
+class TestFacetedSearch(StaticLiveServerTestCase):
+    # Issue 104 https://github.com/HumanExposure/factotum/issues/104
+    #
+    fixtures = ['seed_data','seed_product_category.yaml']
+
+    def setUp(self):
+        self.browser = webdriver.Chrome()
+        log_karyn_in(self)
+
+    def tearDown(self):
+        self.browser.quit()
+
+    def test_elasticsearch(self):
+        #Implement faceted search within application. Desire ability to search on Products by title, 
+        # with the following two facets
+        # 
+        # Data documents, by type of data document 
+        # (e.g. no data document, MSDS, SDS, ingredient list, etc.)
+        # Product category, by general category (e.g., no product 
+        # category, list of ~12 general categories)
+        # 
+        # Search bar appears on far right side of the navigation bar, on every page of the application. 
+        # User enters a product title in the search bar. User is then taken to a landing page with 
+        # search results on product title, with the two facets visible on the left side of the page.
+
+        # Check for the elasticsearch engine
+        self.browser.get('http://127.0.0.1:9200/')
+        self.assertIn("9200", self.browser.current_url)
+        self.assertIn("elasticsearch", self.browser.page_source, "The search engine's server needs to be running")
+        
+        # use the input box to enter a search query
+        self.browser.get(self.live_server_url)
+        searchbox = self.browser.find_element_by_id('q')
+        searchbox.send_keys('raid')
+        searchbox.send_keys(Keys.RETURN)
+        self.assertIn("raid", self.browser.current_url,'The URL should contain the search string')
+        facetcheck = self.browser.find_element_by_id('Pesticides--')
+        facetcheck.click()
+        facetapply = self.browser.find_element_by_id('btn-apply-filters')
+        facetapply.click()
+        self.assertIn("prod_cat=Pesticides", self.browser.current_url,'The URL should contain the facet search string')
+
+
+

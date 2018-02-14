@@ -53,7 +53,7 @@ class TestDataSource(LiveServerTestCase):
     def test_data_source_name(self):
         self.browser.get(self.live_server_url + '/datasource/1')
         h1 = self.browser.find_element_by_name('title')
-        self.assertIn('Walmart MSDS', h1.text)
+        self.assertIn('Walmart MSDS', h1.text,'The h1 text should include "Walmart MSDS"')
 
     # When a new data source is entered, the data source is automatically
     # assigned the state 'awaiting triage.'
@@ -79,8 +79,8 @@ class TestDataSource(LiveServerTestCase):
         b = len(DataGroup.objects.filter(data_source_id=1))
         self.browser.get(self.live_server_url + '/datasource/1')
         row_count = len(self.browser.find_elements_by_xpath(
-                                "//table[@id='data_group_table']/tbody/tr"))
-        self.assertEqual(b, row_count, 'Does the number of rows in the table match the number of objects with the data_source_id of 1?')
+                                "//table[@id='groups']/tbody/tr"))
+        self.assertEqual(b, row_count, 'Does the number of objects with the data_source_id of 1 (left side) match number of rows in the table (right side)?')
 
 
 class TestDataGroup(LiveServerTestCase):

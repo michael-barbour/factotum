@@ -1,10 +1,11 @@
+from dal import autocomplete
+
 from django.utils import timezone
 from django.forms import ModelForm, ModelChoiceField
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from dashboard.views import *
+
 from dashboard.models import DataSource, DataDocument, Product, ProductDocument, ProductCategory
-from dal import autocomplete
 
 
 class ProductForm(ModelForm):
@@ -13,8 +14,8 @@ class ProductForm(ModelForm):
         model = Product
         fields = ['title', 'brand_name']
 
-class ProductPUCForm(forms.ModelForm):
-    prod_cat = forms.ModelChoiceField(
+class ProductPUCForm(ModelForm):
+    prod_cat = ModelChoiceField(
         queryset=ProductCategory.objects.all(),
 		label='Category',
         widget=autocomplete.ModelSelect2(

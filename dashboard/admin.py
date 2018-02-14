@@ -13,6 +13,8 @@ class ProductCategoryAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(DataSource)
 admin.site.register(DataGroup)
+admin.site.register(DataDocument)
+admin.site.register(Script)
 admin.site.register(SourceType)
 admin.site.register(Product)
 admin.site.register(SourceCategory)

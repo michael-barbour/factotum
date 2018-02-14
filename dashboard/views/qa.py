@@ -1,19 +1,20 @@
+import django_filters
+
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
-from dashboard.views import *
-from dashboard.models import DataSource, DataDocument, ExtractionScript
-import django_filters
+from dashboard.models import Script
 
+# we are not currently using this class
 class ExtractionScriptFilter(django_filters.FilterSet):
     title = django_filters.CharFilter(lookup_expr='iexact')
 
     class Meta:
-        model = ExtractionScript
+        model = Script
         fields = ['url']
 
 @login_required()
 def qa_index(request, template_name='qa/qa_index.html'):
 
-    extractionscripts = ExtractionScript.objects.all()
-    return render(request, template_name, {'extraction_scripts': extractionscripts})
+    scripts = Script.objects.filter(script_type='EX')
+    return render(request, template_name, {'extraction_scripts': scripts})

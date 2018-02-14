@@ -20,7 +20,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from dashboard.models import (DataGroup, DataSource, DataDocument,
-                                ExtractionScript, ExtractedText, Product)
+                                Script, ExtractedText, Product)
 
 def log_karyn_in(object):
     '''
@@ -241,7 +241,7 @@ class TestQAScoreboard(LiveServerTestCase):
         'The link to /qa/ must be in the nav list')
 
         self.browser.get('%s%s' % (self.live_server_url, '/qa'))
-        scriptcount = ExtractionScript.objects.count()
+        scriptcount = Script.objects.filter(script_type='EX').count()
 
         # A Table on the QA home page
         row_count = len(self.browser.find_elements_by_xpath(
@@ -260,12 +260,13 @@ class TestQAScoreboard(LiveServerTestCase):
 
         displayed_pct_checked = self.browser.find_elements_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr/td[3]')[0].text
-        model_pct_checked = ExtractionScript.objects.get(pk=1).get_pct_checked()
+        #this assumes that pk=1 will be a script_type of 'EX'
+        model_pct_checked = Script.objects.get(pk=1).get_pct_checked()
         self.assertEqual(displayed_pct_checked, model_pct_checked,
                         ('The displayed percentage should match what is '
                         'derived from the model'))
 
-        es = ExtractionScript.objects.get(pk=1)
+        es = Script.objects.get(pk=1)
         self.assertEqual(es.get_qa_complete_extractedtext_count(), 0,
                         ('The ExtractionScript object should return 0'
                         'qa_checked ExtractedText objects'))
@@ -278,7 +279,7 @@ class TestQAScoreboard(LiveServerTestCase):
         self.assertEqual(ExtractedText.objects.get(pk=1).qa_checked , True,
                         'The object should now have qa_checked = True')
 
-        es = ExtractionScript.objects.get(pk=1)
+        es = Script.objects.get(pk=1)
         self.assertEqual(es.get_qa_complete_extractedtext_count(), 1,
                         ('The ExtractionScript object should return 1 '
                         'qa_checked ExtractedText object'))
@@ -287,7 +288,7 @@ class TestQAScoreboard(LiveServerTestCase):
                         'Check the numerator in the model layer')
         self.assertEqual(2, es.get_datadocument_count(),
                         'Check the denominator in the model layer')
-        model_pct_checked = ExtractionScript.objects.get(pk=1).get_pct_checked()
+        model_pct_checked = Script.objects.get(pk=1).get_pct_checked()
         self.assertEqual(model_pct_checked, '50%',
                         ('The get_pct_checked() method should return 50 pct'
                         ' from the model layer'))
@@ -306,19 +307,20 @@ class TestQAScoreboard(LiveServerTestCase):
         )
         # Before clicking the link, the script's qa_done property
         # should be false
-        self.assertEqual(ExtractionScript.objects.get(pk=1).qa_begun, False,
-        'The qa_done property of the ExtractionScript should be False')
+        self.assertEqual(Script.objects.get(pk=1).qa_begun, False,
+        'The qa_done property of the Script should be False')
 
         script_qa_link.click()
         # The link should open a page where the h1 text matches the title
-        # of the ExtractionScript
+
+        # of the Script
         h1 = self.browser.find_element_by_xpath('/html/body/div/h1').text
-        self.assertIn(ExtractionScript.objects.get(pk=1).title, h1,
-        'The <h1> text should equal the .title of the ExtractionScript')
+        self.assertIn(Script.objects.get(pk=1).title, h1,
+        'The <h1> text should equal the .title of the Script')
 
         # Opening the ExtractionScript's QA page should set its qa_begun
         # property to True
-        self.assertEqual(ExtractionScript.objects.get(pk=1).qa_begun, True,
+        self.assertEqual(Script.objects.get(pk=1).qa_begun, True,
         'The qa_done property of the ExtractionScript should now be True')
         # Go back to the QA index page to confirm
         self.browser.get('%s%s' % (self.live_server_url, '/qa'))

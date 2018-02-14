@@ -140,3 +140,7 @@ nuke_and_pave.sh
 
 .vscode/launch.json
 chromedriver
+/node_modules/
+factotum.iml
+/webpack-stats.json
+/assets/bundles/

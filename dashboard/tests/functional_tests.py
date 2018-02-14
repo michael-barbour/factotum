@@ -16,6 +16,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.core.files.storage import FileSystemStorage
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from dashboard.models import (DataGroup, DataSource, DataDocument,
                                 Script, ExtractedText, Product)
@@ -327,6 +328,7 @@ class TestQAScoreboard(LiveServerTestCase):
 
         script_qa_link.click()
         # The link should open a page where the h1 text matches the title
+
         # of the Script
         h1 = self.browser.find_element_by_xpath('/html/body/div/h1').text
         self.assertIn(Script.objects.get(pk=1).title, h1,
@@ -357,7 +359,7 @@ def wait_for_element(self, elm, by = 'id', timeout=10):
     return self.browser.find_element_by_xpath(elm)
 
 
-class TestPUCAssignment(LiveServerTestCase):
+class TestPUCAssignment(StaticLiveServerTestCase):
     # Issue 80 https://github.com/HumanExposure/factotum/issues/80
     #
     fixtures = ['seed_data','seed_product_category.yaml']

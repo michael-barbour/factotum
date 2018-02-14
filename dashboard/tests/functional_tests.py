@@ -37,24 +37,7 @@ def log_karyn_in(object):
 
 
 
-class TestAuthInBrowser(LiveServerTestCase):
 
-    fixtures = ['seed_data']
-
-    def setUp(self):
-        self.browser = webdriver.Chrome()
-
-    def tearDown(self):
-        self.browser.quit()
-
-    def test_login(self):
-        self.browser.get(self.live_server_url )
-        body = self.browser.find_element_by_tag_name('body')
-        self.assertIn('Please sign in', body.text,
-                        "Confirm that the login page is displayed")
-        log_karyn_in(self)
-        body = self.browser.find_element_by_tag_name('body')
-        self.assertIn('Welcome to Factotum', body.text)
 
 class TestDataSource(LiveServerTestCase):
 
@@ -97,7 +80,7 @@ class TestDataSource(LiveServerTestCase):
         self.browser.get(self.live_server_url + '/datasource/1')
         row_count = len(self.browser.find_elements_by_xpath(
                                 "//table[@id='data_group_table']/tbody/tr"))
-        self.assertEqual(b, row_count)
+        self.assertEqual(b, row_count, 'Does the number of rows in the table match the number of objects with the data_source_id of 1?')
 
 
 class TestDataGroup(LiveServerTestCase):

@@ -372,7 +372,9 @@ class TestPUCAssignment(StaticLiveServerTestCase):
         self.assertIn(Product.objects.get(pk=1).title, h2,
         'The <h2> text should equal the .title of the product')
 
+        self.assertEqual(1, Product.objects.filter(pk=1).count(), "There should be one object with pk=1")
         puc_before = Product.objects.get(pk=1).prod_cat
+        self.assertEqual(puc_before, None, "There should be no assigned PUC")
 
         puc_selector = self.browser.find_element_by_xpath('//*[@id="id_prod_cat"]')
         puc_selector = self.browser.find_element_by_xpath('//*[@id="select2-id_prod_cat-container"]')
@@ -391,13 +393,15 @@ class TestPUCAssignment(StaticLiveServerTestCase):
             '//*[@id="select2-id_prod_cat-results"]/li[2]',
             "xpath").click()
         puc_selector = self.browser.find_element_by_xpath('//*[@id="select2-id_prod_cat-container"]')
-        self.assertEqual(puc_selector.text, 'Pet care - all pets -')
+        self.assertEqual(puc_selector.text, 'Pet care - all pets -', 'The PUC selector value should be "Pet care - all pets -"')
 
-        submit_button = self.browser.find_element_by_xpath('/html/body/div/div/form/button')
+        submit_button = self.browser.find_element_by_id('btn-assign-puc')
         submit_button.click()
-        puc_after = Product.objects.get(pk=1).prod_cat
-        # check the model layer for the change
+        # Open the product page and confirm the PUC has changed
+        self.browser.get('%s%s' % (self.live_server_url, '/product/1'))
+        puc_after = self.browser.find_element_by_id('prod_cat')
         self.assertNotEqual(puc_before, puc_after, "The object's prod_cat should have changed")
+
 
 class TestFacetedSearch(StaticLiveServerTestCase):
     # Issue 104 https://github.com/HumanExposure/factotum/issues/104

@@ -9,6 +9,8 @@
     <dl class="row col-sm-12">
         <dt class="col-sm-3">UPC</dt>
         <dd class="col-sm-9">{{ product.upc }}</dd>
+        <dt class="col-sm-3">Product Use Category</dt>
+        <dd class="col-sm-9" id='prod_cat'>{{ product.prod_cat }}</dd>
         <dt class="col-sm-3">Brand Name</dt>
         <dd class="col-sm-9">{{ product.brand_name }}</dd>
         <dt class="col-sm-3">Size</dt>
@@ -16,7 +18,7 @@
         <dt class="col-sm-3">Color</dt>
         <dd class="col-sm-9">{{ product.color }}</dd>
         <dt class="col-sm-3">Short Description</dt>
-        <dd class="col-sm-9">{{ product.short_desription }}</dd>
+        <dd class="col-sm-9">{{ product.short_description }}</dd>
         <dt class="col-sm-3">Image</dt>
         <!-- not yet sure where images are being stored for products -->
         <dd class="col-sm-9"><img src="{{ product.medium_image }}" alt="Image not available"></dd>

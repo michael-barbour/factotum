@@ -16,8 +16,6 @@ window.getParameterByName = function getParameterByName(name, url) {
   }
 
   
-  
-  
   window.onFacetChangeApplied = function onFacetChangeApplied(){
     var url = window.location.href.split("?")[0];
     var search_query = getParameterByName('q');

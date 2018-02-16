@@ -68,47 +68,45 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav justify-content-lg-between">
-        <li class="nav-item {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
-            <a class="nav-link" href="{% url 'index' %}">Dashboard</a>
-        </li>
-        <li class="nav-item {% if 'data_source' in request.resolver_match.url_name %}active{% endif %}">
-            <a class="nav-link" href="{% url 'data_source_list' %}">Data Sources</a>
-        </li>
-        <li class="nav-item {% if 'product_curation' in request.resolver_match.url_name %}active{% endif %}">
-            <a class="nav-link" href="{% url 'product_curation' %}">Product Curation</a>
-        </li>
-        <li class="nav-item {% if 'qa' in request.resolver_match.url_name %}active{% endif %}">
-            <a class="nav-link" href="{% url 'qa' %}">QA</a>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
-               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="oi oi-person" title="factotum" aria-hidden="true"></span> {{ user.first_name }}
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                {% if user.is_superuser %}
-                  <a class="dropdown-item" href="{% url 'admin:index' %}"><span class="oi oi-cog" title="Admin settings"
-                  aria-hidden="true"></span> Admin</a>
-                {% endif %}
-                <a class="dropdown-item" href="{% url 'logout' %}"><span class="oi oi-account-logout" title="factotum"
-                                                                         aria-hidden="true"></span> Logout</a>
-
-            </div>
-        </li>
-        <ul class="nav navbar-nav ml-auto">
+            <li class="nav-item {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'index' %}">Dashboard</a>
+            </li>
+            <li class="nav-item {% if 'data_source' in request.resolver_match.url_name %}active{% endif %}">
+                <a class="nav-link" href="{% url 'data_source_list' %}">Data Sources</a>
+            </li>
+            <li class="nav-item {% if 'product_curation' in request.resolver_match.url_name %}active{% endif %}">
+                <a class="nav-link" href="{% url 'product_curation' %}">Product Curation</a>
+            </li>
+            <li class="nav-item {% if 'qa' in request.resolver_match.url_name %}active{% endif %}">
+                <a class="nav-link" href="{% url 'qa' %}">QA</a>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right ml-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="oi oi-person" title="factotum" aria-hidden="true"></span> {{ user.first_name }}
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    {% if user.is_superuser %}
+                      <a class="dropdown-item" href="{% url 'admin:index' %}"><span class="oi oi-cog" title="Admin settings"
+                      aria-hidden="true"></span> Admin</a>
+                    {% endif %}
+                    <a class="dropdown-item" href="{% url 'logout' %}"><span class="oi oi-account-logout" title="factotum"
+                                                                             aria-hidden="true"></span> Logout</a>
+                </div>
+            </li>
             <li class="nav-item {% if 'find' in request.resolver_match.url_name %}active{% endif %}">
                 <!-- TODO: the input form should contain the search query string -->
                 <form class="search-form-container" action="/find/" method="get" >
                     <div class="icon-addon addon-lg">
-                    <input type="text" placeholder="search" class="form-control" name="q" id="q" autocomplete="off">
+                    <input type="text" placeholder="Search" class="form-control" name="q" id="q" autocomplete="off">
                     <div id="selction-ajax"></div>
                     </div>
                 </form>
             </li>
         </ul>
     {% endif %}
-
-    </ul>
     </div>
 
 </nav>

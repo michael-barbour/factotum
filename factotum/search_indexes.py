@@ -14,11 +14,13 @@ class ProductIndex(indexes.SearchIndex, indexes.Indexable):
 
     brand_name = indexes.CharField(
         model_attr='brand_name',
-        faceted=True)
+        faceted=True,
+        null=True)
 
     prod_cat = indexes.CharField(
         model_attr='prod_cat',
-        faceted=True)
+        faceted=True,
+        null=True)
 
 # The document type can't be properly indexed until it's added here:
 # https://github.com/HumanExposure/factotum/issues/125   
@@ -40,8 +42,9 @@ class DataDocumentIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.EdgeNgramField(
     document=True, use_template=True,
     template_name='search/indexes/dashboard/product_text.txt')
-    title = indexes.EdgeNgramField(model_attr='title')
+    title            = indexes.EdgeNgramField(model_attr='title')
     facet_model_name = indexes.CharField(faceted=True)
+    uploaded_at      = indexes.DateTimeField(model_attr='uploaded_at')
     
     filename = indexes.EdgeNgramField(model_attr="filename", null=True)
 

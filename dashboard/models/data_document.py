@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.utils import timezone
 
 
 class DataDocument(models.Model):
@@ -9,10 +10,11 @@ class DataDocument(models.Model):
 	url = models.CharField(null=True, blank=True, max_length=200)
 	product_category = models.CharField(null=True, blank=True, max_length=50)
 	data_group = models.ForeignKey('DataGroup', on_delete=models.CASCADE)
-	data_source = models.ForeignKey('DataSource', on_delete=models.CASCADE)
+	#data_source = models.ForeignKey('DataSource', on_delete=models.CASCADE)
 	products = models.ManyToManyField('Product', through='ProductDocument')
 	matched = models.BooleanField(default=False)
 	extracted = models.BooleanField(default=False)
+	uploaded_at = models.DateTimeField(default=timezone.now)
 
 	def __str__(self):
 		return self.title

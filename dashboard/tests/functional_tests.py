@@ -12,7 +12,7 @@ from selenium.webdriver.common.keys import Keys
 
 from django.conf import settings
 from django.utils import timezone
-from django.test import LiveServerTestCase
+from django.test import LiveServerTestCase, override_settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.core.files.storage import FileSystemStorage
@@ -21,6 +21,9 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from dashboard.models import (DataGroup, DataSource, DataDocument,
                                 Script, ExtractedText, Product)
+
+from haystack import connections
+from django.core.management import call_command
 
 def log_karyn_in(object):
     '''
@@ -36,8 +39,14 @@ def log_karyn_in(object):
     object.browser.find_element_by_class_name('btn').click()
 
 
-
-
+TEST_INDEX = {
+    'default': {
+        'ENGINE': 'haystack_elasticsearch.elasticsearch2.Elasticsearch2SearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'TIMEOUT': 60 * 10,
+        'INDEX_NAME': 'test_index',
+    },
+}
 
 
 class TestDataSource(LiveServerTestCase):
@@ -145,8 +154,7 @@ class TestDataGroup(LiveServerTestCase):
                         product_category=line['product'],
                         url=line['url'],
                         matched = line['filename'] in self.pdfs,
-                        data_group=data_group,
-                        data_source=data_source)
+                        data_group=data_group)
                     dds.append(dd)
             return dds
 
@@ -216,7 +224,7 @@ class TestProductCuration(LiveServerTestCase):
         self.assertEqual(puc_link.text, products_missing_PUC, ('The Assign PUC '
                             'link should display # of Products without a PUC'))
 
-class TestQAScoreboard(LiveServerTestCase):
+class TestQAScoreboard(StaticLiveServerTestCase):
     # Issue 35 https://github.com/HumanExposure/factotum/issues/35
     # Definition of Done:
     # A QA Home Page
@@ -251,22 +259,24 @@ class TestQAScoreboard(LiveServerTestCase):
 
         displayed_doc_count = self.browser.find_elements_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr/td[2]')[0].text
+
         model_doc_count = DataDocument.objects.filter(
-                                    extractedtext__extraction_script=1).count()
+                                    extractedtext__extraction_script=2).count()
+
         self.assertEqual(displayed_doc_count, str(model_doc_count),
                         ('The displayed number of datadocuments should match '
-                        'the number of data documents whose related extracted '
-                        'text objects used the extraction script'))
+                        'the number whose related extracted text objects used '
+                        ' the extraction script'))
 
         displayed_pct_checked = self.browser.find_elements_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr/td[3]')[0].text
         #this assumes that pk=1 will be a script_type of 'EX'
-        model_pct_checked = Script.objects.get(pk=1).get_pct_checked()
+        model_pct_checked = Script.objects.get(pk=2).get_pct_checked()
         self.assertEqual(displayed_pct_checked, model_pct_checked,
                         ('The displayed percentage should match what is '
                         'derived from the model'))
 
-        es = Script.objects.get(pk=1)
+        es = Script.objects.get(pk=2)
         self.assertEqual(es.get_qa_complete_extractedtext_count(), 0,
                         ('The ExtractionScript object should return 0'
                         'qa_checked ExtractedText objects'))
@@ -279,7 +289,7 @@ class TestQAScoreboard(LiveServerTestCase):
         self.assertEqual(ExtractedText.objects.get(pk=1).qa_checked , True,
                         'The object should now have qa_checked = True')
 
-        es = Script.objects.get(pk=1)
+        es = Script.objects.get(pk=2)
         self.assertEqual(es.get_qa_complete_extractedtext_count(), 1,
                         ('The ExtractionScript object should return 1 '
                         'qa_checked ExtractedText object'))
@@ -288,7 +298,7 @@ class TestQAScoreboard(LiveServerTestCase):
                         'Check the numerator in the model layer')
         self.assertEqual(2, es.get_datadocument_count(),
                         'Check the denominator in the model layer')
-        model_pct_checked = Script.objects.get(pk=1).get_pct_checked()
+        model_pct_checked = Script.objects.get(pk=2).get_pct_checked()
         self.assertEqual(model_pct_checked, '50%',
                         ('The get_pct_checked() method should return 50 pct'
                         ' from the model layer'))
@@ -307,7 +317,7 @@ class TestQAScoreboard(LiveServerTestCase):
         )
         # Before clicking the link, the script's qa_done property
         # should be false
-        self.assertEqual(Script.objects.get(pk=1).qa_begun, False,
+        self.assertEqual(Script.objects.get(pk=2).qa_begun, False,
         'The qa_done property of the Script should be False')
 
         script_qa_link.click()
@@ -315,12 +325,12 @@ class TestQAScoreboard(LiveServerTestCase):
 
         # of the Script
         h1 = self.browser.find_element_by_xpath('/html/body/div/h1').text
-        self.assertIn(Script.objects.get(pk=1).title, h1,
+        self.assertIn(Script.objects.get(pk=2).title, h1,
         'The <h1> text should equal the .title of the Script')
 
         # Opening the ExtractionScript's QA page should set its qa_begun
         # property to True
-        self.assertEqual(Script.objects.get(pk=1).qa_begun, True,
+        self.assertEqual(Script.objects.get(pk=2).qa_begun, True,
         'The qa_done property of the ExtractionScript should now be True')
         # Go back to the QA index page to confirm
         self.browser.get('%s%s' % (self.live_server_url, '/qa'))
@@ -402,7 +412,7 @@ class TestPUCAssignment(StaticLiveServerTestCase):
         puc_after = self.browser.find_element_by_id('prod_cat')
         self.assertNotEqual(puc_before, puc_after, "The object's prod_cat should have changed")
 
-
+@override_settings(HAYSTACK_CONNECTIONS=TEST_INDEX)
 class TestFacetedSearch(StaticLiveServerTestCase):
     # Issue 104 https://github.com/HumanExposure/factotum/issues/104
     #
@@ -411,9 +421,13 @@ class TestFacetedSearch(StaticLiveServerTestCase):
     def setUp(self):
         self.browser = webdriver.Chrome()
         log_karyn_in(self)
+        connections.reload('default')
+        super(TestFacetedSearch, self).setUp()
+        call_command('update_index', interactive=False, verbosity=0)
 
     def tearDown(self):
         self.browser.quit()
+        call_command('clear_index', interactive=False, verbosity=0)
 
     def test_elasticsearch(self):
         #Implement faceted search within application. Desire ability to search on Products by title, 
@@ -439,7 +453,7 @@ class TestFacetedSearch(StaticLiveServerTestCase):
         searchbox.send_keys('raid')
         searchbox.send_keys(Keys.RETURN)
         self.assertIn("raid", self.browser.current_url,'The URL should contain the search string')
-        facetcheck = self.browser.find_element_by_id('Pesticides--')
+        facetcheck = self.browser.find_element_by_id('Pesticides-insecticide-')
         facetcheck.click()
         facetapply = self.browser.find_element_by_id('btn-apply-filters')
         facetapply.click()

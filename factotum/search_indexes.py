@@ -41,7 +41,7 @@ class ProductIndex(indexes.SearchIndex, indexes.Indexable):
 class DataDocumentIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.EdgeNgramField(
     document=True, use_template=True,
-    template_name='search/indexes/dashboard/product_text.txt')
+    template_name='search/indexes/dashboard/data_document_text.txt')
     title            = indexes.EdgeNgramField(model_attr='title')
     facet_model_name = indexes.CharField(faceted=True)
     uploaded_at      = indexes.DateTimeField(model_attr='uploaded_at')

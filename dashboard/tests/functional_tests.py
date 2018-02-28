@@ -2,6 +2,7 @@ import csv
 import time
 import unittest
 import collections
+import json
 from selenium import webdriver
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
@@ -23,7 +24,9 @@ from dashboard.models import (DataGroup, DataSource, DataDocument,
                                 Script, ExtractedText, Product)
 
 from haystack import connections
+from haystack.query import SearchQuerySet
 from django.core.management import call_command
+from haystack.management.commands import update_index
 
 def log_karyn_in(object):
     '''
@@ -37,16 +40,6 @@ def log_karyn_in(object):
     password_input = object.browser.find_element_by_name("password")
     password_input.send_keys('specialP@55word')
     object.browser.find_element_by_class_name('btn').click()
-
-
-TEST_INDEX = {
-    'default': {
-        'ENGINE': 'haystack_elasticsearch.elasticsearch2.Elasticsearch2SearchEngine',
-        'URL': 'http://127.0.0.1:9200/',
-        'TIMEOUT': 60 * 10,
-        'INDEX_NAME': 'test_index',
-    },
-}
 
 
 class TestDataSource(LiveServerTestCase):
@@ -412,7 +405,6 @@ class TestPUCAssignment(StaticLiveServerTestCase):
         puc_after = self.browser.find_element_by_id('prod_cat')
         self.assertNotEqual(puc_before, puc_after, "The object's prod_cat should have changed")
 
-@override_settings(HAYSTACK_CONNECTIONS=TEST_INDEX)
 class TestFacetedSearch(StaticLiveServerTestCase):
     # Issue 104 https://github.com/HumanExposure/factotum/issues/104
     #
@@ -421,13 +413,13 @@ class TestFacetedSearch(StaticLiveServerTestCase):
     def setUp(self):
         self.browser = webdriver.Chrome()
         log_karyn_in(self)
-        connections.reload('default')
-        super(TestFacetedSearch, self).setUp()
-        call_command('update_index', interactive=False, verbosity=0)
+        #call_command('rebuild_index --using=test_index', interactive=False, verbosity=1)
+        update_index.Command().handle(using=['test_index'])
+        #connections.reload('test_index')
+        
 
     def tearDown(self):
         self.browser.quit()
-        call_command('clear_index', interactive=False, verbosity=0)
 
     def test_elasticsearch(self):
         #Implement faceted search within application. Desire ability to search on Products by title, 
@@ -447,17 +439,25 @@ class TestFacetedSearch(StaticLiveServerTestCase):
         self.assertIn("9200", self.browser.current_url)
         self.assertIn("elasticsearch", self.browser.page_source, "The search engine's server needs to be running")
         
+        sqs = SearchQuerySet().facet('prod_cat')
+        self.assertIn('nails', json.dumps(sqs.facet_counts() ) , 
+            'The search engine should return "Personal care - nails - " among the product category facets.')
+
+        
         # use the input box to enter a search query
         self.browser.get(self.live_server_url)
         searchbox = self.browser.find_element_by_id('q')
-        searchbox.send_keys('raid')
+        searchbox.send_keys('nutra')
         searchbox.send_keys(Keys.RETURN)
-        self.assertIn("raid", self.browser.current_url,'The URL should contain the search string')
-        facetcheck = self.browser.find_element_by_id('Pesticides-insecticide-')
+        self.assertIn("nutra", self.browser.current_url,'The URL should contain the search string')
+        facetcheck = self.browser.find_element_by_xpath('/html/body/div/div/div/div[1]')
+        self.assertIn('nails', facetcheck.text, 
+            'The faceting controls should include a "Personal care - nails - " entry')
+        facetcheck = self.browser.find_element_by_id('Personalcare-nails-')
         facetcheck.click()
         facetapply = self.browser.find_element_by_id('btn-apply-filters')
         facetapply.click()
-        self.assertIn("prod_cat=Pesticides", self.browser.current_url,'The URL should contain the facet search string')
+        self.assertIn("prod_cat=Personal%20care%20-%20nails%20-%20", self.browser.current_url,'The URL should contain the facet search string')
 
 
 

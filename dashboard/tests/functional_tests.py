@@ -43,7 +43,7 @@ def log_karyn_in(object):
     object.browser.find_element_by_class_name('btn').click()
 
 
-class TestDataSource(LiveServerTestCase):
+class TestDataSource(StaticLiveServerTestCase):
 
     fixtures = ['seed_data']
 
@@ -89,7 +89,7 @@ class TestDataSource(LiveServerTestCase):
             b, row_count, 'Does the number of objects with the data_source_id of 1 (left side) match number of rows in the table (right side)?')
 
 
-class TestDataGroup(LiveServerTestCase):
+class TestDataGroup(StaticLiveServerTestCase):
 
     fixtures = ['seed_data']
 
@@ -190,7 +190,7 @@ class TestDataGroup(LiveServerTestCase):
                          "Confirm the DataGroup object has been deleted")
 
 
-class TestProductCuration(LiveServerTestCase):
+class TestProductCuration(StaticLiveServerTestCase):
 
     fixtures = ['seed_data']
 

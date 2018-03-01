@@ -21,12 +21,12 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from dashboard.models import (DataGroup, DataSource, DataDocument,
-                              Script, ExtractedText, Product)
+                              Script, ExtractedText, Product, ProductCategory)
 
 from haystack import connections
 from haystack.query import SearchQuerySet
 from django.core.management import call_command
-from haystack.management.commands import update_index
+from haystack.management.commands import update_index, rebuild_index
 
 
 def log_karyn_in(object):
@@ -356,7 +356,7 @@ def wait_for_element(self, elm, by='id', timeout=10):
 class TestPUCAssignment(StaticLiveServerTestCase):
     # Issue 80 https://github.com/HumanExposure/factotum/issues/80
     #
-    fixtures = ['seed_data', 'seed_product_category.yaml']
+    fixtures = ['seed_product_category.yaml', 'seed_data', ]
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -384,6 +384,7 @@ class TestPUCAssignment(StaticLiveServerTestCase):
 
         self.assertEqual(1, Product.objects.filter(pk=1).count(),
                          "There should be one object with pk=1")
+
         puc_before = Product.objects.get(pk=1).prod_cat
         self.assertEqual(puc_before, None, "There should be no assigned PUC")
 
@@ -424,14 +425,13 @@ class TestPUCAssignment(StaticLiveServerTestCase):
 class TestFacetedSearch(StaticLiveServerTestCase):
     # Issue 104 https://github.com/HumanExposure/factotum/issues/104
     #
-    fixtures = ['seed_data', 'seed_product_category.yaml']
+    fixtures = ['seed_product_category.yaml', 'seed_data', ]
 
     def setUp(self):
         self.browser = webdriver.Chrome()
         log_karyn_in(self)
-        #call_command('rebuild_index --using=test_index', interactive=False, verbosity=1)
-        update_index.Command().handle(using=['test_index'])
-        # connections.reload('test_index')
+        update_index.Command().handle()
+
 
     def tearDown(self):
         self.browser.quit()
@@ -448,14 +448,23 @@ class TestFacetedSearch(StaticLiveServerTestCase):
         # Search bar appears on far right side of the navigation bar, on every page of the application.
         # User enters a product title in the search bar. User is then taken to a landing page with
         # search results on product title, with the two facets visible on the left side of the page.
+        
+        # Temporary fix: assign a PUC to the product, then rebuild the index
+        
+        p1 = Product.objects.get(pk=1)
+        pc230 = ProductCategory.objects.get(pk=230)
+        p1.prod_cat = pc230
+        p1.save()
+        # update the search engine index
+        update_index.Command().handle()
 
         # Check for the elasticsearch engine
         self.browser.get('http://127.0.0.1:9200/')
         self.assertIn("9200", self.browser.current_url)
         self.assertIn("elasticsearch", self.browser.page_source,
                       "The search engine's server needs to be running")
-
-        sqs = SearchQuerySet().facet('prod_cat')
+        # if a Product object has a PUC assigned, that PUC should appear in the facet index
+        sqs = SearchQuerySet().using('default').facet('prod_cat')
         self.assertIn('nails', json.dumps(sqs.facet_counts()),
                       'The search engine should return "Personal care - nails - " among the product category facets.')
 

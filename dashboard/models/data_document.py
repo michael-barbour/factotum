@@ -10,8 +10,8 @@ class DataDocument(models.Model):
 	product_category = models.CharField(null=True, blank=True, max_length=50)
 	data_group = models.ForeignKey('DataGroup', on_delete=models.CASCADE)
 	products = models.ManyToManyField('Product', through='ProductDocument')
-	matched = models.BooleanField(default=False)
-	extracted = models.BooleanField(default=False)
+	matched = models.BooleanField(null=False, default=False)
+	extracted = models.BooleanField(null=False, default=False)
 
 	def __str__(self):
 		return self.title

@@ -105,7 +105,7 @@ class TestDataGroup(StaticLiveServerTestCase):
         h1 = self.browser.find_element_by_name('title')
         self.assertIn('Walmart MSDS', h1.text)
         pdflink = self.browser.find_elements_by_xpath(
-            '/html/body/div/table/tbody/tr[1]/td[1]/a')[0]
+            '//*[@id="d-docs"]/tbody/tr[2]/td[1]/a')[0]
         self.assertIn('shampoo.pdf', pdflink.get_attribute('href'))
 
     def create_data_group(self, data_source, testusername='Karyn',
@@ -204,20 +204,20 @@ class TestProductCuration(StaticLiveServerTestCase):
     def test_unlinked_documents(self):
         self.browser.get(self.live_server_url + '/product_curation/')
         src_title = self.browser.find_elements_by_xpath(
-            '/html/body/div/table/tbody/tr[1]/td[1]/a')[0]
+            '//*[@id="products"]/tbody/tr/td[1]/a')[0]
         ds = DataSource.objects.get(title=src_title.text)
         un_link = self.browser.find_elements_by_xpath(
-            '/html/body/div/table/tbody/tr[1]/td[3]/a')[0]
+            '//*[@id="products"]/tbody/tr/td[1]/a')[0]
         self.assertEqual(un_link.get_attribute("href").split('/')[-1],
                          str(ds.pk))
 
     def test_PUC_assignment(self):
         self.browser.get(self.live_server_url + '/product_curation/')
         src_title = self.browser.find_elements_by_xpath(
-            '/html/body/div/table/tbody/tr[1]/td[1]/a')[0]
+            '//*[@id="products"]/tbody/tr/td[1]/a')[0]
         ds = DataSource.objects.get(title=src_title.text)
         puc_link = self.browser.find_elements_by_xpath(
-            '/html/body/div/table/tbody/tr[1]/td[4]/a')[0]
+            '//*[@id="products"]/tbody/tr/td[4]/a')[0]
         products_missing_PUC = str(
             len(ds.source.filter(prod_cat__isnull=True)))
         self.assertEqual(puc_link.text, products_missing_PUC, ('The Assign PUC '

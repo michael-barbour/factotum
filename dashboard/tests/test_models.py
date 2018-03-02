@@ -39,8 +39,7 @@ class DataGroupTest(TestCase):
         self.pdfs = self.upload_pdfs()
 
         # DataDocuments
-        self.dds = self.create_data_documents(data_group = self.dg,
-                                              data_source= self.ds)
+        self.dds = self.create_data_documents(data_group = self.dg)
 
     def tearDown(self):
         del self.dg
@@ -75,7 +74,7 @@ class DataGroupTest(TestCase):
 
 
 
-    def create_data_documents(self, data_group, data_source):
+    def create_data_documents(self, data_group):
         dds = []
         #pdfs = [f for f in os.listdir('/media/' + self.dg.dgurl() + '/pdf') if f.endswith('.pdf')]
         #pdfs
@@ -95,8 +94,7 @@ class DataGroupTest(TestCase):
                     product_category=line['product'],
                     url=line['url'],
                     matched = line['filename'] in self.pdfs,
-                    data_group=data_group,
-                    data_source=data_source)
+                    data_group=data_group)
                 dds.append(dd)
             return dds
 

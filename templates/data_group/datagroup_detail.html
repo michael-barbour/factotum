@@ -12,6 +12,7 @@
 {% endblock %}
 
 {% block content %}
+    <h1 class="col-sm-12">{{ documents }}</h1>
     <h1 class="col-sm-12">
         <span name="title">{{ datagroup.name }}</span>
         <div class="btn-group float-lg-right" role="group" aria-label="Data Group Modification">
@@ -139,9 +140,25 @@
 
   <div class="col-sm-12">
     <h5>Work with uploaded documents:</h5>
+    {% if inc_upload %}
+        <div class="col-md-4 btn-group border rounded"  style="text-align:center">
+            <form enctype="multipart/form-data" action="" method="post">
+                <h5 align="center">Extraction Script:</h5>
+                {% csrf_token %}
+                <select name="script_selection">
+                  {% for script in scripts %}
+                  <option value="{{ script.title }}">{{ script.title }}</option>
+                  {% endfor %}
+                </select>
+                <br>
+                <input type="file" class="btn btn-light" name="extract">
+                <br>
+                <input type="submit" class="btn btn-primary" name="extract">
+            </form>
+        </div>
+    {% endif %}
     <a href="{% static 'csv/extracted_text.csv' %}" class="btn btn-secondary"
        {% if not doc.matched %}disabled{% endif %}><span class="oi oi-spreadsheet"></span>Extracted Text CSV Template</a>
-    <button type="button" class="btn btn-secondary"  disabled><span class="oi oi-file"></span>Extracted Text CSV Template</button>
     <button type="button" class="btn btn-primary"  disabled>Upload Extracted Text</button>
   </div>
   <br>

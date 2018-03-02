@@ -11,7 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
 
-from dashboard.models import DataGroup, DataDocument, DataSource
+from dashboard.models import DataGroup, DataDocument, DataSource, Script
 
 class DataGroupForm(ModelForm):
 	required_css_class = 'required' # adds to label tag
@@ -42,7 +42,7 @@ def data_group_detail(request, pk,
 	docs = DataDocument.objects.filter(data_group_id=pk)
 	store = settings.MEDIA_URL + datagroup.name.replace(' ','_')
 	err = False
-	if request.method == 'POST':
+	if request.method == 'POST' and 'upload' in request.POST:
 		files = request.FILES.getlist('multifiles')
 		# match filename to pdf name
 		proc_files = [f for d in docs for f in files if f.name == d.filename]
@@ -62,12 +62,19 @@ def data_group_detail(request, pk,
 			fs.save(pdf.name, pdf)
 			zf.write(store + '/pdf/' + pdf.name, pdf.name)
 		zf.close()
+	if request.method == 'POST' and 'extract' in request.POST:
+		print(request.POST)
+		print(request.FILES.getlist('extract'))
 	docs = DataDocument.objects.filter(data_group_id=pk) # refresh
 	inc_upload = all([d.matched for d in docs])
+	include_extract = any([d.matched for d in docs])
+	scripts = Script.objects.filter(script_type='EX')
 	return render(request, template_name, {'datagroup'  : datagroup,
 											'documents' : docs,
 											'inc_upload': inc_upload,
-											'err'       : err})
+											'err'       : err,
+											'include_extract':include_extract,
+											'scripts': scripts})
 
 # raid_ant_killer.pdf
 # raid_msds.pdf

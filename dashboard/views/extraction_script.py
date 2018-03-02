@@ -6,13 +6,13 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
 
-from dashboard.views import *
-from dashboard.models import DataGroup, DataDocument, DataSource, ExtractedText
+from dashboard.models import (DataGroup, DataDocument, DataSource,
+                              ExtractedText, Script)
 
 class ExtractionScriptForm(ModelForm):
     required_css_class = 'required' # adds to label tag
     class Meta:
-        model = ExtractionScript
+        model = Script
         fields = ['title', 'url', 'qa_begun']
         labels = {
             'qa_begun': _('QA has begun'),
@@ -25,7 +25,7 @@ class ExtractionScriptForm(ModelForm):
 @login_required()
 def extraction_script_list(request, template_name='qa/extraction_script_list.html'):
 
-    extractionscript = ExtractionScript.objects.all()
+    extractionscript = Script.objects.filter(script_type='EX')
     data = {}
     data['object_list'] = extractionscript
     return render(request, template_name, data)
@@ -33,7 +33,7 @@ def extraction_script_list(request, template_name='qa/extraction_script_list.htm
 @login_required()
 def extraction_script_qa(request, pk,
                         template_name='qa/extraction_script.html'):
-    es = get_object_or_404(ExtractionScript, pk=pk)
+    es = get_object_or_404(Script, pk=pk)
     ets = ExtractedText.objects.filter(extraction_script=pk)
     es.qa_begun = True
     es.save()
@@ -43,7 +43,7 @@ def extraction_script_qa(request, pk,
 @login_required()
 def extraction_script_detail(request, pk,
                         template_name='extraction_script/extraction_script_detail.html'):
-    extractionscript = get_object_or_404(ExtractionScript, pk=pk)
+    extractionscript = get_object_or_404(Script, pk=pk)
     data = {}
     data['object_list'] = extractionscript
     return render(request, template_name, data)

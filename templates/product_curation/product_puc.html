@@ -25,7 +25,7 @@ Link Product To Product Category</h1>
 
       {%endfor%}
       {{ form.as_p }}
-      <button type="submit" class="btn btn-primary">Submit</button>
+      <button type="submit" id="btn-assign-puc" class="btn btn-primary">Submit</button>
       <a class="btn btn-secondary" href="{% url 'category_assignment' product.id %}">Cancel</a>
   </form>
 </div>

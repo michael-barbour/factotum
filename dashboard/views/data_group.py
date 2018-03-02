@@ -11,7 +11,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
 
-from dashboard.views import *
 from dashboard.models import DataGroup, DataDocument, DataSource
 
 class DataGroupForm(ModelForm):
@@ -157,3 +156,9 @@ def data_group_delete(request, pk, template_name='data_source/datasource_confirm
 		datagroup.delete()
 		return redirect('data_group_list')
 	return render(request, template_name, {'object': datagroup})
+
+@login_required()
+def data_document_detail(request, pk,
+						template_name='data_group/data_document_detail.html'):
+	doc = get_object_or_404(DataDocument, pk=pk, )
+	return render(request, template_name, {'doc'  : doc,})

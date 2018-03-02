@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
+import sys
 import os
 from .settings_secret import *
 
@@ -35,7 +36,10 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'factotum',
     'django_filters',
-    'debug_toolbar',
+#    'debug_toolbar',
+    'haystack',
+    'haystack_elasticsearch',
+    'webpack_loader',
 ]
 
 MIDDLEWARE = [
@@ -46,7 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+#    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'factotum.urls'
@@ -69,6 +73,21 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'factotum.wsgi.application'
+
+# Haystack search
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack_elasticsearch.elasticsearch2.Elasticsearch2SearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'INDEX_NAME': 'product-index',
+    },
+    'test_index': {
+        'ENGINE': 'haystack_elasticsearch.elasticsearch2.Elasticsearch2SearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'TIMEOUT': 60 * 10,
+        'INDEX_NAME': 'test_index',
+    },
+}
 
 # IPs allowed to see django-debug-toolbar output.
 INTERNAL_IPS = ('127.0.0.1',)
@@ -111,10 +130,24 @@ USE_TZ = False
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'assets'),
 ]
+
+DEBUG = True
 
 LOGIN_REDIRECT_URL = 'index'
 LOGIN_URL = 'login'
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'CACHE': not DEBUG,
+        'BUNDLE_DIR_NAME': 'bundles/', # must end with slash
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+        'POLL_INTERVAL': 0.1,
+        'TIMEOUT': None,
+        'IGNORE': ['.+\.hot-update.js', '.+\.map']
+    }
+}

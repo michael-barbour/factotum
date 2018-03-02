@@ -9,7 +9,7 @@
     </h1>
 
     <table class="table table-sm table-bordered table-striped">
-        <thead class="thead-inverse">
+        <thead class="table-primary">
         <th>Name</th>
         <th>Data Source</th>
         <th>Downloaded by</th>
@@ -27,7 +27,7 @@
                 <td>{{ data_group.downloaded_by }}</td>
                 <td>{{ data_group.downloaded_at | date:"M d, Y" }}</td>
                 <td>
-                    <a href="{{ data_group.extraction_script }}" title="Link to {{ data_group.name }}">{{ data_group.extraction_script }}</a>
+                    <a href="{{ data_group.download_script }}" title="Link to {{ data_group.name }}">{{ data_group.download_script }}</a>
                 </td>
                 <td class="float-sm-right">
                         <div class="btn-group">

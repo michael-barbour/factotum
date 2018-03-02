@@ -1,0 +1,59 @@
+{% extends 'core/base.html' %}
+{% load humanize %}
+
+{% block content %}
+<h1 class="col-sm-12"><span class="oi oi-wrench" title="factotum" aria-hidden="true"></span>
+Link Product To Product Category</h1>
+<br>
+<div class="col-sm-12">
+  <h2><a href="{% url "data_source_detail" datasource.id %}"
+    title="Link to {{ datasource.title }}">{{ datasource.title }}</a>
+  </h2>
+  <h3>
+    Products without any category assignments:
+  </h3>
+</div>
+
+<table class="table table-sm table-bordered table-striped table-sortable" id="category">
+  <thead class="table-primary">
+      <th>Product</th>
+      <th>MSDS</th>
+      <th>PUC</th>
+  </thead>
+  <tbody>
+  {% for product in products %}
+    <tr>
+      <td><a href="{% url "product" product.id %}"
+      title="Link to {{ product.title }}">{{ product.title }}</a></td>
+      <td>
+        {% if product.msds%}
+          <a class="btn btn-sm btn-info" role="button" href="/media/{{ product.msds.data_group.dgurl }}/pdf/{{ product.msds.filename }}"
+          title="Link to {{ product.msds.filename }} detail"
+          target = "_blank"><span class="oi oi-spreadsheet"></span> {{ product.msds.title }}</a>
+        {% else %}
+
+        {% endif %}
+      </td>
+      <td>
+        <a class="btn btn-warning btn-sm" role="button" title="Category Assignment"
+         href="{% url "product_puc" product.id %}"><span class="oi oi-link-intact"></span> Assign PUC</a>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
+{% block js %}
+  <script type="text/javascript">
+    $(document).ready(function () {
+      var table = $('#category').DataTable({
+      // "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
+
+      dom:"<'row'<'col-md-4 form-inline'l><'col-md-4 form-inline'f>>" +
+          "<'row'<'col-sm-12 text-center'tr>>" +
+          "<'row'<'col-sm-5'i><'col-sm-7'p>>", // order the control divs
+      });
+    });
+  </script>
+{% endblock %}

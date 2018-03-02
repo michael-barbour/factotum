@@ -5,9 +5,7 @@ from django.forms import inlineformset_factory
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 
-from dashboard.views import *
-from dashboard.models import DataSource
-from dashboard.models import DataGroup
+from dashboard.models import DataSource, DataGroup, DataDocument
 from .data_group import DataGroupForm
 
 
@@ -32,20 +30,10 @@ class PriorityForm(forms.ModelForm):
             'onchange': 'form.submit();'
 			})
 
-headers = {'priority':'asc'}
-
 @login_required()
 def data_source_list(request, template_name='data_source/datasource_list.html'):
 	datasources = DataSource.objects.all()
 	docs = DataDocument.objects.all()
-	sort = request.GET.get('sort')
-	if sort is not None:
-		datasources = datasources.order_by(sort)
-		if headers[sort] == "des":
-			datasources = datasources.reverse()
-			headers[sort] = "asc"
-		else:
-			headers[sort] = "des"
 	ds_list, frm_list = [], []
 	for ds in datasources:
 		ds.registered = (len([d

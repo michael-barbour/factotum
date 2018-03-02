@@ -11,14 +11,13 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
 
-from dashboard.views import *
-from dashboard.models import DataGroup, DataDocument
+from dashboard.models import DataGroup, DataDocument, DataSource
 
 class DataGroupForm(ModelForm):
 	required_css_class = 'required' # adds to label tag
 	class Meta:
 		model = DataGroup
-		fields = ['name', 'description', 'downloaded_by', 'downloaded_at', 'extraction_script','data_source','updated_at','csv']
+		fields = ['name', 'description', 'downloaded_by', 'downloaded_at', 'download_script','data_source','updated_at','csv']
 		labels = {
             'csv': _('Register Records CSV File'),
         	}
@@ -79,6 +78,7 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
 	# get the data source from which the create button was clicked
 	datasource_title = request.session['datasource_title']
 	datasource_pk = request.session['datasource_pk']
+	ds = DataSource.objects.get(pk=datasource_pk)
 	# get highest data group id associated with the data source, increment by 1
 	group_key = DataGroup.objects.filter(data_source=datasource_pk).count() + 1
 	default_name = '{} {}'.format(datasource_title, group_key)
@@ -113,7 +113,8 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
 								title=line['title'],
 								product_category=line['product'],
 								url=line['url'],
-								data_group=datagroup)
+								data_group=datagroup,
+								data_source=ds)
 				doc.save()
 				# update line to hold the pk for writeout
 				text.append(str(doc.pk)+','+ ','.join(line.values())+'\n')
@@ -123,6 +124,7 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
 				return render(request, template_name, {'line_errors': errors,
 														'form': form})
 			dg_dir = datagroup.name.replace(' ','_')
+			# os.mkdir('media/{0}'.format(dg_dir))
 			zf = zipfile.ZipFile('media/{0}/{0}.zip'.format(dg_dir), 'w',
 								zipfile.ZIP_DEFLATED)
 			datagroup.zip_file = zf.filename

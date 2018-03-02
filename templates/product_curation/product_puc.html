@@ -1,0 +1,36 @@
+{% extends 'core/base.html' %}
+{% load humanize %}
+{% load static %}
+
+
+{% block content %}
+
+
+<h1><span class="oi oi-wrench" title="factotum" aria-hidden="true"></span>
+Link Product To Product Category</h1>
+<br>
+<h2>
+  {{ product.title }}
+</h2> 
+<div>
+
+    <form action='' method="post" >
+      {% csrf_token %}
+      {% for dd in product.datadocument_set.all %}
+    <p>
+      <span class="oi oi-file" title="pdf" ></span>
+          <a href="/media/{{ dd.data_group.dgurl }}/pdf/{{ dd.filename }}" title="Link to {{ dd.filename }}" target = "_blank">{{dd.filename}}
+          </a>
+    </p>
+
+      {%endfor%}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">Submit</button>
+      <a class="btn btn-secondary" href="{% url 'category_assignment' product.id %}">Cancel</a>
+  </form>
+</div>
+
+<script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+
+{{ form.media }}
+{% endblock %}

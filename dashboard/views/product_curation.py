@@ -1,10 +1,14 @@
+from dal import autocomplete
+from datetime import datetime
+from django.shortcuts import redirect
+
+
 from django.utils import timezone
 from django.forms import ModelForm, ModelChoiceField
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from dashboard.views import *
+
 from dashboard.models import DataSource, DataDocument, Product, ProductDocument, ProductCategory
-from dal import autocomplete
 
 
 class ProductForm(ModelForm):
@@ -13,18 +17,24 @@ class ProductForm(ModelForm):
         model = Product
         fields = ['title', 'brand_name']
 
-class ProductPUCForm(forms.ModelForm):
-    prod_cat = forms.ModelChoiceField(
+class ProductPUCForm(ModelForm):
+    prod_cat = ModelChoiceField(
         queryset=ProductCategory.objects.all(),
 		label='Category',
         widget=autocomplete.ModelSelect2(
-			url='puc-autocomplete', 
+			url='puc-autocomplete',
           	attrs={'data-minimum-input-length': 3,  })
     )
 
     class Meta:
         model = Product
         fields = ['prod_cat']
+
+@login_required()
+def product_detail(request, pk,
+						template_name='product_curation/product_detail.html'):
+	product = get_object_or_404(Product, pk=pk, )
+	return render(request, template_name, {'product'  : product,})
 
 @login_required()
 def product_curation_index(request, template_name='product_curation/product_curation_index.html'):
@@ -113,3 +123,8 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
         return redirect('category_assignment', pk=p.data_source.id)
     return render(request, template_name,{'product': p, 'form': form})
 
+@login_required()
+def product_detail(request, pk, template_name=('product_curation/'
+                                                'product_detail.html')):
+    p = Product.objects.get(pk=pk)
+    return render(request, template_name,{'product': p})

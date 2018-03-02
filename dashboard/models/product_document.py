@@ -15,4 +15,4 @@ class ProductDocument(models.Model):
 		return self.product.title
 
 	def get_absolute_url(self):
-		return reverse('product_edit', kwargs={'pk': self.pk})
+		return reverse('product_detail', kwargs={'pk': self.pk})

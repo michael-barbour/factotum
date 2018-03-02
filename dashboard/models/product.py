@@ -15,7 +15,7 @@ class Product(models.Model):
 	title = models.CharField(max_length=255)
 	upc = models.CharField(db_index=True, max_length=60, null=False, blank=False, unique=True)
 	url = models.CharField(max_length=500, null=True, blank=True)
-	brand_name = models.CharField(db_index=True, max_length=200, null=True, blank=True)
+	brand_name = models.CharField(db_index=True, max_length=200, null=True, blank=True, default = '')
 	size = models.CharField(max_length=100, null=True, blank=True)
 	model_number = models.CharField(max_length=200, null=True, blank=True)
 	color = models.CharField(max_length=100, null=True, blank=True)
@@ -33,4 +33,4 @@ class Product(models.Model):
 		return self.title
 
 	def get_absolute_url(self):
-		return reverse('product_edit', kwargs={'pk': self.pk})
+		return reverse('product', kwargs={'pk': self.pk})

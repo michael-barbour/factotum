@@ -1,0 +1,164 @@
+{% extends 'core/base.html' %}
+{% load staticfiles %}
+
+{% load humanize %}
+
+{% block title %}
+    "{{ query }}" | {{ block.super }}
+{% endblock %}
+{% block content %}
+<div class="container">
+
+<div class="row">
+{% if  page_obj.object_list %}
+<div class="col-md-3">
+        <div>
+                <input id="btn-apply-filters" class="btn btn-info btn-lg pull-right" type="submit" value="Apply Filters" onclick="return onFacetChangeApplied();" />
+        </div>
+
+        {% if facets.fields.facet_model_name %}
+        <dl>
+        <dt>Filter by Object Type</dt>
+        {% for facet_model_name in facets.fields.facet_model_name %}
+            {% if facet_model_name.1 != 0 %}
+            <dd>
+            <input class="facet" id="{{facet_model_name.0|cut:" "}}" type="checkbox" name="facet_model_name" value="{{ facet_model_name.0 }}" 
+            data-toggle="toggle" /> {{ facet_model_name.0 }} ({{ facet_model_name.1 }})
+            </dd>
+            {% endif %}
+        {% endfor %}
+        </dl>
+        <!-- <div>
+        <input class="btn btn-info btn-sm pull-right" type="submit" value="apply filter" onclick="return onFacetChangeApplied();" />
+        </div> -->
+        {% endif %}
+
+
+	<h3>Product Filters</h3>
+        {% if facets.fields.prod_cat %}
+        <dl>
+        <dt>Filter by Category</dt>
+        {% for prod_cat in facets.fields.prod_cat %}
+            {% if prod_cat.1 != 0 %}
+            <dd>
+            <input class="facet" id="{{prod_cat.0|cut:" "}}" type="checkbox" name="prod_cat" value="{{ prod_cat.0 }}" 
+            data-toggle="toggle" /> {{ prod_cat.0 }} ({{ prod_cat.1 }})
+            </dd>
+            {% endif %}
+        {% endfor %}
+        </dl>
+        <!-- <div>
+        <input class="btn btn-info btn-sm pull-right" type="submit" value="apply filter" onclick="return onFacetChangeApplied();" />
+        </div> -->
+        {% endif %}
+
+        {% if facets.fields.brand_name %}
+        <dl>
+        <dt>Filter by Brand</dt>
+        {% for brand_name in facets.fields.brand_name %}
+        {% if brand_name.1 != 0 %}
+        <dd>
+        <input class="facet" id="{{brand_name.0|cut:" "}}" type="checkbox" name="brand_name" value="{{ brand_name.0 }}" /> {{ brand_name.0 }} ({{ brand_name.1 }})
+        </dd>
+        {% endif %}
+        {% endfor %}
+        </dl>
+        <!-- <div>
+        <input class="btn btn-info btn-sm pull-right" type="submit" value="apply filter" onclick="return onFacetChangeApplied();" />
+        </div> -->
+        {% endif %}
+
+        {% if facets.fields.source_category %}
+        <dl>
+        <dt>Filter by Source Category</dt>
+        {% for source_category in facets.fields.source_category %}
+        {% if source_category.1 != 0 %}
+        <dd>
+        <input class="facet" id="{{source_category.0|cut:" "}}" type="checkbox" name="source_category" value="{{ source_category.0 }}" /> {{ source_category.0 }} ({{ source_category.1 }})
+        </dd>
+        {% endif %}
+        {% endfor %}
+        
+        </dl>
+        <!-- <div>
+        <input class="btn btn-info btn-sm pull-right" type="submit" value="apply filter" onclick="return onFacetChangeApplied();" />
+        </div> -->
+        {% endif %}
+
+        <h3>Data Document Filters</h3>
+        <p><code>Document Type will be a facet: not yet implemented in DataDocument model</code></p>
+        <!-- TODO: the doc_type field has not yet been added to the DataDocumentModel -->
+        {% if facets.fields.doc_type %}
+        <dl>
+        <dt>Filter by Document Type</dt>
+        {% for doc_type in facets.fields.doc_type %}
+            {% if doc_type.1 != 0 %}
+            <dd>
+            <input class="facet" id="{{doc_type.0|cut:" "}}" type="checkbox" name="doc_type" value="{{ doc_type.0 }}" 
+            data-toggle="toggle" /> {{ doc_type.0 }} ({{ doc_type.1 }})
+            </dd>
+            {% endif %}
+        {% endfor %}
+        </dl>
+        <!-- <div>
+        <input class="btn btn-info btn-sm pull-right" type="submit" value="apply filter" onclick="return onFacetChangeApplied();" />
+        </div> -->
+        {% endif %}
+
+</div>
+{% endif %}
+	<div class="col-md-9">
+            <div class="row">
+                <div class="col-md-6 col-xs-6">
+                      Search result for: <label> {{query}} </label>
+               </div>
+               <div class="col-md-6 col-xs-6 align-right">
+               
+                   Showing {{ page_obj.start_index }} - {{ page_obj.end_index }} of total 
+                    {{ page_obj.paginator.count }}
+                    results on page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+               </div>
+            </div>    
+            <div>
+	    {% if  page_obj.object_list %}
+                <ol class="row top20">
+                    {% for result in page_obj.object_list %}
+                        <div class="showcase col-sm-6 col-md-4">
+           <h5>{{result.facet_model_name}}</h5>
+		   <a href="{{ result.object.get_absolute_url }}">
+		      <h4>{{result.object.title}}</h4>
+		   </a>
+		    <p class="text-center"><span class="label label-info">{{result.object.brand_name}}</span></p>
+		    </div>
+                    {% endfor %}
+                </ol>
+            </div>
+		    {% if is_paginated %}
+		      <ul class="pagination pull-right">
+		        {% if page_obj.has_previous %}
+		          <li><a href="?q={{ query }}&page={{ page_obj.previous_page_number }}">«</a></li>
+		        {% else %}
+		          <li class="disabled"><span>«</span></li>
+		        {% endif %}
+		        {% for i in paginator.page_range %}
+		          {% if page_obj.number == i %}
+		            <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+		          {% else %}
+		            <li><a href="?q={{ query }}&page={{ i }}">{{ i }}</a></li>
+		          {% endif %}
+		        {% endfor %}
+		        {% if page_obj.has_next %}
+		          <li><a href="?q={{ query }}&page={{ page_obj.next_page_number }}">»</a></li>
+		        {% else %}
+		          <li class="disabled"><span>»</span></li>
+		        {% endif %}
+		      </ul>
+		    {% endif %}
+        {% else %}
+	    <p> Sorry, no result found for the search term  <strong>{{query}} </strong></p>
+	{% endif %}
+	</div>
+</div>
+</div>
+
+{% endblock %} 

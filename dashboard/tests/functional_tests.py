@@ -222,6 +222,7 @@ class TestProductCuration(StaticLiveServerTestCase):
             len(ds.source.filter(prod_cat__isnull=True)))
         self.assertEqual(puc_link.text, products_missing_PUC, ('The Assign PUC '
                                                                'link should display # of Products without a PUC'))
+        
 
 
 class TestQAScoreboard(StaticLiveServerTestCase):
@@ -420,6 +421,11 @@ class TestPUCAssignment(StaticLiveServerTestCase):
         puc_after = self.browser.find_element_by_id('prod_cat')
         self.assertNotEqual(puc_before, puc_after,
                             "The object's prod_cat should have changed")
+        # Confirm that the puc_assigned_usr has been set to the current user
+        puc_assigned_usr_after = self.browser.find_element_by_id('puc_assigned_usr').text
+        self.assertEqual(puc_assigned_usr_after, 'Karyn',
+                            "The PUC assigning user should have changed")
+        
 
 
 class TestFacetedSearch(StaticLiveServerTestCase):

@@ -30,6 +30,7 @@ class ProductPUCForm(ModelForm):
         model = Product
         fields = ['prod_cat']
 
+
 @login_required()
 def product_detail(request, pk,
 						template_name='product_curation/product_detail.html'):
@@ -120,7 +121,7 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
     if form.is_valid():
         p.updated_at = datetime.now()
         p.puc_assigned_time = datetime.now()
-        p.puc_assigned_usr = kwargs.pop('user', None)
+        p.puc_assigned_usr = request.user
         form.save()
         return redirect('category_assignment', pk=p.data_source.id)
     return render(request, template_name,{'product': p, 'form': form})

@@ -119,6 +119,8 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
     form = ProductPUCForm(request.POST or None, instance=p)
     if form.is_valid():
         p.updated_at = datetime.now()
+        p.puc_assigned_time = datetime.now()
+        p.puc_assigned_usr = kwargs.pop('user', None)
         form.save()
         return redirect('category_assignment', pk=p.data_source.id)
     return render(request, template_name,{'product': p, 'form': form})

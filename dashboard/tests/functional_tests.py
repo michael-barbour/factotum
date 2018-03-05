@@ -2,16 +2,18 @@ import csv
 import time
 import unittest
 import collections
+import json
 from selenium import webdriver
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 
 
 from django.conf import settings
 from django.utils import timezone
-from django.test import LiveServerTestCase
+from django.test import LiveServerTestCase, override_settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.core.files.storage import FileSystemStorage
@@ -19,7 +21,13 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from dashboard.models import (DataGroup, DataSource, DataDocument,
-                                Script, ExtractedText, Product)
+                              Script, ExtractedText, Product, ProductCategory)
+
+from haystack import connections
+from haystack.query import SearchQuerySet
+from django.core.management import call_command
+from haystack.management.commands import update_index, rebuild_index
+
 
 def log_karyn_in(object):
     '''
@@ -35,28 +43,7 @@ def log_karyn_in(object):
     object.browser.find_element_by_class_name('btn').click()
 
 
-
-
-class TestAuthInBrowser(LiveServerTestCase):
-
-    fixtures = ['seed_data']
-
-    def setUp(self):
-        self.browser = webdriver.Chrome()
-
-    def tearDown(self):
-        self.browser.quit()
-
-    def test_login(self):
-        self.browser.get(self.live_server_url )
-        body = self.browser.find_element_by_tag_name('body')
-        self.assertIn('Please sign in', body.text,
-                        "Confirm that the login page is displayed")
-        log_karyn_in(self)
-        body = self.browser.find_element_by_tag_name('body')
-        self.assertIn('Welcome to Factotum', body.text)
-
-class TestDataSource(LiveServerTestCase):
+class TestDataSource(StaticLiveServerTestCase):
 
     fixtures = ['seed_data']
 
@@ -70,13 +57,14 @@ class TestDataSource(LiveServerTestCase):
     def test_data_source_name(self):
         self.browser.get(self.live_server_url + '/datasource/1')
         h1 = self.browser.find_element_by_name('title')
-        self.assertIn('Walmart MSDS', h1.text)
+        self.assertIn('Walmart MSDS', h1.text,
+                      'The h1 text should include "Walmart MSDS"')
 
     # When a new data source is entered, the data source is automatically
     # assigned the state 'awaiting triage.'
     def test_state_and_priority(self):
-        valid_states = ['Awaiting Triage','In Progress','Complete','Stale']
-        valid_priorities = ['High','Medium','Low']
+        valid_states = ['Awaiting Triage', 'In Progress', 'Complete', 'Stale']
+        valid_priorities = ['High', 'Medium', 'Low']
         self.browser.get(self.live_server_url + '/datasource/1')
         state = self.browser.find_element_by_name('state')
         self.assertIn(state.text, valid_states)
@@ -96,11 +84,12 @@ class TestDataSource(LiveServerTestCase):
         b = len(DataGroup.objects.filter(data_source_id=1))
         self.browser.get(self.live_server_url + '/datasource/1')
         row_count = len(self.browser.find_elements_by_xpath(
-                                "//table[@id='groups']/tbody/tr"))
-        self.assertEqual(b, row_count)
+            "//table[@id='groups']/tbody/tr"))
+        self.assertEqual(
+            b, row_count, 'Does the number of objects with the data_source_id of 1 (left side) match number of rows in the table (right side)?')
 
 
-class TestDataGroup(LiveServerTestCase):
+class TestDataGroup(StaticLiveServerTestCase):
 
     fixtures = ['seed_data']
 
@@ -116,19 +105,20 @@ class TestDataGroup(LiveServerTestCase):
         h1 = self.browser.find_element_by_name('title')
         self.assertIn('Walmart MSDS', h1.text)
         pdflink = self.browser.find_elements_by_xpath(
-                                '/html/body/div/table/tbody/tr[1]/td[1]/a')[0]
-        self.assertIn('shampoo.pdf',pdflink.get_attribute('href'))
+            '//*[@id="d-docs"]/tbody/tr[2]/td[1]/a')[0]
+        self.assertIn('shampoo.pdf', pdflink.get_attribute('href'))
 
-    def create_data_group(self, data_source, testusername = 'Karyn',
-                            name='Walmart MSDS 3',
-                            description=('Another data group, '
-                                         'added programatically')):
-        source_csv = open('./sample_files/walmart_msds_3.csv','rb')
+    def create_data_group(self, data_source, testusername='Karyn',
+                          name='Walmart MSDS 3',
+                          description=('Another data group, '
+                                       'added programatically')):
+        source_csv = open('./sample_files/walmart_msds_3.csv', 'rb')
         return DataGroup.objects.create(name=name,
-                description=description, data_source = data_source,
-                downloaded_by=User.objects.get(username=testusername) ,
-                downloaded_at=timezone.now(),
-                csv=SimpleUploadedFile('walmart_msds_3.csv', source_csv.read()))
+                                        description=description, data_source=data_source,
+                                        downloaded_by=User.objects.get(
+                                            username=testusername),
+                                        downloaded_at=timezone.now(),
+                                        csv=SimpleUploadedFile('walmart_msds_3.csv', source_csv.read()))
 
     def upload_pdfs(self):
         store = settings.MEDIA_URL + self.dg.dgurl()
@@ -145,25 +135,24 @@ class TestDataGroup(LiveServerTestCase):
     def create_data_documents(self, data_group, data_source):
         dds = []
         #pdfs = [f for f in os.listdir('/media/' + self.dg.dgurl() + '/pdf') if f.endswith('.pdf')]
-        #pdfs
+        # pdfs
         with open(data_group.csv.path) as dg_csv:
             table = csv.DictReader(dg_csv)
             errors = []
             count = 0
-            for line in table: # read every csv line, create docs for each
-                    count+=1
-                    if line['filename'] == '':
-                        errors.append(count)
-                    if line['title'] == '': # updates title in line object
-                        line['title'] = line['filename'].split('.')[0]
-                    dd = DataDocument.objects.create(filename=line['filename'],
-                        title=line['title'],
-                        product_category=line['product'],
-                        url=line['url'],
-                        matched = line['filename'] in self.pdfs,
-                        data_group=data_group,
-                        data_source=data_source)
-                    dds.append(dd)
+            for line in table:  # read every csv line, create docs for each
+                count += 1
+                if line['filename'] == '':
+                    errors.append(count)
+                if line['title'] == '':  # updates title in line object
+                    line['title'] = line['filename'].split('.')[0]
+                dd = DataDocument.objects.create(filename=line['filename'],
+                                                 title=line['title'],
+                                                 product_category=line['product'],
+                                                 url=line['url'],
+                                                 matched=line['filename'] in self.pdfs,
+                                                 data_group=data_group)
+                dds.append(dd)
             return dds
 
     # creation of another DataGroup from csv and pdf sources
@@ -174,19 +163,19 @@ class TestDataGroup(LiveServerTestCase):
         self.dg = self.create_data_group(data_source=ds)
         dg_count_after = DataGroup.objects.count()
         self.assertEqual(dg_count_after, dg_count_before + 1,
-                            "Confirm the DataGroup object has been created")
+                         "Confirm the DataGroup object has been created")
         self.assertEqual(3, self.dg.pk,
-                            "Confirm the new DataGroup object's pk is 3")
+                         "Confirm the new DataGroup object's pk is 3")
         self.pdfs = self.upload_pdfs()
         self.dds = self.create_data_documents(self.dg, ds)
 
         # Use the browser layer to confirm that the object has been created
         self.browser.get('%s%s' % (self.live_server_url, '/datagroup/3'))
         self.assertEqual('factotum', self.browser.title,
-                            "Testing open of datagroup 3 show page")
+                         "Testing open of datagroup 3 show page")
 
         self.browser.get(self.live_server_url + reverse('data_group_detail',
-                                                    kwargs={'pk': self.dg.pk}))
+                                                        kwargs={'pk': self.dg.pk}))
         self.assertEqual('factotum', self.browser.title)
         h1 = self.browser.find_element_by_name('title')
         self.assertEqual('Walmart MSDS 3', h1.text)
@@ -195,12 +184,13 @@ class TestDataGroup(LiveServerTestCase):
         # deleting the DataGroup should clean up the file system
         self.browser.get(self.live_server_url + '/datagroup/delete/3')
         del_button = self.browser.find_elements_by_xpath(('/html/body/div/form/'
-                                                                'input[2]'))[0]
+                                                          'input[2]'))[0]
         del_button.click()
-        self.assertEqual(DataGroup.objects.count(), dg_count_before ,
-                            "Confirm the DataGroup object has been deleted")
+        self.assertEqual(DataGroup.objects.count(), dg_count_before,
+                         "Confirm the DataGroup object has been deleted")
 
-class TestProductCuration(LiveServerTestCase):
+
+class TestProductCuration(StaticLiveServerTestCase):
 
     fixtures = ['seed_data']
 
@@ -214,25 +204,27 @@ class TestProductCuration(LiveServerTestCase):
     def test_unlinked_documents(self):
         self.browser.get(self.live_server_url + '/product_curation/')
         src_title = self.browser.find_elements_by_xpath(
-                                '/html/body/div/table/tbody/tr[1]/td[1]/a')[0]
+            '//*[@id="products"]/tbody/tr/td[1]/a')[0]
         ds = DataSource.objects.get(title=src_title.text)
         un_link = self.browser.find_elements_by_xpath(
-                                '/html/body/div/table/tbody/tr[1]/td[3]/a')[0]
+            '//*[@id="products"]/tbody/tr/td[1]/a')[0]
         self.assertEqual(un_link.get_attribute("href").split('/')[-1],
-                                                                    str(ds.pk))
+                         str(ds.pk))
 
     def test_PUC_assignment(self):
         self.browser.get(self.live_server_url + '/product_curation/')
         src_title = self.browser.find_elements_by_xpath(
-                                '/html/body/div/table/tbody/tr[1]/td[1]/a')[0]
+            '//*[@id="products"]/tbody/tr/td[1]/a')[0]
         ds = DataSource.objects.get(title=src_title.text)
         puc_link = self.browser.find_elements_by_xpath(
-                                '/html/body/div/table/tbody/tr[1]/td[4]/a')[0]
-        products_missing_PUC = str(len(ds.source.filter(prod_cat__isnull=True)))
+            '//*[@id="products"]/tbody/tr/td[4]/a')[0]
+        products_missing_PUC = str(
+            len(ds.source.filter(prod_cat__isnull=True)))
         self.assertEqual(puc_link.text, products_missing_PUC, ('The Assign PUC '
-                            'link should display # of Products without a PUC'))
+                                                               'link should display # of Products without a PUC'))
 
-class TestQAScoreboard(LiveServerTestCase):
+
+class TestQAScoreboard(StaticLiveServerTestCase):
     # Issue 35 https://github.com/HumanExposure/factotum/issues/35
     # Definition of Done:
     # A QA Home Page
@@ -252,9 +244,10 @@ class TestQAScoreboard(LiveServerTestCase):
 
         # A link in the nav bar to the QA Home page
         self.browser.get('%s%s' % (self.live_server_url, ''))
-        nav_html = self.browser.find_element_by_xpath('//*[@id="navbarCollapse"]/ul').get_attribute('innerHTML')
+        nav_html = self.browser.find_element_by_xpath(
+            '//*[@id="navbarCollapse"]/ul').get_attribute('innerHTML')
         self.assertIn('href="/qa/"', nav_html,
-        'The link to /qa/ must be in the nav list')
+                      'The link to /qa/ must be in the nav list')
 
         self.browser.get('%s%s' % (self.live_server_url, '/qa'))
         scriptcount = Script.objects.filter(script_type='EX').count()
@@ -263,59 +256,61 @@ class TestQAScoreboard(LiveServerTestCase):
         row_count = len(self.browser.find_elements_by_xpath(
             "//table[@id='extraction_script_table']/tbody/tr"))
         self.assertEqual(scriptcount, row_count, ('The seed data contains one '
-                    'ExtractionScript object that should appear in this table'))
+                                                  'ExtractionScript object that should appear in this table'))
 
         displayed_doc_count = self.browser.find_elements_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr/td[2]')[0].text
+
         model_doc_count = DataDocument.objects.filter(
-                                    extractedtext__extraction_script=1).count()
+            extractedtext__extraction_script=2).count()
+
         self.assertEqual(displayed_doc_count, str(model_doc_count),
-                        ('The displayed number of datadocuments should match '
-                        'the number of data documents whose related extracted '
-                        'text objects used the extraction script'))
+                         ('The displayed number of datadocuments should match '
+                          'the number whose related extracted text objects used '
+                          ' the extraction script'))
 
         displayed_pct_checked = self.browser.find_elements_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr/td[3]')[0].text
-        #this assumes that pk=1 will be a script_type of 'EX'
-        model_pct_checked = Script.objects.get(pk=1).get_pct_checked()
+        # this assumes that pk=1 will be a script_type of 'EX'
+        model_pct_checked = Script.objects.get(pk=2).get_pct_checked()
         self.assertEqual(displayed_pct_checked, model_pct_checked,
-                        ('The displayed percentage should match what is '
-                        'derived from the model'))
+                         ('The displayed percentage should match what is '
+                          'derived from the model'))
 
-        es = Script.objects.get(pk=1)
+        es = Script.objects.get(pk=2)
         self.assertEqual(es.get_qa_complete_extractedtext_count(), 0,
-                        ('The ExtractionScript object should return 0'
-                        'qa_checked ExtractedText objects'))
+                         ('The ExtractionScript object should return 0'
+                          'qa_checked ExtractedText objects'))
         self.assertEqual(model_pct_checked, '0%')
         # Set qa_checked property to True for one of the ExtractedText objects
-        self.assertEqual(ExtractedText.objects.get(pk=1).qa_checked , False)
+        self.assertEqual(ExtractedText.objects.get(pk=1).qa_checked, False)
         et_change = ExtractedText.objects.get(pk=1)
         et_change.qa_checked = True
         et_change.save()
-        self.assertEqual(ExtractedText.objects.get(pk=1).qa_checked , True,
-                        'The object should now have qa_checked = True')
+        self.assertEqual(ExtractedText.objects.get(pk=1).qa_checked, True,
+                         'The object should now have qa_checked = True')
 
-        es = Script.objects.get(pk=1)
+        es = Script.objects.get(pk=2)
         self.assertEqual(es.get_qa_complete_extractedtext_count(), 1,
-                        ('The ExtractionScript object should return 1 '
-                        'qa_checked ExtractedText object'))
+                         ('The ExtractionScript object should return 1 '
+                          'qa_checked ExtractedText object'))
 
         self.assertEqual(1, es.get_qa_complete_extractedtext_count(),
-                        'Check the numerator in the model layer')
+                         'Check the numerator in the model layer')
         self.assertEqual(2, es.get_datadocument_count(),
-                        'Check the denominator in the model layer')
-        model_pct_checked = Script.objects.get(pk=1).get_pct_checked()
+                         'Check the denominator in the model layer')
+        model_pct_checked = Script.objects.get(pk=2).get_pct_checked()
         self.assertEqual(model_pct_checked, '50%',
-                        ('The get_pct_checked() method should return 50 pct'
-                        ' from the model layer'))
+                         ('The get_pct_checked() method should return 50 pct'
+                          ' from the model layer'))
         self.browser.refresh()
 
         displayed_pct_checked = self.browser.find_elements_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr/td[3]')[0].text
 
         self.assertEqual(displayed_pct_checked, model_pct_checked,
-                        ('The displayed percentage in the browser layer should '
-                        'reflect the newly checked extracted text object'))
+                         ('The displayed percentage in the browser layer should '
+                          'reflect the newly checked extracted text object'))
         # A button for each row that will take you to the script's QA page
         # https://github.com/HumanExposure/factotum/issues/36
         script_qa_link = self.browser.find_element_by_xpath(
@@ -323,29 +318,28 @@ class TestQAScoreboard(LiveServerTestCase):
         )
         # Before clicking the link, the script's qa_done property
         # should be false
-        self.assertEqual(Script.objects.get(pk=1).qa_begun, False,
-        'The qa_done property of the Script should be False')
+        self.assertEqual(Script.objects.get(pk=2).qa_begun, False,
+                         'The qa_done property of the Script should be False')
 
         script_qa_link.click()
         # The link should open a page where the h1 text matches the title
 
         # of the Script
         h1 = self.browser.find_element_by_xpath('/html/body/div/h1').text
-        self.assertIn(Script.objects.get(pk=1).title, h1,
-        'The <h1> text should equal the .title of the Script')
+        self.assertIn(Script.objects.get(pk=2).title, h1,
+                      'The <h1> text should equal the .title of the Script')
 
         # Opening the ExtractionScript's QA page should set its qa_begun
         # property to True
-        self.assertEqual(Script.objects.get(pk=1).qa_begun, True,
-        'The qa_done property of the ExtractionScript should now be True')
+        self.assertEqual(Script.objects.get(pk=2).qa_begun, True,
+                         'The qa_done property of the ExtractionScript should now be True')
         # Go back to the QA index page to confirm
         self.browser.get('%s%s' % (self.live_server_url, '/qa'))
         script_qa_link = self.browser.find_element_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr/td[4]/a'
         )
         self.assertEqual(script_qa_link.text, 'Continue QA',
-        'The QA button should now say "Continue QA" instead of "Begin QA"')
-
+                         'The QA button should now say "Continue QA" instead of "Begin QA"')
 
 
 def clean_label(self, label):
@@ -353,7 +347,7 @@ def clean_label(self, label):
     return label.replace('\xd7', '')
 
 
-def wait_for_element(self, elm, by = 'id', timeout=10):
+def wait_for_element(self, elm, by='id', timeout=10):
     wait = WebDriverWait(self.browser, timeout)
     wait.until(EC.presence_of_element_located((By.XPATH, elm)))
     return self.browser.find_element_by_xpath(elm)
@@ -362,7 +356,7 @@ def wait_for_element(self, elm, by = 'id', timeout=10):
 class TestPUCAssignment(StaticLiveServerTestCase):
     # Issue 80 https://github.com/HumanExposure/factotum/issues/80
     #
-    fixtures = ['seed_data','seed_product_category.yaml']
+    fixtures = ['seed_product_category.yaml', 'seed_data', ]
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -386,17 +380,25 @@ class TestPUCAssignment(StaticLiveServerTestCase):
         self.browser.get('%s%s' % (self.live_server_url, '/product_puc/1'))
         h2 = self.browser.find_element_by_xpath('/html/body/div/h2').text
         self.assertIn(Product.objects.get(pk=1).title, h2,
-        'The <h2> text should equal the .title of the product')
+                      'The <h2> text should equal the .title of the product')
+
+        self.assertEqual(1, Product.objects.filter(pk=1).count(),
+                         "There should be one object with pk=1")
 
         puc_before = Product.objects.get(pk=1).prod_cat
+        self.assertEqual(puc_before, None, "There should be no assigned PUC")
 
-        puc_selector = self.browser.find_element_by_xpath('//*[@id="id_prod_cat"]')
-        puc_selector = self.browser.find_element_by_xpath('//*[@id="select2-id_prod_cat-container"]')
-        puc_sibling = self.browser.find_element_by_xpath('//*[@id="id_prod_cat"]/following::*')
+        puc_selector = self.browser.find_element_by_xpath(
+            '//*[@id="id_prod_cat"]')
+        puc_selector = self.browser.find_element_by_xpath(
+            '//*[@id="select2-id_prod_cat-container"]')
+        puc_sibling = self.browser.find_element_by_xpath(
+            '//*[@id="id_prod_cat"]/following::*')
         puc_sibling.click()
 
         #wait_for_element(self, "select2-search__field", "class").click()
-        puc_input = self.browser.find_element_by_class_name('select2-search__field')
+        puc_input = self.browser.find_element_by_class_name(
+            'select2-search__field')
         puc_input.send_keys('pet care')
 
         # The driver cannot immediately type into the input box - it needs
@@ -404,13 +406,82 @@ class TestPUCAssignment(StaticLiveServerTestCase):
         # https://stackoverflow.com/questions/34422274/django-selecting-autocomplete-light-choices-with-selenium
 
         wait_for_element(self,
-            '//*[@id="select2-id_prod_cat-results"]/li[2]',
-            "xpath").click()
-        puc_selector = self.browser.find_element_by_xpath('//*[@id="select2-id_prod_cat-container"]')
-        self.assertEqual(puc_selector.text, 'Pet care - all pets -')
+                         '//*[@id="select2-id_prod_cat-results"]/li[2]',
+                         "xpath").click()
+        puc_selector = self.browser.find_element_by_xpath(
+            '//*[@id="select2-id_prod_cat-container"]')
+        self.assertEqual(puc_selector.text, 'Pet care - all pets -',
+                         'The PUC selector value should be "Pet care - all pets -"')
 
-        submit_button = self.browser.find_element_by_xpath('/html/body/div/div/form/button')
+        submit_button = self.browser.find_element_by_id('btn-assign-puc')
         submit_button.click()
-        puc_after = Product.objects.get(pk=1).prod_cat
-        # check the model layer for the change
-        self.assertNotEqual(puc_before, puc_after, "The object's prod_cat should have changed")
+        # Open the product page and confirm the PUC has changed
+        self.browser.get('%s%s' % (self.live_server_url, '/product/1'))
+        puc_after = self.browser.find_element_by_id('prod_cat')
+        self.assertNotEqual(puc_before, puc_after,
+                            "The object's prod_cat should have changed")
+
+
+class TestFacetedSearch(StaticLiveServerTestCase):
+    # Issue 104 https://github.com/HumanExposure/factotum/issues/104
+    #
+    fixtures = ['seed_product_category.yaml', 'seed_data', ]
+
+    def setUp(self):
+        self.browser = webdriver.Chrome()
+        log_karyn_in(self)
+        update_index.Command().handle()
+
+
+    def tearDown(self):
+        self.browser.quit()
+
+    def test_elasticsearch(self):
+        # Implement faceted search within application. Desire ability to search on Products by title,
+        # with the following two facets
+        #
+        # Data documents, by type of data document
+        # (e.g. no data document, MSDS, SDS, ingredient list, etc.)
+        # Product category, by general category (e.g., no product
+        # category, list of ~12 general categories)
+        #
+        # Search bar appears on far right side of the navigation bar, on every page of the application.
+        # User enters a product title in the search bar. User is then taken to a landing page with
+        # search results on product title, with the two facets visible on the left side of the page.
+        
+        # Temporary fix: assign a PUC to the product, then rebuild the index
+        
+        p1 = Product.objects.get(pk=1)
+        pc230 = ProductCategory.objects.get(pk=230)
+        p1.prod_cat = pc230
+        p1.save()
+        # update the search engine index
+        update_index.Command().handle()
+
+        # Check for the elasticsearch engine
+        self.browser.get('http://127.0.0.1:9200/')
+        self.assertIn("9200", self.browser.current_url)
+        self.assertIn("elasticsearch", self.browser.page_source,
+                      "The search engine's server needs to be running")
+        # if a Product object has a PUC assigned, that PUC should appear in the facet index
+        sqs = SearchQuerySet().using('default').facet('prod_cat')
+        self.assertIn('nails', json.dumps(sqs.facet_counts()),
+                      'The search engine should return "Personal care - nails - " among the product category facets.')
+
+        # use the input box to enter a search query
+        self.browser.get(self.live_server_url)
+        searchbox = self.browser.find_element_by_id('q')
+        searchbox.send_keys('nutra')
+        searchbox.send_keys(Keys.RETURN)
+        self.assertIn("nutra", self.browser.current_url,
+                      'The URL should contain the search string')
+        facetcheck = self.browser.find_element_by_xpath(
+            '/html/body/div/div/div/div[1]')
+        self.assertIn('nails', facetcheck.text,
+                      'The faceting controls should include a "Personal care - nails - " entry')
+        facetcheck = self.browser.find_element_by_id('Personalcare-nails-')
+        facetcheck.click()
+        facetapply = self.browser.find_element_by_id('btn-apply-filters')
+        facetapply.click()
+        self.assertIn("prod_cat=Personal%20care%20-%20nails%20-%20",
+                      self.browser.current_url, 'The URL should contain the facet search string')

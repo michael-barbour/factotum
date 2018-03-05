@@ -1,4 +1,7 @@
 from dal import autocomplete
+from datetime import datetime
+from django.shortcuts import redirect
+
 
 from django.utils import timezone
 from django.forms import ModelForm, ModelChoiceField
@@ -26,6 +29,12 @@ class ProductPUCForm(ModelForm):
     class Meta:
         model = Product
         fields = ['prod_cat']
+
+@login_required()
+def product_detail(request, pk,
+						template_name='product_curation/product_detail.html'):
+	product = get_object_or_404(Product, pk=pk, )
+	return render(request, template_name, {'product'  : product,})
 
 @login_required()
 def product_curation_index(request, template_name='product_curation/product_curation_index.html'):

@@ -36,7 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'factotum',
     'django_filters',
-    'debug_toolbar',
+#    'debug_toolbar',
+    'haystack',
+    'haystack_elasticsearch',
     'webpack_loader',
 ]
 
@@ -48,7 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+#    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'factotum.urls'
@@ -71,6 +73,21 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'factotum.wsgi.application'
+
+# Haystack search
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack_elasticsearch.elasticsearch2.Elasticsearch2SearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'INDEX_NAME': 'product-index',
+    },
+    'test_index': {
+        'ENGINE': 'haystack_elasticsearch.elasticsearch2.Elasticsearch2SearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'TIMEOUT': 60 * 10,
+        'INDEX_NAME': 'test_index',
+    },
+}
 
 # IPs allowed to see django-debug-toolbar output.
 INTERNAL_IPS = ('127.0.0.1',)
@@ -115,6 +132,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
     os.path.join(BASE_DIR, 'assets'),
 ]
+
+DEBUG = True
 
 LOGIN_REDIRECT_URL = 'index'
 LOGIN_URL = 'login'

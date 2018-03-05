@@ -6,3 +6,10 @@ PyYAML==3.12
 wincertstore==0.2
 django-autocomplete-light==3.2.10
 django-debug-toolbar==1.9.1
+django-filters==0.2.1
+django-haystack==2.7.0
+django-haystack-elasticsearch==0.1.0
+django-webpack-loader==0.5.0
+django-widget-tweaks==1.4.1
+docutils==0.12
+elasticsearch==2.4.1

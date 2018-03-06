@@ -28,6 +28,9 @@ class Product(models.Model):
 	large_image = models.CharField(max_length=500, null=True, blank=True)
 	created_at = models.DateTimeField(default=timezone.now)
 	updated_at = models.DateTimeField(null=True, blank=True)
+	puc_assigned_usr = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, blank = True)
+	puc_assigned_script = models.ForeignKey('Script', on_delete=models.CASCADE, null=True, blank = True)
+	puc_assigned_time = models.DateTimeField(null=True, blank=True)
 
 	def __str__(self):
 		return self.title

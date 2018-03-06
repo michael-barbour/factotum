@@ -120,10 +120,20 @@
                             </a>
                         </td>
                         <td>{{ doc.product_category }}</td>
-                        <td align="center"><input type="checkbox" name="matched" {% if doc.matched %}checked{% endif %}>
+                        <td align="center">
+                          {% if doc.matched %}
+                          <span class="oi oi-circle-check" style="color:green;"></span>
+                        {% else %}
+                          <span class="oi oi-circle-x" style="color:red;"></span>
+                          {% endif %}
                         </td>
-                        <td align="center"><input type="checkbox" name="extracted"
-                                                  {% if doc.extracted %}checked{% endif %}></td>
+                        <td align="center">
+                          {% if doc.extracted %}
+                            <span class="oi oi-circle-check" style="color:green;"></span>
+                          {% else %}
+                            <span class="oi oi-circle-x" style="color:red;"></span>
+                          {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>

@@ -157,17 +157,47 @@
             </form>
         </div>
     {% endif %}
-    <a href="{% static 'csv/extracted_text.csv' %}" class="btn btn-secondary"
+    <a id="xx" href="" class="btn btn-secondary"
        {% if not doc.matched %}disabled{% endif %}><span class="oi oi-spreadsheet"></span>Extracted Text CSV Template</a>
     <button type="button" class="btn btn-primary"  disabled>Upload Extracted Text</button>
   </div>
   <br>
   <br>
+<!-- {% static 'csv/extracted_text.csv' %} -->
+
+
+
+  {% if documents %}
+      <table class="table" id="extract" style="display:none;">
+          <thead class="table-primary">
+          <th>PK</th>
+          <th>Title</th>
+          </thead>
+          <tbody>
+          {% for doc in documents %}
+              <tr>
+                  {% if doc.matched and not doc.extracted %}
+                      <td>{{ doc.pk }}</td>
+                      <td>{{ doc.title }}</td>
+                  {% endif %}
+              </tr>
+          {% endfor %}
+          </tbody>
+      </table>
+  {% endif %}
+
+
+
+
 {% endblock %}
 {% block js %}
   <script type="text/javascript">
     $(document).ready(function () {
-      var table = $('#d-docs').DataTable({
+
+
+
+      var table = $('#d-docs');
+      table.DataTable({
       // "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
       dom:"<'row'<'col-md-4 form-inline'l><'col-md-4 form-inline'f><'col-md-4'B>>" +
           "<'row'<'col-sm-12'tr>>" +
@@ -181,6 +211,61 @@
           },
         }]
       });
+
+    function exportTableToCSV($table, filename) {
+
+          var $rows = $table.find('tr:has(td),tr:has(th)'),
+
+              // Temporary delimiter characters unlikely to be typed by keyboard
+              // This is to avoid accidentally splitting the actual contents
+              tmpColDelim = String.fromCharCode(11), // vertical tab character
+              tmpRowDelim = String.fromCharCode(0), // null character
+
+              // actual delimiter characters for CSV format
+              colDelim = '","',
+              rowDelim = '"\r\n"',
+
+              // Grab text from table into CSV formatted string
+              csv = '"' + $rows.map(function (i, row) {
+                  var $row = $(row), $cols = $row.find('td,th');
+
+                  return $cols.map(function (j, col) {
+                      var $col = $(col), text = $col.text();
+
+                      return text.replace(/"/g, '""'); // escape double quotes
+
+                  }).get().join(tmpColDelim);
+
+              }).get().join(tmpRowDelim)
+                  .split(tmpRowDelim).join(rowDelim)
+                  .split(tmpColDelim).join(colDelim) + '"',
+
+
+
+              // Data URI
+              csvData = 'data:application/csv;charset=utf-8,' + encodeURIComponent(csv);
+
+              console.log(csv);
+
+          	if (window.navigator.msSaveBlob) { // IE 10+
+          		//alert('IE' + csv);
+          		window.navigator.msSaveOrOpenBlob(new Blob([csv], {type: "text/plain;charset=utf-8;"}), "csvname.csv")
+          	}
+          	else {
+          		$(this).attr({ 'download': filename, 'href': csvData, 'target': '_blank' });
+          	}
+      }
+
+      // This must be a hyperlink
+      $("#xx").on('click', function (event) {
+
+          exportTableToCSV.apply(this, [$('#extract'), 'export.csv']);
+
+          // IF CSV, don't do event.preventDefault() or return false
+          // We actually need this to be a typical hyperlink
+      });
+
     });
+
   </script>
 {% endblock %}

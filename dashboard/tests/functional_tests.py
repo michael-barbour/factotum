@@ -448,9 +448,9 @@ class TestFacetedSearch(StaticLiveServerTestCase):
         # Search bar appears on far right side of the navigation bar, on every page of the application.
         # User enters a product title in the search bar. User is then taken to a landing page with
         # search results on product title, with the two facets visible on the left side of the page.
-        
+
         # Temporary fix: assign a PUC to the product, then rebuild the index
-        
+
         p1 = Product.objects.get(pk=1)
         pc230 = ProductCategory.objects.get(pk=230)
         p1.prod_cat = pc230
@@ -485,3 +485,18 @@ class TestFacetedSearch(StaticLiveServerTestCase):
         facetapply.click()
         self.assertIn("prod_cat=Personal%20care%20-%20nails%20-%20",
                       self.browser.current_url, 'The URL should contain the facet search string')
+
+class TestDataTables(StaticLiveServerTestCase):
+
+    fixtures = ['seed_data']
+
+    def setUp(self):
+        self.browser = webdriver.Chrome()
+        log_karyn_in(self)
+
+    def tearDown(self):
+        self.browser.quit()
+
+    def test_table_wrapped(self):
+        self.browser.get(self.live_server_url + '/datasources/')
+        self.browser.find_element_by_class_name('dataTables_wrapper')

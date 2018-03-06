@@ -123,6 +123,7 @@
                         <td align="center">
                           {% if doc.matched %}
                           <span class="oi oi-circle-check" style="color:green;"></span>
+                          <p hidden>1</p>  <!-- for sorting DataTable -->
                         {% else %}
                           <span class="oi oi-circle-x" style="color:red;"></span>
                           {% endif %}
@@ -130,6 +131,7 @@
                         <td align="center">
                           {% if doc.extracted %}
                             <span class="oi oi-circle-check" style="color:green;"></span>
+                            <p hidden>1</p>  <!-- for sorting DataTable -->
                           {% else %}
                             <span class="oi oi-circle-x" style="color:red;"></span>
                           {% endif %}

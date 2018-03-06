@@ -3,7 +3,7 @@
 
 {% block content %}
     <h1><span class="oi oi-wrench" title="factotum" aria-hidden="true"></span>
-Welcome to Factotum</h1>
+        Welcome to Factotum</h1>
     <br>
 
     <div class="card-deck">
@@ -28,4 +28,88 @@ Welcome to Factotum</h1>
       </div>
     </div>
 
+    <p></p>
+    <h4>Documents Uploaded</h4>
+    <div id="lineChart">
+        <svg style="height:350px;width:50%;overflow:visible"></svg>
+    </div>
+
+    <script>
+        nv.addGraph(function () {
+            var chart = nv.models.lineChart(x_is_date=true)
+                .color(d3.scale.category10().range())
+                .x(function(d) {return d3.time.format("%Y-%m-%d").parse(d['x']);});
+            chart.xAxis
+                .axisLabel('Date')
+                .tickFormat(function(d) {
+                    return d3.time.format('%m/%d/%y')(new Date(d))
+                });
+            chart.xScale(d3.time.scale());
+            chart.yAxis
+                .tickFormat(d3.format(',.0f'));
+            d3.select('#lineChart svg')
+                .datum(data_lineChart)
+                .transition().duration(500)
+                .attr('height', 350)
+                .call(chart);
+            return chart;
+        });
+
+        data_lineChart = [
+            {
+                'color': 'blue',
+                'values': [
+                    {% for item in document_stats.all %}
+                        {
+                            'y': {{ item.document_count }},
+                            'x': '{{ item.upload_date }}'
+                        },
+                    {% endfor %}
+                ],
+                'key': 'All',
+                'yAxis': '0'
+            },
+            {
+                'color': 'green',
+                'values': [
+                    {% for item in document_stats.product %}
+                        {
+                            'y': {{ item.document_count }},
+                            'x': '{{ item.upload_date }}'
+                        },
+                    {% endfor %}
+                ],
+                'key': 'Product',
+                'yAxis': '0'
+            },
+            {
+                'color': 'red',
+                'values': [
+                    {% for item in document_stats.msds_sds %}
+                        {
+                            'y': {{ item.document_count }},
+                            'x': '{{ item.upload_date }}'
+                        },
+                    {% endfor %}
+                ],
+                'key': 'MSDS/SDS',
+                'yAxis': '0'
+            }
+
+        ];
+    </script>
+
+    <!--
+        <h4>Linechart datasets for debugging purposes</h4>
+        <p>All documents:
+            {{ document_stats.all }}
+        </p>
+        <p>Product documents:
+            {{ document_stats.product }}
+        </p>
+        <p>MSDS/SDS documents:
+            {{ document_stats.msds_sds }}
+        </p>
+    -->
 {% endblock %}
+

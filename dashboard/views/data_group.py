@@ -67,7 +67,7 @@ def data_group_detail(request, pk,
 		print(request.FILES.getlist('extract'))
 	docs = DataDocument.objects.filter(data_group_id=pk) # refresh
 	inc_upload = all([d.matched for d in docs])
-	include_extract = any([d.matched for d in docs])
+	include_extract = any([d.matched for d in docs])  # not used now?
 	scripts = Script.objects.filter(script_type='EX')
 	return render(request, template_name, {'datagroup'  : datagroup,
 											'documents' : docs,
@@ -75,9 +75,6 @@ def data_group_detail(request, pk,
 											'err'       : err,
 											'include_extract':include_extract,
 											'scripts': scripts})
-
-# raid_ant_killer.pdf
-# raid_msds.pdf
 
 @login_required()
 def data_group_create(request, template_name='data_group/datagroup_form.html'):
@@ -131,7 +128,6 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
 				return render(request, template_name, {'line_errors': errors,
 														'form': form})
 			dg_dir = datagroup.name.replace(' ','_')
-			# os.mkdir('media/{0}'.format(dg_dir))
 			zf = zipfile.ZipFile('media/{0}/{0}.zip'.format(dg_dir), 'w',
 								zipfile.ZIP_DEFLATED)
 			datagroup.zip_file = zf.filename

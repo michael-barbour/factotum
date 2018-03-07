@@ -12,7 +12,6 @@
 {% endblock %}
 
 {% block content %}
-    <h1 class="col-sm-12">{{ documents }}</h1>
     <h1 class="col-sm-12">
         <span name="title">{{ datagroup.name }}</span>
         <div class="btn-group float-lg-right" role="group" aria-label="Data Group Modification">
@@ -184,6 +183,13 @@
           <thead class="table-primary">
           <th>PK</th>
           <th>Title</th>
+          <th>CAS</th>
+          <th>chem_name</th>
+          <th>raw_min_comp</th>
+          <th>raw_max_comp</th>
+          <th>units</th>
+          <th>report_funcuse</th>
+          <th>rev_num</th>
           </thead>
           <tbody>
           {% for doc in documents %}

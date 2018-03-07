@@ -88,6 +88,11 @@ class TestDataSource(StaticLiveServerTestCase):
         self.assertEqual(
             b, row_count, 'Does the number of objects with the data_source_id of 1 (left side) match number of rows in the table (right side)?')
 
+    def test_DataTables(self):
+        self.browser.get(self.live_server_url + '/datasources/')
+        wrap_div = self.browser.find_element_by_class_name('dataTables_wrapper')
+        self.assertIn("Show", wrap_div.text, 'DataTables missing...')
+
 
 class TestDataGroup(StaticLiveServerTestCase):
 
@@ -485,18 +490,3 @@ class TestFacetedSearch(StaticLiveServerTestCase):
         facetapply.click()
         self.assertIn("prod_cat=Personal%20care%20-%20nails%20-%20",
                       self.browser.current_url, 'The URL should contain the facet search string')
-
-class TestDataTables(StaticLiveServerTestCase):
-
-    fixtures = ['seed_data']
-
-    def setUp(self):
-        self.browser = webdriver.Chrome()
-        log_karyn_in(self)
-
-    def tearDown(self):
-        self.browser.quit()
-
-    def test_table_wrapped(self):
-        self.browser.get(self.live_server_url + '/datasources/')
-        self.browser.find_element_by_class_name('dataTables_wrapper')

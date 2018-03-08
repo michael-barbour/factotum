@@ -131,3 +131,13 @@ def product_detail(request, pk, template_name=('product_curation/'
                                                 'product_detail.html')):
     p = Product.objects.get(pk=pk)
     return render(request, template_name,{'product': p})
+
+@login_required()
+def product_list(request, template_name=('product_curation/'
+                                                'products.html')):
+    product = Product.objects.all()
+    data = {}
+    data['object_list'] = product
+    return render(request, template_name, data)
+    p = Product.objects.all()
+    return render(request, template_name,{'products': p})

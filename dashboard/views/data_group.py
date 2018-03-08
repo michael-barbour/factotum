@@ -4,12 +4,14 @@ import zipfile
 from datetime import datetime
 
 from django.conf import settings
-from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import ModelForm
-from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext_lazy as _
 from django.core.files import File
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+from django.utils.translation import ugettext_lazy as _
 from django.core.files.storage import FileSystemStorage
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
 
 from dashboard.models import DataGroup, DataDocument, DataSource, Script
 
@@ -43,6 +45,7 @@ def data_group_detail(request, pk,
 	store = settings.MEDIA_URL + datagroup.name.replace(' ','_')
 	err = False
 	if request.method == 'POST' and 'upload' in request.POST:
+		print('POOP')
 		files = request.FILES.getlist('multifiles')
 		# match filename to pdf name
 		proc_files = [f for d in docs for f in files if f.name == d.filename]
@@ -64,7 +67,29 @@ def data_group_detail(request, pk,
 		zf.close()
 	if request.method == 'POST' and 'extract' in request.POST:
 		print(request.POST)
-		print(request.FILES.getlist('extract'))
+		cv = request.FILES.getlist('extract')[0]
+		print(type(cv))
+		print(cv.read())
+		print(settings.MEDIA_ROOT)
+		print(cv.name)
+		path = default_storage.save('junk/'+cv.name,ContentFile(cv.read()))
+		print(path)
+		# tmp_file = os.path.join(settings.MEDIA_ROOT, path)
+
+
+
+
+		# tt = open(cv,"r")
+		# table = csv.reader(tt)
+		# for line in table:
+		# 	print(line)
+
+
+
+
+
+
+
 	docs = DataDocument.objects.filter(data_group_id=pk) # refresh
 	inc_upload = all([d.matched for d in docs])
 	include_extract = any([d.matched for d in docs])  # not used now?
@@ -117,8 +142,7 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
 								title=line['title'],
 								product_category=line['product'],
 								url=line['url'],
-								data_group=datagroup,
-								data_source=ds)
+								data_group=datagroup)
 				doc.save()
 				# update line to hold the pk for writeout
 				text.append(str(doc.pk)+','+ ','.join(line.values())+'\n')

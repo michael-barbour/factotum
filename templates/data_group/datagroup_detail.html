@@ -67,27 +67,52 @@
         </button>
 <br>
     <br>
-        <div class="col-sm-6">
+    {% if include_extract %}
+      <div class="col-sm-12">
+        <h5>Work with uploaded documents:</h5>
 
-            {% if doc.matched %}
-                <h5>Upload Extracted Text:</h5>
-                <div class="card">
-                    <div class="card-body">
-                        <form method="post" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <input type="file" name="extracted_csv">
-                            <button class="btn btn-primary" type="submit">Upload</button>
-                        </form>
-                        <br>
-                        <a href="{% static 'csv/extracted_text.csv' %}" class="btn btn-secondary"
-                           {% if doc.matched %}disabled{% endif %}><span class="oi oi-spreadsheet"></span>Extracted
-                            Text
-                            CSV
-                            Template</a>
-                    </div>
-                </div>
-            {% endif %}
-        </div>
+            <div class="col-md-4 btn-group border rounded"  style="text-align:center">
+                <form enctype="multipart/form-data" action="" method="post">
+                    <h5 align="center">Extraction Script:</h5>
+                    {% csrf_token %}
+                    <select name="script_selection">
+                      {% for script in scripts %}
+                      <option value="{{ script.title }}">{{ script.title }}</option>
+                      {% endfor %}
+                    </select>
+                    <br>
+                    <input type="file" class="btn btn-light" name="extract">
+                    <br>
+                    <input type="submit" class="btn btn-primary" name="extract" disabled>
+                </form>
+            </div>
+        <a id="xx" href="" class="btn btn-secondary"
+           {% if not doc.matched %}disabled{% endif %}><span class="oi oi-spreadsheet"></span>Extracted Text CSV Template</a>
+      </div>
+      <table class="table" id="extract" style="display:none;">
+          <thead class="table-primary">
+          <th>PK</th>
+          <th>Title</th>
+          <th>CAS</th>
+          <th>chem_name</th>
+          <th>raw_min_comp</th>
+          <th>raw_max_comp</th>
+          <th>units</th>
+          <th>report_funcuse</th>
+          <th>rev_num</th>
+          </thead>
+          <tbody>
+          {% for doc in documents %}
+              <tr>
+                  {% if doc.matched and not doc.extracted %}
+                      <td>{{ doc.pk }}</td>
+                      <td>{{ doc.title }}</td>
+                  {% endif %}
+              </tr>
+          {% endfor %}
+          </tbody>
+      </table>
+    {% endif %}
 
         {% if documents %}
             <br>
@@ -149,29 +174,7 @@
         </ul>
     </div>
 
-  <div class="col-sm-12">
-    <h5>Work with uploaded documents:</h5>
-    {% if inc_upload %}
-        <div class="col-md-4 btn-group border rounded"  style="text-align:center">
-            <form enctype="multipart/form-data" action="" method="post">
-                <h5 align="center">Extraction Script:</h5>
-                {% csrf_token %}
-                <select name="script_selection">
-                  {% for script in scripts %}
-                  <option value="{{ script.title }}">{{ script.title }}</option>
-                  {% endfor %}
-                </select>
-                <br>
-                <input type="file" class="btn btn-light" name="extract">
-                <br>
-                <input type="submit" class="btn btn-primary" name="extract">
-            </form>
-        </div>
-    {% endif %}
-    <a id="xx" href="" class="btn btn-secondary"
-       {% if not doc.matched %}disabled{% endif %}><span class="oi oi-spreadsheet"></span>Extracted Text CSV Template</a>
-    <button type="button" class="btn btn-primary"  disabled>Upload Extracted Text</button>
-  </div>
+
   <br>
   <br>
 <!-- {% static 'csv/extracted_text.csv' %} -->
@@ -179,29 +182,7 @@
 
 
   {% if documents %}
-      <table class="table" id="extract" style="display:none;">
-          <thead class="table-primary">
-          <th>PK</th>
-          <th>Title</th>
-          <th>CAS</th>
-          <th>chem_name</th>
-          <th>raw_min_comp</th>
-          <th>raw_max_comp</th>
-          <th>units</th>
-          <th>report_funcuse</th>
-          <th>rev_num</th>
-          </thead>
-          <tbody>
-          {% for doc in documents %}
-              <tr>
-                  {% if doc.matched and not doc.extracted %}
-                      <td>{{ doc.pk }}</td>
-                      <td>{{ doc.title }}</td>
-                  {% endif %}
-              </tr>
-          {% endfor %}
-          </tbody>
-      </table>
+
   {% endif %}
 
 
@@ -211,9 +192,6 @@
 {% block js %}
   <script type="text/javascript">
     $(document).ready(function () {
-
-
-
       var table = $('#d-docs');
       table.DataTable({
       // "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
@@ -231,42 +209,26 @@
       });
 
     function exportTableToCSV($table, filename) {
-
           var $rows = $table.find('tr:has(td),tr:has(th)'),
-
               // Temporary delimiter characters unlikely to be typed by keyboard
               // This is to avoid accidentally splitting the actual contents
               tmpColDelim = String.fromCharCode(11), // vertical tab character
               tmpRowDelim = String.fromCharCode(0), // null character
-
               // actual delimiter characters for CSV format
               colDelim = '","',
               rowDelim = '"\r\n"',
-
               // Grab text from table into CSV formatted string
               csv = '"' + $rows.map(function (i, row) {
                   var $row = $(row), $cols = $row.find('td,th');
-
                   return $cols.map(function (j, col) {
                       var $col = $(col), text = $col.text();
-
                       return text.replace(/"/g, '""'); // escape double quotes
-
                   }).get().join(tmpColDelim);
-
               }).get().join(tmpRowDelim)
                   .split(tmpRowDelim).join(rowDelim)
                   .split(tmpColDelim).join(colDelim) + '"',
-
-
-
-              // Data URI
               csvData = 'data:application/csv;charset=utf-8,' + encodeURIComponent(csv);
-
-              console.log(csv);
-
           	if (window.navigator.msSaveBlob) { // IE 10+
-          		//alert('IE' + csv);
           		window.navigator.msSaveOrOpenBlob(new Blob([csv], {type: "text/plain;charset=utf-8;"}), "csvname.csv")
           	}
           	else {
@@ -276,14 +238,19 @@
 
       // This must be a hyperlink
       $("#xx").on('click', function (event) {
-
           exportTableToCSV.apply(this, [$('#extract'), 'export.csv']);
-
-          // IF CSV, don't do event.preventDefault() or return false
-          // We actually need this to be a typical hyperlink
       });
+      // make submit button active when file selected
+      $('input:file').change(
+          function(){
+              if ($(this).val()) {
+                  $('input:submit').attr('disabled',false);
+              } else {
+                  $('input:submit').attr('disabled',true);
+              }
+          }
+          );
 
     });
-
   </script>
 {% endblock %}

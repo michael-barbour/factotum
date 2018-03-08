@@ -7,8 +7,8 @@ from .script import Script
 class ExtractedText(models.Model):
 
 	UNITS_CHOICES = (
-		('PC','percent composition'),
-		('WF','weight fraction'))
+		('percent composition','percent composition'),
+		('weight fraction','weight fraction'))
 
 	datadocument = models.ForeignKey(DataDocument, on_delete=models.CASCADE)
 	cas = models.CharField(max_length=200, blank=True)
@@ -26,7 +26,7 @@ class ExtractedText(models.Model):
 							 choices=UNITS_CHOICES)
 	report_funcuse = models.CharField(max_length=100, blank=True)
 	doc_date = models.DateField(blank=True, null=True)
-	rev_num = models.PositiveIntegerField(blank=True, null=True)
+	rev_num = models.IntegerField(blank=True, null=True)
 	extraction_script = models.ForeignKey(Script,on_delete=models.CASCADE,
 										limit_choices_to={'script_type': 'EX'},)
 

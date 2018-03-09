@@ -5,9 +5,21 @@
 
 {% block errors %}
   {% if err %}
-  <div class="bg-warning text-white">
-    There were no matching records in the selected directory.
-  </div>
+    <div class="bg-warning text-white">
+      There were no matching records in the selected directory.
+    </div>
+  {% endif %}
+
+  {% if ext_err %}
+    <div class="bg-danger text-white text-center">
+      {% for pk, message in ext_err.items %}
+        {% for col, msg in message.items %}
+          <p>Error on pk {{ pk }}:
+              {% if not col == '__all__' %}On column {{ col }}{% endif %}
+            {{ msg.0 }} </p>
+        {% endfor %}
+      {% endfor %}
+    </div>
   {% endif %}
 {% endblock %}
 
@@ -77,11 +89,11 @@
                     {% csrf_token %}
                     <select name="script_selection">
                       {% for script in scripts %}
-                      <option value="{{ script.title }}">{{ script.title }}</option>
+                      <option value="{{ script.pk }}">{{ script.title }}</option>
                       {% endfor %}
                     </select>
                     <br>
-                    <input type="file" class="btn btn-light" name="extract">
+                    <input type="file" accept=".csv" class="btn btn-light" name="extract">
                     <br>
                     <input type="submit" class="btn btn-primary" name="extract" disabled>
                 </form>
@@ -91,15 +103,9 @@
       </div>
       <table class="table" id="extract" style="display:none;">
           <thead class="table-primary">
-          <th>PK</th>
-          <th>Title</th>
-          <th>CAS</th>
-          <th>chem_name</th>
-          <th>raw_min_comp</th>
-          <th>raw_max_comp</th>
-          <th>units</th>
-          <th>report_funcuse</th>
-          <th>rev_num</th>
+          {% for field in extract_fieldnames %}
+            <th>{{ field }}</th>
+          {% endfor %}
           </thead>
           <tbody>
           {% for doc in documents %}
@@ -173,20 +179,6 @@
             {% endfor %}
         </ul>
     </div>
-
-
-  <br>
-  <br>
-<!-- {% static 'csv/extracted_text.csv' %} -->
-
-
-
-  {% if documents %}
-
-  {% endif %}
-
-
-
 
 {% endblock %}
 {% block js %}

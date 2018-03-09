@@ -15,8 +15,8 @@ class ExtractedText(models.Model):
 										limit_choices_to={'script_type': 'EX'},)
 
 	def __str__(self):
-		return self.datadocument.title
+		return self.prod_name
 
 	def clean(self):
-		if self.doc_date[4] == '-' and self.doc_date[7] == '-':
+		if self.doc_date[4] != '-' or self.doc_date[7] != '-':
 			raise ValidationError('Date format is off, should be  YYYY-MM-DD.')

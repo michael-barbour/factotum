@@ -59,27 +59,11 @@
   fields: {filename: 0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf, title: NUTRA NAIL OLIVE
       OIL NAIL & CUTICLE TREATMENT, url: '', product_category: OIL BASED NAIL TREATMENT,
     data_group: 2, matched: true, extracted: false, uploaded_at: ! '2018-02-04 14:45:22.570331'}
-- model: dashboard.extractedtext
-  pk: 1
-  fields: {
-    data_document: 4,
-    doc_date: '2018-01-08',
-    rev_num: 1,
-    extraction_script: 2
-  }
 - model: dashboard.datadocument
   pk: 5
   fields: {filename: 0c68ab16-2065-4d9b-a8f2-e428eb192465.pdf, title: Hawaiian Body
       Cream Nourishing Coconut Milk, url: '', product_category: personal care product,
     data_group: 2, matched: true, extracted: true}
-- model: dashboard.extractedtext
-  pk: 2
-  fields: {
-    data_document: 5,
-    doc_date: '2018-01-08',
-    rev_num: 1,
-    extraction_script: 2
-  }
 - model: dashboard.datagroup
   pk: 1
   fields: {name: Walmart MSDS 1, description: MSDS from Walmart group 1, downloaded_by: 1,

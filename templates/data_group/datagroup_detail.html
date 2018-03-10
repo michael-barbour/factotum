@@ -12,10 +12,10 @@
 
   {% if ext_err %}
     <div class="bg-danger text-white text-center">
-      {% for pk, message in ext_err.items %}
+      {% for fn, message in ext_err.items %}
         {% for col, msg in message.items %}
-          <p>Error on pk {{ pk }}:
-              {% if not col == '__all__' %}On column {{ col }}{% endif %}
+          <p>Error on {{ fn }} record:
+              {% if not col == '__all__' %}Column "{{ col }}"{% endif %}
             {{ msg.0 }} </p>
         {% endfor %}
       {% endfor %}
@@ -112,7 +112,7 @@
               <tr>
                   {% if doc.matched and not doc.extracted %}
                       <td>{{ doc.pk }}</td>
-                      <td>{{ doc.title }}</td>
+                      <td>{{ doc.filename }}</td>
                   {% endif %}
               </tr>
           {% endfor %}

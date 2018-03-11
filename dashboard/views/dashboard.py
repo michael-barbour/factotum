@@ -13,7 +13,7 @@ def index(request):
 	stats['document_count'] = DataDocument.objects.count()
 
 	# Build datasets to populate linechart with document-upload statistics
-	select_data = {"upload_date": """strftime('%%Y-%%m-%%d', uploaded_at)"""}
+	select_data = {"upload_date": """date_format(uploaded_at, '%%Y-%%m-%%d')"""}
 	# current_date = time.mktime(datetime.datetime.now().date().timetuple())
 	current_date = datetime.datetime.now().strftime('%Y-%m-%d')
 	document_stats = {}
@@ -30,7 +30,6 @@ def index(request):
 	for type in {'all', 'product', 'msds_sds'}:
 		document_count = 0
 		for item in document_stats[type]:
-			# item['upload_date'] = datetime.datetime.strptime(item['upload_date'], "%Y-%m-%d").timestamp()
 			document_count += item['document_count']
 			item['document_count'] = document_count
 		# if final record isn't for current date, create one

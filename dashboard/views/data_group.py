@@ -83,15 +83,14 @@ def data_group_detail(request, pk,
 			fs.save(pdf.name, pdf)
 			zf.write(store + '/pdf/' + pdf.name, pdf.name)
 		zf.close()
-	if request.method == 'POST' and 'extract' in request.POST:
-		csv_file = request.FILES.getlist('extract')[0] # potentaily problematic
+	if request.method == 'POST' and 'extract_button' in request.POST:
+		start = datetime.now()
+		csv_file = request.FILES.getlist('extract_file')[0]
 		script = Script.objects.get(pk=request.POST['script_selection'])
 		info = [x.decode('ascii','ignore') for x in csv_file.readlines()]
 		table = csv.DictReader(info)
 		throw = 0
 		if not table.fieldnames == extract_fieldnames:
-			print(table.fieldnames)
-			print(extract_fieldnames)
 			for i, col in enumerate(table.fieldnames):
 				if not col in extract_fieldnames:
 					good = extract_fieldnames[i]
@@ -105,9 +104,9 @@ def data_group_detail(request, pk,
 								'scripts'           : scripts,
 								'extract_fieldnames': extract_fieldnames,
 								'ext_err'           : ext_err})
+		record = 1
 		for row in csv.DictReader(info):
 			doc_pk = (row['data_document_pk'])
-			print(doc_pk)
 			doc = docs.get(pk=doc_pk)
 			# load and validate ALL ExtractedText records
 			# see if it exists if true continue else validate, don't save
@@ -116,8 +115,9 @@ def data_group_detail(request, pk,
 				text.full_clean()
 			except ValidationError as e:
 				throw = 1
-				ext_err[doc.filename] = e.message_dict
+				ext_err[record] = e.message_dict
 				# send back to user if not all text records pass validation
+			record += 1
 		if throw:
 			return render(request, template_name,
 							{   'datagroup'         : datagroup,
@@ -129,9 +129,9 @@ def data_group_detail(request, pk,
 								'extract_fieldnames': extract_fieldnames,
 								'ext_err'           : ext_err})
 		good_chems = []
+		record = 1
 		for row in csv.DictReader(info):
 			doc_pk = (row['data_document_pk'])
-			print(doc_pk)
 			doc = docs.get(pk=doc_pk)
 			text = loadExtracted(row, doc, script)
 			if not ExtractedText.objects.filter(data_document=doc):
@@ -156,7 +156,8 @@ def data_group_detail(request, pk,
 					chem.full_clean()
 					good_chems.append([doc,chem])
 				except ValidationError as e:
-					ext_err[doc.filename] = e.message_dict
+					ext_err[record] = e.message_dict
+			record += 1
 
 		if not ext_err:  # no saving until all errors are removed
 			for doc, chem in good_chems:
@@ -169,6 +170,7 @@ def data_group_detail(request, pk,
 			# 	'{1}_{2}.csv'.format(fn.split('.')[0],tail)
 			# 	tail += 1
 			fs.save(str(datagroup)+'_extracted.csv', csv_file)
+		print(datetime.now()-start)
 	docs = DataDocument.objects.filter(data_group_id=pk) # refresh
 	inc_upload = all([d.matched for d in docs])
 	include_extract = any([d.matched

@@ -11,15 +11,18 @@
   {% endif %}
 
   {% if ext_err %}
-    <div class="bg-danger text-white text-center">
+    <div class="bg-danger text-white">
       {% for fn, message in ext_err.items %}
         {% for col, msg in message.items %}
-          <p>Error on {{ fn }} record:
+          <p style="margin:0;padding:0;">Error {% if fn == 'every' %}in header
+                                                {% else %}on line {{ fn }}
+                                               {% endif %}:
               {% if not col == '__all__' %}Column "{{ col }}"{% endif %}
             {{ msg.0 }} </p>
         {% endfor %}
       {% endfor %}
     </div>
+    <br>
   {% endif %}
 {% endblock %}
 

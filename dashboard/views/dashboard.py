@@ -37,7 +37,8 @@ def document_uploaded_count_by_date():
 	for type in {'all', 'product', 'msds_sds'}:
 		document_count = 0
 		for item in document_stats[type]:
-			item['upload_date'] = datetime.date.strftime((item['upload_date']), '%Y-%m-%d')
+			if isinstance(item['upload_date'], datetime.date):
+				item['upload_date'] = datetime.date.strftime((item['upload_date']), '%Y-%m-%d')
 			document_count += item['document_count']
 			item['document_count'] = document_count
 		# if final record isn't for current date, create one

@@ -158,20 +158,17 @@ def data_group_detail(request, pk,
 				except ValidationError as e:
 					ext_err[doc.filename] = e.message_dict
 
-		if not ext_err:
-			# no saving until all errors are removed
+		if not ext_err:  # no saving until all errors are removed
 			for doc, chem in good_chems:
 				doc.extracted = True
 				doc.save()
 				chem.save()
 			fs = FileSystemStorage(store)
-			# tail = 1
-			# while os.path.exists(fn):
+			# tail = 1  # this was going to be used if some chems were loaded,
+			# while os.path.exists(fn):  # but not all.
 			# 	'{1}_{2}.csv'.format(fn.split('.')[0],tail)
 			# 	tail += 1
 			fs.save(str(datagroup)+'_extracted.csv', csv_file)
-
-	print('You did it!')
 	docs = DataDocument.objects.filter(data_group_id=pk) # refresh
 	inc_upload = all([d.matched for d in docs])
 	include_extract = any([d.matched
@@ -193,10 +190,10 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
 	# get the data source from which the create button was clicked
 	datasource_title = request.session['datasource_title']
 	datasource_pk = request.session['datasource_pk']
-	# the default name of the new data group is the name 
+	# the default name of the new data group is the name
     # of its data source, followed by the count of existing data groups + 1
     # This can result in the name defaulting to a name that already exists
-    # 
+    #
 	group_key = DataGroup.objects.filter(data_source=datasource_pk).count() + 1
 	default_name = '{} {}'.format(datasource_title, group_key)
 	initial_values = {'downloaded_by' : request.user,

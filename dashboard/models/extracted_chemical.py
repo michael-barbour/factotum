@@ -4,7 +4,6 @@ from .extracted_text import ExtractedText
 
 
 class ExtractedChemical(models.Model):
-	
 	UNITS_CHOICES = (
 		('percent composition', 'percent composition'),
 		('weight fraction', 'weight fraction'))

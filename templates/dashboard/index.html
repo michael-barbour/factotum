@@ -8,32 +8,76 @@
     <br>
 
     <div class="card-deck">
-      <div class="card text-center bg-light">
+        <div class="card text-center bg-light">
           <div class="card-body">
             <h3 class="card-title text-muted">Sources</h3>
-            <div class="card-text font-weight-bold display-4">{{ source_count | intword}} </div>
+            <div class="card-text font-weight-bold display-4">{{ datasource_count | intword}} </div>
           </div>
-      </div>
-      <div class="card text-center bg-light">
+        </div>
+        <div class="card text-center bg-light">
           <div class="card-body">
             <h3 class="card-title text-muted">Groups</h3>
-            <div class="card-text font-weight-bold display-4">{{ group_count | intword}} </div>
+            <div class="card-text font-weight-bold display-4">{{ datagroup_count | intword}} </div>
           </div>
-      </div>
-      <div class="card text-center bg-light">
+        </div>
+        <div class="card text-center bg-light">
           <div class="card-body">
               <h3 class="card-title text-muted">Documents</h3>
-              <div class="card-text font-weight-bold display-4">{{ document_count | intword}} </div>
+              <div class="card-text font-weight-bold display-4">{{ datadocument_count | intword}} </div>
           </div>
-
-      </div>
+        </div>
+        <div class="card text-center bg-light">
+            <div class="card-body">
+                <h3 class="card-title text-muted">Documents With Extracted Text</h3>
+                <div class="card-text font-weight-bold display-4">{{ datadocument_with_extracted_text_percent | intword}}%</div>
+            </div>
+        </div>
+    </div>
+    <div class="card-deck">
+        <div class="card text-center bg-light">
+            <div class="card-body">
+                <h3 class="card-title text-muted">Products</h3>
+                <div class="card-text font-weight-bold display-4">{{ product_count | intword}} </div>
+            </div>
+        </div>
+        <div class="card text-center bg-light">
+            <div class="card-body">
+                <h3 class="card-title text-muted">Products Linked To PUC</h3>
+                <div class="card-text font-weight-bold display-4">{{ product_with_puc_count | intword}} </div>
+            </div>
+        </div>
+        <div class="card text-center bg-light">
+            <div class="card-body">
+                <h3 class="card-title text-muted"></h3>
+                <div class="card-text font-weight-bold display-4"></div>
+            </div>
+        </div>
+        <div class="card text-center bg-light">
+            <div class="card-body">
+                <h3 class="card-title text-muted"></h3>
+                <div class="card-text font-weight-bold display-4"></div>
+            </div>
+        </div>
     </div>
 
     <p></p>
-    <h4>Documents Uploaded</h4>
-    <div id="lineChart">
+    <h4>Documents Uploaded By Date</h4>
+    <div id="datadocument_count_by_date_lineChart">
         <svg style="height:350px;width:50%;overflow:visible"></svg>
     </div>
+
+    <p></p>
+    <h4>Documents Uploaded By Month</h4>
+    <div id="datadocument_count_by_month_barchart">
+        <svg style="height:350px;width:50%;overflow:visible"></svg>
+    </div>
+
+    <p></p>
+    <h4>Products Linked to PUC By Month</h4>
+    <div id="product_with_puc_count_by_month_barchart">
+        <svg style="height:350px;width:50%;overflow:visible"></svg>
+    </div>
+
 {% endblock %}
 
 {% block css %}
@@ -46,11 +90,42 @@
     <script src="{% static 'js/nv.d3.js' %}"></script>
     <script src="{% static 'js/dashboard/index.js' %}"></script>
     <script>
-        data_lineChart = [
+        product_with_puc_count_by_month = [
+            {
+                key: "Products Linked to PUC",
+                values: [
+                    {% for item in product_with_puc_count_by_month.all %}
+                    {
+                        "label" : '{{ item.puc_assigned_month | date:"M Y" }}' ,
+                        "value" : {{ item.product_count }}
+                    },
+                    {% endfor %}
+                ]
+
+            }
+        ];
+
+        datadocument_count_by_month = [
+            {
+                key: "Documents Uploaded",
+                values: [
+                    {% for item in datadocument_count_by_month.all %}
+                        {
+                            "label" : '{{ item.upload_month | date:"M Y" }}' ,
+                            "value" : {{ item.document_count }}
+                        },
+                    {% endfor %}
+                ]
+
+            }
+        ];
+
+
+        datadocument_count_by_date = [
             {
                 'color': 'blue',
                 'values': [
-                    {% for item in document_stats.all %}
+                    {% for item in datadocument_count_by_date.all %}
                         {
                             'y': {{ item.document_count }},
                             'x': '{{ item.upload_date }}'
@@ -63,7 +138,7 @@
             {
                 'color': 'green',
                 'values': [
-                    {% for item in document_stats.product %}
+                    {% for item in datadocument_count_by_date.product %}
                         {
                             'y': {{ item.document_count }},
                             'x': '{{ item.upload_date }}'
@@ -76,7 +151,7 @@
             {
                 'color': 'red',
                 'values': [
-                    {% for item in document_stats.msds_sds %}
+                    {% for item in datadocument_count_by_date.msds_sds %}
                         {
                             'y': {{ item.document_count }},
                             'x': '{{ item.upload_date }}'

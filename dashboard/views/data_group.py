@@ -4,14 +4,17 @@ import zipfile
 from datetime import datetime
 
 from django.conf import settings
-from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import ModelForm
-from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext_lazy as _
 from django.core.files import File
+from django.core.files.base import ContentFile
+from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
 from django.core.files.storage import FileSystemStorage
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
 
-from dashboard.models import DataGroup, DataDocument, DataSource
+from dashboard.models import (DataGroup, DataDocument, DataSource, Script,
+								ExtractedText, ExtractedChemical)
 
 class DataGroupForm(ModelForm):
 	required_css_class = 'required' # adds to label tag
@@ -34,15 +37,33 @@ def data_group_list(request, template_name='data_group/datagroup_list.html'):
 	data['object_list'] = datagroup
 	return render(request, template_name, data)
 
+def loadExtracted (row, dd, sc):
+	if ExtractedText.objects.filter(data_document=dd):
+		t = ExtractedText.objects.get(data_document=dd)
+		return t
+	else:
+		t = ExtractedText(	data_document     = dd,
+							record_type       = row['record_type'],
+							prod_name         = row['prod_name'],
+							doc_date          = row['doc_date'],
+							rev_num           = row['rev_num'],
+							extraction_script = sc)
+	return t
 
 @login_required()
 def data_group_detail(request, pk,
 						template_name='data_group/datagroup_detail.html'):
 	datagroup = get_object_or_404(DataGroup, pk=pk, )
 	docs = DataDocument.objects.filter(data_group_id=pk)
+	scripts = Script.objects.filter(script_type='EX')
 	store = settings.MEDIA_URL + datagroup.name.replace(' ','_')
+	extract_fieldnames = ['data_document_pk','data_document_filename',
+						'record_type','prod_name','doc_date','rev_num','cas',
+						'chem_name','raw_min_comp','raw_max_comp','units',
+						'report_funcuse']
 	err = False
-	if request.method == 'POST':
+	ext_err = {}
+	if request.method == 'POST' and 'upload' in request.POST:
 		files = request.FILES.getlist('multifiles')
 		# match filename to pdf name
 		proc_files = [f for d in docs for f in files if f.name == d.filename]
@@ -62,15 +83,108 @@ def data_group_detail(request, pk,
 			fs.save(pdf.name, pdf)
 			zf.write(store + '/pdf/' + pdf.name, pdf.name)
 		zf.close()
+	if request.method == 'POST' and 'extract_button' in request.POST:
+		start = datetime.now()
+		csv_file = request.FILES.getlist('extract_file')[0]
+		script = Script.objects.get(pk=request.POST['script_selection'])
+		info = [x.decode('ascii','ignore') for x in csv_file.readlines()]
+		table = csv.DictReader(info)
+		throw = 0
+		if not table.fieldnames == extract_fieldnames:
+			for i, col in enumerate(table.fieldnames):
+				if not col in extract_fieldnames:
+					good = extract_fieldnames[i]
+					ext_err['every'] = {col:['needs to be renamed to "%s"' % good]}
+			return render(request, template_name,
+							{   'datagroup'         : datagroup,
+								'documents'         : docs,
+								'inc_upload'        : False,
+								'err'               : err,
+								'include_extract'   : True,
+								'scripts'           : scripts,
+								'extract_fieldnames': extract_fieldnames,
+								'ext_err'           : ext_err})
+		record = 1
+		for row in csv.DictReader(info):
+			doc_pk = (row['data_document_pk'])
+			doc = docs.get(pk=doc_pk)
+			# load and validate ALL ExtractedText records
+			# see if it exists if true continue else validate, don't save
+			text = loadExtracted(row, doc, script)
+			try:
+				text.full_clean()
+			except ValidationError as e:
+				throw = 1
+				ext_err[record] = e.message_dict
+				# send back to user if not all text records pass validation
+			record += 1
+		if throw:
+			return render(request, template_name,
+							{   'datagroup'         : datagroup,
+								'documents'         : docs,
+								'inc_upload'        : False,
+								'err'               : err,
+								'include_extract'   : True,
+								'scripts'           : scripts,
+								'extract_fieldnames': extract_fieldnames,
+								'ext_err'           : ext_err})
+		good_chems = []
+		record = 1
+		for row in csv.DictReader(info):
+			doc_pk = (row['data_document_pk'])
+			doc = docs.get(pk=doc_pk)
+			text = loadExtracted(row, doc, script)
+			if not ExtractedText.objects.filter(data_document=doc):
+				text.save()
+			# see if chem already assigned to text ultimately DD
+			qs = ExtractedChemical.objects.filter(  # empty queryset if no
+									chem_name=row['chem_name']).values_list(
+														'extracted_text_id')
+			#check qs if returned
+			check = any([t_id[0] == text.pk for t_id in qs])
+			if check:
+				continue
+			if not check:
+				chem = ExtractedChemical(	extracted_text = text,
+										cas            = row['cas'],
+										chem_name      = row['chem_name'],
+										raw_min_comp   = row['raw_min_comp'],
+										raw_max_comp   = row['raw_max_comp'],
+										units          = row['units'],
+										report_funcuse = row['report_funcuse'])
+				try:
+					chem.full_clean()
+					good_chems.append([doc,chem])
+				except ValidationError as e:
+					ext_err[record] = e.message_dict
+			record += 1
+
+		if not ext_err:  # no saving until all errors are removed
+			for doc, chem in good_chems:
+				doc.extracted = True
+				doc.save()
+				chem.save()
+			fs = FileSystemStorage(store)
+			# tail = 1  # this was going to be used if some chems were loaded,
+			# while os.path.exists(fn):  # but not all.
+			# 	'{1}_{2}.csv'.format(fn.split('.')[0],tail)
+			# 	tail += 1
+			fs.save(str(datagroup)+'_extracted.csv', csv_file)
+		print(datetime.now()-start)
 	docs = DataDocument.objects.filter(data_group_id=pk) # refresh
 	inc_upload = all([d.matched for d in docs])
-	return render(request, template_name, {'datagroup'  : datagroup,
-											'documents' : docs,
-											'inc_upload': inc_upload,
-											'err'       : err})
-
-# raid_ant_killer.pdf
-# raid_msds.pdf
+	include_extract = any([d.matched
+							for d in docs]) and not all([d.extracted
+														for d in docs])
+	return render(request, template_name,{
+									'datagroup'         : datagroup,
+									'documents'         : docs,
+									'inc_upload'        : inc_upload,
+									'err'               : err,
+									'include_extract'   : include_extract,
+									'scripts'           : scripts,
+									'extract_fieldnames': extract_fieldnames,
+									'ext_err'           : ext_err})
 
 @login_required()
 def data_group_create(request, template_name='data_group/datagroup_form.html'):
@@ -78,10 +192,10 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
 	# get the data source from which the create button was clicked
 	datasource_title = request.session['datasource_title']
 	datasource_pk = request.session['datasource_pk']
-	# the default name of the new data group is the name 
+	# the default name of the new data group is the name
     # of its data source, followed by the count of existing data groups + 1
     # This can result in the name defaulting to a name that already exists
-    # 
+    #
 	group_key = DataGroup.objects.filter(data_source=datasource_pk).count() + 1
 	default_name = '{} {}'.format(datasource_title, group_key)
 	initial_values = {'downloaded_by' : request.user,
@@ -125,7 +239,6 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
 				return render(request, template_name, {'line_errors': errors,
 														'form': form})
 			dg_dir = datagroup.name.replace(' ','_')
-			# os.mkdir('media/{0}'.format(dg_dir))
 			zf = zipfile.ZipFile('media/{0}/{0}.zip'.format(dg_dir), 'w',
 								zipfile.ZIP_DEFLATED)
 			datagroup.zip_file = zf.filename

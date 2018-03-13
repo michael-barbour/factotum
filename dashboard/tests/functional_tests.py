@@ -1,3 +1,4 @@
+import os
 import csv
 import time
 import unittest
@@ -87,6 +88,11 @@ class TestDataSource(StaticLiveServerTestCase):
             "//table[@id='groups']/tbody/tr"))
         self.assertEqual(
             b, row_count, 'Does the number of objects with the data_source_id of 1 (left side) match number of rows in the table (right side)?')
+
+    def test_DataTables(self):
+        self.browser.get(self.live_server_url + '/datasources/')
+        wrap_div = self.browser.find_element_by_class_name('dataTables_wrapper')
+        self.assertIn("Show", wrap_div.text, 'DataTables missing...')
 
 
 class TestDataGroup(StaticLiveServerTestCase):
@@ -222,7 +228,7 @@ class TestProductCuration(StaticLiveServerTestCase):
             len(ds.source.filter(prod_cat__isnull=True)))
         self.assertEqual(puc_link.text, products_missing_PUC, ('The Assign PUC '
                                                                'link should display # of Products without a PUC'))
-        
+
 
 
 class TestQAScoreboard(StaticLiveServerTestCase):
@@ -284,11 +290,11 @@ class TestQAScoreboard(StaticLiveServerTestCase):
                           'qa_checked ExtractedText objects'))
         self.assertEqual(model_pct_checked, '0%')
         # Set qa_checked property to True for one of the ExtractedText objects
-        self.assertEqual(ExtractedText.objects.get(pk=1).qa_checked, False)
-        et_change = ExtractedText.objects.get(pk=1)
+        self.assertEqual(ExtractedText.objects.get(pk=4).qa_checked, False)
+        et_change = ExtractedText.objects.get(pk=4)
         et_change.qa_checked = True
         et_change.save()
-        self.assertEqual(ExtractedText.objects.get(pk=1).qa_checked, True,
+        self.assertEqual(ExtractedText.objects.get(pk=4).qa_checked, True,
                          'The object should now have qa_checked = True')
 
         es = Script.objects.get(pk=2)
@@ -425,7 +431,7 @@ class TestPUCAssignment(StaticLiveServerTestCase):
         puc_assigned_usr_after = self.browser.find_element_by_id('puc_assigned_usr').text
         self.assertEqual(puc_assigned_usr_after, 'Karyn',
                             "The PUC assigning user should have changed")
-        
+
 
 
 class TestFacetedSearch(StaticLiveServerTestCase):
@@ -454,9 +460,9 @@ class TestFacetedSearch(StaticLiveServerTestCase):
         # Search bar appears on far right side of the navigation bar, on every page of the application.
         # User enters a product title in the search bar. User is then taken to a landing page with
         # search results on product title, with the two facets visible on the left side of the page.
-        
+
         # Temporary fix: assign a PUC to the product, then rebuild the index
-        
+
         p1 = Product.objects.get(pk=1)
         pc230 = ProductCategory.objects.get(pk=230)
         p1.prod_cat = pc230
@@ -491,3 +497,31 @@ class TestFacetedSearch(StaticLiveServerTestCase):
         facetapply.click()
         self.assertIn("prod_cat=Personal%20care%20-%20nails%20-%20",
                       self.browser.current_url, 'The URL should contain the facet search string')
+
+
+class TestExtractedText(StaticLiveServerTestCase):
+
+    fixtures = ['seed_data']
+
+    def setUp(self):
+        self.browser = webdriver.Chrome()
+        log_karyn_in(self)
+
+    def tearDown(self):
+        self.browser.quit()
+
+    def test_submit_button(self):
+        self.browser.get(self.live_server_url + '/datagroup/1')
+        submit_button = self.browser.find_element_by_name('extract_button')
+        self.assertEqual(submit_button.is_enabled(),False,
+                         ("This button shouldn't be enabled until there "
+                         "is a file selected in the file input."))
+        file_input = self.browser.find_element_by_name('extract_file')
+        file_input.send_keys(os.getcwd()+("/media/Walmart_MSDS_1/"
+                                "Walmart_MSDS_1_register_records_DG1.csv"))
+        submit_button = self.browser.find_element_by_name('extract_button')
+        # if this fails here, the file likely isn't in the repo anymore
+        # or has been deleted
+        self.assertEqual(submit_button.is_enabled(),True,
+                         ("This button should be enabled now that there "
+                         "is a file selected in the file input."))

@@ -1,0 +1,239 @@
+- fields:
+    created_at: '2018-01-08T23:23:13.521'
+    description: Walmart self serve msds/sds site. Vendors are able to upload msds/sds
+      which show up live. There are up to 50 new msds/sds added daily. Also has information
+      linking to UPC
+    estimated_records: 100
+    priority: HI
+    state: AT
+    title: Walmart MSDS
+    type: 1
+    updated_at: '2018-01-08T23:47:03.681'
+    url: http://msds.walmartstores.com/
+  model: dashboard.datasource
+  pk: 1
+- fields:
+    created_at: '2018-01-08T23:49:32.614'
+    description: API for Walmart products.
+    estimated_records: 100
+    priority: HI
+    state: AT
+    title: Walmart Labs
+    type: 2
+    updated_at: null
+    url: http://walmartlabs.com
+  model: dashboard.datasource
+  pk: 2
+- fields:
+    created_at: '2017-12-06T17:08:23.690'
+    description: MSDS downloaded from Home Depot by ICF in May 2016. See memo stored
+      at L:LabHEMCPDatData to be entered into CPDatHome Depot Data Extraction  for
+      additional information.
+    estimated_records: 1900
+    priority: HI
+    state: AT
+    title: Home Depot - ICF
+    type: 1
+    updated_at: null
+    url: www.homedepot.com
+  model: dashboard.datasource
+  pk: 4
+- fields:
+    created_at: '2017-12-06T17:10:13.163'
+    description: ''
+    estimated_records: 130
+    priority: HI
+    state: AT
+    title: Georgia Pacific
+    type: 1
+    updated_at: null
+    url: http://msds.gp.com/msdsinternet/?bu=bp
+  model: dashboard.datasource
+  pk: 5
+- fields:
+    created_at: '2017-12-06T17:11:32.114'
+    description: Need to update/check the Data Source URL
+    estimated_records: 4000
+    priority: HI
+    state: AT
+    title: Hewlett Packard
+    type: 1
+    updated_at: null
+    url: http://www8.hp.com/us/en/hp-information/environment/msds-specs.html
+  model: dashboard.datasource
+  pk: 6
+- fields:
+    created_at: '2017-12-06T17:12:45.808'
+    description: Need to update/check data sourced URL
+    estimated_records: 300
+    priority: HI
+    state: AT
+    title: Sun Products Corporation-Ingredient Disclosure
+    type: 3
+    updated_at: '2017-12-20T17:42:38.434'
+    url: https://www.henkel-northamerica.com/brands-and-businesses/laundry-and-home-care/the-sun-products-corporation
+  model: dashboard.datasource
+  pk: 7
+- fields:
+    created_at: '2017-12-19T17:32:29.458'
+    description: herbicides, insecticides, fungicides msds and product labels (ingredient
+      list) as well as how the product is used.
+    estimated_records: 2000
+    priority: HI
+    state: AT
+    title: Bayer Crop Science
+    type: 1
+    updated_at: '2017-12-19T17:33:28.551'
+    url: https://www.cropscience.bayer.us/products/
+  model: dashboard.datasource
+  pk: 8
+- fields:
+    created_at: '2017-12-19T17:37:56.861'
+    description: This is the BP MSDS database for Aviation fuel.
+    estimated_records: 100
+    priority: LO
+    state: AT
+    title: British Petroleum (Air)
+    type: 1
+    updated_at: null
+    url: https://airbpmsds.bp.com/msdspds/airbpmsdspds.nsf/BPHomePage?OpenForm&sitelang=EN
+  model: dashboard.datasource
+  pk: 9
+- fields:
+    created_at: '2017-12-19T17:43:30.147'
+    description: This is a database of healthcare related MSDS's - the site is scrapable.
+    estimated_records: 17493
+    priority: HI
+    state: AT
+    title: Healthcare Related MSDS Database
+    type: 1
+    updated_at: null
+    url: http://msds.ohsah.bc.ca/
+  model: dashboard.datasource
+  pk: 10
+- fields:
+    created_at: '2017-12-20T15:59:47.779'
+    description: "Database of manufacturers of U.S. foods and consumer products with\
+      \ ingredient lists and (sometimes) functional uses of the ingredients.\r\n\r\
+      \nFrom the website:\r\n\"SmartLabel\u2122 gives you easy and instantaneous access\
+      \ to detailed information about thousands of food, beverage, personal care,\
+      \ household and pet care products.\r\nYou can find this product information\
+      \ in many ways \u2013 smartphone, computer, telephone. It gives you the information\
+      \ you want \u2013 when you want it.\""
+    estimated_records: 1000
+    priority: HI
+    state: AT
+    title: SmartLabel
+    type: 3
+    updated_at: null
+    url: http://www.smartlabel.org/
+  model: dashboard.datasource
+  pk: 11
+- fields:
+    created_at: '2017-12-20T17:43:08.083'
+    description: Consider doing these over again as they have upc info on the site
+    estimated_records: 273
+    priority: HI
+    state: AT
+    title: Sun Products Corporation - MSDS
+    type: 1
+    updated_at: '2018-01-08T20:32:58.103'
+    url: https://www.henkel-northamerica.com/brands-and-businesses/laundry-and-home-care/the-sun-products-corporation
+  model: dashboard.datasource
+  pk: 12
+- fields:
+    created_at: '2017-12-20T17:44:47.026'
+    description: ''
+    estimated_records: 2500
+    priority: HI
+    state: AT
+    title: HPD Public Repository
+    type: 4
+    updated_at: null
+    url: https://www.hpd-collaborative.org/hpd-public-repository/
+  model: dashboard.datasource
+  pk: 13
+- fields:
+    created_at: '2017-12-20T17:45:33.027'
+    description: ''
+    estimated_records: 1200
+    priority: HI
+    state: AT
+    title: Smith Group HPD Library
+    type: 4
+    updated_at: null
+    url: http://hpd.smithgroupjjr.org/search/Pages/results.aspx
+  model: dashboard.datasource
+  pk: 14
+- fields:
+    created_at: '2018-01-11T19:43:44.305'
+    description: ''
+    estimated_records: 22000000
+    priority: LO
+    state: AT
+    title: Walmart Labs API
+    type: 2
+    updated_at: null
+    url: ''
+  model: dashboard.datasource
+  pk: 15
+- fields:
+    created_at: '2018-02-01T10:17:44.819'
+    description: British Petroleum non aviation related safety data sheets
+    estimated_records: 100
+    priority: LO
+    state: AT
+    title: British Petroleum
+    type: 5
+    updated_at: null
+    url: https://msdspds.bp.com
+  model: dashboard.datasource
+  pk: 16
+- fields:
+    created_at: '2018-02-01T10:23:46.083'
+    description: ''
+    estimated_records: 600
+    priority: LO
+    state: AT
+    title: ExxonMobil
+    type: 1
+    updated_at: null
+    url: http://www.msds.exxonmobil.com/IntApps/psims/psims.aspx
+  model: dashboard.datasource
+  pk: 17
+- fields:
+    created_at: '2018-02-01T10:35:14.546'
+    description: ''
+    estimated_records: 1000
+    priority: LO
+    state: AT
+    title: Dow Chemical Company
+    type: 5
+    updated_at: null
+    url: https://www.dow.com/en-us/elibrary
+  model: dashboard.datasource
+  pk: 18
+- fields:
+    created_at: '2018-02-01T10:42:48.987'
+    description: Antiperspirant, deodorant, food, skin, hair
+    estimated_records: 250
+    priority: MD
+    state: AT
+    title: Unilever Product
+    type: 5
+    updated_at: null
+    url: http://www.unilevermsdsusa.com/MSDSSearch.aspx?fm=0&tb=0
+  model: dashboard.datasource
+  pk: 19
+- fields:
+    created_at: '2018-02-01T10:53:43.447'
+    description: Olympic Paint
+    estimated_records: 300
+    priority: LO
+    state: AT
+    title: PPG Architectural Coatings
+    type: 5
+    updated_at: null
+    url: http://products.ppgac.com/
+  model: dashboard.datasource
+  pk: 20

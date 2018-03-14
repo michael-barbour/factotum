@@ -5,9 +5,24 @@
 
 {% block errors %}
   {% if err %}
-  <div class="bg-warning text-white">
-    There were no matching records in the selected directory.
-  </div>
+    <div class="bg-warning text-white">
+      There were no matching records in the selected directory.
+    </div>
+  {% endif %}
+
+  {% if ext_err %}
+    <div class="bg-danger text-white">
+      {% for fn, message in ext_err.items %}
+        {% for col, msg in message.items %}
+          <p style="margin:0;padding:0;">Error {% if fn == 'every' %}in header
+                                                {% else %}on line {{ fn }}
+                                               {% endif %}:
+              {% if not col == '__all__' %}Column "{{ col }}"{% endif %}
+            {{ msg.0 }} </p>
+        {% endfor %}
+      {% endfor %}
+    </div>
+    <br>
   {% endif %}
 {% endblock %}
 
@@ -67,27 +82,46 @@
         </button>
 <br>
     <br>
-        <div class="col-sm-6">
+    {% if include_extract %}
+      <div class="col-sm-12">
+        <h5>Work with uploaded documents:</h5>
 
-            {% if doc.matched %}
-                <h5>Upload Extracted Text:</h5>
-                <div class="card">
-                    <div class="card-body">
-                        <form method="post" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <input type="file" name="extracted_csv">
-                            <button class="btn btn-primary" type="submit">Upload</button>
-                        </form>
-                        <br>
-                        <a href="{% static 'csv/extracted_text.csv' %}" class="btn btn-secondary"
-                           {% if doc.matched %}disabled{% endif %}><span class="oi oi-spreadsheet"></span>Extracted
-                            Text
-                            CSV
-                            Template</a>
-                    </div>
-                </div>
-            {% endif %}
-        </div>
+            <div class="col-md-4 btn-group border rounded"  style="text-align:center">
+                <form enctype="multipart/form-data" action="" method="post">
+                    <h5 align="center">Extraction Script:</h5>
+                    {% csrf_token %}
+                    <select name="script_selection">
+                      {% for script in scripts %}
+                      <option value="{{ script.pk }}">{{ script.title }}</option>
+                      {% endfor %}
+                    </select>
+                    <br>
+                    <input type="file" accept=".csv" class="form-control btn btn-light" name="extract_file">
+                    <br>
+                    <input type="submit" class="btn btn-primary" name="extract_button" disabled>
+                </form>
+            </div>
+        <a id="xx" href="" class="btn btn-secondary"
+           {% if not doc.matched %}disabled{% endif %}><span class="oi oi-spreadsheet"></span>Extracted Text CSV Template</a>
+      </div>
+      <table class="table" id="extract" style="display:none;">
+          <thead class="table-primary">
+          {% for field in extract_fieldnames %}
+            <th>{{ field }}</th>
+          {% endfor %}
+          </thead>
+          <tbody>
+          {% for doc in documents %}
+              <tr>
+                  {% if doc.matched and not doc.extracted %}
+                      <td>{{ doc.pk }}</td>
+                      <td>{{ doc.filename }}</td>
+                  {% endif %}
+              </tr>
+          {% endfor %}
+          </tbody>
+      </table>
+    {% endif %}
 
         {% if documents %}
             <br>
@@ -119,10 +153,22 @@
                             </a>
                         </td>
                         <td>{{ doc.product_category }}</td>
-                        <td align="center"><input type="checkbox" name="matched" {% if doc.matched %}checked{% endif %}>
+                        <td align="center">
+                          {% if doc.matched %}
+                          <span class="oi oi-circle-check" style="color:green;"></span>
+                          <p hidden>1</p>  <!-- for sorting DataTable -->
+                        {% else %}
+                          <span class="oi oi-circle-x" style="color:red;"></span>
+                          {% endif %}
                         </td>
-                        <td align="center"><input type="checkbox" name="extracted"
-                                                  {% if doc.extracted %}checked{% endif %}></td>
+                        <td align="center">
+                          {% if doc.extracted %}
+                            <span class="oi oi-circle-check" style="color:green;"></span>
+                            <p hidden>1</p>  <!-- for sorting DataTable -->
+                          {% else %}
+                            <span class="oi oi-circle-x" style="color:red;"></span>
+                          {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -136,34 +182,8 @@
             {% endfor %}
         </ul>
     </div>
-
-  <div class="col-sm-12">
-    <h5>Work with uploaded documents:</h5>
-    <a href="{% static 'csv/extracted_text.csv' %}" class="btn btn-secondary"
-       {% if not doc.matched %}disabled{% endif %}><span class="oi oi-spreadsheet"></span>Extracted Text CSV Template</a>
-    <button type="button" class="btn btn-secondary"  disabled><span class="oi oi-file"></span>Extracted Text CSV Template</button>
-    <button type="button" class="btn btn-primary"  disabled>Upload Extracted Text</button>
-  </div>
-  <br>
-  <br>
+<input type="hidden" id="dg_name" name="variable" value="{{ datagroup.dgurl }}">
 {% endblock %}
 {% block js %}
-  <script type="text/javascript">
-    $(document).ready(function () {
-      var table = $('#d-docs').DataTable({
-      // "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
-      dom:"<'row'<'col-md-4 form-inline'l><'col-md-4 form-inline'f><'col-md-4'B>>" +
-          "<'row'<'col-sm-12'tr>>" +
-          "<'row'<'col-sm-5'i><'col-sm-7'p>>", // order the control divs
-      buttons: [{
-        extend: 'csv',
-        text: 'Download CSV',
-        title: 'Data_Groups_{{ datagroup.name }}_Factotum',
-        exportOptions : {
-          columns: [ 0, 1, 2, 3, 4 ],
-          },
-        }]
-      });
-    });
-  </script>
+  <script src="{% static 'js/data_group_detail.js' %}"></script>
 {% endblock %}

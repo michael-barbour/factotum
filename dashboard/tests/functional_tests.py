@@ -221,10 +221,10 @@ class TestProductCuration(StaticLiveServerTestCase):
     def test_PUC_assignment(self):
         self.browser.get(self.live_server_url + '/product_curation/')
         src_title = self.browser.find_elements_by_xpath(
-            '//*[@id="products"]/tbody/tr/td[1]/a')[0]
+            '//*[@id="products"]/tbody/tr[2]/td[1]/a')[0]
         ds = DataSource.objects.get(title=src_title.text)
         puc_link = self.browser.find_elements_by_xpath(
-            '//*[@id="products"]/tbody/tr/td[4]/a')[0]
+            '//*[@id="products"]/tbody/tr[2]/td[4]')[0] 
         products_missing_PUC = str(
             len(ds.source.filter(prod_cat__isnull=True)))
         self.assertEqual(puc_link.text, products_missing_PUC, ('The Assign PUC '
@@ -433,7 +433,7 @@ class TestPUCAssignment(StaticLiveServerTestCase):
         self.assertEqual(puc_assigned_usr_after, 'Karyn',
                             "The PUC assigning user should have changed")
 
-      def test_cancelled_puc_assignment(self):
+    def test_cancelled_puc_assignment(self):
 
         # Bug report in issue #155
         # When on the Product Curation Page, I click Assign Puc.

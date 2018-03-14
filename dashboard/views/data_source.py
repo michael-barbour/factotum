@@ -13,7 +13,7 @@ class DataSourceForm(forms.ModelForm):
 	required_css_class = 'required'
 	class Meta:
 		model = DataSource
-		fields = ['title', 'url', 'estimated_records', 'state', 'priority',
+		fields = ['title', 'url', 'estimated_records', 'state', 'priority', 
 					'type', 'description']
 
 
@@ -33,11 +33,10 @@ class PriorityForm(forms.ModelForm):
 @login_required()
 def data_source_list(request, template_name='data_source/datasource_list.html'):
 	datasources = DataSource.objects.all()
-	docs = DataDocument.objects.all()
+	#docs = DataDocument.objects.all()
 	ds_list, frm_list = [], []
 	for ds in datasources:
-		dg = DataGroup.objects.filter(data_source=ds)
-		docs = DataDocument.objects.filter(data_group=dg)
+		docs = DataDocument.objects.filter(data_group__in=DataGroup.objects.filter(data_source=ds))
 		ds.registered = (len(docs)/float(
 											ds.estimated_records))*100
 		ds.uploaded = (len(docs.filter(matched=True))/float(

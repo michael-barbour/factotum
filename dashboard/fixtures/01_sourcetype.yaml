@@ -1,1 +1,50 @@
-[{"model": "dashboard.sourcetype", "pk": 1, "fields": {"title": "msds/sds", "description": "Material Safety Data Sheet (msds) or Safety Data Sheet (sds). These documents are normally in pdf format.", "created_at": "2017-10-07T05:27:47", "updated_at": null}}, {"model": "dashboard.sourcetype", "pk": 2, "fields": {"title": "product", "description": "An item sold or purchased in a store", "created_at": "2017-10-07T05:28:49", "updated_at": null}}, {"model": "dashboard.sourcetype", "pk": 3, "fields": {"title": "ingredient disclosure", "description": "", "created_at": "2017-12-19T18:48:48", "updated_at": null}}, {"model": "dashboard.sourcetype", "pk": 4, "fields": {"title": "health product declaration", "description": "", "created_at": "2017-12-19T19:23:20", "updated_at": null}}, {"model": "dashboard.sourcetype", "pk": 5, "fields": {"title": "sds", "description": "", "created_at": "2018-01-31T14:49:53", "updated_at": "2018-01-31T14:50:09"}}, {"model": "dashboard.sourcetype", "pk": 6, "fields": {"title": "product label", "description": "Image of full product label, may include ingredient list", "created_at": "2018-01-31T14:50:39", "updated_at": null}}, {"model": "dashboard.sourcetype", "pk": 7, "fields": {"title": "ingredient list", "description": "Image of ingredient list for a product.", "created_at": "2018-01-31T14:51:04", "updated_at": null}}]
+- fields:
+    created_at: '2017-10-07T05:27:47'
+    description: Material Safety Data Sheet (msds) or Safety Data Sheet (sds). These
+      documents are normally in pdf format.
+    title: msds/sds
+    updated_at: null
+  model: dashboard.sourcetype
+  pk: 1
+- fields:
+    created_at: '2017-10-07T05:28:49'
+    description: An item sold or purchased in a store
+    title: product
+    updated_at: null
+  model: dashboard.sourcetype
+  pk: 2
+- fields:
+    created_at: '2017-12-19T18:48:48'
+    description: ''
+    title: ingredient disclosure
+    updated_at: null
+  model: dashboard.sourcetype
+  pk: 3
+- fields:
+    created_at: '2017-12-19T19:23:20'
+    description: ''
+    title: health product declaration
+    updated_at: null
+  model: dashboard.sourcetype
+  pk: 4
+- fields:
+    created_at: '2018-01-31T14:49:53'
+    description: ''
+    title: sds
+    updated_at: '2018-01-31T14:50:09'
+  model: dashboard.sourcetype
+  pk: 5
+- fields:
+    created_at: '2018-01-31T14:50:39'
+    description: Image of full product label, may include ingredient list
+    title: product label
+    updated_at: null
+  model: dashboard.sourcetype
+  pk: 6
+- fields:
+    created_at: '2018-01-31T14:51:04'
+    description: Image of ingredient list for a product.
+    title: ingredient list
+    updated_at: null
+  model: dashboard.sourcetype
+  pk: 7

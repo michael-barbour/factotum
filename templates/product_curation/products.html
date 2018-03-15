@@ -1,6 +1,32 @@
 {% extends 'core/base.html' %}
 {% load staticfiles %}
 {% load humanize %}
+{% block js %}
+  <script type="text/javascript">
+    $(document).ready(function () {
+      var table = $('#products').DataTable({
+        "serverSide": true,
+        "processing": true,
+        "ajax": {
+                 "processing": true,
+                 "url": "{% url 'p_ajax_url' %}"             },
+        "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
+      dom:"<'row'<'col-md-4 form-inline'l><'col-md-4 form-inline'f><'col-md-4'B>>" +
+          "<'row'<'col-sm-12'tr>>" +
+          "<'row'<'col-sm-5'i><'col-sm-7'p>>", // order the control divs
+      buttons: [{
+        extend: 'csv',
+        text: 'Download CSV',
+        title: 'Products_Factotum',
+        exportOptions : {
+          columns: [ 0, 1, 2],
+          },
+        }]
+      });
+  });
+
+  </script>
+{% endblock %}
 {% block content %}
 
 
@@ -11,52 +37,11 @@
 <table class="table table-striped table-bordered dataTable no-footer table-sm" id="products">
   <thead class="table-primary">
       <th>Title</th>
+      <th>Brand Name</th>
       <th>PUC</th>
   </thead>
   <tbody>
-  {% for product in object_list %}
-    <tr>
-      <td>
-        <a title="details"
-           href="{% url "product_detail" product.id %}"> {{ product.title }}
-         </a>
-      </td>
-      <td>{{ product.prod_cat }}</td>
-    </tr>
-  {% endfor %}
   </tbody>
 </table>
 {% endblock %}
-{% block js %}
-  <script type="text/javascript">
-    $(document).ready(function () {
-      var table = $('#products').DataTable({
-        "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
-      // "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
-    //   "columnDefs": [
-    //       {
-    //           "targets": 6, // sixth column is edit/delete links
-    //           "orderable": false
-    //       },
-    //       {
-    //           "orderDataType": "dom-select",
-    //           "targets": 3, // third column is select input
-    //           "type": "string",
-    //       },
-    //   ],
-      dom:"<'row'<'col-md-4 form-inline'l><'col-md-4 form-inline'f><'col-md-4'B>>" +
-          "<'row'<'col-sm-12'tr>>" +
-          "<'row'<'col-sm-5'i><'col-sm-7'p>>", // order the control divs
-      buttons: [{
-        extend: 'csv',
-        text: 'Download CSV',
-        title: 'Products_Factotum',
-        exportOptions : {
-          columns: [ 0, 1],
-          },
-        }]
-      });
-  });
 
-  </script>
-{% endblock %}

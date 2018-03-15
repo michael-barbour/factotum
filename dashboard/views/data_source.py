@@ -13,7 +13,7 @@ class DataSourceForm(forms.ModelForm):
 	required_css_class = 'required'
 	class Meta:
 		model = DataSource
-		fields = ['title', 'url', 'estimated_records', 'state', 'priority',
+		fields = ['title', 'url', 'estimated_records', 'state', 'priority', 
 					'type', 'description']
 
 
@@ -33,18 +33,14 @@ class PriorityForm(forms.ModelForm):
 @login_required()
 def data_source_list(request, template_name='data_source/datasource_list.html'):
 	datasources = DataSource.objects.all()
-	docs = DataDocument.objects.all()
+	#docs = DataDocument.objects.all()
 	ds_list, frm_list = [], []
 	for ds in datasources:
-		ds.registered = (len([d
-							for d in docs
-							if d.data_group.data_source_id == ds.pk
-							and d.matched == True
-							])/float(ds.estimated_records))*100
-		ds.uploaded = (len([d
-							for d in docs
-							if d.data_group.data_source_id == ds.pk
-							])/float(ds.estimated_records))*100
+		docs = DataDocument.objects.filter(data_group__in=DataGroup.objects.filter(data_source=ds))
+		ds.registered = (len(docs)/float(
+											ds.estimated_records))*100
+		ds.uploaded = (len(docs.filter(matched=True))/float(
+											ds.estimated_records))*100
 		ds_list.append(ds)
 		frm_list.append(PriorityForm(request.POST or None, instance=ds))
 	out = zip(ds_list, frm_list)
@@ -63,16 +59,14 @@ def data_source_list(request, template_name='data_source/datasource_list.html'):
 def data_source_detail(request, pk,
  						template_name='data_source/datasource_detail.html'):
 	datasource = get_object_or_404(DataSource, pk=pk, )
-	docs = DataDocument.objects.all()
-	datasource.registered = (len([d
-								for d in docs
-								if d.data_group.data_source_id == datasource.pk
-								and d.matched ==True
-								])/float(datasource.estimated_records))*100
-	datasource.uploaded = (len([d
-								for d in docs
-								if d.data_group.data_source_id == datasource.pk
-								])/float(datasource.estimated_records))*100
+	#docs = DataDocument.objects.all()
+
+	dgs = DataGroup.objects.filter(data_source=datasource)
+	docs = DataDocument.objects.filter(data_group__in=DataGroup.objects.filter(data_source=datasource))
+	datasource.registered = (len(docs)/float(datasource.estimated_records))*100
+	datasource.uploaded = (len(docs.filter(matched=True))/float(
+											datasource.estimated_records))*100
+
 	form = PriorityForm(request.POST or None, instance=datasource)
 	if request.method == 'POST':
 		if form.is_valid():

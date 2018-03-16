@@ -224,7 +224,7 @@ class TestProductCuration(StaticLiveServerTestCase):
             '//*[@id="products"]/tbody/tr[2]/td[1]/a')[0]
         ds = DataSource.objects.get(title=src_title.text)
         puc_link = self.browser.find_elements_by_xpath(
-            '//*[@id="products"]/tbody/tr[2]/td[4]')[0] 
+            '//*[@id="products"]/tbody/tr[2]/td[4]')[0]
         products_missing_PUC = str(
             len(ds.source.filter(prod_cat__isnull=True)))
         self.assertEqual(puc_link.text, products_missing_PUC, ('The Assign PUC '
@@ -549,8 +549,8 @@ class TestExtractedText(StaticLiveServerTestCase):
                          ("This button shouldn't be enabled until there "
                          "is a file selected in the file input."))
         file_input = self.browser.find_element_by_name('extract_file')
-        file_input.send_keys(os.getcwd()+("/media/Walmart_MSDS_1/"
-                                "Walmart_MSDS_1_register_records_DG1.csv"))
+        file_input.send_keys(os.getcwd()+("/sample_files/"
+                                            "test_extract.csv"))
         submit_button = self.browser.find_element_by_name('extract_button')
         # if this fails here, the file likely isn't in the repo anymore
         # or has been deleted

@@ -12,12 +12,7 @@ def DataGroups_asJson(request):
     json = serializers.serialize('json', object_list)
     return HttpResponse(json, content_type='application/json')
 
-def Products_asJson(request):
-    object_list = Product.objects.all() 
-    json = serializers.serialize('json', object_list)
-    return HttpResponse(json, content_type='application/json')
-
-def process_ajax(request):
+def product_ajax(request):
 
     draw = request.GET['draw']
     start = int(request.GET['start'])

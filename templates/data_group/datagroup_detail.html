@@ -2,7 +2,6 @@
 {% load staticfiles %}
 {% load humanize %}
 
-
 {% block errors %}
   {% if err %}
     <div class="bg-warning text-white">
@@ -183,52 +182,37 @@
             {% endfor %}
         </ul>
     </div>
+
+
+    <nav aria-label="Paginated navigation">
+            <ul class="pagination">
+                {% if documents.has_previous %}
+            <li class="page-item">
+                    <a class="page-link" href="?page=1">&laquo; first</a>
+            </li>
+            <li class="page-item">
+                    <a class="page-link" href="?page={{ documents.previous_page_number }}" >previous</a>
+            </li>
+                {% endif %}
+            <li class="page-item">
+                <span class="current page-item page-link" >
+                    Page {{ documents.number }} of {{ documents.paginator.num_pages }}
+                </span>
+            </li>
+        
+                {% if documents.has_next %}
+                <li class="page-item">
+                    <a href="?page={{ documents.next_page_number }}" class="page-link">next</a>
+                </li>
+                <li class="page-item">
+                    <a href="?page={{ documents.paginator.num_pages }}" class="page-link">last &raquo;</a>
+                </li>
+                    {% endif %}
+            </li>
+        </ul>
+    </nav>
+
 <input type="hidden" id="dg_name" name="variable" value="{{ datagroup.dgurl }}">
-
-
-{% if documents.has_other_pages %}
-  <ul class="pagination">
-    {% if documents.has_previous %}
-      <li><a href="?page={{ documents.previous_page_number }}">&laquo;</a></li>
-    {% else %}
-      <li class="disabled"><span>&laquo;</span></li>
-    {% endif %}
-    {% for i in documents.paginator.page_range %}
-      {% if documents.number == i %}
-        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
-      {% else %}
-        <li><a href="?page={{ i }}">{{ i }}</a></li>
-      {% endif %}
-    {% endfor %}
-    {% if documents.has_next %}
-      <li><a href="?page={{ documents.next_page_number }}">&raquo;</a></li>
-    {% else %}
-      <li class="disabled"><span>&raquo;</span></li>
-    {% endif %}
-  </ul>
-{% endif %}
-
-{% if is_paginated %}
-  <ul class="pagination">
-    {% if documents.has_previous %}
-      <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
-    {% else %}
-      <li class="disabled"><span>&laquo;</span></li>
-    {% endif %}
-    {% for i in paginator.page_range %}
-      {% if documents.number == i %}
-        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
-      {% else %}
-        <li><a href="?page={{ i }}">{{ i }}</a></li>
-      {% endif %}
-    {% endfor %}
-    {% if documents.has_next %}
-      <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
-    {% else %}
-      <li class="disabled"><span>&raquo;</span></li>
-    {% endif %}
-  </ul>
-{% endif %}
 
 {% endblock %}
 {% block js %}

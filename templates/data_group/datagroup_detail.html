@@ -123,10 +123,11 @@
       </table>
     {% endif %}
 
+
         {% if documents %}
             <br>
             <br>
-            <h4>{{ documents|length }} documents registered, {{ datagroup.matched_docs }} matched</h4>
+            <h4>{{ datagroup.registered_docs }} documents registered, {{ datagroup.matched_docs }} matched</h4>
             </div>
             <table class="table table-sm table-bordered table-striped table-hover" id="d-docs">
                 <thead class="table-primary">
@@ -183,6 +184,52 @@
         </ul>
     </div>
 <input type="hidden" id="dg_name" name="variable" value="{{ datagroup.dgurl }}">
+
+
+{% if documents.has_other_pages %}
+  <ul class="pagination">
+    {% if documents.has_previous %}
+      <li><a href="?page={{ documents.previous_page_number }}">&laquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in documents.paginator.page_range %}
+      {% if documents.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li><a href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if documents.has_next %}
+      <li><a href="?page={{ documents.next_page_number }}">&raquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+  </ul>
+{% endif %}
+
+{% if is_paginated %}
+  <ul class="pagination">
+    {% if documents.has_previous %}
+      <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in paginator.page_range %}
+      {% if documents.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li><a href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if documents.has_next %}
+      <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+  </ul>
+{% endif %}
+
 {% endblock %}
 {% block js %}
   <script src="{% static 'js/data_group_detail.js' %}"></script>

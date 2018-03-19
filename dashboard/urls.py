@@ -15,6 +15,7 @@ urlpatterns = [
 	url(r'^datasource/delete/(?P<pk>\d+)$', views.data_source_delete, name='data_source_delete'),
 	url(r'^datagroups/$', views.data_group_list, name='data_group_list'),
 	url(r'^datagroup/(?P<pk>\d+)$', views.data_group_detail, name='data_group_detail'),
+	url(r'^datagroup/docs_csv/(?P<pk>\d+)$', views.dg_dd_csv_view, name='dg_dd_csv_view'),
 	url(r'^datagroup/new$', views.data_group_create, name='data_group_new'),
 	url(r'^datagroup/edit/(?P<pk>\d+)$', views.data_group_update, name='data_group_edit'),
 	url(r'^datagroup/delete/(?P<pk>\d+)$', views.data_group_delete, name='data_group_delete'),

@@ -63,7 +63,7 @@
     </dl>
     <div class="col-sm-12">
         <button type="button" class="btn btn-secondary" onclick="location.href = '/media/{{ datagroup.csv }}';">
-            <span class="oi oi-spreadsheet"></span> Download Registered CSV
+            <span class="oi oi-spreadsheet"></span>&nbsp; Download Registered CSV
         </button>
         {% if not inc_upload %}
             <div class="col-md-4 btn-group border rounded float-right">
@@ -101,7 +101,7 @@
                 </form>
             </div>
         <a id="xx" href="" class="btn btn-secondary"
-           {% if not doc.matched %}disabled{% endif %}><span class="oi oi-spreadsheet"></span>Extracted Text CSV Template</a>
+           {% if not doc.matched %}disabled{% endif %}><span class="oi oi-spreadsheet"></span>&nbsp;Extracted Text CSV Template</a>
       </div>
       <table class="table" id="extract" style="display:none;">
           <thead class="table-primary">
@@ -127,7 +127,8 @@
             <br>
             <br>
             <h4>{{ datagroup.registered_docs }} documents registered, {{ datagroup.matched_docs }} matched</h4>
-            </div>
+            <p></p><a class="btn btn-secondary" href="docs_csv/{{ datagroup.id }}"><span class="oi oi-spreadsheet"></span>&nbsp;Export all records in {{ datagroup.name }} to csv</a></p>
+        </div>
             <table class="table table-sm table-bordered table-striped table-hover" id="d-docs">
                 <thead class="table-primary">
                 <th>Title</th>

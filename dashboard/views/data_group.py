@@ -183,13 +183,9 @@ def data_group_detail(request, pk,
 			# 	tail += 1
 			fs.save(str(datagroup)+'_extracted.csv', csv_file)
 		print(datetime.now()-start)
-<<<<<<< HEAD
 	paginator = Paginator(docs, npage) # Show 25 data documents per page
 	docs_page = paginator.page(page)
 
-=======
-	docs = DataDocument.objects.filter(data_group_id=pk)  # refresh
->>>>>>> dev
 	inc_upload = all([d.matched for d in docs])
 	include_extract = any([d.matched
 							for d in docs]) and not all([d.extracted

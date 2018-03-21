@@ -44,7 +44,7 @@ def log_karyn_in(object):
     object.browser.find_element_by_class_name('btn').click()
 
 
-class TestDataSource(StaticLiveServerTestCase):
+class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
 
     fixtures = ['seed_data']
 
@@ -93,18 +93,8 @@ class TestDataSource(StaticLiveServerTestCase):
         self.browser.get(self.live_server_url + '/datasources/')
         wrap_div = self.browser.find_element_by_class_name('dataTables_wrapper')
         self.assertIn("Show", wrap_div.text, 'DataTables missing...')
-
-
-class TestDataGroup(StaticLiveServerTestCase):
-
-    fixtures = ['seed_data']
-
-    def setUp(self):
-        self.browser = webdriver.Chrome()
-        log_karyn_in(self)
-
-    def tearDown(self):
-        self.browser.quit()
+    
+    # Data Groups
 
     def test_data_group_name(self):
         self.browser.get(self.live_server_url + '/datagroup/1')

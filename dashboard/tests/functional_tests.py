@@ -459,12 +459,14 @@ class TestPUCAssignment(StaticLiveServerTestCase):
 class TestFacetedSearch(StaticLiveServerTestCase):
     # Issue 104 https://github.com/HumanExposure/factotum/issues/104
     #
-    fixtures = ['seed_product_category.yaml', 'seed_data', ]
+    fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
+                '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml', 
+                '05_product.yaml', '06_datadocument.yaml' ]
 
     def setUp(self):
         self.browser = webdriver.Chrome()
         log_karyn_in(self)
-        update_index.Command().handle()
+        update_index.Command().handle(using=['default'])
 
 
     def tearDown(self):
@@ -485,12 +487,12 @@ class TestFacetedSearch(StaticLiveServerTestCase):
 
         # Temporary fix: assign a PUC to the product, then rebuild the index
 
-        p1 = Product.objects.get(pk=1)
+        p1 = Product.objects.get(pk=1538000)
         pc230 = ProductCategory.objects.get(pk=230)
         p1.prod_cat = pc230
         p1.save()
         # update the search engine index
-        update_index.Command().handle()
+        update_index.Command().handle(using=['default'])
 
         # Check for the elasticsearch engine
         self.browser.get('http://127.0.0.1:9200/')

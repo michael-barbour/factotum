@@ -46,7 +46,9 @@ def log_karyn_in(object):
 
 class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
 
-    fixtures = ['seed_data']
+    fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
+                '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml', 
+                '05_product.yaml', '06_datadocument.yaml' ]
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -185,6 +187,18 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
         del_button.click()
         self.assertEqual(DataGroup.objects.count(), dg_count_before,
                          "Confirm the DataGroup object has been deleted")
+
+    def test_pagination(self):
+        self.browser.get('%s%s' % (self.live_server_url, '/datagroup/40'))
+        h1 = self.browser.find_element_by_name('title')
+        self.assertEqual('Walmart MSDS 1', h1.text)
+
+        #pagebox = self.browser.find_elements_by_class_name("current")[0]
+        pagebox = self.browser.find_elements_by_xpath(('/html/body/div[1]/nav/ul/li[1]/span'))[0]
+        self.assertEqual(pagebox.text, 'Page 1 of 50',
+                         "Confirm the navigation box displays 'Page 1 of 50'")
+        
+        
 
 
 class TestProductCuration(StaticLiveServerTestCase):

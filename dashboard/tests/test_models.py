@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from dashboard.models import DataSource, DataGroup, DataDocument, SourceType
+from dashboard.models import DataSource, DataGroup, DataDocument, SourceType, ExtractedText, ExtractedChemical, DSSToxSubstance, Script
 from dashboard.views import data_source, data_group
 from django.test import TestCase, RequestFactory
 from django.utils import timezone
@@ -40,6 +40,18 @@ class DataGroupTest(TestCase):
 
         # DataDocuments
         self.dds = self.create_data_documents(data_group = self.dg)
+
+        # Script, type EX
+        self.ex = self.create_extraction_script(script_type='EX')
+
+        # ExtractedText
+        self.et = self.create_extracted_text(data_documents=self.dds, extraction_script=self.ex)
+
+        # ExtractedChemical
+        self.ec = self.create_extracted_chemical(extracted_text=self.et)
+
+        # DSSToxSubstance
+        self.dsstox = self.create_dsstox_substance(extracted_chemical=self.ec)
 
     def tearDown(self):
         del self.dg
@@ -98,10 +110,31 @@ class DataGroupTest(TestCase):
                 dds.append(dd)
             return dds
 
+    def create_extraction_script(self, script_type, title='Test Title', url='http://www.epa.gov/', qa_begun=False):
+        return Script.objects.create(title=title, url=url, qa_begun=qa_begun, script_type=script_type)
+
+    def create_extracted_text(self, data_documents, extraction_script):
+        return ExtractedText.objects.create(data_document=data_documents[0], record_type='Test Record Type', prod_name='Test Prod Name',
+                                            doc_date='Test Doc Date', rev_num='Test Rev Num', extraction_script=extraction_script, qa_checked=False)
+
+    def create_extracted_chemical(self, extracted_text, cas='Test CAS', chem_name='Test Chem Name', raw_min_comp='Test Raw Min Comp',
+                                  raw_max_comp='Test Raw Max Comp', units='Test Units', report_funcuse='Test Report Funcuse'):
+        return ExtractedChemical.objects.create(extracted_text=extracted_text, cas=cas, chem_name=chem_name, raw_min_comp=raw_min_comp,
+                                                raw_max_comp=raw_max_comp, units=units, report_funcuse=report_funcuse)
+
+    def create_dsstox_substance(self, extracted_chemical, true_cas='Test True CAS',
+                                true_chemname='Test True Chem Name', rid='Test RID', sid='Test SID'):
+        return DSSToxSubstance.objects.create(extracted_checmical=extracted_chemical, true_cas=true_cas,
+                                              true_chemname=true_chemname, rid=rid, sid=sid)
+
     def test_object_creation(self):
         self.assertTrue(isinstance(self.ds, DataSource))
         self.assertTrue(isinstance(self.dg, DataGroup))
         self.assertTrue(isinstance(self.dds, collections.Iterable))
+        self.assertTrue(isinstance(self.ex, Script))
+        self.assertTrue(isinstance(self.et, ExtractedText))
+        self.assertTrue(isinstance(self.ec, ExtractedChemical))
+        self.assertTrue(isinstance(self.dsstox, DSSToxSubstance))
 
     def test_object_properties(self):
         # Test properties of objects
@@ -128,6 +161,18 @@ class DataGroupTest(TestCase):
         # Test a link to an uploaded pdf
         good_url = b'Data_Group_for_Test/pdf/0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf'
         self.assertIn(good_url, dg_response.content)
+
+        # ExtractionScript
+        self.assertEqual(self.ex.__str__(), 'Test Title')
+
+        # ExtractedText
+        self.assertEqual(self.et.__str__(), 'Test Prod Name')
+
+        # ExtractedChemical
+        self.assertEqual(self.ec.__str__(), 'Test Chem Name')
+
+        #DSSToxSubstance
+        self.assertEqual(self.dsstox.__str__(), self.ec.__str__())
 
 
     def test_data_source_view(self):

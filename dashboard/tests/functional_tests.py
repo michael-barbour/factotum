@@ -47,8 +47,8 @@ def log_karyn_in(object):
 class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
 
     fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
-                '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml', 
-                '05_product.yaml', '06_datadocument.yaml' ]
+            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml', 
+            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '08_extractedtext.yaml']
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -207,7 +207,7 @@ class TestProductCuration(StaticLiveServerTestCase):
 
     fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
             '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml', 
-            '05_product.yaml', '06_datadocument.yaml' ]
+            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '08_extractedtext.yaml']
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -248,7 +248,9 @@ class TestQAScoreboard(StaticLiveServerTestCase):
     # A link in the nav bar to the QA Home page
     # A Table on the QA Home page
     # A button for each row in the table that will take you to #36 (Not Implemented Yet)
-    fixtures = ['seed_data']
+    fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
+            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml', 
+            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '08_extractedtext.yaml']
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -479,8 +481,8 @@ class TestFacetedSearch(StaticLiveServerTestCase):
     # Issue 104 https://github.com/HumanExposure/factotum/issues/104
     #
     fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
-                '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml', 
-                '05_product.yaml', '06_datadocument.yaml' ]
+            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml', 
+            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '08_extractedtext.yaml']
 
     def setUp(self):
         self.browser = webdriver.Chrome()

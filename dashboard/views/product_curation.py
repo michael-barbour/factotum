@@ -8,7 +8,7 @@ from django.forms import ModelForm, ModelChoiceField
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
-from dashboard.models import DataSource, DataDocument, Product, ProductDocument, ProductCategory
+from dashboard.models import DataSource, DataGroup, DataDocument, Product, ProductDocument, ProductCategory
 
 
 class ProductForm(ModelForm):
@@ -41,9 +41,8 @@ def product_detail(request, pk,
 def product_curation_index(request, template_name='product_curation/product_curation_index.html'):
     # List of all data sources which have had at least 1 data
     # document matched to a registered record
-    docs = DataDocument.objects.all()
-    valid_ds = set([d.data_group.data_source_id for d in docs])
-    data_sources = DataSource.objects.filter(pk__in=valid_ds)
+    ds_ids = DataGroup.objects.filter(datadocument__isnull=False).distinct().values('data_source_id')
+    data_sources = DataSource.objects.filter(id__in=ds_ids)
 
     for data_source in data_sources:
         # Number of data documents which have been matched for each source

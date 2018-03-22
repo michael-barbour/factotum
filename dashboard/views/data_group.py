@@ -16,19 +16,21 @@ from django.shortcuts import render, redirect, get_object_or_404
 from dashboard.models import (DataGroup, DataDocument, DataSource, Script,
 								ExtractedText, ExtractedChemical)
 
+
 class DataGroupForm(ModelForm):
 	required_css_class = 'required' # adds to label tag
+
 	class Meta:
 		model = DataGroup
-		fields = ['name', 'description', 'downloaded_by', 'downloaded_at', 'download_script','data_source','updated_at','csv']
-		labels = {
-            'csv': _('Register Records CSV File'),
-        	}
+		fields = ['name', 'description', 'downloaded_by', 'downloaded_at', 'download_script', 'data_source',
+				  'updated_at', 'csv']
+		labels = {'csv': _('Register Records CSV File'), }
 
 	def __init__(self, *args, **kwargs):
 		self.user = kwargs.pop('user', None)
 		super(DataGroupForm, self).__init__(*args, **kwargs)
 		self.fields['csv'].widget.attrs.update({'accept':'.csv'})
+
 
 @login_required()
 def data_group_list(request, template_name='data_group/datagroup_list.html'):
@@ -36,6 +38,7 @@ def data_group_list(request, template_name='data_group/datagroup_list.html'):
 	data = {}
 	data['object_list'] = datagroup
 	return render(request, template_name, data)
+
 
 def loadExtracted (row, dd, sc):
 	if ExtractedText.objects.filter(data_document=dd):
@@ -73,9 +76,8 @@ def data_group_detail(request, pk,
 		while proc_files:
 			pdf = proc_files.pop(0)
 			# set the Matched value of each registered record to True
-			doc = DataDocument.objects.get(filename   = pdf.name,
-										   data_group = datagroup.pk)
-			if doc.matched: # skip if already matched
+			doc = DataDocument.objects.get(filename=pdf.name, data_group=datagroup.pk)
+			if doc.matched:  # skip if already matched
 				continue
 			doc.matched = True
 			doc.save()
@@ -171,7 +173,7 @@ def data_group_detail(request, pk,
 			# 	tail += 1
 			fs.save(str(datagroup)+'_extracted.csv', csv_file)
 		print(datetime.now()-start)
-	docs = DataDocument.objects.filter(data_group_id=pk) # refresh
+	docs = DataDocument.objects.filter(data_group_id=pk)  # refresh
 	inc_upload = all([d.matched for d in docs])
 	include_extract = any([d.matched
 							for d in docs]) and not all([d.extracted

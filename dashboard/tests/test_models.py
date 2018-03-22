@@ -19,7 +19,8 @@ def file_len(fname):
     f.closed
     return i + 1
 
-class DataGroupTest(TestCase):
+
+class ModelsTest(TestCase):
 
     def setUp(self):
         # Every test needs access to the request factory.
@@ -34,8 +35,11 @@ class DataGroupTest(TestCase):
         # DataSource
         self.ds = self.create_data_source()
 
+        # Script, type DL
+        self.dl = self.create_download_script(script_type='DL')
+
         # DataGroup
-        self.dg = self.create_data_group(data_source=self.ds)
+        self.dg = self.create_data_group(data_source=self.ds, download_script=self.dl)
         self.pdfs = self.upload_pdfs()
 
         # DataDocuments
@@ -62,10 +66,14 @@ class DataGroupTest(TestCase):
     def create_data_source(self, title='Data Source for Test', estimated_records=2, state='AT', priority='HI', typetitle='msds/sds'):
         return DataSource.objects.create(title=title, estimated_records=estimated_records, state=state, priority=priority, type=SourceType.objects.get(title=typetitle))
 
-    def create_data_group(self, data_source, testusername = 'jdoe', name='Data Group for Test', description='Testing the DataGroup model'):
+    def create_download_script(self, script_type, title='Test Title', url='http://www.epa.gov/', qa_begun=False):
+        return Script.objects.create(title=title, url=url, qa_begun=qa_begun, script_type=script_type)
+
+    def create_data_group(self, data_source, download_script, testusername = 'jdoe', name='Data Group for Test', description='Testing the DataGroup model'):
             source_csv = open('./sample_files/register_records_matching.csv','rb')
             return DataGroup.objects.create(name=name,
                                             description=description, data_source = data_source,
+                                            download_script=download_script,
                                             downloaded_by=User.objects.get(username=testusername),
                                             downloaded_at=timezone.now(),
                                             csv=SimpleUploadedFile('register_records_matching.csv', source_csv.read() )
@@ -82,9 +90,6 @@ class DataGroupTest(TestCase):
         fs = FileSystemStorage(store + '/pdf')
         fs.save(pdf2_name, local_pdf)
         return [pdf1_name, pdf2_name]
-
-
-
 
     def create_data_documents(self, data_group):
         dds = []
@@ -115,7 +120,7 @@ class DataGroupTest(TestCase):
 
     def create_extracted_text(self, data_documents, extraction_script):
         return ExtractedText.objects.create(data_document=data_documents[0], record_type='Test Record Type', prod_name='Test Prod Name',
-                                            doc_date='Test Doc Date', rev_num='Test Rev Num', extraction_script=extraction_script, qa_checked=False)
+                                            doc_date='TstDocDate', rev_num='Test Rev Num', extraction_script=extraction_script, qa_checked=False)
 
     def create_extracted_chemical(self, extracted_text, cas='Test CAS', chem_name='Test Chem Name', raw_min_comp='Test Raw Min Comp',
                                   raw_max_comp='Test Raw Max Comp', units='Test Units', report_funcuse='Test Report Funcuse'):
@@ -124,7 +129,7 @@ class DataGroupTest(TestCase):
 
     def create_dsstox_substance(self, extracted_chemical, true_cas='Test True CAS',
                                 true_chemname='Test True Chem Name', rid='Test RID', sid='Test SID'):
-        return DSSToxSubstance.objects.create(extracted_checmical=extracted_chemical, true_cas=true_cas,
+        return DSSToxSubstance.objects.create(extracted_chemical=extracted_chemical, true_cas=true_cas,
                                               true_chemname=true_chemname, rid=rid, sid=sid)
 
     def test_object_creation(self):
@@ -173,18 +178,3 @@ class DataGroupTest(TestCase):
 
         #DSSToxSubstance
         self.assertEqual(self.dsstox.__str__(), self.ec.__str__())
-
-
-    def test_data_source_view(self):
-        response = self.client.get(reverse('data_source_detail', args=[self.ds.pk]))
-        request = response.wsgi_request
-        request.user = self.user
-        response = data_source.data_source_detail(request, self.ds.pk)
-        self.assertEqual(response.status_code, 200)
-
-    def test_data_group_view(self):
-        response = self.client.get(reverse('data_group_detail', args=[self.dg.pk]))
-        request = response.wsgi_request
-        request.user = self.user
-        response = data_group.data_group_detail(request, self.dg.pk)
-        self.assertEqual(response.status_code, 200)

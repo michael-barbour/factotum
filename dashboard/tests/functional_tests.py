@@ -205,7 +205,9 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
 
 class TestProductCuration(StaticLiveServerTestCase):
 
-    fixtures = ['seed_data']
+    fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
+            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml', 
+            '05_product.yaml', '06_datadocument.yaml' ]
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -229,6 +231,7 @@ class TestProductCuration(StaticLiveServerTestCase):
         src_title = self.browser.find_elements_by_xpath(
             '//*[@id="products"]/tbody/tr[2]/td[1]/a')[0]
         ds = DataSource.objects.get(title=src_title.text)
+        self.assertEqual(ds.title, 'Walmart Labs', 'Check the title of the group')
         puc_link = self.browser.find_elements_by_xpath(
             '//*[@id="products"]/tbody/tr[2]/td[4]')[0]
         products_missing_PUC = str(

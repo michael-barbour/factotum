@@ -62,11 +62,11 @@ def category_assignment(request, pk, template_name=('product_curation/'
     """Deliver a datasource and its associated products"""
     ds = DataSource.objects.get(pk=pk)
     products = ds.source.filter(prod_cat__isnull=True)
-    for product in products:
-        try:
-            product.msds = product.datadocument_set.all()[0]
-        except IndexError:
-            product.msds = 0
+    # for product in products:
+    #     try:
+    #         product.msds = product.datadocument_set.all()[0]
+    #     except IndexError:
+    #         product.msds = 0
     return render(request, template_name, {'datasource': ds, 'products': products})
 
 @login_required()

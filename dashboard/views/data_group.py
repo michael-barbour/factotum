@@ -13,6 +13,10 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+from djqscsv import *
+
 from dashboard.models import (DataGroup, DataDocument, DataSource, Script,
 								ExtractedText, ExtractedChemical)
 
@@ -58,6 +62,12 @@ def data_group_detail(request, pk,
 						template_name='data_group/datagroup_detail.html'):
 	datagroup = get_object_or_404(DataGroup, pk=pk, )
 	docs = DataDocument.objects.filter(data_group_id=pk)
+	npage = 20 # TODO: make this dynamic someday in its own ticket
+	paginator = Paginator(docs, npage) # Show npage data documents per page
+	page = request.GET.get('page')
+	page = 1 if page is None else page
+	docs_page = paginator.page(page)
+
 	scripts = Script.objects.filter(script_type='EX')
 	store = settings.MEDIA_URL + datagroup.name.replace(' ','_')
 	extract_fieldnames = ['data_document_pk','data_document_filename',
@@ -173,14 +183,17 @@ def data_group_detail(request, pk,
 			# 	tail += 1
 			fs.save(str(datagroup)+'_extracted.csv', csv_file)
 		print(datetime.now()-start)
-	docs = DataDocument.objects.filter(data_group_id=pk)  # refresh
+	paginator = Paginator(docs, npage) # Show 25 data documents per page
+	docs_page = paginator.page(page)
+
 	inc_upload = all([d.matched for d in docs])
 	include_extract = any([d.matched
 							for d in docs]) and not all([d.extracted
 														for d in docs])
 	return render(request, template_name,{
 									'datagroup'         : datagroup,
-									'documents'         : docs,
+									'documents'         : docs_page,
+									'all_documents'     : docs,
 									'inc_upload'        : inc_upload,
 									'err'               : err,
 									'include_extract'   : include_extract,
@@ -278,3 +291,9 @@ def data_document_detail(request, pk,
 						template_name='data_group/data_document_detail.html'):
 	doc = get_object_or_404(DataDocument, pk=pk, )
 	return render(request, template_name, {'doc'  : doc,})
+
+@login_required
+def dg_dd_csv_view(request, pk, template_name='data_group/docs_in_data_group.csv'):
+  qs = DataDocument.objects.filter(data_group_id=pk)
+  filename = DataGroup.objects.get(pk=pk).name
+  return render_to_csv_response(qs, filename=filename, append_datestamp=True)

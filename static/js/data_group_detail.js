@@ -2,18 +2,21 @@ $(document).ready(function () {
   var dg_name = document.getElementById("dg_name").value;
   var table = $('#d-docs');
   table.DataTable({
+    "paging": false,
+    "searching": false,
+    "ordering":true,
   // "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
   dom:"<'row'<'col-md-4 form-inline'l><'col-md-4 form-inline'f><'col-md-4'B>>" +
       "<'row'<'col-sm-12'tr>>" +
       "<'row'<'col-sm-5'i><'col-sm-7'p>>", // order the control divs
-  buttons: [{
-    extend: 'csv',
-    text: 'Download CSV',
-    title: 'Data_Documents_in_'+ dg_name +'_Factotum',
-    exportOptions : {
-      columns: [ 0, 1, 2, 3, 4 ],
-      },
-    }]
+//   buttons: [{
+//     extend: 'csv',
+//     text: 'Download CSV',
+//     title: 'Data_Documents_in_'+ dg_name +'_Factotum',
+//     exportOptions : {
+//       columns: [ 0, 1, 2, 3, 4 ],
+//       },
+//     }]
   });
 
 function exportTableToCSV($table, filename) {
@@ -43,6 +46,7 @@ function exportTableToCSV($table, filename) {
           $(this).attr({ 'download': filename, 'href': csvData, 'target': '_blank' });
         }
   }
+
 
   // This must be a hyperlink
   $("#xx").on('click', function (event) {

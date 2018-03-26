@@ -4,6 +4,7 @@ import time
 import unittest
 import collections
 import json
+import re
 from selenium import webdriver
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
@@ -22,7 +23,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from dashboard.models import (DataGroup, DataSource, DataDocument,
-                              Script, ExtractedText, Product, ProductCategory)
+                              Script, ExtractedText, Product, ProductCategory, ProductDocument)
 
 from haystack import connections
 from haystack.query import SearchQuerySet
@@ -217,6 +218,35 @@ class TestProductCuration(StaticLiveServerTestCase):
             '//*[@id="products"]/tbody/tr/td[1]/a')[0]
         self.assertEqual(un_link.get_attribute("href").split('/')[-1],
                          str(ds.pk))
+
+    def test_link_product(self):
+        self.browser.get(self.live_server_url + '/link_product_list/1')
+        create_prod_link = self.browser.find_element_by_xpath('//*[@id="products"]/tbody/tr[1]/td[2]/a')
+        create_prod_link.click()
+
+        title_input = self.browser.find_element_by_xpath('//*[@id="id_title"]')
+        manufacturer_input = self.browser.find_element_by_xpath('//*[@id="id_manufacturer"]')
+        brand_name_input = self.browser.find_element_by_xpath('//*[@id="id_brand_name"]')
+
+        title_input.send_keys('A Product Title')
+        manufacturer_input.send_keys('A Product Manufacturer')
+        brand_name_input.send_keys('A Product Brand Name')
+        # get the data document's ID from the URL, for later use
+        dd_pk = re.search('(?P<pk>\d+)$', self.browser.current_url ).group(0)
+
+        save_button = self.browser.find_element_by_xpath('/html/body/div[1]/form/button')
+        save_button.click()
+        # Saving the product should return the browser to the list of documents without products
+        self.assertIn("link_product_list", self.browser.current_url)
+
+        #check at the model level to confirm that the edits have been applied
+        # self.assertEqual(dd_pk, 'x')
+        pd = ProductDocument.objects.get(document=dd_pk)
+        p = Product.objects.get(pk=pd.product.id)
+        self.assertEqual('A Product Title', p.title)
+
+
+
 
     def test_PUC_assignment(self):
         self.browser.get(self.live_server_url + '/product_curation/')

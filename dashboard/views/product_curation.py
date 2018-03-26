@@ -1,6 +1,7 @@
 from dal import autocomplete
 from datetime import datetime
 from django.shortcuts import redirect
+from django.db.models import Count, Q
 
 
 from django.utils import timezone
@@ -41,18 +42,24 @@ def product_detail(request, pk,
 def product_curation_index(request, template_name='product_curation/product_curation_index.html'):
     # List of all data sources which have had at least 1 data
     # document matched to a registered record
-    ds_ids = DataGroup.objects.filter(datadocument__isnull=False).distinct().values('data_source_id')
-    data_sources = DataSource.objects.filter(id__in=ds_ids)
-
+    data_sources = DataSource.objects.annotate(uploaded=Count('datagroup__datadocument')).filter(uploaded__gt=0).annotate(unlinked=Count('datagroup__datadocument') - Count('datagroup__datadocument__productdocument'))    
+    # A separate queryset of data groups and their related products without PUCs assigned
+    ds_no_puc = ProductDocument.objects.filter(product__prod_cat_id__isnull=True)
+    DataSource.objects.filter(datagroup__datadocument__isnull=False).annotate(prods_missing_puc=Count('datagroup__datadocument__productdocument__product',filter=Q(prod_cat_id__isnull=True)))
+    
     for data_source in data_sources:
+        data_source.no_category = ds_no_puc.get(data_source.pk).prods_missing_puc
+
+
+    #for data_source in data_sources:
         # Number of data documents which have been matched for each source
-        data_source.uploaded = sum([len(d.datadocument_set.all()) for d in data_source.datagroup_set.all()])
-        data_source.no_category = len(data_source.source.filter(prod_cat__isnull=True))
-        # Number of data documents for each source which are NOT linked
-        # to a product
-        data_source.unlinked = (data_source.uploaded -
-                                sum([len(x.datadocument_set.all())
-                                for x in data_source.source.all()]))
+        # data_source.uploaded = sum([len(d.datadocument_set.all()) for d in data_source.datagroup_set.all()])
+        # data_source.no_category = len(data_source.source.filter(prod_cat__isnull=True))
+        # # Number of data documents for each source which are NOT linked
+        # # to a product
+        # data_source.unlinked = (data_source.uploaded -
+        #                         sum([len(x.datadocument_set.all())
+        #                         for x in data_source.source.all()]))
 
     return render(request, template_name, {'data_sources': data_sources})
 

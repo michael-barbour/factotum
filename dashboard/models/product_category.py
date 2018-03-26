@@ -14,5 +14,9 @@ class ProductCategory(models.Model):
 	def __str__(self):
 		return self.gen_cat + ' - ' + self.prod_fam + ' - ' + self.prod_type # this may need to change
 
+	def natural_key(self):
+		return self.gen_cat
+
 	class Meta:
 		verbose_name_plural = 'Product categories'
+

@@ -94,6 +94,10 @@
   <script type="text/javascript">
     $(document).ready(function () {
       var table = $('#groups').DataTable({
+        "serverSide": true,
+        "ajax": {
+                 "processing": true,
+                 "url": "{% url 'dg_ajax_url' %}"             },
       // "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
       "columnDefs": [
           {

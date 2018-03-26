@@ -63,14 +63,17 @@ class ModelsTest(TestCase):
     def create_source_type(self, title='msds/sds'):
         return SourceType.objects.create(title=title)
 
-    def create_data_source(self, title='Data Source for Test', estimated_records=2, state='AT', priority='HI', typetitle='msds/sds'):
-        return DataSource.objects.create(title=title, estimated_records=estimated_records, state=state, priority=priority, type=SourceType.objects.get(title=typetitle))
+    def create_data_source(self, title='Data Source for Test', estimated_records=2, state='AT', priority='HI',
+                           typetitle='msds/sds'):
+        return DataSource.objects.create(title=title, estimated_records=estimated_records, state=state,
+                                         priority=priority, type=SourceType.objects.get(title=typetitle))
 
     def create_download_script(self, script_type, title='Test Title', url='http://www.epa.gov/', qa_begun=False):
         return Script.objects.create(title=title, url=url, qa_begun=qa_begun, script_type=script_type)
 
-    def create_data_group(self, data_source, download_script, testusername = 'jdoe', name='Data Group for Test', description='Testing the DataGroup model'):
-            source_csv = open('./sample_files/register_records_matching.csv','rb')
+    def create_data_group(self, data_source, download_script, testusername = 'jdoe', name='Data Group for Test',
+                          description='Testing the DataGroup model'):
+            source_csv = open('./sample_files/register_records_matching.csv', 'rb')
             return DataGroup.objects.create(name=name,
                                             description=description, data_source = data_source,
                                             download_script=download_script,
@@ -119,16 +122,19 @@ class ModelsTest(TestCase):
         return Script.objects.create(title=title, url=url, qa_begun=qa_begun, script_type=script_type)
 
     def create_extracted_text(self, data_documents, extraction_script):
-        return ExtractedText.objects.create(data_document=data_documents[0], record_type='Test Record Type', prod_name='Test Prod Name',
-                                            doc_date='TstDocDate', rev_num='Test Rev Num', extraction_script=extraction_script, qa_checked=False)
+        return ExtractedText.objects.create(data_document=data_documents[0], record_type='Test Record Type',
+                                            prod_name='Test Prod Name', doc_date='TstDocDate', rev_num='Test Rev Num',
+                                            extraction_script=extraction_script, qa_checked=False)
 
-    def create_extracted_chemical(self, extracted_text, cas='Test CAS', chem_name='Test Chem Name', raw_min_comp='Test Raw Min Comp',
-                                  raw_max_comp='Test Raw Max Comp', units='Test Units', report_funcuse='Test Report Funcuse'):
-        return ExtractedChemical.objects.create(extracted_text=extracted_text, cas=cas, chem_name=chem_name, raw_min_comp=raw_min_comp,
+    def create_extracted_chemical(self, extracted_text, raw_cas='Test CAS', raw_chem_name='Test Chem Name',
+                                  raw_min_comp='Test Raw Min Comp', raw_max_comp='Test Raw Max Comp',
+                                  units='Test Units', report_funcuse='Test Report Funcuse'):
+        return ExtractedChemical.objects.create(extracted_text=extracted_text, raw_cas=raw_cas,
+                                                raw_chem_name=raw_chem_name, raw_min_comp=raw_min_comp,
                                                 raw_max_comp=raw_max_comp, units=units, report_funcuse=report_funcuse)
 
     def create_dsstox_substance(self, extracted_chemical, true_cas='Test True CAS',
-                                true_chemname='Test True Chem Name', rid='Test RID', sid='Test SID'):
+                                true_chemname='Test Chem Name', rid='Test RID', sid='Test SID'):
         return DSSToxSubstance.objects.create(extracted_chemical=extracted_chemical, true_cas=true_cas,
                                               true_chemname=true_chemname, rid=rid, sid=sid)
 
@@ -155,7 +161,7 @@ class ModelsTest(TestCase):
         self.assertEqual(csv_there, csv_here)
 
         # DataDocuments
-        #The number of data documents created should match the number of rows in the csv file minus the header
+        # The number of data documents created should match the number of rows in the csv file minus the header
         self.assertEqual(len(self.dds) , csv_there - 1)
         # Confirm that one of the data documents appears in the data group show page
         dg_response = self.client.get('/datagroup/' + str(self.dg.pk), follow=True)
@@ -176,5 +182,5 @@ class ModelsTest(TestCase):
         # ExtractedChemical
         self.assertEqual(self.ec.__str__(), 'Test Chem Name')
 
-        #DSSToxSubstance
+        # DSSToxSubstance
         self.assertEqual(self.dsstox.__str__(), self.ec.__str__())

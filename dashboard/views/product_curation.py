@@ -1,7 +1,7 @@
 from dal import autocomplete
 from datetime import datetime
 from django.shortcuts import redirect
-
+from django.db.models import Min
 
 from django.utils import timezone
 from django.forms import ModelForm, ModelChoiceField
@@ -62,6 +62,9 @@ def category_assignment(request, pk, template_name=('product_curation/'
     """Deliver a datasource and its associated products"""
     ds = DataSource.objects.get(pk=pk)
     products = ds.source.filter(prod_cat__isnull=True)
+    product = products.annotate( dd_count=Min("documents__url"))
+    #Product.objects.annotate( dd_count=Min("documents__url"))
+    # old loop below, required a query per product
     # for product in products:
     #     try:
     #         product.msds = product.datadocument_set.all()[0]

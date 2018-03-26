@@ -4,6 +4,7 @@ $(document).ready(function () {
   table.DataTable({
     "paging": false,
     "searching": false,
+    "ordering":true,
   // "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
   dom:"<'row'<'col-md-4 form-inline'l><'col-md-4 form-inline'f><'col-md-4'B>>" +
       "<'row'<'col-sm-12'tr>>" +

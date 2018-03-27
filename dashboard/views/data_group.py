@@ -15,7 +15,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from djqscsv import *
+from djqscsv import render_to_csv_response
 
 from dashboard.models import (DataGroup, DataDocument, DataSource, Script,
 								ExtractedText, ExtractedChemical)
@@ -61,7 +61,7 @@ def loadExtracted (row, dd, sc):
 def data_group_detail(request, pk,
 						template_name='data_group/datagroup_detail.html'):
 	datagroup = get_object_or_404(DataGroup, pk=pk, )
-	docs = DataDocument.objects.filter(data_group_id=pk)
+	docs = DataDocument.objects.filter(data_group_id=pk).order_by('title')
 	npage = 20 # TODO: make this dynamic someday in its own ticket
 	paginator = Paginator(docs, npage) # Show npage data documents per page
 	page = request.GET.get('page')

@@ -562,8 +562,7 @@ class TestExtractedText(StaticLiveServerTestCase):
                          ("This button shouldn't be enabled until there "
                          "is a file selected in the file input."))
         file_input = self.browser.find_element_by_name('extract_file')
-        file_input.send_keys(os.getcwd()+("/sample_files/"
-                                            "test_extract.csv"))
+        file_input.send_keys(os.path.join(os.getcwd(),"sample_files","test_extract.csv"))
         submit_button = self.browser.find_element_by_name('extract_button')
         # if this fails here, the file likely isn't in the repo anymore
         # or has been deleted

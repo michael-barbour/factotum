@@ -45,7 +45,7 @@ def product_curation_index(request, template_name='product_curation/product_cura
     data_sources = DataSource.objects.annotate(uploaded=Count('datagroup__datadocument')).filter(uploaded__gt=0).annotate(unlinked=Count('datagroup__datadocument') - Count('datagroup__datadocument__productdocument'))    
     # A separate queryset of data groups and their related products without PUCs assigned
     ds_no_puc = ProductDocument.objects.filter(product__prod_cat_id__isnull=True)
-    DataSource.objects.filter(datagroup__datadocument__isnull=False).annotate(prods_missing_puc=Count('datagroup__datadocument__productdocument__product',filter=Q(prod_cat_id__isnull=True)))
+    DataSource.objects.filter(datagroup__datadocument__isnull=False).annotate(prods_missing_puc=Count('datagroup__datadocument__productdocument__product',filter=Q(datagroup__datadocument__productdocument__product__prod_cat_id__isnull=True)))
     
     for data_source in data_sources:
         data_source.no_category = ds_no_puc.get(data_source.pk).prods_missing_puc

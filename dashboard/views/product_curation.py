@@ -15,7 +15,7 @@ class ProductForm(ModelForm):
     required_css_class = 'required' # adds to label tag
     class Meta:
         model = Product
-        fields = ['title', 'brand_name']
+        fields = ['title', 'manufacturer', 'brand_name']
 
 class ProductPUCForm(ModelForm):
     prod_cat = ModelChoiceField(
@@ -97,6 +97,7 @@ def link_product_form(request, pk, template_name=('product_curation/'
         if form.is_valid():
             title = form['title'].value()
             brand_name = form['brand_name'].value()
+            manufacturer = form['manufacturer'].value()
             try:
                 product = Product.objects.get(title=title)
             except Product.DoesNotExist:
@@ -104,6 +105,7 @@ def link_product_form(request, pk, template_name=('product_curation/'
                             # title +  ### Removed as title busts product UPC size limits
                             str(Product.objects.all().count() + 1))
                 product = Product.objects.create(title=title,
+                                                 manufacturer=manufacturer,
                                                  brand_name=brand_name,
                                                  upc=upc_stub,
                                                  data_source_id=data_source_id,

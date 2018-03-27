@@ -13,6 +13,7 @@ class Product(models.Model):
 	documents = models.ManyToManyField(DataDocument, through='ProductDocument')
 	source_category = models.ForeignKey(SourceCategory, on_delete=models.CASCADE, null=True, blank=True)
 	title = models.CharField(max_length=255)
+	manufacturer = models.CharField(db_index=True, max_length=250, null=True, blank=True, default = '')
 	upc = models.CharField(db_index=True, max_length=60, null=False, blank=False, unique=True)
 	url = models.CharField(max_length=500, null=True, blank=True)
 	brand_name = models.CharField(db_index=True, max_length=200, null=True, blank=True, default = '')

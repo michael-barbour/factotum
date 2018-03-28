@@ -5,3 +5,4 @@ from .product_curation import *
 from .qa import *
 from .extraction_script import *
 from .product_autocomplete import *
+from .ajax import *

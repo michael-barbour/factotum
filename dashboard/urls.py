@@ -15,6 +15,7 @@ urlpatterns = [
 	url(r'^datasource/delete/(?P<pk>\d+)$', views.data_source_delete, name='data_source_delete'),
 	url(r'^datagroups/$', views.data_group_list, name='data_group_list'),
 	url(r'^datagroup/(?P<pk>\d+)$', views.data_group_detail, name='data_group_detail'),
+	url(r'^datagroup/docs_csv/(?P<pk>\d+)$', views.dg_dd_csv_view, name='dg_dd_csv_view'),
 	url(r'^datagroup/new$', views.data_group_create, name='data_group_new'),
 	url(r'^datagroup/edit/(?P<pk>\d+)$', views.data_group_update, name='data_group_edit'),
 	url(r'^datagroup/delete/(?P<pk>\d+)$', views.data_group_delete, name='data_group_delete'),
@@ -29,10 +30,14 @@ urlpatterns = [
 	url(r'^product_puc/(?P<pk>\d+)$', views.assign_puc_to_product, name='product_puc'),
 	url(r'^puc-autocomplete/$', views.product_autocomplete.PUCAutocomplete.as_view(),
 	name='puc-autocomplete'),
-	url(r'^product/(?P<pk>\d+)$', views.product_detail, name='product'),
+	url(r'^product/(?P<pk>\d+)$', views.product_detail, name='product_detail'),
+    url(r'^products/$', views.product_list, name='product_list'),
     url(r'^datadocument/(?P<pk>\d+)$', views.data_document_detail, name='data_document'),
     url(r'^search/', include('haystack.urls')),
     url(r'^find/', search.FacetedSearchView.as_view(), name='haystack_search'),
+    url(r'^dg_json/', views.DataGroups_asJson, name='dg_ajax_url'),
+    #url(r'^p_json/', views.Products_asJson, name='p_ajax_url'),
+    url(r'^p_json/', views.product_ajax, name='p_ajax_url'),
     #url(r'^search/', FacetedSearchView(form_class=FacetedSearchForm, facet_fields=['brand_name','prod_cat']), name='haystack_search'),
 	# test with: /puc-autocomplete/?q=Art
 ]

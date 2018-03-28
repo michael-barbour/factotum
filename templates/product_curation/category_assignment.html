@@ -23,7 +23,7 @@ Link Product To Product Category</h1>
   <tbody>
   {% for product in products %}
     <tr>
-      <td><a href="{% url "product" product.id %}"
+      <td><a href="{% url "product_detail" product.id %}"
       title="Link to {{ product.title }}">{{ product.title }}</a></td>
       <td>
         {% if product.msds%}

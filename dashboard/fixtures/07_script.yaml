@@ -1,0 +1,8 @@
+- model: dashboard.script
+  pk: 1
+  fields: {title: MSDS scraper script, url: 'https://github.com/HumanExposure/MSDS_scraper_script.rmd',
+    qa_begun: false, script_type: DL}
+- model: dashboard.script
+  pk: 2
+  fields: {title: Default Extraction Script, url: 'https://github.com/HumanExposure/Extractors/DefaultScript.r',
+    qa_begun: false, script_type: EX}

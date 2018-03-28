@@ -2,7 +2,6 @@
 {% load staticfiles %}
 {% load humanize %}
 
-
 {% block errors %}
   {% if err %}
     <div class="bg-warning text-white">
@@ -64,7 +63,7 @@
     </dl>
     <div class="col-sm-12">
         <button type="button" class="btn btn-secondary" onclick="location.href = '/media/{{ datagroup.csv }}';">
-            <span class="oi oi-spreadsheet"></span> Download Registered CSV
+            <span class="oi oi-spreadsheet"></span>&nbsp; Download Registered CSV
         </button>
         {% if not inc_upload %}
             <div class="col-md-4 btn-group border rounded float-right">
@@ -82,7 +81,7 @@
         </button>
 <br>
     <br>
-    {% if include_upload %}
+    {% if include_extract %}
       <div class="col-sm-12">
         <h5>Work with uploaded documents:</h5>
 
@@ -102,7 +101,7 @@
                 </form>
             </div>
         <a id="xx" href="" class="btn btn-secondary"
-           {% if not doc.matched %}disabled{% endif %}><span class="oi oi-spreadsheet"></span>Extracted Text CSV Template</a>
+           {% if not doc.matched %}disabled{% endif %}><span class="oi oi-spreadsheet"></span>&nbsp;Extracted Text CSV Template</a>
       </div>
       <table class="table" id="extract" style="display:none;">
           <thead class="table-primary">
@@ -123,12 +122,14 @@
       </table>
     {% endif %}
 
+
         {% if documents %}
             <br>
             <br>
-            <h4>{{ documents|length }} documents registered, {{ datagroup.matched_docs }} matched</h4>
-            </div>
-            <table class="table table-sm table-bordered table-striped table-hover" id="d-docs">
+            <h4>{{ datagroup.registered_docs }} documents registered, {{ datagroup.matched_docs }} matched</h4>
+            <p></p><a class="btn btn-secondary" href="docs_csv/{{ datagroup.id }}"><span class="oi oi-spreadsheet"></span>&nbsp;Export all records in {{ datagroup.name }} to csv</a></p>
+        </div>
+            <table class="table table-striped table-bordered dataTable no-footer table-sm" id="docs">
                 <thead class="table-primary">
                 <th>Title</th>
                 <th>URL</th>
@@ -182,8 +183,40 @@
             {% endfor %}
         </ul>
     </div>
+
+
+    <nav aria-label="Paginated navigation">
+            <ul class="pagination">
+                {% if documents.has_previous %}
+            <li class="page-item">
+                    <a class="page-link" href="?page=1">&laquo; first</a>
+            </li>
+            <li class="page-item">
+                    <a class="page-link" href="?page={{ documents.previous_page_number }}" >previous</a>
+            </li>
+                {% endif %}
+            <li class="page-item">
+                <span class="current page-item page-link" >
+                    Page {{ documents.number }} of {{ documents.paginator.num_pages }}
+                </span>
+            </li>
+        
+                {% if documents.has_next %}
+                <li class="page-item">
+                    <a href="?page={{ documents.next_page_number }}" class="page-link">next</a>
+                </li>
+                <li class="page-item">
+                    <a href="?page={{ documents.paginator.num_pages }}" class="page-link">last &raquo;</a>
+                </li>
+                    {% endif %}
+            </li>
+        </ul>
+    </nav>
+
 <input type="hidden" id="dg_name" name="variable" value="{{ datagroup.dgurl }}">
+
 {% endblock %}
 {% block js %}
   <script src="{% static 'js/data_group_detail.js' %}"></script>
+  
 {% endblock %}

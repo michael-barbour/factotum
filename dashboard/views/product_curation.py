@@ -3,6 +3,7 @@ from datetime import datetime
 from django.shortcuts import redirect
 from django.db.models import Count, Q
 
+from django.db.models import Min
 
 from django.utils import timezone
 from django.forms import ModelForm, ModelChoiceField
@@ -16,7 +17,7 @@ class ProductForm(ModelForm):
     required_css_class = 'required' # adds to label tag
     class Meta:
         model = Product
-        fields = ['title', 'brand_name']
+        fields = ['title', 'manufacturer', 'brand_name']
 
 class ProductPUCForm(ModelForm):
     prod_cat = ModelChoiceField(
@@ -69,11 +70,14 @@ def category_assignment(request, pk, template_name=('product_curation/'
     """Deliver a datasource and its associated products"""
     ds = DataSource.objects.get(pk=pk)
     products = ds.source.filter(prod_cat__isnull=True)
-    for product in products:
-        try:
-            product.msds = product.datadocument_set.all()[0]
-        except IndexError:
-            product.msds = 0
+    product = products.annotate( dd_count=Min("documents__url"))
+    #Product.objects.annotate( dd_count=Min("documents__url"))
+    # old loop below, required a query per product
+    # for product in products:
+    #     try:
+    #         product.msds = product.datadocument_set.all()[0]
+    #     except IndexError:
+    #         product.msds = 0
     return render(request, template_name, {'datasource': ds, 'products': products})
 
 @login_required()
@@ -101,6 +105,7 @@ def link_product_form(request, pk, template_name=('product_curation/'
         if form.is_valid():
             title = form['title'].value()
             brand_name = form['brand_name'].value()
+            manufacturer = form['manufacturer'].value()
             try:
                 product = Product.objects.get(title=title)
             except Product.DoesNotExist:
@@ -108,6 +113,7 @@ def link_product_form(request, pk, template_name=('product_curation/'
                             # title +  ### Removed as title busts product UPC size limits
                             str(Product.objects.all().count() + 1))
                 product = Product.objects.create(title=title,
+                                                 manufacturer=manufacturer,
                                                  brand_name=brand_name,
                                                  upc=upc_stub,
                                                  data_source_id=data_source_id,
@@ -137,3 +143,13 @@ def product_detail(request, pk, template_name=('product_curation/'
                                                 'product_detail.html')):
     p = Product.objects.get(pk=pk)
     return render(request, template_name,{'product': p})
+
+@login_required()
+def product_list(request, template_name=('product_curation/'
+                                                'products.html')):
+    product = Product.objects.all()
+    data = {}
+    data['object_list'] = product
+    return render(request, template_name, data)
+    p = Product.objects.all()
+    return render(request, template_name,{'products': p})

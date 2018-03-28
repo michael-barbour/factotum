@@ -6,7 +6,7 @@
       "paging": false,
       "searching": false,
       "ordering": true,
-      "dom": 'p',
+      "dom": 't',
     // "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
     "columnDefs": [
         {

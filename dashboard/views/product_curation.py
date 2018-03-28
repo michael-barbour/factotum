@@ -43,14 +43,18 @@ def product_detail(request, pk,
 def product_curation_index(request, template_name='product_curation/product_curation_index.html'):
     # List of all data sources which have had at least 1 data
     # document matched to a registered record
+    linked_products = Product.objects.filter(documents__in=DataDocument.objects.all())
     data_sources = DataSource.objects.annotate(uploaded=Count('datagroup__datadocument')).filter(uploaded__gt=0).annotate(unlinked=Count('datagroup__datadocument') - Count('datagroup__datadocument__productdocument'))    
     # A separate queryset of data groups and their related products without PUCs assigned
-    ds_no_puc = ProductDocument.objects.filter(product__prod_cat_id__isnull=True)
-    DataSource.objects.filter(datagroup__datadocument__isnull=False).annotate(prods_missing_puc=Count('datagroup__datadocument__productdocument__product',filter=Q(datagroup__datadocument__productdocument__product__prod_cat_id__isnull=True)))
+    qs_no_puc = Product.objects.filter(prod_cat__isnull=True).filter(data_source__isnull=False).values('data_source').annotate(no_category=Count('id'))
     
-    for data_source in data_sources:
-        data_source.no_category = ds_no_puc.get(data_source.pk).prods_missing_puc
-
+    for ds in data_sources:
+        # because the query builds up from product instead of down from data source,
+        # we need to handle the cases where a data source has zero products without PUCs
+        try: 
+            ds.no_category = qs_no_puc.get(data_source=ds.id)['no_category']
+        except:
+            ds.no_category = 0
 
     #for data_source in data_sources:
         # Number of data documents which have been matched for each source

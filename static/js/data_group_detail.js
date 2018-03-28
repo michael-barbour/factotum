@@ -5,11 +5,13 @@
       "serverSide": false,
       "paging": false,
       "searching": false,
+      "ordering": true,
+      "dom": 'p',
     // "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
     "columnDefs": [
         {
-            "targets": 4, // sixth column is edit/delete links
-            "orderable": true
+            "targets": [1,2,3,4], 
+            "orderable": false
         },
     ],
     });

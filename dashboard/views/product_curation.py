@@ -76,12 +76,16 @@ def category_assignment(request, pk, template_name=('product_curation/'
 def link_product_list(request,  pk, template_name='product_curation/link_product_list.html'):
     ds = DataSource.objects.get(pk=pk)
 
-    unlinked_pks = list(set([dd.pk
-                            for dg in ds.datagroup_set.all()
-                            for dd in dg.datadocument_set.all()]
-                      )-set([dd.pk
-                            for product in ds.source.all()
-                            for dd in product.datadocument_set.all()]))
+    # unlinked_pks = list(set([dd.pk
+    #                         for dg in ds.datagroup_set.all()
+    #                         for dd in dg.datadocument_set.all()]
+    #                   )-set([dd.pk
+    #                         for product in ds.source.all()
+    #                         for dd in product.datadocument_set.all()]))
+
+    a = DataDocument.objects.filter(data_group__data_source=ds).values_list('id',flat=True)
+    b = ProductDocument.objects.filter(document_id__in=a).values_list('document_id', flat=True)
+    unlinked_pks = set(a)-set(b) 
     documents = DataDocument.objects.filter(pk__in=unlinked_pks)
 
     return render(request, template_name, {'documents':documents})

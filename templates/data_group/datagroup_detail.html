@@ -61,10 +61,12 @@
             <dd class="col-sm-9">{{ datagroup.updated_at }}</dd>
         {% endif %}
     </dl>
+
+
+
+
     <div class="col-sm-12">
-      <button type="button" class="btn btn-secondary" onclick="location.href = '/media/{{ datagroup.csv }}';">
-          <span class="oi oi-spreadsheet"></span>&nbsp; Download Registered CSV
-      </button>
+      <a id="rr" href="" class="btn btn-secondary"><span class="oi oi-spreadsheet"></span>&nbsp; Download Registered CSV</a>
       {% if not inc_upload %}
         <div class="col-md-4 btn-group border rounded float-right">
           <form enctype="multipart/form-data" action="" method="post">
@@ -216,6 +218,29 @@
       </li>
   </ul>
     </nav>
+
+  <table class="table" id="registered" style="display:none;">
+    <thead class="table-primary">
+      <th>DataDocument_id</th>
+      <th>filename</th>
+      <th>title</th>
+      <th>product</th>
+      <th>url</th>
+    </thead>
+    <tbody>
+    {% for doc in all_documents %}
+      <tr>
+      {% if doc.matched and not doc.extracted %}
+        <td>{{ doc.pk }}</td>
+        <td>{{ doc.filename }}</td>
+        <td>{{ doc.title }}</td>
+        <td>{{ doc.product_category }}</td>
+        <td>{{ doc.url }}</td>
+      {% endif %}
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
 
 <input type="hidden" id="dg_name" name="variable" value="{{ datagroup.dgurl }}">
 

@@ -512,7 +512,7 @@ class TestFacetedSearch(StaticLiveServerTestCase):
     #
     fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
             '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml', 
-            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '08_extractedtext.yaml']
+            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '09_productdocument.yaml']
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -538,9 +538,9 @@ class TestFacetedSearch(StaticLiveServerTestCase):
 
         # Temporary fix: assign a PUC to the product, then rebuild the index
 
-        p1 = Product.objects.get(pk=1538000)
-        pc230 = ProductCategory.objects.get(pk=230)
-        p1.prod_cat = pc230
+        p1 = Product.objects.get(pk=22)
+        pc252 = ProductCategory.objects.get(pk=252)
+        p1.prod_cat = pc252
         p1.save()
         # update the search engine index
         update_index.Command().handle(using=['default'])

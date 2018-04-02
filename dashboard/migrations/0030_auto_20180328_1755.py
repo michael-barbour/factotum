@@ -13,18 +13,18 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # migrations.CreateModel(
-        #     name='DSSToxSubstance',
-        #     fields=[
-        #         ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-        #         ('true_cas', models.CharField(blank=True, max_length=50, null=True)),
-        #         ('true_chemname', models.CharField(blank=True, max_length=500, null=True)),
-        #         ('rid', models.CharField(blank=True, max_length=50, null=True)),
-        #         ('sid', models.CharField(blank=True, max_length=50, null=True)),
-        #         ('created_at', models.DateTimeField(auto_now_add=True)),
-        #         ('updated_at', models.DateTimeField(auto_now=True, null=True)),
-        #     ],
-        # ),
+        migrations.CreateModel(
+            name='DSSToxSubstance',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('true_cas', models.CharField(blank=True, max_length=50, null=True)),
+                ('true_chemname', models.CharField(blank=True, max_length=500, null=True)),
+                ('rid', models.CharField(blank=True, max_length=50, null=True)),
+                ('sid', models.CharField(blank=True, max_length=50, null=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True, null=True)),
+            ],
+        ),
         migrations.RenameField(
             model_name='extractedchemical',
             old_name='cas',
@@ -45,9 +45,9 @@ class Migration(migrations.Migration):
             name='download_script',
             field=models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, to='dashboard.Script'),
         ),
-        # migrations.AddField(
-        #     model_name='dsstoxsubstance',
-        #     name='extracted_chemical',
-        #     field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='dashboard.ExtractedChemical'),
-        # ),
+        migrations.AddField(
+            model_name='dsstoxsubstance',
+            name='extracted_chemical',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='dashboard.ExtractedChemical'),
+        ),
     ]

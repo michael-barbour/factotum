@@ -1,22 +1,22 @@
-$(document).ready(function () {
-  var dg_name = document.getElementById("dg_name").value;
-  var table = $('#d-docs');
-  table.DataTable({
-  // "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
-  dom:"<'row'<'col-md-4 form-inline'l><'col-md-4 form-inline'f><'col-md-4'B>>" +
-      "<'row'<'col-sm-12'tr>>" +
-      "<'row'<'col-sm-5'i><'col-sm-7'p>>", // order the control divs
-  buttons: [{
-    extend: 'csv',
-    text: 'Download CSV',
-    title: 'Data_Documents_in_'+ dg_name +'_Factotum',
-    exportOptions : {
-      columns: [ 0, 1, 2, 3, 4 ],
-      },
-    }]
-  });
 
-function exportTableToCSV($table, filename) {
+
+  $(document).ready(function () {
+    var table = $('#docs').DataTable({
+      "serverSide": false,
+      "paging": false,
+      "searching": false,
+      "ordering": true,
+      "dom": 't',
+    // "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
+    "columnDefs": [
+        {
+            "targets": [1,2,3,4],
+            "orderable": false
+        },
+    ],
+    });
+
+    function exportTableToCSV($table, filename) {
       var $rows = $table.find('tr:has(td),tr:has(th)'),
           // Temporary delimiter characters unlikely to be typed by keyboard
           // This is to avoid accidentally splitting the actual contents
@@ -42,20 +42,26 @@ function exportTableToCSV($table, filename) {
         else {
           $(this).attr({ 'download': filename, 'href': csvData, 'target': '_blank' });
         }
-  }
-
-  // This must be a hyperlink
-  $("#xx").on('click', function (event) {
-      exportTableToCSV.apply(this, [$('#extract'), 'export.csv']);
-  });
-  // make submit button active when file selected
-  $('input:file').change(
-      function(){
-          if ($(this).val()) {
-              $('input:submit').attr('disabled',false);
-          } else {
-              $('input:submit').attr('disabled',true);
-          }
       }
-      );
-});
+
+    var dg_name = document.getElementById("dg_name").value;
+      // This must be a hyperlink
+    $("#rr").on('click', function (event) {
+        exportTableToCSV.apply(this, [$('#registered'), dg_name + '_registered_records.csv']);
+    });
+
+    $("#xx").on('click', function (event) {
+        exportTableToCSV.apply(this, [$('#extract'), dg_name + '_extract_template.csv']);
+    });
+
+    // make submit button active when file selected
+    $('input:file').change(
+        function(){
+            if ($(this).val()) {
+                $('input:submit').attr('disabled',false);
+            } else {
+                $('input:submit').attr('disabled',true);
+            }
+        }
+        );
+    });

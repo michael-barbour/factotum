@@ -4,6 +4,7 @@ import time
 import unittest
 import collections
 import json
+import re
 from selenium import webdriver
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
@@ -22,7 +23,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from dashboard.models import (DataGroup, DataSource, DataDocument,
-                              Script, ExtractedText, Product, ProductCategory)
+                              Script, ExtractedText, Product, ProductCategory, ProductDocument)
 
 from haystack import connections
 from haystack.query import SearchQuerySet
@@ -44,9 +45,11 @@ def log_karyn_in(object):
     object.browser.find_element_by_class_name('btn').click()
 
 
-class TestDataSource(StaticLiveServerTestCase):
+class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
 
-    fixtures = ['seed_data']
+    fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
+            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
+            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '08_extractedtext.yaml']
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -94,26 +97,20 @@ class TestDataSource(StaticLiveServerTestCase):
         wrap_div = self.browser.find_element_by_class_name('dataTables_wrapper')
         self.assertIn("Show", wrap_div.text, 'DataTables missing...')
 
-
-class TestDataGroup(StaticLiveServerTestCase):
-
-    fixtures = ['seed_data']
-
-    def setUp(self):
-        self.browser = webdriver.Chrome()
-        log_karyn_in(self)
-
-    def tearDown(self):
-        self.browser.quit()
+    # Data Groups
 
     def test_data_group_name(self):
-        self.browser.get(self.live_server_url + '/datagroup/1')
+        self.browser.get(self.live_server_url + '/datagroup/40')
         h1 = self.browser.find_element_by_name('title')
-        self.assertIn('Walmart MSDS', h1.text)
+        self.assertIn('Walmart MSDS 1', h1.text)
         # Checking the URL by row is too brittle
         #pdflink = self.browser.find_elements_by_xpath(
         #    '//*[@id="d-docs"]/tbody/tr[2]/td[1]/a')[0]
         #self.assertIn('shampoo.pdf', pdflink.get_attribute('href'))
+        rows = self.browser.find_elements_by_xpath(
+                                        "//table[@id='registered']/tbody/tr")
+        docs = DataDocument.objects.filter(data_group=40)
+        self.assertEqual(len(rows),len(docs),'This table needs to be the entire set of data documents for the group for downloading CSV.')
 
     def create_data_group(self, data_source, testusername='Karyn',
                           name='Walmart MSDS 3',
@@ -121,10 +118,12 @@ class TestDataGroup(StaticLiveServerTestCase):
                                        'added programatically')):
         source_csv = open('./sample_files/walmart_msds_3.csv', 'rb')
         return DataGroup.objects.create(name=name,
-                                        description=description, data_source=data_source,
+                                        description=description,
+                                        data_source=data_source,
                                         downloaded_by=User.objects.get(
                                             username=testusername),
                                         downloaded_at=timezone.now(),
+                                        download_script=None,
                                         csv=SimpleUploadedFile('walmart_msds_3.csv', source_csv.read()))
 
     def upload_pdfs(self):
@@ -166,20 +165,19 @@ class TestDataGroup(StaticLiveServerTestCase):
     def test_new_data_group(self):
         # DataGroup, created using the model layer
         dg_count_before = DataGroup.objects.count()
-        ds = DataSource.objects.get(pk=1)
+        ds = DataSource.objects.get(pk=2)
         self.dg = self.create_data_group(data_source=ds)
         dg_count_after = DataGroup.objects.count()
         self.assertEqual(dg_count_after, dg_count_before + 1,
                          "Confirm the DataGroup object has been created")
-        self.assertEqual(3, self.dg.pk,
-                         "Confirm the new DataGroup object's pk is 3")
+        new_dg_pk = self.dg.pk
         self.pdfs = self.upload_pdfs()
         self.dds = self.create_data_documents(self.dg, ds)
 
         # Use the browser layer to confirm that the object has been created
-        self.browser.get('%s%s' % (self.live_server_url, '/datagroup/3'))
+        self.browser.get('%s%s%s' % (self.live_server_url, '/datagroup/', new_dg_pk))
         self.assertEqual('factotum', self.browser.title,
-                         "Testing open of datagroup 3 show page")
+                         "Testing open of show page for new data group")
 
         self.browser.get(self.live_server_url + reverse('data_group_detail',
                                                         kwargs={'pk': self.dg.pk}))
@@ -189,17 +187,32 @@ class TestDataGroup(StaticLiveServerTestCase):
 
         # Use the browser layer to delete the DataGroup object
         # deleting the DataGroup should clean up the file system
-        self.browser.get(self.live_server_url + '/datagroup/delete/3')
+        self.browser.get('%s%s%s' % (self.live_server_url, '/datagroup/delete/', new_dg_pk))
         del_button = self.browser.find_elements_by_xpath(('/html/body/div/form/'
                                                           'input[2]'))[0]
         del_button.click()
         self.assertEqual(DataGroup.objects.count(), dg_count_before,
                          "Confirm the DataGroup object has been deleted")
 
+    def test_pagination(self):
+        # The data group detail page uses server-side pagination to display the
+        # related data documents
+        self.browser.get('%s%s' % (self.live_server_url, '/datagroup/40'))
+        pagebox = self.browser.find_elements_by_class_name("current")[0]
+        self.assertIn('Page 1', pagebox.text,
+                         "Confirm the current page navigation box displays 'Page 1 of [some number]'")
+        nextbox = self.browser.find_element_by_xpath('/html/body/div[1]/nav/ul/li[2]/a')
+        nextbox.click()
+        self.assertIn("?page=2", self.browser.current_url,
+                      'The newly opened URL should contain the new page number')
+
+
 
 class TestProductCuration(StaticLiveServerTestCase):
 
-    fixtures = ['seed_data']
+    fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
+            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
+            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '08_extractedtext.yaml']
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -218,13 +231,43 @@ class TestProductCuration(StaticLiveServerTestCase):
         self.assertEqual(un_link.get_attribute("href").split('/')[-1],
                          str(ds.pk))
 
+    def test_link_product(self):
+        self.browser.get(self.live_server_url + '/link_product_list/1')
+        create_prod_link = self.browser.find_element_by_xpath('//*[@id="products"]/tbody/tr[1]/td[2]/a')
+        create_prod_link.click()
+
+        title_input = self.browser.find_element_by_xpath('//*[@id="id_title"]')
+        manufacturer_input = self.browser.find_element_by_xpath('//*[@id="id_manufacturer"]')
+        brand_name_input = self.browser.find_element_by_xpath('//*[@id="id_brand_name"]')
+
+        title_input.send_keys('A Product Title')
+        manufacturer_input.send_keys('A Product Manufacturer')
+        brand_name_input.send_keys('A Product Brand Name')
+        # get the data document's ID from the URL, for later use
+        dd_pk = re.search('(?P<pk>\d+)$', self.browser.current_url ).group(0)
+
+        save_button = self.browser.find_element_by_xpath('/html/body/div[1]/form/button')
+        save_button.click()
+        # Saving the product should return the browser to the list of documents without products
+        self.assertIn("link_product_list", self.browser.current_url)
+
+        #check at the model level to confirm that the edits have been applied
+        # self.assertEqual(dd_pk, 'x')
+        pd = ProductDocument.objects.get(document=dd_pk)
+        p = Product.objects.get(pk=pd.product.id)
+        self.assertEqual('A Product Title', p.title)
+
+
+
+
     def test_PUC_assignment(self):
         self.browser.get(self.live_server_url + '/product_curation/')
         src_title = self.browser.find_elements_by_xpath(
-            '//*[@id="products"]/tbody/tr/td[1]/a')[0]
+            '//*[@id="products"]/tbody/tr[2]/td[1]/a')[0]
         ds = DataSource.objects.get(title=src_title.text)
+        self.assertEqual(ds.title, 'Walmart Labs', 'Check the title of the group')
         puc_link = self.browser.find_elements_by_xpath(
-            '//*[@id="products"]/tbody/tr/td[4]/a')[0]
+            '//*[@id="products"]/tbody/tr[2]/td[4]')[0]
         products_missing_PUC = str(
             len(ds.source.filter(prod_cat__isnull=True)))
         self.assertEqual(puc_link.text, products_missing_PUC, ('The Assign PUC '
@@ -239,7 +282,9 @@ class TestQAScoreboard(StaticLiveServerTestCase):
     # A link in the nav bar to the QA Home page
     # A Table on the QA Home page
     # A button for each row in the table that will take you to #36 (Not Implemented Yet)
-    fixtures = ['seed_data']
+    fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
+            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
+            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '08_extractedtext.yaml']
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -433,7 +478,7 @@ class TestPUCAssignment(StaticLiveServerTestCase):
         self.assertEqual(puc_assigned_usr_after, 'Karyn',
                             "The PUC assigning user should have changed")
 
-      def test_cancelled_puc_assignment(self):
+    def test_cancelled_puc_assignment(self):
 
         # Bug report in issue #155
         # When on the Product Curation Page, I click Assign Puc.
@@ -469,12 +514,14 @@ class TestPUCAssignment(StaticLiveServerTestCase):
 class TestFacetedSearch(StaticLiveServerTestCase):
     # Issue 104 https://github.com/HumanExposure/factotum/issues/104
     #
-    fixtures = ['seed_product_category.yaml', 'seed_data', ]
+    fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
+            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
+            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '08_extractedtext.yaml']
 
     def setUp(self):
         self.browser = webdriver.Chrome()
         log_karyn_in(self)
-        update_index.Command().handle()
+        update_index.Command().handle(using=['default'])
 
 
     def tearDown(self):
@@ -495,12 +542,12 @@ class TestFacetedSearch(StaticLiveServerTestCase):
 
         # Temporary fix: assign a PUC to the product, then rebuild the index
 
-        p1 = Product.objects.get(pk=1)
+        p1 = Product.objects.get(pk=1538000)
         pc230 = ProductCategory.objects.get(pk=230)
         p1.prod_cat = pc230
         p1.save()
         # update the search engine index
-        update_index.Command().handle()
+        update_index.Command().handle(using=['default'])
 
         # Check for the elasticsearch engine
         self.browser.get('http://127.0.0.1:9200/')
@@ -549,8 +596,7 @@ class TestExtractedText(StaticLiveServerTestCase):
                          ("This button shouldn't be enabled until there "
                          "is a file selected in the file input."))
         file_input = self.browser.find_element_by_name('extract_file')
-        file_input.send_keys(os.getcwd()+("/media/Walmart_MSDS_1/"
-                                "Walmart_MSDS_1_register_records_DG1.csv"))
+        file_input.send_keys(os.path.join(os.getcwd(),"sample_files","test_extract.csv"))
         submit_button = self.browser.find_element_by_name('extract_button')
         # if this fails here, the file likely isn't in the repo anymore
         # or has been deleted

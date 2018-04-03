@@ -261,7 +261,7 @@ class TestProductCuration(StaticLiveServerTestCase):
         src_title = self.browser.find_elements_by_xpath(
             '//*[@id="products"]/tbody/tr[2]/td[1]/a')[0]
         ds = DataSource.objects.get(title=src_title.text)
-        self.assertEqual(ds.title, 'Walmart Labs', 'Check the title of the group')
+        self.assertEqual(ds.title, 'Home Depot - ICF', 'Check the title of the group')
         puc_link = self.browser.find_elements_by_xpath(
             '//*[@id="products"]/tbody/tr[2]/td[4]')[0]
         products_missing_PUC = str(
@@ -552,25 +552,25 @@ class TestFacetedSearch(StaticLiveServerTestCase):
                       "The search engine's server needs to be running")
         # if a Product object has a PUC assigned, that PUC should appear in the facet index
         sqs = SearchQuerySet().using('default').facet('prod_cat')
-        self.assertIn('nails', json.dumps(sqs.facet_counts()),
-                      'The search engine should return "Personal care - nails - " among the product category facets.')
+        self.assertIn('insect', json.dumps(sqs.facet_counts()),
+                      'The search engine should return "["Pesticides - insect repellent - insect repellent - skin", 1]" among the product category facets.')
 
         # use the input box to enter a search query
         self.browser.get(self.live_server_url)
         searchbox = self.browser.find_element_by_id('q')
-        searchbox.send_keys('nutra')
+        searchbox.send_keys('Skinsations')
         searchbox.send_keys(Keys.RETURN)
-        self.assertIn("nutra", self.browser.current_url,
+        self.assertIn("Skinsations", self.browser.current_url,
                       'The URL should contain the search string')
         facetcheck = self.browser.find_element_by_xpath(
             '/html/body/div/div/div/div[1]')
-        self.assertIn('nails', facetcheck.text,
-                      'The faceting controls should include a "Personal care - nails - " entry')
-        facetcheck = self.browser.find_element_by_id('Personalcare-nails-')
+        self.assertIn('insect', facetcheck.text,
+                      'The faceting controls should include a "Pesticides - insect repellent" entry')
+        facetcheck = self.browser.find_element_by_id('Pesticides-insectrepellent-insectrepellent-skin')
         facetcheck.click()
         facetapply = self.browser.find_element_by_id('btn-apply-filters')
         facetapply.click()
-        self.assertIn("prod_cat=Personal%20care%20-%20nails%20-%20",
+        self.assertIn("insect%20repellent",
                       self.browser.current_url, 'The URL should contain the facet search string')
 
 

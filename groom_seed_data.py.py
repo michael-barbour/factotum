@@ -5,35 +5,40 @@
 # addition because it's already in there
 
 # python manage.py loaddata prod_20180328
+# python manage.py loaddata 00_superuser
 
 from django.contrib.auth.models import User
 from dashboard.models import DataSource, DataGroup, DataDocument, ProductDocument, Product, ProductCategory
 from django.db.models import Count
 
+# prep the objects by switching their related user to Karyn
+karyn = User.objects.get(username='Karyn')
 
-Product.objects.count()
-DataDocument.objects.count()
-ProductCategory.objects.count()
-# Objects related to User:
 DataGroup.objects.values('downloaded_by__username').annotate(n=Count('id'))
 Product.objects.values('puc_assigned_usr_id__username').annotate(n=Count('id'))
-# before: 
-# <QuerySet [{'puc_assigned_usr_id': None, 'assigned': 463}, 
-#            {'puc_assigned_usr_id': 1, 'assigned': 1}, 
-#            {'puc_assigned_usr_id': 3, 'assigned': 1}]>
-# after deleting user 3:
-# <QuerySet [{'puc_assigned_usr_id': None, 'assigned': 463}, 
-#            {'puc_assigned_usr_id': 1, 'assigned': 1}]>
 
-ProductCategory.objects.values('last_edited_by').annotate(n=Count('id'))
+DataGroup.objects.all().update(downloaded_by=karyn)
+Product.objects.all().update(puc_assigned_usr_id=karyn)
+
+ProductCategory.objects.all().update(last_edited_by=karyn)
+
+# Remove all the real-world users
+User.objects.exclude(username='Karyn').delete()
+
+ProductDocument.objects.filter(id=196)
+ProductDocument.objects.get(id=196).product #192
+ProductDocument.objects.get(id=196).document.id #1105
+
+# delete products and datadocuments where their crosswalk id is greater than 200
+ProductDocument.objects.filter(id__gt=200).select_related('document').delete()
+
+# Delete the now-unlinked products
+Product.objects.exclude(id__in=ProductDocument.objects.all().values('product_id')).delete()
+
+# Delete a few more data groups
+DataGroup.objects.filter(id__in=[19,23,24]).delete()
 
 
-# <QuerySet [{'puc_assigned_usr_id': None, 'assigned': 463}, 
-#    {'puc_assigned_usr_id': 1, 'assigned': 1}, {'puc_assigned_usr_id': 3, 'assigned': 1}]>
-User.objects.filter(id=3).delete()
-
-
-User.objects.filter(id__gt=1).delete()
 
 
 python manage.py dumpdata dashboard.sourcetype --format=yaml > ./dashboard/fixtures/01_sourcetype.yaml

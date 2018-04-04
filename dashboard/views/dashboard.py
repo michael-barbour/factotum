@@ -1,28 +1,36 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from dashboard.models import DataGroup, DataDocument, DataSource, Product
-from django.db.models import Count, F
-import datetime, time
+from django.db.models import Count, F, DateField
+import datetime
+from django.db.models.functions import Trunc
 
 current_date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d')
-select_upload_date = {"upload_date": """date(uploaded_at)"""}
+chart_start_datetime = datetime.datetime(datetime.datetime.now().year - 1, datetime.datetime.now().month, 1)
+
 
 @login_required(login_url='/login')
 def index(request):
 	stats = {}
 	stats['datagroup_count'] = DataGroup.objects.count()
 	stats['datasource_count'] = DataSource.objects.count()
+
 	stats['datadocument_count'] = DataDocument.objects.count()
+	stats['datadocument_with_extracted_text_percent'] =\
+		DataDocument.objects.filter(extracted = True).count()/DataDocument.objects.count()*100
+	stats['datadocument_count_by_date'] = datadocument_count_by_date()
+	stats['datadocument_count_by_month'] = datadocument_count_by_month()
+
 	stats['product_count'] = Product.objects.count()
-	stats['product_with_puc_count'] = Product.objects.count()
-	stats['documents_uploaded_count_by_date'] = document_uploaded_count_by_date()
-	stats['document_percent_with_extracted_text_count'] = Product.objects.count()
+	stats['product_with_puc_count'] = Product.objects.filter(prod_cat__isnull = False).count()
+	stats['product_with_puc_count_by_month'] = product_with_puc_count_by_month()
 
 	return render(request, 'dashboard/index.html', stats)
 
-def document_uploaded_count_by_date():
+def datadocument_count_by_date():
 	# Datasets to populate linechart with document-upload statistics
 	# Number of datadocuments, both overall and by type, that have been uploaded as of each date
+	select_upload_date = {"upload_date": """date(uploaded_at)"""}
 	document_stats = {}
 	document_stats['all'] = list(DataDocument.objects.extra(select=select_upload_date) \
 								 .values('upload_date') \
@@ -47,3 +55,23 @@ def document_uploaded_count_by_date():
 				document_stats[type].append({'upload_date': current_date
 												, 'document_count': document_count})
 	return document_stats
+
+def datadocument_count_by_month():
+	# GROUP BY issue solved with https://stackoverflow.com/questions/8746014/django-group-by-date-day-month-year
+	document_stats = DataDocument.objects.filter(uploaded_at__gte=chart_start_datetime)\
+		.annotate(upload_month = (Trunc('uploaded_at', 'month', output_field=DateField()))) \
+		.values('upload_month') \
+		.annotate(document_count = (Count('id'))) \
+		.values('document_count', 'upload_month') \
+		.order_by('upload_month')
+	return document_stats
+
+def product_with_puc_count_by_month():
+	# GROUP BY issue solved with https://stackoverflow.com/questions/8746014/django-group-by-date-day-month-year
+	product_stats = Product.objects.filter(puc_assigned_time__gte=chart_start_datetime) \
+		.annotate(puc_assigned_month = (Trunc('puc_assigned_time', 'month', output_field=DateField()))) \
+		.values('puc_assigned_month') \
+		.annotate(product_count = (Count('id'))) \
+		.values('product_count', 'puc_assigned_month') \
+		.order_by('puc_assigned_month')
+	return product_stats

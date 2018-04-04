@@ -3,14 +3,12 @@ from datetime import datetime
 from django.shortcuts import redirect
 from django.db.models import Count, Q
 
-from django.db.models import Min
-
 from django.utils import timezone
 from django.forms import ModelForm, ModelChoiceField
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
-from dashboard.models import DataSource, DataGroup, DataDocument, Product, ProductDocument, ProductCategory
+from dashboard.models import DataSource, DataDocument, Product, ProductDocument, ProductCategory
 
 
 class ProductForm(ModelForm):
@@ -36,17 +34,20 @@ class ProductPUCForm(ModelForm):
 @login_required()
 def product_detail(request, pk,
 						template_name='product_curation/product_detail.html'):
-	product = get_object_or_404(Product, pk=pk, )
-	return render(request, template_name, {'product'  : product,})
+    product = get_object_or_404(Product, pk=pk, )
+    return render(request, template_name, {'product'  : product,})
 
 @login_required()
 def product_curation_index(request, template_name='product_curation/product_curation_index.html'):
-    # List of all data sources which have had at least 1 data
-    # document matched to a registered record
-    linked_products = Product.objects.filter(documents__in=DataDocument.objects.all())
-    data_sources = DataSource.objects.annotate(uploaded=Count('datagroup__datadocument')).filter(uploaded__gt=0).annotate(unlinked=Count('datagroup__datadocument') - Count('datagroup__datadocument__productdocument'))    
+    # List of all data sources which have had at least 1 data document matched to a registered record
+    data_sources = DataSource.objects.annotate(uploaded=Count('datagroup__datadocument'))\
+        .filter(uploaded__gt=0)\
+        .annotate(unlinked=Count('datagroup__datadocument') - Count('datagroup__datadocument__productdocument'))
     # A separate queryset of data groups and their related products without PUCs assigned
-    qs_no_puc = Product.objects.filter(prod_cat__isnull=True).filter(data_source__isnull=False).values('data_source').annotate(no_category=Count('id'))
+    qs_no_puc = Product.objects.filter(prod_cat__isnull=True)\
+        .filter(data_source__isnull=False)\
+        .values('data_source')\
+        .annotate(no_category=Count('id'))
     
     for ds in data_sources:
         # because the query builds up from product instead of down from data source,
@@ -56,16 +57,6 @@ def product_curation_index(request, template_name='product_curation/product_cura
         except:
             ds.no_category = 0
 
-    #for data_source in data_sources:
-        # Number of data documents which have been matched for each source
-        # data_source.uploaded = sum([len(d.datadocument_set.all()) for d in data_source.datagroup_set.all()])
-        # data_source.no_category = len(data_source.source.filter(prod_cat__isnull=True))
-        # # Number of data documents for each source which are NOT linked
-        # # to a product
-        # data_source.unlinked = (data_source.uploaded -
-        #                         sum([len(x.datadocument_set.all())
-        #                         for x in data_source.source.all()]))
-
     return render(request, template_name, {'data_sources': data_sources})
 
 @login_required()
@@ -74,14 +65,6 @@ def category_assignment(request, pk, template_name=('product_curation/'
     """Deliver a datasource and its associated products"""
     ds = DataSource.objects.get(pk=pk)
     products = ds.source.filter(prod_cat__isnull=True)
-    product = products.annotate( dd_count=Min("documents__url"))
-    #Product.objects.annotate( dd_count=Min("documents__url"))
-    # old loop below, required a query per product
-    # for product in products:
-    #     try:
-    #         product.msds = product.datadocument_set.all()[0]
-    #     except IndexError:
-    #         product.msds = 0
     return render(request, template_name, {'datasource': ds, 'products': products})
 
 @login_required()
@@ -155,5 +138,3 @@ def product_list(request, template_name=('product_curation/'
     data = {}
     data['object_list'] = product
     return render(request, template_name, data)
-    p = Product.objects.all()
-    return render(request, template_name,{'products': p})

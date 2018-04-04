@@ -21,7 +21,8 @@ nv.addGraph(function () {
 
 nv.addGraph(function() {
     var chart = nv.models.discreteBarChart()
-        .color(d3.scale.category10().range());
+        // .color(d3.scale.category10().range());
+        .color(['#0071bc']);
     chart.yAxis.tickFormat(d3.format(',.0f'));
     chart.x(function(d) { return d.label })
         .y(function(d) { return d.value });
@@ -37,7 +38,7 @@ nv.addGraph(function() {
 
 nv.addGraph(function() {
     var chart = nv.models.discreteBarChart()
-        .color(d3.scale.category10().range());
+        .color(['#0071bc']);
     chart.yAxis.tickFormat(d3.format(',.0f'));
     chart.x(function(d) { return d.label })
         .y(function(d) { return d.value });

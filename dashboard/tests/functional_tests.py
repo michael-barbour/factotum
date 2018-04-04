@@ -49,7 +49,8 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
 
     fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
             '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
-            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '08_extractedtext.yaml']
+            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', 
+            '08_extractedtext.yaml','09_productdocument.yaml']
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -59,7 +60,8 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
         self.browser.quit()
 
     def test_data_source_name(self):
-        self.browser.get(self.live_server_url + '/datasource/1')
+        dspk = DataSource.objects.filter(title='Walmart MSDS')[0].pk
+        self.browser.get(self.live_server_url + '/datasource/' + str(dspk))
         h1 = self.browser.find_element_by_name('title')
         self.assertIn('Walmart MSDS', h1.text,
                       'The h1 text should include "Walmart MSDS"')
@@ -67,9 +69,10 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
     # When a new data source is entered, the data source is automatically
     # assigned the state 'awaiting triage.'
     def test_state_and_priority(self):
+        dspk = DataSource.objects.get(title='Walmart MSDS').id
         valid_states = ['Awaiting Triage', 'In Progress', 'Complete', 'Stale']
         valid_priorities = ['High', 'Medium', 'Low']
-        self.browser.get(self.live_server_url + '/datasource/1')
+        self.browser.get(self.live_server_url + '/datasource/' + str(dspk))
         state = self.browser.find_element_by_name('state')
         self.assertIn(state.text, valid_states)
         self.assertIn('Awaiting Triage', state.text)
@@ -77,12 +80,7 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
         self.assertEqual([o.text for o in select.options], valid_priorities)
         selected_option = select.first_selected_option
         self.assertIn(selected_option.text, valid_priorities)
-        # is there a better way to loop through datasources???
-        # do we need to do all ????
-        self.browser.get(self.live_server_url + '/datasource/2')
-        state = self.browser.find_element_by_name('state')
-        self.assertIn(state.text, valid_states)
-        self.assertIn('Awaiting Triage', state.text)
+
 
     def test_datagroup_list_length(self):
         b = len(DataGroup.objects.filter(data_source_id=1))
@@ -100,7 +98,8 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
     # Data Groups
 
     def test_data_group_name(self):
-        self.browser.get(self.live_server_url + '/datagroup/40')
+        dgpk = DataGroup.objects.filter(name='Walmart MSDS 1')[0].pk
+        self.browser.get(self.live_server_url + '/datagroup/' + str(dgpk))
         h1 = self.browser.find_element_by_name('title')
         self.assertIn('Walmart MSDS 1', h1.text)
         # Checking the URL by row is too brittle
@@ -109,7 +108,7 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
         #self.assertIn('shampoo.pdf', pdflink.get_attribute('href'))
         rows = self.browser.find_elements_by_xpath(
                                         "//table[@id='registered']/tbody/tr")
-        docs = DataDocument.objects.filter(data_group=40)
+        docs = DataDocument.objects.filter(data_group=dgpk)
         self.assertEqual(len(rows),len(docs),'This table needs to be the entire set of data documents for the group for downloading CSV.')
 
     def create_data_group(self, data_source, testusername='Karyn',
@@ -165,7 +164,7 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
     def test_new_data_group(self):
         # DataGroup, created using the model layer
         dg_count_before = DataGroup.objects.count()
-        ds = DataSource.objects.get(pk=2)
+        ds = DataSource.objects.filter(title='Walmart MSDS')[0]
         self.dg = self.create_data_group(data_source=ds)
         dg_count_after = DataGroup.objects.count()
         self.assertEqual(dg_count_after, dg_count_before + 1,
@@ -183,7 +182,7 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
                                                         kwargs={'pk': self.dg.pk}))
         self.assertEqual('factotum', self.browser.title)
         h1 = self.browser.find_element_by_name('title')
-        self.assertEqual('Walmart MSDS 3', h1.text)
+        self.assertIn('Walmart MSDS ', h1.text)
 
         # Use the browser layer to delete the DataGroup object
         # deleting the DataGroup should clean up the file system
@@ -197,8 +196,9 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
     def test_pagination(self):
         # The data group detail page uses server-side pagination to display the
         # related data documents
-        self.browser.get('%s%s' % (self.live_server_url, '/datagroup/40'))
-        pagebox = self.browser.find_elements_by_class_name("current")[0]
+        dgpk = DataGroup.objects.get(name='Walmart MSDS 2').id
+        self.browser.get('%s%s%s' % (self.live_server_url, '/datagroup/', str(dgpk)))
+        pagebox = self.browser.find_element_by_xpath("/html/body/div[1]/nav/ul/li[1]/span")
         self.assertIn('Page 1', pagebox.text,
                          "Confirm the current page navigation box displays 'Page 1 of [some number]'")
         nextbox = self.browser.find_element_by_xpath('/html/body/div[1]/nav/ul/li[2]/a')
@@ -232,7 +232,8 @@ class TestProductCuration(StaticLiveServerTestCase):
                          str(ds.pk))
 
     def test_link_product(self):
-        self.browser.get(self.live_server_url + '/link_product_list/1')
+        dspk = DataSource.objects.filter(title='Walmart MSDS')[0].pk
+        self.browser.get(self.live_server_url + '/link_product_list/' + str(dspk))
         create_prod_link = self.browser.find_element_by_xpath('//*[@id="products"]/tbody/tr[1]/td[2]/a')
         create_prod_link.click()
 
@@ -308,14 +309,15 @@ class TestQAScoreboard(StaticLiveServerTestCase):
         # A Table on the QA home page
         row_count = len(self.browser.find_elements_by_xpath(
             "//table[@id='extraction_script_table']/tbody/tr"))
-        self.assertEqual(scriptcount, row_count, ('The seed data contains one '
-                                                  'ExtractionScript object that should appear in this table'))
+        self.assertEqual(scriptcount, row_count, ('The seed data contains three '
+                                                  'Script objects with the script_type'
+                                                  'EX, which should appear in this table'))
 
         displayed_doc_count = self.browser.find_elements_by_xpath(
-            '//*[@id="extraction_script_table"]/tbody/tr/td[2]')[0].text
+            '//*[@id="extraction_script_table"]/tbody/tr[2]/td[2]')[0].text
 
         model_doc_count = DataDocument.objects.filter(
-            extractedtext__extraction_script=2).count()
+            extractedtext__extraction_script=6).count()
 
         self.assertEqual(displayed_doc_count, str(model_doc_count),
                          ('The displayed number of datadocuments should match '
@@ -325,25 +327,25 @@ class TestQAScoreboard(StaticLiveServerTestCase):
         displayed_pct_checked = self.browser.find_elements_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr/td[3]')[0].text
         # this assumes that pk=1 will be a script_type of 'EX'
-        model_pct_checked = Script.objects.get(pk=2).get_pct_checked()
+        model_pct_checked = Script.objects.get(pk=6).get_pct_checked()
         self.assertEqual(displayed_pct_checked, model_pct_checked,
                          ('The displayed percentage should match what is '
                           'derived from the model'))
 
-        es = Script.objects.get(pk=2)
+        es = Script.objects.get(pk=6)
         self.assertEqual(es.get_qa_complete_extractedtext_count(), 0,
                          ('The ExtractionScript object should return 0'
                           'qa_checked ExtractedText objects'))
         self.assertEqual(model_pct_checked, '0%')
         # Set qa_checked property to True for one of the ExtractedText objects
-        self.assertEqual(ExtractedText.objects.get(pk=4).qa_checked, False)
-        et_change = ExtractedText.objects.get(pk=4)
+        self.assertEqual(ExtractedText.objects.get(pk=121627).qa_checked, False)
+        et_change = ExtractedText.objects.get(pk=121627)
         et_change.qa_checked = True
         et_change.save()
-        self.assertEqual(ExtractedText.objects.get(pk=4).qa_checked, True,
+        self.assertEqual(ExtractedText.objects.get(pk=121627).qa_checked, True,
                          'The object should now have qa_checked = True')
 
-        es = Script.objects.get(pk=2)
+        es = Script.objects.get(pk=6)
         self.assertEqual(es.get_qa_complete_extractedtext_count(), 1,
                          ('The ExtractionScript object should return 1 '
                           'qa_checked ExtractedText object'))
@@ -352,14 +354,14 @@ class TestQAScoreboard(StaticLiveServerTestCase):
                          'Check the numerator in the model layer')
         self.assertEqual(2, es.get_datadocument_count(),
                          'Check the denominator in the model layer')
-        model_pct_checked = Script.objects.get(pk=2).get_pct_checked()
+        model_pct_checked = Script.objects.get(pk=6).get_pct_checked()
         self.assertEqual(model_pct_checked, '50%',
                          ('The get_pct_checked() method should return 50 pct'
                           ' from the model layer'))
         self.browser.refresh()
 
         displayed_pct_checked = self.browser.find_elements_by_xpath(
-            '//*[@id="extraction_script_table"]/tbody/tr/td[3]')[0].text
+            '//*[@id="extraction_script_table"]/tbody/tr[2]/td[3]')[0].text
 
         self.assertEqual(displayed_pct_checked, model_pct_checked,
                          ('The displayed percentage in the browser layer should '
@@ -367,11 +369,11 @@ class TestQAScoreboard(StaticLiveServerTestCase):
         # A button for each row that will take you to the script's QA page
         # https://github.com/HumanExposure/factotum/issues/36
         script_qa_link = self.browser.find_element_by_xpath(
-            '//*[@id="extraction_script_table"]/tbody/tr/td[4]/a'
+            '//*[@id="extraction_script_table"]/tbody/tr[2]/td[4]/a'
         )
         # Before clicking the link, the script's qa_done property
         # should be false
-        self.assertEqual(Script.objects.get(pk=2).qa_begun, False,
+        self.assertEqual(Script.objects.get(pk=6).qa_begun, False,
                          'The qa_done property of the Script should be False')
 
         script_qa_link.click()
@@ -379,18 +381,18 @@ class TestQAScoreboard(StaticLiveServerTestCase):
 
         # of the Script
         h1 = self.browser.find_element_by_xpath('/html/body/div/h1').text
-        self.assertIn(Script.objects.get(pk=2).title, h1,
+        self.assertIn(Script.objects.get(pk=6).title, h1,
                       'The <h1> text should equal the .title of the Script')
 
         # Opening the ExtractionScript's QA page should set its qa_begun
         # property to True
-        self.assertEqual(Script.objects.get(pk=2).qa_begun, True,
+        self.assertEqual(Script.objects.get(pk=6).qa_begun, True,
                          'The qa_done property of the ExtractionScript should now be True')
         # Go back to the QA index page to confirm
         self.browser.get('%s%s' % (self.live_server_url, '/qa'))
         script_qa_link = self.browser.find_element_by_xpath(
-            '//*[@id="extraction_script_table"]/tbody/tr/td[4]/a'
-        )
+            '//*[@id="extraction_script_table"]/tbody/tr[2]/td[4]/a'
+        )    
         self.assertEqual(script_qa_link.text, 'Continue QA',
                          'The QA button should now say "Continue QA" instead of "Begin QA"')
 

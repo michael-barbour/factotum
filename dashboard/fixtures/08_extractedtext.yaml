@@ -1,1 +1,8 @@
-[]
+- model: dashboard.extractedtext
+  pk: 121627
+  fields: {record_type: MSDS, prod_name: Cuticle Cream, doc_date: '2018-01-08', rev_num: '1',
+    extraction_script: 6, qa_checked: false}
+- model: dashboard.extractedtext
+  pk: 121647
+  fields: {record_type: MSDS, prod_name: Coconut Milk, doc_date: '2018-01-08', rev_num: '1',
+    extraction_script: 6, qa_checked: false}

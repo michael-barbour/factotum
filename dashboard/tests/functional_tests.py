@@ -501,21 +501,6 @@ def wait_for_element(self, elm, by='id', timeout=10):
     return self.browser.find_element_by_xpath(elm)
 
 
-class TestPUCAssignment(StaticLiveServerTestCase):
-    # Issue 80 https://github.com/HumanExposure/factotum/issues/80
-    #
-    fixtures = ['seed_product_category.yaml', 'seed_data', ]
-
-    def setUp(self):
-        self.browser = webdriver.Chrome()
-        log_karyn_in(self)
-
-    def tearDown(self):
-        self.browser.quit()
-
-    
-
-
 
 class TestFacetedSearch(StaticLiveServerTestCase):
     # Issue 104 https://github.com/HumanExposure/factotum/issues/104

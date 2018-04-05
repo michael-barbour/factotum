@@ -212,7 +212,8 @@ class TestProductCuration(StaticLiveServerTestCase):
 
     fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
             '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
-            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '08_extractedtext.yaml']
+            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '08_extractedtext.yaml',
+            '09_productdocument.yaml']
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -274,6 +275,98 @@ class TestProductCuration(StaticLiveServerTestCase):
         self.assertEqual(puc_link.text, products_missing_PUC, ('The Assign PUC '
                                                                'link should display # of Products without a PUC'))
 
+    def test_puc(self):
+
+        # As Karyn the Curator
+        # I want the ability to assign product categories (PUCs) to a product
+        # So that I can more easily navigate through products if they are grouped.
+
+        # From the assignment of product category
+        # Click button, form appears which shows you a pdf icon allowing you to view pdf,
+        # product name (Product.title), auto complete box for PUC - when you start typing
+        # auto complete looks at general, specific, product family to match what the user
+        # is typing (auto complete should work like Google), expect minimum of three
+        # characters before auto complete appears
+        ppk = Product.objects.get(title=' Skinsations Insect Repellent').id
+        self.browser.get('%s%s%s' % (self.live_server_url, '/product_puc/', str(ppk)))
+        h2 = self.browser.find_element_by_xpath('/html/body/div/h2').text
+        self.assertIn(h2, Product.objects.get(pk=ppk).title ,
+                      'The <h2> text should be within the .title of the product'
+                      ' (accounting for padding spaces)')
+
+        self.assertEqual(1, Product.objects.filter(pk=ppk).count(),
+                         "There should be one object with the pk of interest")
+
+        puc_before = Product.objects.get(pk=ppk).prod_cat
+        self.assertEqual(puc_before, None, "There should be no assigned PUC")
+
+        puc_selector = self.browser.find_element_by_xpath(
+            '//*[@id="id_prod_cat"]')
+        puc_selector = self.browser.find_element_by_xpath(
+            '//*[@id="select2-id_prod_cat-container"]')
+        puc_sibling = self.browser.find_element_by_xpath(
+            '//*[@id="id_prod_cat"]/following::*')
+        puc_sibling.click()
+
+        #wait_for_element(self, "select2-search__field", "class").click()
+        puc_input = self.browser.find_element_by_class_name(
+            'select2-search__field')
+        puc_input.send_keys('insect')
+
+        # The driver cannot immediately type into the input box - it needs
+        # to load an element first, as explained here:
+        # https://stackoverflow.com/questions/34422274/django-selecting-autocomplete-light-choices-with-selenium
+
+        wait_for_element(self,
+                         '//*[@id="select2-id_prod_cat-results"]/li[3]',
+                         "xpath").click()
+        puc_selector = self.browser.find_element_by_xpath(
+            '//*[@id="select2-id_prod_cat-container"]')
+        self.assertEqual(puc_selector.text, 'Pesticides - insect repellent - insect repellent - skin',
+                         'The PUC selector value should be "Pesticides - insect repellent - insect repellent - skin"')
+
+        submit_button = self.browser.find_element_by_id('btn-assign-puc')
+        submit_button.click()
+        # Open the product page and confirm the PUC has changed
+        self.browser.get('%s%s%s' % (self.live_server_url, '/product/',ppk))
+        puc_after = self.browser.find_element_by_id('prod_cat')
+        self.assertNotEqual(puc_before, puc_after,
+                            "The object's prod_cat should have changed")
+        # Confirm that the puc_assigned_usr has been set to the current user
+        puc_assigned_usr_after = self.browser.find_element_by_id('puc_assigned_usr').text
+        self.assertEqual(puc_assigned_usr_after, 'Karyn',
+                            "The PUC assigning user should have changed")
+
+    def test_cancelled_puc_assignment(self):
+
+        # Bug report in issue #155
+        # When on the Product Curation Page, I click Assign Puc.
+        # I decide that I can not find a PUC and press cancel and get this error:
+
+        # DataSource matching query does not exist.
+        # data/code/factotum/dashboard/views/product_curation.py in category_assignment
+        # ds = DataSource.objects.get(pk=pk)
+        # pk | '1'
+        # request | <WSGIRequest: GET '/category_assignment/1'>
+        # template_name | 'product_curation/category_assignment.html'
+
+        # This was happening because the destination URL for the Cancel
+        # button was being built with the Product's ID instead of the
+        # Product's DataSource's ID.
+        ppk = Product.objects.get(title=' Skinsations Insect Repellent').id
+        prod = Product.objects.get(pk=ppk)
+        ds_id = prod.data_source.id
+        ds = DataSource.objects.get(pk=ds_id)
+        self.browser.get('%s%s%s' % (self.live_server_url, '/product_puc/',ppk))
+        cancel_a = self.browser.find_element_by_xpath('/html/body/div/div/form/a')
+        # find out the path that the Cancel button will use
+        cancel_a_href = cancel_a.get_attribute("href")
+        # open that page
+        self.browser.get(cancel_a_href)
+        # make sure it shows a DataSource
+        h2 = self.browser.find_element_by_xpath('/html/body/div/div[1]/h2').text
+        self.assertIn(ds.title, h2,
+                      'The <h2> text should equal the .title of the DataSource')
 
 
 class TestQAScoreboard(StaticLiveServerTestCase):
@@ -420,96 +513,7 @@ class TestPUCAssignment(StaticLiveServerTestCase):
     def tearDown(self):
         self.browser.quit()
 
-    def test_puc(self):
-
-        # As Karyn the Curator
-        # I want the ability to assign product categories (PUCs) to a product
-        # So that I can more easily navigate through products if they are grouped.
-
-        # From the assignment of product category
-        # Click button, form appears which shows you a pdf icon allowing you to view pdf,
-        # product name (Product.title), auto complete box for PUC - when you start typing
-        # auto complete looks at general, specific, product family to match what the user
-        # is typing (auto complete should work like Google), expect minimum of three
-        # characters before auto complete appears
-        self.browser.get('%s%s' % (self.live_server_url, '/product_puc/1'))
-        h2 = self.browser.find_element_by_xpath('/html/body/div/h2').text
-        self.assertIn(Product.objects.get(pk=1).title, h2,
-                      'The <h2> text should equal the .title of the product')
-
-        self.assertEqual(1, Product.objects.filter(pk=1).count(),
-                         "There should be one object with pk=1")
-
-        puc_before = Product.objects.get(pk=1).prod_cat
-        self.assertEqual(puc_before, None, "There should be no assigned PUC")
-
-        puc_selector = self.browser.find_element_by_xpath(
-            '//*[@id="id_prod_cat"]')
-        puc_selector = self.browser.find_element_by_xpath(
-            '//*[@id="select2-id_prod_cat-container"]')
-        puc_sibling = self.browser.find_element_by_xpath(
-            '//*[@id="id_prod_cat"]/following::*')
-        puc_sibling.click()
-
-        #wait_for_element(self, "select2-search__field", "class").click()
-        puc_input = self.browser.find_element_by_class_name(
-            'select2-search__field')
-        puc_input.send_keys('pet care')
-
-        # The driver cannot immediately type into the input box - it needs
-        # to load an element first, as explained here:
-        # https://stackoverflow.com/questions/34422274/django-selecting-autocomplete-light-choices-with-selenium
-
-        wait_for_element(self,
-                         '//*[@id="select2-id_prod_cat-results"]/li[2]',
-                         "xpath").click()
-        puc_selector = self.browser.find_element_by_xpath(
-            '//*[@id="select2-id_prod_cat-container"]')
-        self.assertEqual(puc_selector.text, 'Pet care - all pets -',
-                         'The PUC selector value should be "Pet care - all pets -"')
-
-        submit_button = self.browser.find_element_by_id('btn-assign-puc')
-        submit_button.click()
-        # Open the product page and confirm the PUC has changed
-        self.browser.get('%s%s' % (self.live_server_url, '/product/1'))
-        puc_after = self.browser.find_element_by_id('prod_cat')
-        self.assertNotEqual(puc_before, puc_after,
-                            "The object's prod_cat should have changed")
-        # Confirm that the puc_assigned_usr has been set to the current user
-        puc_assigned_usr_after = self.browser.find_element_by_id('puc_assigned_usr').text
-        self.assertEqual(puc_assigned_usr_after, 'Karyn',
-                            "The PUC assigning user should have changed")
-
-    def test_cancelled_puc_assignment(self):
-
-        # Bug report in issue #155
-        # When on the Product Curation Page, I click Assign Puc.
-        # I decide that I can not find a PUC and press cancel and get this error:
-
-        # DataSource matching query does not exist.
-        # data/code/factotum/dashboard/views/product_curation.py in category_assignment
-        # ds = DataSource.objects.get(pk=pk)
-        # pk | '1'
-        # request | <WSGIRequest: GET '/category_assignment/1'>
-        # template_name | 'product_curation/category_assignment.html'
-
-        # This was happening because the destination URL for the Cancel
-        # button was being built with the Product's ID instead of the
-        # Product's DataSource's ID.
-
-        prod = Product.objects.get(pk=1)
-        ds_id = prod.data_source.id
-        ds = DataSource.objects.get(pk=ds_id)
-        self.browser.get('%s%s' % (self.live_server_url, '/product_puc/1'))
-        cancel_a = self.browser.find_element_by_xpath('/html/body/div/div/form/a')
-        # find out the path that the Cancel button will use
-        cancel_a_href = cancel_a.get_attribute("href")
-        # open that page
-        self.browser.get(cancel_a_href)
-        # make sure it shows a DataSource
-        h2 = self.browser.find_element_by_xpath('/html/body/div/div[1]/h2').text
-        self.assertIn(ds.title, h2,
-                      'The <h2> text should equal the .title of the DataSource')
+    
 
 
 

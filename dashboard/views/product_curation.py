@@ -11,6 +11,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
 from dashboard.models import DataSource, DataGroup, DataDocument, Product, ProductDocument, ProductCategory
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 class ProductForm(ModelForm):
@@ -44,19 +45,25 @@ def product_curation_index(request, template_name='product_curation/product_cura
     # List of all data groups which have had at least 1 data
     # document matched to a registered record
     linked_products = Product.objects.filter(documents__in=DataDocument.objects.all())
-    data_sources = DataSource.objects.annotate(uploaded=Count('datagroup__datadocument')).filter(uploaded__gt=0).annotate(unlinked=Count('datagroup__datadocument') - Count('datagroup__datadocument__productdocument'))    
-    # A separate queryset of data groups and their related products without PUCs assigned
-    qs_no_puc = Product.objects.filter(prod_cat__isnull=True).filter(data_group__isnull=False).values('data_group').annotate(no_category=Count('id'))
-    
-    for dg in data_groups:
-        # because the query builds up from product instead of down from data group,
-        # we need to handle the cases where a data group has zero products without PUCs
-        try: 
-            dg.no_category = qs_no_puc.get(data_group=dg.id)['no_category']
-        except:
-            dg.no_category = 0
+    data_sources = DataSource.objects.annotate(uploaded=Count('datagroup__datadocument'))\
+        .filter(uploaded__gt=0)
+    # A separate queryset of data sources and their related products without PUCs assigned
+    qs_no_puc = Product.objects.filter(prod_cat__isnull=True).filter(data_source__isnull=False)\
+        .values('data_source').annotate(no_category=Count('id'))
+    # Convert the queryset to a list
+    list_no_puc = [ds_no_puc for ds_no_puc in qs_no_puc]
 
-    return render(request, template_name, {'data_groups': data_groups})
+    for ds in data_sources:
+        try: 
+            ds.no_category = next((item for item in list_no_puc if item["data_source"] == ds.id), False)['no_category']
+        except:
+            ds.no_category = 0
+        dgs = ds.datagroup_set.all()
+        for dg in dgs:
+            dg.unlinked = dg.datadocument_set.count() - dg.datadocument_set.filter(productdocument__document__isnull=False).count()      
+        ds.data_groups = dgs
+
+    return render(request, template_name, {'data_sources': data_sources})
 
 @login_required()
 def category_assignment(request, pk, template_name=('product_curation/'
@@ -76,21 +83,14 @@ def category_assignment(request, pk, template_name=('product_curation/'
 
 @login_required()
 def link_product_list(request,  pk, template_name='product_curation/link_product_list.html'):
-    ds = DataSource.objects.get(pk=pk)
-
-    # unlinked_pks = list(set([dd.pk
-    #                         for dg in ds.datagroup_set.all()
-    #                         for dd in dg.datadocument_set.all()]
-    #                   )-set([dd.pk
-    #                         for product in ds.source.all()
-    #                         for dd in product.datadocument_set.all()]))
-
-    a = DataDocument.objects.filter(data_group__data_source=ds).values_list('id',flat=True)
-    b = ProductDocument.objects.filter(document_id__in=a).values_list('document_id', flat=True)
-    unlinked_pks = set(a)-set(b) 
-    documents = DataDocument.objects.filter(pk__in=unlinked_pks)
-
-    return render(request, template_name, {'documents':documents})
+    dg = DataGroup.objects.get(pk=pk)
+    documents = dg.datadocument_set.filter(productdocument__document__isnull=True)
+    npage = 20 # TODO: make this dynamic someday in its own ticket
+    paginator = Paginator(documents, npage) # Show npage data documents per page
+    page = request.GET.get('page')
+    page = 1 if page is None else page
+    docs_page = paginator.page(page)
+    return render(request, template_name, {'documents':docs_page, 'datagroup':dg})
 
 @login_required()
 def link_product_form(request, pk, template_name=('product_curation/'

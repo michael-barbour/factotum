@@ -232,7 +232,7 @@ class TestProductCuration(StaticLiveServerTestCase):
                          str(ds.pk))
 
     def test_link_product(self):
-        dspk = DataSource.objects.filter(title='Walmart MSDS')[0].pk
+        dspk = DataSource.objects.filter(title='Georgia Pacific')[0].pk
         self.browser.get(self.live_server_url + '/link_product_list/' + str(dspk))
         create_prod_link = self.browser.find_element_by_xpath('//*[@id="products"]/tbody/tr[1]/td[2]/a')
         create_prod_link.click()

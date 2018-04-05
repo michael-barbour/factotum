@@ -3,11 +3,9 @@ from datetime import datetime
 from django.shortcuts import redirect
 from django.db.models import Count, Q
 
-from django.db.models import Min
-
 from django.utils import timezone
 from django.forms import ModelForm, ModelChoiceField
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
 from dashboard.models import DataSource, DataGroup, DataDocument, Product, ProductDocument, ProductCategory
@@ -37,8 +35,8 @@ class ProductPUCForm(ModelForm):
 @login_required()
 def product_detail(request, pk,
 						template_name='product_curation/product_detail.html'):
-	product = get_object_or_404(Product, pk=pk, )
-	return render(request, template_name, {'product'  : product,})
+    product = get_object_or_404(Product, pk=pk, )
+    return render(request, template_name, {'product'  : product,})
 
 @login_required()
 def product_curation_index(request, template_name='product_curation/product_curation_index.html'):
@@ -71,14 +69,6 @@ def category_assignment(request, pk, template_name=('product_curation/'
     """Deliver a datasource and its associated products"""
     ds = DataSource.objects.get(pk=pk)
     products = ds.source.filter(prod_cat__isnull=True)
-    product = products.annotate( dd_count=Min("documents__url"))
-    #Product.objects.annotate( dd_count=Min("documents__url"))
-    # old loop below, required a query per product
-    # for product in products:
-    #     try:
-    #         product.msds = product.datadocument_set.all()[0]
-    #     except IndexError:
-    #         product.msds = 0
     return render(request, template_name, {'datasource': ds, 'products': products})
 
 @login_required()
@@ -149,5 +139,3 @@ def product_list(request, template_name=('product_curation/'
     data = {}
     data['object_list'] = product
     return render(request, template_name, data)
-    p = Product.objects.all()
-    return render(request, template_name,{'products': p})

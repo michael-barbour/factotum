@@ -48,7 +48,7 @@ def log_karyn_in(object):
 class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
 
     fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
-            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml', 
+            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
             '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '08_extractedtext.yaml']
 
     def setUp(self):
@@ -96,7 +96,7 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
         self.browser.get(self.live_server_url + '/datasources/')
         wrap_div = self.browser.find_element_by_class_name('dataTables_wrapper')
         self.assertIn("Show", wrap_div.text, 'DataTables missing...')
-    
+
     # Data Groups
 
     def test_data_group_name(self):
@@ -107,6 +107,10 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
         #pdflink = self.browser.find_elements_by_xpath(
         #    '//*[@id="d-docs"]/tbody/tr[2]/td[1]/a')[0]
         #self.assertIn('shampoo.pdf', pdflink.get_attribute('href'))
+        rows = self.browser.find_elements_by_xpath(
+                                        "//table[@id='registered']/tbody/tr")
+        docs = DataDocument.objects.filter(data_group=40)
+        self.assertEqual(len(rows),len(docs),'This table needs to be the entire set of data documents for the group for downloading CSV.')
 
     def create_data_group(self, data_source, testusername='Karyn',
                           name='Walmart MSDS 3',
@@ -114,7 +118,7 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
                                        'added programatically')):
         source_csv = open('./sample_files/walmart_msds_3.csv', 'rb')
         return DataGroup.objects.create(name=name,
-                                        description=description, 
+                                        description=description,
                                         data_source=data_source,
                                         downloaded_by=User.objects.get(
                                             username=testusername),
@@ -191,7 +195,7 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
                          "Confirm the DataGroup object has been deleted")
 
     def test_pagination(self):
-        # The data group detail page uses server-side pagination to display the 
+        # The data group detail page uses server-side pagination to display the
         # related data documents
         self.browser.get('%s%s' % (self.live_server_url, '/datagroup/40'))
         pagebox = self.browser.find_elements_by_class_name("current")[0]
@@ -207,7 +211,7 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
 class TestProductCuration(StaticLiveServerTestCase):
 
     fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
-            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml', 
+            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
             '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '08_extractedtext.yaml']
 
     def setUp(self):
@@ -279,7 +283,7 @@ class TestQAScoreboard(StaticLiveServerTestCase):
     # A Table on the QA Home page
     # A button for each row in the table that will take you to #36 (Not Implemented Yet)
     fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
-            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml', 
+            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
             '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '08_extractedtext.yaml']
 
     def setUp(self):
@@ -511,7 +515,7 @@ class TestFacetedSearch(StaticLiveServerTestCase):
     # Issue 104 https://github.com/HumanExposure/factotum/issues/104
     #
     fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
-            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml', 
+            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
             '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '08_extractedtext.yaml']
 
     def setUp(self):

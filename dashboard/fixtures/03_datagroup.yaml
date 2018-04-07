@@ -1,33 +1,39 @@
 - model: dashboard.datagroup
-  pk: 2
-  fields: {name: Walmart MSDS 2, description: MSDS from Walmart group 2, downloaded_by: 1,
-    downloaded_at: ! '2018-03-13 12:09:46', download_script: null, data_source: 1,
-    updated_at: ! '2018-03-13 12:10:00', csv: Walmart_MSDS_2/Walmart_MSDS_2_register_records_DG2.csv,
-    zip_file: "media/Walmart_MSDS_2/Walmart_MSDS_2.zip\r"}
+  pk: 6
+  fields: {name: British Petroleum (Air) 1, description: '', downloaded_by: 1, downloaded_at: !!timestamp '2018-03-09
+      11:31:35', download_script: null, data_source: 7, updated_at: !!timestamp '2018-03-09
+      11:31:35', csv: British_Petroleum_(Air)_1/British_Petroleum_Air_1_British_Petroleum_Air_1_register_recor_EHDBt5f.csv,
+    zip_file: media/British_Petroleum_(Air)_1/British_Petroleum_(Air)_1.zip}
 - model: dashboard.datagroup
-  pk: 40
-  fields: {name: Walmart MSDS 1, description: '', downloaded_by: 1, downloaded_at: ! '2018-03-13
-      12:09:46', download_script: null, data_source: 2, updated_at: ! '2018-03-13
-      12:10:00', csv: Walmart_MSDS_1/Walmart_MSDS_1_out_08.csv, zip_file: "media/Walmart_MSDS_1/Walmart_MSDS_1.zip\r"}
+  pk: 7
+  fields: {name: Home Depot - ICF 1, description: '', downloaded_by: 1, downloaded_at: !!timestamp '2018-03-12
+      09:09:58', download_script: null, data_source: 8, updated_at: !!timestamp '2018-03-12
+      09:09:58', csv: Home_Depot_-_ICF_1/Home_Depot_-_ICF_1_HD_register_records.csv,
+    zip_file: media/Home_Depot_-_ICF_1/Home_Depot_-_ICF_1.zip}
 - model: dashboard.datagroup
-  pk: 42
-  fields: {name: Walmart MSDS 3, description: '', downloaded_by: 1, downloaded_at: ! '2018-03-13
-      12:09:46', download_script: null, data_source: 5, updated_at: ! '2018-03-13
-      12:10:00', csv: Walmart_MSDS_3/Walmart_MSDS_3_out_10.csv, zip_file: "media/Walmart_MSDS_3/Walmart_MSDS_3.zip\r"}
+  pk: 17
+  fields: {name: Walmart MSDS 1, description: '', downloaded_by: 1, downloaded_at: !!timestamp '2017-08-20
+      14:48:51', download_script: null, data_source: 10, updated_at: !!timestamp '2018-03-20
+      14:48:51', csv: Walmart_MSDS_1/Walmart_MSDS_1_out_08.csv, zip_file: media/Walmart_MSDS_1/Walmart_MSDS_1.zip}
 - model: dashboard.datagroup
-  pk: 43
-  fields: {name: Walmart MSDS 4, description: '', downloaded_by: 1, downloaded_at: ! '2018-03-13
-      12:09:46', download_script: null, data_source: 5, updated_at: ! '2018-03-13
-      12:10:00', csv: Walmart_MSDS_4/Walmart_MSDS_4_out_11.csv, zip_file: "media/Walmart_MSDS_4/Walmart_MSDS_4.zip\r"}
+  pk: 18
+  fields: {name: Walmart MSDS 2, description: '', downloaded_by: 1, downloaded_at: !!timestamp '2017-09-20
+      15:30:23', download_script: null, data_source: 10, updated_at: !!timestamp '2018-03-20
+      15:30:23', csv: Walmart_MSDS_2/Walmart_MSDS_2_out_09.csv, zip_file: media/Walmart_MSDS_2/Walmart_MSDS_2.zip}
 - model: dashboard.datagroup
-  pk: 44
-  fields: {name: Walmart MSDS 5, description: '', downloaded_by: 1, downloaded_at: ! '2018-03-13
-      12:09:46', download_script: null, data_source: 6, updated_at: ! '2018-03-13
-      12:10:00', csv: Walmart_MSDS_5/Walmart_MSDS_5_out_12.csv, zip_file: "media/Walmart_MSDS_5/Walmart_MSDS_5.zip\r"}
+  pk: 20
+  fields: {name: Georgia Pacific 1, description: '', downloaded_by: 1, downloaded_at: !!timestamp '2018-03-21
+      12:37:36', download_script: 1, data_source: 11, updated_at: !!timestamp '2018-03-21
+      12:37:36', csv: Georgia_Pacific_1/Georgia_Pacific_1_GP_register_records.csv,
+    zip_file: media/Georgia_Pacific_1/Georgia_Pacific_1.zip}
 - model: dashboard.datagroup
-  pk: 45
-  fields: {name: Home Depot - ICF 1, description: 'MSDS downloaded from www.homedepot.com
-      by ICF, in May 2016. MSDS and extracted text were provided to EPA by ICF.',
-    downloaded_by: 1, downloaded_at: ! '2018-03-13 12:09:46', download_script: null,
-    data_source: 4, updated_at: ! '2018-03-13 12:10:00', csv: Home_Depot_-_ICF_1/Home_Depot_-_ICF_1_HD_register_records.csv,
-    zip_file: "media/Home_Depot_-_ICF_1/Home_Depot_-_ICF_1.zip\r"}
+  pk: 21
+  fields: {name: Sun MSDS 1, description: '', downloaded_by: 1, downloaded_at: !!timestamp '2018-03-21
+      12:43:58', download_script: 3, data_source: 13, updated_at: !!timestamp '2018-03-21
+      12:43:58', csv: Sun_MSDS_1/Sun_MSDS_1_Sun_MSDS_register_records.csv, zip_file: media/Sun_MSDS_1/Sun_MSDS_1.zip}
+- model: dashboard.datagroup
+  pk: 22
+  fields: {name: Sun Ingredient Disclosures 1, description: '', downloaded_by: 1,
+    downloaded_at: !!timestamp '2018-03-21 13:16:15', download_script: 6, data_source: 15,
+    updated_at: !!timestamp '2018-03-21 13:16:15', csv: Sun_Ingredient_Disclosures_1/Sun_Ingredient_Disclosures_1_Sun_IngDisc_register_records.csv,
+    zip_file: media/Sun_Ingredient_Disclosures_1/Sun_Ingredient_Disclosures_1.zip}

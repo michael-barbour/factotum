@@ -14,8 +14,7 @@ class DataDocument(models.Model):
 	matched = models.BooleanField(default=False)
 	extracted = models.BooleanField(default=False)
 	uploaded_at = models.DateTimeField(default=timezone.now)
-	qa_group = models.ForeignKey('QAGroup', null=True,
-											on_delete=models.SET_NULL)
+	
 
 	def __str__(self):
 		return str(self.title)

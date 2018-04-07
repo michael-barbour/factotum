@@ -24,7 +24,7 @@ class Script(models.Model):
 									default    = 'EX')
 
 	def __str__(self):
-		return self.title
+		return str(self.title)
 
 	def get_absolute_url(self):
 		return reverse('extraction_script_edit', kwargs={'pk': self.pk})

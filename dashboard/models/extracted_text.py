@@ -15,7 +15,7 @@ class ExtractedText(models.Model):
 	qa_checked = models.BooleanField(default=False)
 
 	def __str__(self):
-		return self.prod_name
+		return str(self.prod_name)
 
 	def clean(self):
 		if self.doc_date[4] != '-' or self.doc_date[7] != '-':

@@ -23,7 +23,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from dashboard.models import (DataGroup, DataSource, DataDocument,
-                              Script, ExtractedText, Product, ProductCategory, ProductDocument)
+                              Script, ExtractedText, Product, ProductCategory, ProductDocument, QAGroup)
 
 from haystack import connections
 from haystack.query import SearchQuerySet
@@ -59,17 +59,17 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
         self.browser.quit()
 
     def test_data_source_name(self):
-        self.browser.get(self.live_server_url + '/datasource/1')
+        self.browser.get(self.live_server_url + '/datasource/12')
         h1 = self.browser.find_element_by_name('title')
-        self.assertIn('Walmart MSDS', h1.text,
-                      'The h1 text should include "Walmart MSDS"')
+        self.assertIn('Hewlett-Packard', h1.text,
+                      'The h1 text should include "Hewlett-Packard"')
 
     # When a new data source is entered, the data source is automatically
     # assigned the state 'awaiting triage.'
     def test_state_and_priority(self):
         valid_states = ['Awaiting Triage', 'In Progress', 'Complete', 'Stale']
         valid_priorities = ['High', 'Medium', 'Low']
-        self.browser.get(self.live_server_url + '/datasource/1')
+        self.browser.get(self.live_server_url + '/datasource/11')
         state = self.browser.find_element_by_name('state')
         self.assertIn(state.text, valid_states)
         self.assertIn('Awaiting Triage', state.text)
@@ -79,7 +79,7 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
         self.assertIn(selected_option.text, valid_priorities)
         # is there a better way to loop through datasources???
         # do we need to do all ????
-        self.browser.get(self.live_server_url + '/datasource/2')
+        self.browser.get(self.live_server_url + '/datasource/12')
         state = self.browser.find_element_by_name('state')
         self.assertIn(state.text, valid_states)
         self.assertIn('Awaiting Triage', state.text)
@@ -100,16 +100,16 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
     # Data Groups
 
     def test_data_group_name(self):
-        self.browser.get(self.live_server_url + '/datagroup/40')
+        self.browser.get(self.live_server_url + '/datagroup/21')
         h1 = self.browser.find_element_by_name('title')
-        self.assertIn('Walmart MSDS 1', h1.text)
+        self.assertIn('Sun MSDS 1', h1.text)
         # Checking the URL by row is too brittle
         #pdflink = self.browser.find_elements_by_xpath(
         #    '//*[@id="d-docs"]/tbody/tr[2]/td[1]/a')[0]
         #self.assertIn('shampoo.pdf', pdflink.get_attribute('href'))
         rows = self.browser.find_elements_by_xpath(
                                         "//table[@id='registered']/tbody/tr")
-        docs = DataDocument.objects.filter(data_group=40)
+        docs = DataDocument.objects.filter(data_group=21)
         self.assertEqual(len(rows),len(docs),'This table needs to be the entire set of data documents for the group for downloading CSV.')
 
     def create_data_group(self, data_source, testusername='Karyn',
@@ -165,7 +165,7 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
     def test_new_data_group(self):
         # DataGroup, created using the model layer
         dg_count_before = DataGroup.objects.count()
-        ds = DataSource.objects.get(pk=2)
+        ds = DataSource.objects.get(pk=12)
         self.dg = self.create_data_group(data_source=ds)
         dg_count_after = DataGroup.objects.count()
         self.assertEqual(dg_count_after, dg_count_before + 1,
@@ -197,7 +197,7 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
     def test_pagination(self):
         # The data group detail page uses server-side pagination to display the
         # related data documents
-        self.browser.get('%s%s' % (self.live_server_url, '/datagroup/40'))
+        self.browser.get('%s%s' % (self.live_server_url, '/datagroup/21'))
         pagebox = self.browser.find_elements_by_class_name("current")[0]
         self.assertIn('Page 1', pagebox.text,
                          "Confirm the current page navigation box displays 'Page 1 of [some number]'")
@@ -232,7 +232,7 @@ class TestProductCuration(StaticLiveServerTestCase):
                          str(ds.pk))
 
     def test_link_product(self):
-        self.browser.get(self.live_server_url + '/link_product_list/1')
+        self.browser.get(self.live_server_url + '/link_product_list/11')
         create_prod_link = self.browser.find_element_by_xpath('//*[@id="products"]/tbody/tr[1]/td[2]/a')
         create_prod_link.click()
 
@@ -265,7 +265,7 @@ class TestProductCuration(StaticLiveServerTestCase):
         src_title = self.browser.find_elements_by_xpath(
             '//*[@id="products"]/tbody/tr[2]/td[1]/a')[0]
         ds = DataSource.objects.get(title=src_title.text)
-        self.assertEqual(ds.title, 'Walmart Labs', 'Check the title of the group')
+        self.assertEqual(ds.title, 'Home Depot - ICF', 'Check the title of the group')
         puc_link = self.browser.find_elements_by_xpath(
             '//*[@id="products"]/tbody/tr[2]/td[4]')[0]
         products_missing_PUC = str(
@@ -330,70 +330,75 @@ class TestQAScoreboard(StaticLiveServerTestCase):
                          ('The displayed percentage should match what is '
                           'derived from the model'))
 
-        es = Script.objects.get(pk=2)
+        es = Script.objects.get(pk=5)
         self.assertEqual(es.get_qa_complete_extractedtext_count(), 0,
                          ('The ExtractionScript object should return 0'
-                          'qa_checked ExtractedText objects'))
+                          ' qa_checked ExtractedText objects'))
         self.assertEqual(model_pct_checked, '0%')
         # Set qa_checked property to True for one of the ExtractedText objects
-        self.assertEqual(ExtractedText.objects.get(pk=4).qa_checked, False)
-        et_change = ExtractedText.objects.get(pk=4)
+        self.assertEqual(ExtractedText.objects.get(pk=121647).qa_checked, False)
+        et_change = ExtractedText.objects.get(pk=121647)
         et_change.qa_checked = True
         et_change.save()
-        self.assertEqual(ExtractedText.objects.get(pk=4).qa_checked, True,
+        self.assertEqual(ExtractedText.objects.get(pk=121647).qa_checked, True,
                          'The object should now have qa_checked = True')
 
-        es = Script.objects.get(pk=2)
-        self.assertEqual(es.get_qa_complete_extractedtext_count(), 1,
-                         ('The ExtractionScript object should return 1 '
+        es = Script.objects.get(pk=6)
+        self.assertEqual(es.get_qa_complete_extractedtext_count(), 2,
+                         ('The ExtractionScript object should return 2 '
                           'qa_checked ExtractedText object'))
-
-        self.assertEqual(1, es.get_qa_complete_extractedtext_count(),
-                         'Check the numerator in the model layer')
-        self.assertEqual(2, es.get_datadocument_count(),
+        self.assertEqual(13, es.get_datadocument_count(),
                          'Check the denominator in the model layer')
-        model_pct_checked = Script.objects.get(pk=2).get_pct_checked()
-        self.assertEqual(model_pct_checked, '50%',
-                         ('The get_pct_checked() method should return 50 pct'
+        model_pct_checked = Script.objects.get(pk=6).get_pct_checked()
+        self.assertEqual(model_pct_checked, '15%',
+                         ('The get_pct_checked() method should return 15 pct'
                           ' from the model layer'))
         self.browser.refresh()
 
         displayed_pct_checked = self.browser.find_elements_by_xpath(
-            '//*[@id="extraction_script_table"]/tbody/tr/td[3]')[0].text
+            '//*[@id="extraction_script_table"]/tbody/tr[2]/td[3]')[0].text
 
         self.assertEqual(displayed_pct_checked, model_pct_checked,
-                         ('The displayed percentage in the browser layer should '
-                          'reflect the newly checked extracted text object'))
-        # A button for each row that will take you to the script's QA page
-        # https://github.com/HumanExposure/factotum/issues/36
-        script_qa_link = self.browser.find_element_by_xpath(
-            '//*[@id="extraction_script_table"]/tbody/tr/td[4]/a'
-        )
+                        ('The displayed percentage in the browser layer should'
+                          ' reflect the newly checked extracted text object'))
+        # Create a new QAGroup and check that the only ext_texts displayed are
+        # the one's assigned to the group
+        begin = self.browser.find_element_by_xpath(
+                    '//*[@id="extraction_script_table"]/tbody/tr[2]/td[4]/a')
+        script_pk = int(begin.get_attribute('href').split('/')[-1])
+        script = Script.objects.get(pk=script_pk)
+
         # Before clicking the link, the script's qa_done property
         # should be false
-        self.assertEqual(Script.objects.get(pk=2).qa_begun, False,
-                         'The qa_done property of the Script should be False')
-
-        script_qa_link.click()
+        self.assertEqual(script.qa_begun, False,
+                         'The qa_begun property of the Script should be False')
+        begin.click()
+        # this QAGroup will not exist before click
+        group = QAGroup.objects.get(extraction_script_id=script_pk)
+        texts = ExtractedText.objects.filter(qa_group=group,qa_checked=False)
+        row_count = len(self.browser.find_elements_by_xpath(
+            "//table[@id='extracted_text_table']/tbody/tr"))
+        self.assertEqual(row_count, len(texts),
+                         'The extractionscript view should only ExtractedTexts that are in the QAGroup and qa_checked is False')
         # The link should open a page where the h1 text matches the title
-
         # of the Script
         h1 = self.browser.find_element_by_xpath('/html/body/div/h1').text
-        self.assertIn(Script.objects.get(pk=2).title, h1,
+        self.assertIn(script.title, h1,
                       'The <h1> text should equal the .title of the Script')
 
         # Opening the ExtractionScript's QA page should set its qa_begun
         # property to True
-        self.assertEqual(Script.objects.get(pk=2).qa_begun, True,
-                         'The qa_done property of the ExtractionScript should now be True')
+        self.assertEqual(Script.objects.get(pk=script_pk).qa_begun, True,
+                         ('The qa_done property of the ExtractionScript should'
+                          ' now be True'))
         # Go back to the QA index page to confirm
         self.browser.get('%s%s' % (self.live_server_url, '/qa'))
         script_qa_link = self.browser.find_element_by_xpath(
-            '//*[@id="extraction_script_table"]/tbody/tr/td[4]/a'
+            '//*[@id="extraction_script_table"]/tbody/tr[2]/td[4]/a'
         )
         self.assertEqual(script_qa_link.text, 'Continue QA',
-                         'The QA button should now say "Continue QA" instead of "Begin QA"')
-
+                         ('The QA button should now say "Continue QA"'
+                          ' instead of "Begin QA"'))
 
 def clean_label(self, label):
     """Remove the "remove" character used in select2."""
@@ -542,7 +547,7 @@ class TestFacetedSearch(StaticLiveServerTestCase):
 
         # Temporary fix: assign a PUC to the product, then rebuild the index
 
-        p1 = Product.objects.get(pk=1538000)
+        p1 = Product.objects.get(pk=187)
         pc230 = ProductCategory.objects.get(pk=230)
         p1.prod_cat = pc230
         p1.save()

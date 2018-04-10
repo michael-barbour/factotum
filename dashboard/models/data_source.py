@@ -31,7 +31,7 @@ class DataSource(models.Model):
 	url = models.CharField(max_length=150, blank=True)
 	estimated_records = models.PositiveIntegerField(default=47,
 													validators=[validate_nonzero])
-	type = models.ForeignKey(SourceType, on_delete=models.CASCADE)
+	type = models.ForeignKey(SourceType, on_delete=models.PROTECT)
 	state = models.CharField(max_length=2,
 							 choices=STATE_CHOICES,
 							 default='AT')

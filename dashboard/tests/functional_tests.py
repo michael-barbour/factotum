@@ -49,7 +49,8 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
 
     fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
             '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
-            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '08_extractedtext.yaml']
+            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', 
+            '08_extractedtext.yaml','09_productdocument.yaml']
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -59,7 +60,8 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
         self.browser.quit()
 
     def test_data_source_name(self):
-        self.browser.get(self.live_server_url + '/datasource/1')
+        dspk = DataSource.objects.filter(title='Walmart MSDS')[0].pk
+        self.browser.get(self.live_server_url + '/datasource/' + str(dspk))
         h1 = self.browser.find_element_by_name('title')
         self.assertIn('Walmart MSDS', h1.text,
                       'The h1 text should include "Walmart MSDS"')
@@ -67,9 +69,10 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
     # When a new data source is entered, the data source is automatically
     # assigned the state 'awaiting triage.'
     def test_state_and_priority(self):
+        dspk = DataSource.objects.get(title='Walmart MSDS').id
         valid_states = ['Awaiting Triage', 'In Progress', 'Complete', 'Stale']
         valid_priorities = ['High', 'Medium', 'Low']
-        self.browser.get(self.live_server_url + '/datasource/1')
+        self.browser.get(self.live_server_url + '/datasource/' + str(dspk))
         state = self.browser.find_element_by_name('state')
         self.assertIn(state.text, valid_states)
         self.assertIn('Awaiting Triage', state.text)
@@ -77,12 +80,7 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
         self.assertEqual([o.text for o in select.options], valid_priorities)
         selected_option = select.first_selected_option
         self.assertIn(selected_option.text, valid_priorities)
-        # is there a better way to loop through datasources???
-        # do we need to do all ????
-        self.browser.get(self.live_server_url + '/datasource/2')
-        state = self.browser.find_element_by_name('state')
-        self.assertIn(state.text, valid_states)
-        self.assertIn('Awaiting Triage', state.text)
+
 
     def test_datagroup_list_length(self):
         b = len(DataGroup.objects.filter(data_source_id=1))
@@ -100,7 +98,8 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
     # Data Groups
 
     def test_data_group_name(self):
-        self.browser.get(self.live_server_url + '/datagroup/40')
+        dgpk = DataGroup.objects.filter(name='Walmart MSDS 1')[0].pk
+        self.browser.get(self.live_server_url + '/datagroup/' + str(dgpk))
         h1 = self.browser.find_element_by_name('title')
         self.assertIn('Walmart MSDS 1', h1.text)
         # Checking the URL by row is too brittle
@@ -109,7 +108,7 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
         #self.assertIn('shampoo.pdf', pdflink.get_attribute('href'))
         rows = self.browser.find_elements_by_xpath(
                                         "//table[@id='registered']/tbody/tr")
-        docs = DataDocument.objects.filter(data_group=40)
+        docs = DataDocument.objects.filter(data_group=dgpk)
         self.assertEqual(len(rows),len(docs),'This table needs to be the entire set of data documents for the group for downloading CSV.')
 
     def create_data_group(self, data_source, testusername='Karyn',
@@ -165,7 +164,7 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
     def test_new_data_group(self):
         # DataGroup, created using the model layer
         dg_count_before = DataGroup.objects.count()
-        ds = DataSource.objects.get(pk=2)
+        ds = DataSource.objects.filter(title='Walmart MSDS')[0]
         self.dg = self.create_data_group(data_source=ds)
         dg_count_after = DataGroup.objects.count()
         self.assertEqual(dg_count_after, dg_count_before + 1,
@@ -183,7 +182,7 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
                                                         kwargs={'pk': self.dg.pk}))
         self.assertEqual('factotum', self.browser.title)
         h1 = self.browser.find_element_by_name('title')
-        self.assertEqual('Walmart MSDS 3', h1.text)
+        self.assertIn('Walmart MSDS ', h1.text)
 
         # Use the browser layer to delete the DataGroup object
         # deleting the DataGroup should clean up the file system
@@ -197,8 +196,9 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
     def test_pagination(self):
         # The data group detail page uses server-side pagination to display the
         # related data documents
-        self.browser.get('%s%s' % (self.live_server_url, '/datagroup/40'))
-        pagebox = self.browser.find_elements_by_class_name("current")[0]
+        dgpk = DataGroup.objects.get(name='Walmart MSDS 2').id
+        self.browser.get('%s%s%s' % (self.live_server_url, '/datagroup/', str(dgpk)))
+        pagebox = self.browser.find_element_by_xpath("/html/body/div[1]/nav/ul/li[1]/span")
         self.assertIn('Page 1', pagebox.text,
                          "Confirm the current page navigation box displays 'Page 1 of [some number]'")
         nextbox = self.browser.find_element_by_xpath('/html/body/div[1]/nav/ul/li[2]/a')
@@ -212,7 +212,8 @@ class TestProductCuration(StaticLiveServerTestCase):
 
     fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
             '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
-            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '08_extractedtext.yaml']
+            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '08_extractedtext.yaml',
+            '09_productdocument.yaml']
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -232,7 +233,8 @@ class TestProductCuration(StaticLiveServerTestCase):
                          str(ds.pk))
 
     def test_link_product(self):
-        self.browser.get(self.live_server_url + '/link_product_list/1')
+        dspk = DataSource.objects.filter(title='Georgia Pacific')[0].pk
+        self.browser.get(self.live_server_url + '/link_product_list/' + str(dspk))
         create_prod_link = self.browser.find_element_by_xpath('//*[@id="products"]/tbody/tr[1]/td[2]/a')
         create_prod_link.click()
 
@@ -265,7 +267,7 @@ class TestProductCuration(StaticLiveServerTestCase):
         src_title = self.browser.find_elements_by_xpath(
             '//*[@id="products"]/tbody/tr[2]/td[1]/a')[0]
         ds = DataSource.objects.get(title=src_title.text)
-        self.assertEqual(ds.title, 'Walmart Labs', 'Check the title of the group')
+        self.assertEqual(ds.title, 'Home Depot - ICF', 'Check the title of the group')
         puc_link = self.browser.find_elements_by_xpath(
             '//*[@id="products"]/tbody/tr[2]/td[4]')[0]
         products_missing_PUC = str(
@@ -273,6 +275,98 @@ class TestProductCuration(StaticLiveServerTestCase):
         self.assertEqual(puc_link.text, products_missing_PUC, ('The Assign PUC '
                                                                'link should display # of Products without a PUC'))
 
+    def test_puc(self):
+
+        # As Karyn the Curator
+        # I want the ability to assign product categories (PUCs) to a product
+        # So that I can more easily navigate through products if they are grouped.
+
+        # From the assignment of product category
+        # Click button, form appears which shows you a pdf icon allowing you to view pdf,
+        # product name (Product.title), auto complete box for PUC - when you start typing
+        # auto complete looks at general, specific, product family to match what the user
+        # is typing (auto complete should work like Google), expect minimum of three
+        # characters before auto complete appears
+        ppk = Product.objects.get(title=' Skinsations Insect Repellent').id
+        self.browser.get('%s%s%s' % (self.live_server_url, '/product_puc/', str(ppk)))
+        h2 = self.browser.find_element_by_xpath('/html/body/div/h2').text
+        self.assertIn(h2, Product.objects.get(pk=ppk).title ,
+                      'The <h2> text should be within the .title of the product'
+                      ' (accounting for padding spaces)')
+
+        self.assertEqual(1, Product.objects.filter(pk=ppk).count(),
+                         "There should be one object with the pk of interest")
+
+        puc_before = Product.objects.get(pk=ppk).prod_cat
+        self.assertEqual(puc_before, None, "There should be no assigned PUC")
+
+        puc_selector = self.browser.find_element_by_xpath(
+            '//*[@id="id_prod_cat"]')
+        puc_selector = self.browser.find_element_by_xpath(
+            '//*[@id="select2-id_prod_cat-container"]')
+        puc_sibling = self.browser.find_element_by_xpath(
+            '//*[@id="id_prod_cat"]/following::*')
+        puc_sibling.click()
+
+        #wait_for_element(self, "select2-search__field", "class").click()
+        puc_input = self.browser.find_element_by_class_name(
+            'select2-search__field')
+        puc_input.send_keys('insect')
+
+        # The driver cannot immediately type into the input box - it needs
+        # to load an element first, as explained here:
+        # https://stackoverflow.com/questions/34422274/django-selecting-autocomplete-light-choices-with-selenium
+
+        wait_for_element(self,
+                         '//*[@id="select2-id_prod_cat-results"]/li[3]',
+                         "xpath").click()
+        puc_selector = self.browser.find_element_by_xpath(
+            '//*[@id="select2-id_prod_cat-container"]')
+        self.assertEqual(puc_selector.text, 'Pesticides - insect repellent - insect repellent - skin',
+                         'The PUC selector value should be "Pesticides - insect repellent - insect repellent - skin"')
+
+        submit_button = self.browser.find_element_by_id('btn-assign-puc')
+        submit_button.click()
+        # Open the product page and confirm the PUC has changed
+        self.browser.get('%s%s%s' % (self.live_server_url, '/product/',ppk))
+        puc_after = self.browser.find_element_by_id('prod_cat')
+        self.assertNotEqual(puc_before, puc_after,
+                            "The object's prod_cat should have changed")
+        # Confirm that the puc_assigned_usr has been set to the current user
+        puc_assigned_usr_after = self.browser.find_element_by_id('puc_assigned_usr').text
+        self.assertEqual(puc_assigned_usr_after, 'Karyn',
+                            "The PUC assigning user should have changed")
+
+    def test_cancelled_puc_assignment(self):
+
+        # Bug report in issue #155
+        # When on the Product Curation Page, I click Assign Puc.
+        # I decide that I can not find a PUC and press cancel and get this error:
+
+        # DataSource matching query does not exist.
+        # data/code/factotum/dashboard/views/product_curation.py in category_assignment
+        # ds = DataSource.objects.get(pk=pk)
+        # pk | '1'
+        # request | <WSGIRequest: GET '/category_assignment/1'>
+        # template_name | 'product_curation/category_assignment.html'
+
+        # This was happening because the destination URL for the Cancel
+        # button was being built with the Product's ID instead of the
+        # Product's DataSource's ID.
+        ppk = Product.objects.get(title=' Skinsations Insect Repellent').id
+        prod = Product.objects.get(pk=ppk)
+        ds_id = prod.data_source.id
+        ds = DataSource.objects.get(pk=ds_id)
+        self.browser.get('%s%s%s' % (self.live_server_url, '/product_puc/',ppk))
+        cancel_a = self.browser.find_element_by_xpath('/html/body/div/div/form/a')
+        # find out the path that the Cancel button will use
+        cancel_a_href = cancel_a.get_attribute("href")
+        # open that page
+        self.browser.get(cancel_a_href)
+        # make sure it shows a DataSource
+        h2 = self.browser.find_element_by_xpath('/html/body/div/div[1]/h2').text
+        self.assertIn(ds.title, h2,
+                      'The <h2> text should equal the .title of the DataSource')
 
 
 class TestQAScoreboard(StaticLiveServerTestCase):
@@ -308,14 +402,15 @@ class TestQAScoreboard(StaticLiveServerTestCase):
         # A Table on the QA home page
         row_count = len(self.browser.find_elements_by_xpath(
             "//table[@id='extraction_script_table']/tbody/tr"))
-        self.assertEqual(scriptcount, row_count, ('The seed data contains one '
-                                                  'ExtractionScript object that should appear in this table'))
+        self.assertEqual(scriptcount, row_count, ('The seed data contains three '
+                                                  'Script objects with the script_type'
+                                                  'EX, which should appear in this table'))
 
         displayed_doc_count = self.browser.find_elements_by_xpath(
-            '//*[@id="extraction_script_table"]/tbody/tr/td[2]')[0].text
+            '//*[@id="extraction_script_table"]/tbody/tr[2]/td[2]')[0].text
 
         model_doc_count = DataDocument.objects.filter(
-            extractedtext__extraction_script=2).count()
+            extractedtext__extraction_script=6).count()
 
         self.assertEqual(displayed_doc_count, str(model_doc_count),
                          ('The displayed number of datadocuments should match '
@@ -325,25 +420,25 @@ class TestQAScoreboard(StaticLiveServerTestCase):
         displayed_pct_checked = self.browser.find_elements_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr/td[3]')[0].text
         # this assumes that pk=1 will be a script_type of 'EX'
-        model_pct_checked = Script.objects.get(pk=2).get_pct_checked()
+        model_pct_checked = Script.objects.get(pk=6).get_pct_checked()
         self.assertEqual(displayed_pct_checked, model_pct_checked,
                          ('The displayed percentage should match what is '
                           'derived from the model'))
 
-        es = Script.objects.get(pk=2)
+        es = Script.objects.get(pk=6)
         self.assertEqual(es.get_qa_complete_extractedtext_count(), 0,
                          ('The ExtractionScript object should return 0'
                           'qa_checked ExtractedText objects'))
         self.assertEqual(model_pct_checked, '0%')
         # Set qa_checked property to True for one of the ExtractedText objects
-        self.assertEqual(ExtractedText.objects.get(pk=4).qa_checked, False)
-        et_change = ExtractedText.objects.get(pk=4)
+        self.assertEqual(ExtractedText.objects.get(pk=121627).qa_checked, False)
+        et_change = ExtractedText.objects.get(pk=121627)
         et_change.qa_checked = True
         et_change.save()
-        self.assertEqual(ExtractedText.objects.get(pk=4).qa_checked, True,
+        self.assertEqual(ExtractedText.objects.get(pk=121627).qa_checked, True,
                          'The object should now have qa_checked = True')
 
-        es = Script.objects.get(pk=2)
+        es = Script.objects.get(pk=6)
         self.assertEqual(es.get_qa_complete_extractedtext_count(), 1,
                          ('The ExtractionScript object should return 1 '
                           'qa_checked ExtractedText object'))
@@ -352,14 +447,14 @@ class TestQAScoreboard(StaticLiveServerTestCase):
                          'Check the numerator in the model layer')
         self.assertEqual(2, es.get_datadocument_count(),
                          'Check the denominator in the model layer')
-        model_pct_checked = Script.objects.get(pk=2).get_pct_checked()
+        model_pct_checked = Script.objects.get(pk=6).get_pct_checked()
         self.assertEqual(model_pct_checked, '50%',
                          ('The get_pct_checked() method should return 50 pct'
                           ' from the model layer'))
         self.browser.refresh()
 
         displayed_pct_checked = self.browser.find_elements_by_xpath(
-            '//*[@id="extraction_script_table"]/tbody/tr/td[3]')[0].text
+            '//*[@id="extraction_script_table"]/tbody/tr[2]/td[3]')[0].text
 
         self.assertEqual(displayed_pct_checked, model_pct_checked,
                          ('The displayed percentage in the browser layer should '
@@ -367,11 +462,11 @@ class TestQAScoreboard(StaticLiveServerTestCase):
         # A button for each row that will take you to the script's QA page
         # https://github.com/HumanExposure/factotum/issues/36
         script_qa_link = self.browser.find_element_by_xpath(
-            '//*[@id="extraction_script_table"]/tbody/tr/td[4]/a'
+            '//*[@id="extraction_script_table"]/tbody/tr[2]/td[4]/a'
         )
         # Before clicking the link, the script's qa_done property
         # should be false
-        self.assertEqual(Script.objects.get(pk=2).qa_begun, False,
+        self.assertEqual(Script.objects.get(pk=6).qa_begun, False,
                          'The qa_done property of the Script should be False')
 
         script_qa_link.click()
@@ -379,18 +474,18 @@ class TestQAScoreboard(StaticLiveServerTestCase):
 
         # of the Script
         h1 = self.browser.find_element_by_xpath('/html/body/div/h1').text
-        self.assertIn(Script.objects.get(pk=2).title, h1,
+        self.assertIn(Script.objects.get(pk=6).title, h1,
                       'The <h1> text should equal the .title of the Script')
 
         # Opening the ExtractionScript's QA page should set its qa_begun
         # property to True
-        self.assertEqual(Script.objects.get(pk=2).qa_begun, True,
+        self.assertEqual(Script.objects.get(pk=6).qa_begun, True,
                          'The qa_done property of the ExtractionScript should now be True')
         # Go back to the QA index page to confirm
         self.browser.get('%s%s' % (self.live_server_url, '/qa'))
         script_qa_link = self.browser.find_element_by_xpath(
-            '//*[@id="extraction_script_table"]/tbody/tr/td[4]/a'
-        )
+            '//*[@id="extraction_script_table"]/tbody/tr[2]/td[4]/a'
+        )    
         self.assertEqual(script_qa_link.text, 'Continue QA',
                          'The QA button should now say "Continue QA" instead of "Begin QA"')
 
@@ -406,117 +501,13 @@ def wait_for_element(self, elm, by='id', timeout=10):
     return self.browser.find_element_by_xpath(elm)
 
 
-class TestPUCAssignment(StaticLiveServerTestCase):
-    # Issue 80 https://github.com/HumanExposure/factotum/issues/80
-    #
-    fixtures = ['seed_product_category.yaml', 'seed_data', ]
-
-    def setUp(self):
-        self.browser = webdriver.Chrome()
-        log_karyn_in(self)
-
-    def tearDown(self):
-        self.browser.quit()
-
-    def test_puc(self):
-
-        # As Karyn the Curator
-        # I want the ability to assign product categories (PUCs) to a product
-        # So that I can more easily navigate through products if they are grouped.
-
-        # From the assignment of product category
-        # Click button, form appears which shows you a pdf icon allowing you to view pdf,
-        # product name (Product.title), auto complete box for PUC - when you start typing
-        # auto complete looks at general, specific, product family to match what the user
-        # is typing (auto complete should work like Google), expect minimum of three
-        # characters before auto complete appears
-        self.browser.get('%s%s' % (self.live_server_url, '/product_puc/1'))
-        h2 = self.browser.find_element_by_xpath('/html/body/div/h2').text
-        self.assertIn(Product.objects.get(pk=1).title, h2,
-                      'The <h2> text should equal the .title of the product')
-
-        self.assertEqual(1, Product.objects.filter(pk=1).count(),
-                         "There should be one object with pk=1")
-
-        puc_before = Product.objects.get(pk=1).prod_cat
-        self.assertEqual(puc_before, None, "There should be no assigned PUC")
-
-        puc_selector = self.browser.find_element_by_xpath(
-            '//*[@id="id_prod_cat"]')
-        puc_selector = self.browser.find_element_by_xpath(
-            '//*[@id="select2-id_prod_cat-container"]')
-        puc_sibling = self.browser.find_element_by_xpath(
-            '//*[@id="id_prod_cat"]/following::*')
-        puc_sibling.click()
-
-        #wait_for_element(self, "select2-search__field", "class").click()
-        puc_input = self.browser.find_element_by_class_name(
-            'select2-search__field')
-        puc_input.send_keys('pet care')
-
-        # The driver cannot immediately type into the input box - it needs
-        # to load an element first, as explained here:
-        # https://stackoverflow.com/questions/34422274/django-selecting-autocomplete-light-choices-with-selenium
-
-        wait_for_element(self,
-                         '//*[@id="select2-id_prod_cat-results"]/li[2]',
-                         "xpath").click()
-        puc_selector = self.browser.find_element_by_xpath(
-            '//*[@id="select2-id_prod_cat-container"]')
-        self.assertEqual(puc_selector.text, 'Pet care - all pets -',
-                         'The PUC selector value should be "Pet care - all pets -"')
-
-        submit_button = self.browser.find_element_by_id('btn-assign-puc')
-        submit_button.click()
-        # Open the product page and confirm the PUC has changed
-        self.browser.get('%s%s' % (self.live_server_url, '/product/1'))
-        puc_after = self.browser.find_element_by_id('prod_cat')
-        self.assertNotEqual(puc_before, puc_after,
-                            "The object's prod_cat should have changed")
-        # Confirm that the puc_assigned_usr has been set to the current user
-        puc_assigned_usr_after = self.browser.find_element_by_id('puc_assigned_usr').text
-        self.assertEqual(puc_assigned_usr_after, 'Karyn',
-                            "The PUC assigning user should have changed")
-
-    def test_cancelled_puc_assignment(self):
-
-        # Bug report in issue #155
-        # When on the Product Curation Page, I click Assign Puc.
-        # I decide that I can not find a PUC and press cancel and get this error:
-
-        # DataSource matching query does not exist.
-        # data/code/factotum/dashboard/views/product_curation.py in category_assignment
-        # ds = DataSource.objects.get(pk=pk)
-        # pk | '1'
-        # request | <WSGIRequest: GET '/category_assignment/1'>
-        # template_name | 'product_curation/category_assignment.html'
-
-        # This was happening because the destination URL for the Cancel
-        # button was being built with the Product's ID instead of the
-        # Product's DataSource's ID.
-
-        prod = Product.objects.get(pk=1)
-        ds_id = prod.data_source.id
-        ds = DataSource.objects.get(pk=ds_id)
-        self.browser.get('%s%s' % (self.live_server_url, '/product_puc/1'))
-        cancel_a = self.browser.find_element_by_xpath('/html/body/div/div/form/a')
-        # find out the path that the Cancel button will use
-        cancel_a_href = cancel_a.get_attribute("href")
-        # open that page
-        self.browser.get(cancel_a_href)
-        # make sure it shows a DataSource
-        h2 = self.browser.find_element_by_xpath('/html/body/div/div[1]/h2').text
-        self.assertIn(ds.title, h2,
-                      'The <h2> text should equal the .title of the DataSource')
-
-
 
 class TestFacetedSearch(StaticLiveServerTestCase):
     # Issue 104 https://github.com/HumanExposure/factotum/issues/104
     #
     fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
-            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
-            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '08_extractedtext.yaml']
+            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml', 
+            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '09_productdocument.yaml']
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -542,9 +533,9 @@ class TestFacetedSearch(StaticLiveServerTestCase):
 
         # Temporary fix: assign a PUC to the product, then rebuild the index
 
-        p1 = Product.objects.get(pk=1538000)
-        pc230 = ProductCategory.objects.get(pk=230)
-        p1.prod_cat = pc230
+        p1 = Product.objects.get(pk=22)
+        pc252 = ProductCategory.objects.get(pk=252)
+        p1.prod_cat = pc252
         p1.save()
         # update the search engine index
         update_index.Command().handle(using=['default'])
@@ -556,25 +547,25 @@ class TestFacetedSearch(StaticLiveServerTestCase):
                       "The search engine's server needs to be running")
         # if a Product object has a PUC assigned, that PUC should appear in the facet index
         sqs = SearchQuerySet().using('default').facet('prod_cat')
-        self.assertIn('nails', json.dumps(sqs.facet_counts()),
-                      'The search engine should return "Personal care - nails - " among the product category facets.')
+        self.assertIn('insect', json.dumps(sqs.facet_counts()),
+                      'The search engine should return "["Pesticides - insect repellent - insect repellent - skin", 1]" among the product category facets.')
 
         # use the input box to enter a search query
         self.browser.get(self.live_server_url)
         searchbox = self.browser.find_element_by_id('q')
-        searchbox.send_keys('nutra')
+        searchbox.send_keys('Skinsations')
         searchbox.send_keys(Keys.RETURN)
-        self.assertIn("nutra", self.browser.current_url,
+        self.assertIn("Skinsations", self.browser.current_url,
                       'The URL should contain the search string')
         facetcheck = self.browser.find_element_by_xpath(
             '/html/body/div/div/div/div[1]')
-        self.assertIn('nails', facetcheck.text,
-                      'The faceting controls should include a "Personal care - nails - " entry')
-        facetcheck = self.browser.find_element_by_id('Personalcare-nails-')
+        self.assertIn('insect', facetcheck.text,
+                      'The faceting controls should include a "Pesticides - insect repellent" entry')
+        facetcheck = self.browser.find_element_by_id('Pesticides-insectrepellent-insectrepellent-skin')
         facetcheck.click()
         facetapply = self.browser.find_element_by_id('btn-apply-filters')
         facetapply.click()
-        self.assertIn("prod_cat=Personal%20care%20-%20nails%20-%20",
+        self.assertIn("insect%20repellent",
                       self.browser.current_url, 'The URL should contain the facet search string')
 
 

@@ -265,11 +265,11 @@ class TestProductCuration(StaticLiveServerTestCase):
     def test_PUC_assignment(self):
         self.browser.get(self.live_server_url + '/product_curation/')
         src_title = self.browser.find_elements_by_xpath(
-            '//*[@id="products"]/tbody/tr[2]/td[1]/a')[0]
+            '//*[@id="products"]/tbody/tr[3]/td[1]/a')[0]
         ds = DataSource.objects.get(title=src_title.text)
         self.assertEqual(ds.title, 'Home Depot - ICF', 'Check the title of the group')
         puc_link = self.browser.find_elements_by_xpath(
-            '//*[@id="products"]/tbody/tr[2]/td[4]')[0]
+            '//*[@id="products"]/tbody/tr[3]/td[4]')[0]
         products_missing_PUC = str(
             len(ds.source.filter(prod_cat__isnull=True)))
         self.assertEqual(puc_link.text, products_missing_PUC, ('The Assign PUC '

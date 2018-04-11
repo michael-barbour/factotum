@@ -19,9 +19,9 @@ class DataGroup(models.Model):
 
 	name = models.CharField(max_length=50)
 	description = models.TextField(null=True, blank=True)
-	downloaded_by = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+	downloaded_by = models.ForeignKey('auth.User', on_delete=models.SET_DEFAULT, default = 1)
 	downloaded_at = models.DateTimeField()
-	download_script = models.ForeignKey('Script', on_delete=models.CASCADE, default=None, null=True, blank=True)
+	download_script = models.ForeignKey('Script', on_delete=models.SET_NULL, default=None, null=True, blank=True)
 	data_source = models.ForeignKey('DataSource', on_delete=models.CASCADE)
 	updated_at = models.DateTimeField(default=timezone.now, null=True, blank=True)
 	csv = models.FileField(upload_to=update_filename, null=True)

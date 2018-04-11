@@ -10,3 +10,4 @@ from .extracted_text import ExtractedText
 from .extracted_chemical import ExtractedChemical
 from .script import Script
 from .dsstox_substance import DSSToxSubstance
+from .qa_group import QAGroup

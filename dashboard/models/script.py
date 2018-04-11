@@ -24,7 +24,7 @@ class Script(models.Model):
 									default    = 'EX')
 
 	def __str__(self):
-		return self.title
+		return str(self.title)
 
 	def get_absolute_url(self):
 		return reverse('extraction_script_edit', kwargs={'pk': self.pk})
@@ -37,9 +37,9 @@ class Script(models.Model):
 		return DataDocument.objects.filter(extractedtext__qa_checked=True, extractedtext__extraction_script=self.pk).count()
 
 	def get_pct_checked(self):
-		pct = (0 if self.get_datadocument_count() == 0
-				else (self.get_qa_complete_extractedtext_count() /
-						self.get_datadocument_count()) * 100)
+		count = self.get_datadocument_count()
+		pct = (0 if count == 0 else (
+		              self.get_qa_complete_extractedtext_count() / count * 100))
 		return "{0:.0f}%".format(pct)
 
 	def qa_button_text(self):

@@ -26,7 +26,7 @@ Product Curation
       <td>{{ data_source.uploaded }}</td>
       <td>{% for data_group in data_source.data_groups %}
             {% if data_group.unlinked %}
-                <a class="btn btn-warning btn-sm" role="button" title="Create Product"
+                <a class="btn btn-warning btn-sm" role="button" title="Create Product" style="margin-bottom:2px;"
                 href="{% url "link_product_list" data_group.id %}">
                 <span class="oi oi-link-intact"></span> Create Products for {{ data_group.unlinked }} Document{% if data_group.unlinked > 1 %}s{% endif %}</a>
             {% else %}

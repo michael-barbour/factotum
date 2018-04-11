@@ -13,9 +13,11 @@ class ExtractedText(models.Model):
 	rev_num = models.CharField(max_length=50, null=True, blank=True)
 	extraction_script = models.ForeignKey(Script, on_delete=models.CASCADE, limit_choices_to={'script_type': 'EX'}, )
 	qa_checked = models.BooleanField(default=False)
+	qa_group = models.ForeignKey('QAGroup', null=True, blank=True,
+											on_delete=models.SET_NULL)
 
 	def __str__(self):
-		return self.prod_name
+		return str(self.prod_name)
 
 	def clean(self):
 		if self.doc_date[4] != '-' or self.doc_date[7] != '-':

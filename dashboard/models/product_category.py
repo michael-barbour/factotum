@@ -9,7 +9,7 @@ class ProductCategory(models.Model):
 	description = models.TextField(null=False, blank=False)
 	created_at = models.DateTimeField(default=timezone.now)
 	updated_at = models.DateTimeField(null=True, blank=True)
-	last_edited_by = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+	last_edited_by = models.ForeignKey('auth.User', default = 1, on_delete=models.CASCADE)
 
 	def __str__(self):
 		return self.gen_cat + ' - ' + self.prod_fam + ' - ' + self.prod_type # this may need to change

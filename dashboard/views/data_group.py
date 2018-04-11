@@ -79,7 +79,6 @@ def data_group_detail(request, pk,
     paginator = Paginator(docs, npage) # Show npage data documents per page
     page = request.GET.get('page')
     page = 1 if page is None else page
-    docs_page = paginator.page(page)
 
     scripts = Script.objects.filter(script_type='EX')
     store = settings.MEDIA_URL + datagroup.name.replace(' ','_')
@@ -190,10 +189,6 @@ def data_group_detail(request, pk,
                 doc.save()
                 chem.save()
             fs = FileSystemStorage(store)
-            # tail = 1  # this was going to be used if some chems were loaded,
-            # while os.path.exists(fn):  # but not all.
-            # 	'{1}_{2}.csv'.format(fn.split('.')[0],tail)
-            # 	tail += 1
             fs.save(str(datagroup)+'_extracted.csv', csv_file)
         print(datetime.now()-start)
     paginator = Paginator(docs, npage) # Show 25 data documents per page
@@ -217,7 +212,6 @@ def data_group_detail(request, pk,
 
 @login_required()
 def data_group_create(request, template_name='data_group/datagroup_form.html'):
-    #print(request.META)
     # get the data source from which the create button was clicked
     datasource_title = request.session['datasource_title']
     datasource_pk = request.session['datasource_pk']
@@ -263,7 +257,6 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
                 # update line to hold the pk for writeout
                 text.append(str(doc.pk)+','+ ','.join(line.values())+'\n')
             if errors:
-                #datagroup.csv.close() # still need to close?? check
                 datagroup.delete()
                 return render(request, template_name, {'line_errors': errors,
                                                        'form': form})

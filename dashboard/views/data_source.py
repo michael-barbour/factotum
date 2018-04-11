@@ -33,7 +33,6 @@ class PriorityForm(forms.ModelForm):
 @login_required()
 def data_source_list(request, template_name='data_source/datasource_list.html'):
 	datasources = DataSource.objects.all()
-	#docs = DataDocument.objects.all()
 	ds_list, frm_list = [], []
 	for ds in datasources:
 		docs = DataDocument.objects.filter(data_group__in=DataGroup.objects.filter(data_source=ds))
@@ -59,9 +58,6 @@ def data_source_list(request, template_name='data_source/datasource_list.html'):
 def data_source_detail(request, pk,
  						template_name='data_source/datasource_detail.html'):
 	datasource = get_object_or_404(DataSource, pk=pk, )
-	#docs = DataDocument.objects.all()
-
-	dgs = DataGroup.objects.filter(data_source=datasource)
 	docs = DataDocument.objects.filter(data_group__in=DataGroup.objects.filter(data_source=datasource))
 	datasource.registered = (len(docs)/float(datasource.estimated_records))*100
 	datasource.uploaded = (len(docs.filter(matched=True))/float(

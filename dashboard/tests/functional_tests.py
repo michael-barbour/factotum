@@ -488,6 +488,15 @@ class TestQAScoreboard(StaticLiveServerTestCase):
         )    
         self.assertEqual(script_qa_link.text, 'Continue QA',
                          'The QA button should now say "Continue QA" instead of "Begin QA"')
+        
+    def test_extracted_text_qa_page(self):
+
+        # open the QA index
+        self.browser.get('%s%s' % (self.live_server_url, '/qa'))
+        # click on the extraction script's QA page
+        script_qa_link = self.browser.find_element_by_xpath(
+            '//*[@id="extraction_script_table"]/tbody/tr[2]/td[4]/a'
+        )   
 
 
 def clean_label(self, label):

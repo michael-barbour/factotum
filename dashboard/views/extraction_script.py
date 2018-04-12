@@ -10,7 +10,7 @@ from django.core.files import File
 from django.core.files.storage import FileSystemStorage
 
 from dashboard.models import (DataGroup, DataDocument, DataSource,
-                              ExtractedText, Script, QAGroup)
+                              ExtractedText, Script, QAGroup, ExtractedChemical)
 
 class ExtractionScriptForm(ModelForm):
     required_css_class = 'required' # adds to label tag
@@ -48,7 +48,8 @@ def extraction_script_qa(request, pk,
             texts = ExtractedText.objects.filter(qa_group=group,
                                                  qa_checked=False)
             return render(request, template_name, {'extractionscript'  : es,
-        											'extractedtexts' : texts})
+        											'extractedtexts' : texts,
+                                                    'qagroup': group})
     # pks of text and docs are the same!
     doc_text_ids = ExtractedText.objects.filter(extraction_script=pk)
     doc_text_ids = list(ExtractedText.objects.filter(extraction_script=es,
@@ -65,7 +66,8 @@ def extraction_script_qa(request, pk,
     es.qa_begun = True
     es.save()
     return render(request, template_name, {'extractionscript'  : es,
-											'extractedtexts' : texts})
+											'extractedtexts' : texts,
+                                            'qagroup': qa_group})
 
 @login_required()
 def extraction_script_detail(request, pk,
@@ -74,3 +76,17 @@ def extraction_script_detail(request, pk,
     data = {}
     data['object_list'] = extractionscript
     return render(request, template_name, data)
+
+@login_required()
+def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html'):
+    
+    extext = ExtractedText.objects.get(pk=pk)
+    datadoc = DataDocument.objects.get(pk=pk) 
+    exscript = extext.extraction_script
+    chems = ExtractedChemical.objects.filter(extracted_text=extext)
+    # derive the number of approved records and remaining unapproved ones in the QA Group
+    stats = '%s%s%s%s' % (extext.qa_group.get_approved_doc_count(), ' document(s) approved, ', \
+        ExtractedText.objects.filter(qa_group = extext.qa_group).count() - extext.qa_group.get_approved_doc_count() \
+            , ' documents remaining')
+    return render(request, template_name, {'extracted': extext, \
+        'doc': datadoc, 'script': exscript, 'chems':chems, 'stats':stats})

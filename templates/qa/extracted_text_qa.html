@@ -1,0 +1,98 @@
+{% extends 'core/base.html' %}
+{% load staticfiles %}
+{% load humanize %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/qa">QA</a></li>
+      <li class="breadcrumb-item">
+           <a href='{% url "extraction_script_qa" script.id %}'> {{ script }} </a>
+    </li>
+      <li class="breadcrumb-item active" aria-current="page">{{ doc.title }}</li>
+    </ol>
+  </nav>
+
+  <div class="card">
+                    <h3 class="card-header">{{ doc.title }}</h3>
+                  
+    <div class="card-body">  
+        <dl class="row col-sm-12">
+            <dt class="col-sm-3">File Name</dt>
+            <dd class="col-sm-9">{{ doc.filename }}</dd>
+            <dt class="col-sm-3">URL</dt>
+            <dd class="col-sm-9">{{ doc.url }}</dd>
+            {% if doc.matched %}
+            <dt class="col-sm-3">PDF</dt>
+                <dd class="col-sm-9">
+                    <a href="/media/{{ doc.data_group.dgurl }}/pdf/{{ doc.filename }}"
+                        title="Link to {{ doc.filename }}" target="_blank">{{ doc.title }}</a>
+                </dd>
+            {% endif %}
+            <dt class="col-sm-3">Product Category</dt>
+            <dd class="col-sm-9">{{ doc.product_category }}</dd>
+            <dt class="col-sm-3">Data Group</dt>
+            <dd class="col-sm-9">
+                <a title="Data Group"
+                    href="{% url 'data_group_detail' doc.data_group.id %}"> {{ doc.data_group }}
+                </a>
+            </dd>
+
+        </dl>
+        </div>
+</div>
+
+<div class="card">
+            <h3 class="card-header">Extracted Text</h3>
+        <div class="card-body">
+        <dl class="row col-sm-12">
+                <dt class="col-sm-3">Record Type</dt>
+                <dd class="col-sm-9">{{ extracted.record_type }}</dd>
+                <dt class="col-sm-3">Product Name</dt>
+                <dd class="col-sm-9">{{ extracted.prod_name }}</dd>
+                <dt class="col-sm-3">Document Date</dt>
+                <dd class="col-sm-9">{{ extracted.doc_date }}</dd>
+            </dl>
+
+
+            <table class="table table-striped table-bordered dataTable no-footer table-sm" id="extractedchemicals">
+                    <thead class="table-primary">
+                        <th>CAS</th>
+                        <th>Chemical Name</th>
+                        <th>raw_min_comp</th>
+                        <th>raw_max_comp</th>
+                        <th>Units</th>
+                        <th>Reported Functional Use</th>
+                    </thead>
+                    <tbody>
+                    {% for chem in chems %}
+                      <tr>
+                        <td>{{chem.raw_cas}}
+                        </td>
+                        <td>{{ chem.raw_chem_name}} %</td>
+                        <td>{{ chem.raw_min_comp | floatformat:0.00}} %</td>
+                        <td>{{ chem.raw_max_comp | floatformat:0.00 }} %</td>
+
+                        <td>{{ chem.units }}</td>
+                        <td>{{ chem.report_funcuse }}</td>
+                      </tr>
+                    {% endfor %}
+                    </tbody>
+                  </table>
+                  <a class="btn btn-primary" href="#" role="button">Approve</a>
+                  <a class="btn btn-primary" href="#" role="button">Edit</a>
+                  <a class="btn btn-primary" href="#" role="button">Skip</a>
+                  <a class="btn btn-primary" href='{% url "extraction_script_qa" script.id %}' role="button">Cancel</a>
+        </div>
+        <p class="card-footer"> {{stats}}</p>
+    </div>
+
+
+
+
+{% endblock %}
+{% block js %}
+  <script type="text/javascript">
+
+  </script>
+{% endblock %}

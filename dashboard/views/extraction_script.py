@@ -25,6 +25,32 @@ class ExtractionScriptForm(ModelForm):
         self.user = kwargs.pop('user', None)
         super(ExtractionScriptForm, self).__init__(*args, **kwargs)
 
+def get_next_or_prev(models, item, direction):
+    '''
+    Returns the next or previous item of
+    a query-set for 'item'.
+
+    'models' is a query-set containing all
+    items of which 'item' is a part of.
+
+    direction is 'next' or 'prev'
+
+    '''
+    getit = False
+    if direction == 'prev':
+        models = models.reverse()
+    for m in models:
+        if getit:
+            return m
+        if item == m:
+            getit = True
+    if getit:
+        # This would happen when the last
+        # item made getit True
+        return models[0]
+    return False
+
+
 @login_required()
 def extraction_script_list(request, template_name='qa/extraction_script_list.html'):
 
@@ -84,9 +110,17 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html'):
     datadoc = DataDocument.objects.get(pk=pk) 
     exscript = extext.extraction_script
     chems = ExtractedChemical.objects.filter(extracted_text=extext)
+    # get the next unapproved Extracted Text object
+    # Its ID will populate the URL for the "Skip" button
+    extextnext = get_next_or_prev(ExtractedText.objects.filter(qa_group=extext.qa_group, qa_checked=False ), extext, 'next')
+    if extextnext:
+        # Replace our item with the next one
+        nextid = extextnext.pk
+    if extextnext == extext:
+        nextid = 0
     # derive the number of approved records and remaining unapproved ones in the QA Group
     stats = '%s%s%s%s' % (extext.qa_group.get_approved_doc_count(), ' document(s) approved, ', \
         ExtractedText.objects.filter(qa_group = extext.qa_group).count() - extext.qa_group.get_approved_doc_count() \
             , ' documents remaining')
     return render(request, template_name, {'extracted': extext, \
-        'doc': datadoc, 'script': exscript, 'chems':chems, 'stats':stats})
+        'doc': datadoc, 'script': exscript, 'chems':chems, 'stats':stats, 'nextid':nextid})

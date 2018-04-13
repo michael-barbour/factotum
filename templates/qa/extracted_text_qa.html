@@ -80,9 +80,13 @@
                     </tbody>
                   </table>
                   <a class="btn btn-primary" href="#" role="button">Approve</a>
-                  <a class="btn btn-primary" href="#" role="button">Edit</a>
-                  <a class="btn btn-primary" href="#" role="button">Skip</a>
-                  <a class="btn btn-primary" href='{% url "extraction_script_qa" script.id %}' role="button">Cancel</a>
+                  {% if nextid > 0 %}
+                    <a class="btn btn-primary" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>
+                  {% else %}
+                    <button type="button" title="All the other documents in this QA group have been approved" class="btn btn-primary" disabled>Skip</button>
+                  {% endif %}
+                  <a class="btn btn-primary" href="{% url "extraction_script_qa" script.id %}" role="button">Exit</a>
+
         </div>
         <p class="card-footer"> {{stats}}</p>
     </div>

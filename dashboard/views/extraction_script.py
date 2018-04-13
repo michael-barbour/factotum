@@ -1,6 +1,6 @@
 import math
 from random import shuffle
-
+import os
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import ModelForm
@@ -124,3 +124,5 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html'):
             , ' documents remaining')
     return render(request, template_name, {'extracted': extext, \
         'doc': datadoc, 'script': exscript, 'chems':chems, 'stats':stats, 'nextid':nextid})
+
+

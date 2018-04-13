@@ -13,6 +13,8 @@
     </ol>
   </nav>
 
+{% if True %} 
+
   <div class="card">
                     <h3 class="card-header">{{ doc.title }}</h3>
                   
@@ -41,6 +43,7 @@
         </dl>
         </div>
 </div>
+{% endif %}
 
 <div class="card">
             <h3 class="card-header">Extracted Text</h3>
@@ -79,11 +82,12 @@
                     {% endfor %}
                     </tbody>
                   </table>
-                  <a class="btn btn-primary" href="#" role="button">Approve</a>
+                  <a class="btn btn-success" href="#" role="button">Approve</a>
+                  <a class="btn btn-primary" href="#" role="button">Edit</a>
                   {% if nextid > 0 %}
-                    <a class="btn btn-primary" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>
+                    <a class="btn btn-warning" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>
                   {% else %}
-                    <button type="button" title="All the other documents in this QA group have been approved" class="btn btn-primary" disabled>Skip</button>
+                    <button type="button" title="All the other documents in this QA group have been approved" class="btn btn-warning" aria-disabled="true" disabled>Skip</button>
                   {% endif %}
                   <a class="btn btn-primary" href="{% url "extraction_script_qa" script.id %}" role="button">Exit</a>
 
@@ -97,6 +101,8 @@
 {% endblock %}
 {% block js %}
   <script type="text/javascript">
-
+        window.onload = function() {
+        window.open("/media/{{ doc.data_group.dgurl }}/pdf/{{ doc.filename }}",'pdf',' menubar=0, resizable=0,dependent=0,status=0,width=400,height=7000,left=10,top=10')
+        }
   </script>
 {% endblock %}

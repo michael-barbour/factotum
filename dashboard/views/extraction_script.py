@@ -55,10 +55,13 @@ def extraction_script_qa(request, pk,
                                                      qa_checked=False
                                                      ).values_list('pk',
                                                                    flat=True))
-    random_20 = math.ceil(len(doc_text_ids)/5)
-    shuffle(doc_text_ids)  # this is used to make random selection of texts
     qa_group = QAGroup.objects.create(extraction_script=es)
-    texts = ExtractedText.objects.filter(pk__in=doc_text_ids[:random_20])
+    if len(doc_text_ids) < 100:
+        texts = ExtractedText.objects.filter(pk__in=doc_text_ids)
+    else:
+        random_20 = math.ceil(len(doc_text_ids)/5)
+        shuffle(doc_text_ids)  # this is used to make random selection of texts
+        texts = ExtractedText.objects.filter(pk__in=doc_text_ids[:random_20])
     for text in texts:
         text.qa_group = qa_group
         text.save()

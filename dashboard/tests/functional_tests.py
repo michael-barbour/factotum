@@ -49,7 +49,7 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
 
     fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
             '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
-            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', 
+            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml',
             '08_extractedtext.yaml','09_productdocument.yaml']
 
     def setUp(self):
@@ -418,37 +418,37 @@ class TestQAScoreboard(StaticLiveServerTestCase):
                           ' the extraction script'))
 
         displayed_pct_checked = self.browser.find_elements_by_xpath(
-            '//*[@id="extraction_script_table"]/tbody/tr/td[3]')[0].text
-        # this assumes that pk=1 will be a script_type of 'EX'
+            '//*[@id="extraction_script_table"]/tbody/tr[2]/td[3]')[0].text
         model_pct_checked = Script.objects.get(pk=6).get_pct_checked()
         self.assertEqual(displayed_pct_checked, model_pct_checked,
                          ('The displayed percentage should match what is '
                           'derived from the model'))
 
         es = Script.objects.get(pk=6)
-        self.assertEqual(es.get_qa_complete_extractedtext_count(), 0,
-                         ('The ExtractionScript object should return 0'
+        self.assertEqual(es.get_qa_complete_extractedtext_count(), 1,
+                         ('The ExtractionScript object should return 1'
                           'qa_checked ExtractedText objects'))
-        self.assertEqual(model_pct_checked, '0%')
+        self.assertEqual(model_pct_checked, '8%')
         # Set qa_checked property to True for one of the ExtractedText objects
-        self.assertEqual(ExtractedText.objects.get(pk=121627).qa_checked, False)
-        et_change = ExtractedText.objects.get(pk=121627)
+        # what are we testing in the 5 lines below?  rick
+        self.assertEqual(ExtractedText.objects.get(pk=121647).qa_checked, False)
+        et_change = ExtractedText.objects.get(pk=121647)
         et_change.qa_checked = True
         et_change.save()
-        self.assertEqual(ExtractedText.objects.get(pk=121627).qa_checked, True,
+        self.assertEqual(ExtractedText.objects.get(pk=121647).qa_checked, True,
                          'The object should now have qa_checked = True')
 
         es = Script.objects.get(pk=6)
-        self.assertEqual(es.get_qa_complete_extractedtext_count(), 1,
-                         ('The ExtractionScript object should return 1 '
-                          'qa_checked ExtractedText object'))
+        self.assertEqual(es.get_qa_complete_extractedtext_count(), 2,
+                         ('The ExtractionScript object should return 2 '
+                          'qa_checked ExtractedText objects'))
 
-        self.assertEqual(1, es.get_qa_complete_extractedtext_count(),
+        self.assertEqual(2, es.get_qa_complete_extractedtext_count(),
                          'Check the numerator in the model layer')
-        self.assertEqual(2, es.get_datadocument_count(),
+        self.assertEqual(13, es.get_datadocument_count(),
                          'Check the denominator in the model layer')
         model_pct_checked = Script.objects.get(pk=6).get_pct_checked()
-        self.assertEqual(model_pct_checked, '50%',
+        self.assertEqual(model_pct_checked, '15%',
                          ('The get_pct_checked() method should return 50 pct'
                           ' from the model layer'))
         self.browser.refresh()
@@ -485,7 +485,7 @@ class TestQAScoreboard(StaticLiveServerTestCase):
         self.browser.get('%s%s' % (self.live_server_url, '/qa'))
         script_qa_link = self.browser.find_element_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr[2]/td[4]/a'
-        )    
+        )
         self.assertEqual(script_qa_link.text, 'Continue QA',
                          'The QA button should now say "Continue QA" instead of "Begin QA"')
 
@@ -506,7 +506,7 @@ class TestFacetedSearch(StaticLiveServerTestCase):
     # Issue 104 https://github.com/HumanExposure/factotum/issues/104
     #
     fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
-            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml', 
+            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
             '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '09_productdocument.yaml']
 
     def setUp(self):
@@ -594,3 +594,29 @@ class TestExtractedText(StaticLiveServerTestCase):
         self.assertEqual(submit_button.is_enabled(),True,
                          ("This button should be enabled now that there "
                          "is a file selected in the file input."))
+
+class TestAPI(StaticLiveServerTestCase):
+
+    fixtures = ['00_superuser.yaml', '01_sourcetype.yaml',
+            '02_datasource.yaml', '03_datagroup.yaml','04_productcategory.yaml',
+            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml',
+            '08_extractedtext.yaml','09_productdocument.yaml',
+            '10_extractedchemical.yaml', '11_dsstoxsubstance.yaml' ]
+
+    def setUp(self):
+        self.browser = webdriver.Chrome()
+        log_karyn_in(self)
+
+    def tearDown(self):
+        self.browser.quit()
+
+    def test_JSON(self):
+        sid = 'DTXSID6026296'
+        self.browser.get(self.live_server_url + '/api/' + sid)
+        pre = self.browser.find_element_by_tag_name("pre").text
+        api_out = json.loads(pre)
+        # print(api_out)
+        self.assertEqual(type(api_out[0]),type(dict()),
+                         ("This should be JSON"))
+        self.assertIn("upc", api_out[0].keys(),
+                      'A Product should contain a "upc" code.')

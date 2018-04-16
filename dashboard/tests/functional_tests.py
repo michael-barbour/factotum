@@ -208,19 +208,7 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
 
 
 
-class TestProductCuration(StaticLiveServerTestCase):
 
-    fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
-            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
-            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '08_extractedtext.yaml',
-            '09_productdocument.yaml']
-
-    def setUp(self):
-        self.browser = webdriver.Chrome()
-        log_karyn_in(self)
-
-    def tearDown(self):
-        self.browser.quit()
 
     def test_unlinked_documents(self):
         self.browser.get(self.live_server_url + '/product_curation/')

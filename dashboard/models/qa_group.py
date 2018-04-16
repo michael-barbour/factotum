@@ -18,4 +18,5 @@ class QAGroup(models.Model):
 		return str(self.extraction_script) + '_' + str(self.pk)
 
 	def get_approved_doc_count(self):
-		return ExtractedText.objects.filter(qa_group=self).count()
+		return ExtractedText.objects.filter(qa_group=self,
+											qa_checked=True).count()

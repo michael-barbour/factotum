@@ -105,9 +105,9 @@ def extraction_script_detail(request, pk,
 
 @login_required()
 def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html'):
-    
+
     extext = ExtractedText.objects.get(pk=pk)
-    datadoc = DataDocument.objects.get(pk=pk) 
+    datadoc = DataDocument.objects.get(pk=pk)
     exscript = extext.extraction_script
     chems = ExtractedChemical.objects.filter(extracted_text=extext)
     # get the next unapproved Extracted Text object
@@ -119,10 +119,8 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html'):
     if extextnext == extext:
         nextid = 0
     # derive the number of approved records and remaining unapproved ones in the QA Group
-    stats = '%s%s%s%s' % (extext.qa_group.get_approved_doc_count(), ' document(s) approved, ', \
-        ExtractedText.objects.filter(qa_group = extext.qa_group).count() - extext.qa_group.get_approved_doc_count() \
-            , ' documents remaining')
+    a = extext.qa_group.get_approved_doc_count()
+    r = ExtractedText.objects.filter(qa_group=extext.qa_group).count() - a
+    stats = '%s document(s) approved, %s documents remaining' % (a, r)
     return render(request, template_name, {'extracted': extext, \
         'doc': datadoc, 'script': exscript, 'chems':chems, 'stats':stats, 'nextid':nextid})
-
-

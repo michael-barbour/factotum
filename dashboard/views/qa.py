@@ -3,7 +3,7 @@ import django_filters
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
-from dashboard.models import Script
+from dashboard.models import Script, ExtractedText, DataDocument, QAGroup
 
 # we are not currently using this class
 class ExtractionScriptFilter(django_filters.FilterSet):
@@ -18,3 +18,6 @@ def qa_index(request, template_name='qa/qa_index.html'):
 
     scripts = Script.objects.filter(script_type='EX')
     return render(request, template_name, {'extraction_scripts': scripts})
+
+
+

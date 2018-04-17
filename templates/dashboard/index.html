@@ -94,7 +94,7 @@
             {
                 key: "Products Linked to PUC",
                 values: [
-                    {% for item in product_with_puc_count_by_month.all %}
+                    {% for item in product_with_puc_count_by_month %}
                     {
                         "label" : '{{ item.puc_assigned_month | date:"M Y" }}' ,
                         "value" : {{ item.product_count }}
@@ -109,7 +109,7 @@
             {
                 key: "Documents Uploaded",
                 values: [
-                    {% for item in datadocument_count_by_month.all %}
+                    {% for item in datadocument_count_by_month %}
                         {
                             "label" : '{{ item.upload_month | date:"M Y" }}' ,
                             "value" : {{ item.document_count }}

@@ -23,7 +23,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from dashboard.models import (DataGroup, DataSource, DataDocument,
-                              Script, ExtractedText, Product, ProductCategory, ProductDocument)
+                              Script, ExtractedText, Product, ProductCategory, ProductDocument, QAGroup)
 
 from haystack import connections
 from haystack.query import SearchQuerySet
@@ -49,7 +49,7 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
 
     fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
             '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
-            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', 
+            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml',
             '08_extractedtext.yaml','09_productdocument.yaml']
 
     def setUp(self):
@@ -407,36 +407,26 @@ class TestQAScoreboard(StaticLiveServerTestCase):
 
         displayed_pct_checked = self.browser.find_elements_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr/td[3]')[0].text
-        # this assumes that pk=1 will be a script_type of 'EX'
-        model_pct_checked = Script.objects.get(pk=6).get_pct_checked()
+        es = Script.objects.get(pk=5)
+        model_pct_checked = es.get_pct_checked()
         self.assertEqual(displayed_pct_checked, model_pct_checked,
                          ('The displayed percentage should match what is '
                           'derived from the model'))
 
-        es = Script.objects.get(pk=6)
+
         self.assertEqual(es.get_qa_complete_extractedtext_count(), 0,
                          ('The ExtractionScript object should return 0'
                           'qa_checked ExtractedText objects'))
         self.assertEqual(model_pct_checked, '0%')
-        # Set qa_checked property to True for one of the ExtractedText objects
-        self.assertEqual(ExtractedText.objects.get(pk=121627).qa_checked, False)
-        et_change = ExtractedText.objects.get(pk=121627)
-        et_change.qa_checked = True
-        et_change.save()
-        self.assertEqual(ExtractedText.objects.get(pk=121627).qa_checked, True,
-                         'The object should now have qa_checked = True')
 
         es = Script.objects.get(pk=6)
         self.assertEqual(es.get_qa_complete_extractedtext_count(), 1,
                          ('The ExtractionScript object should return 1 '
                           'qa_checked ExtractedText object'))
-
-        self.assertEqual(1, es.get_qa_complete_extractedtext_count(),
-                         'Check the numerator in the model layer')
-        self.assertEqual(2, es.get_datadocument_count(),
+        self.assertEqual(13, es.get_datadocument_count(),
                          'Check the denominator in the model layer')
         model_pct_checked = Script.objects.get(pk=6).get_pct_checked()
-        self.assertEqual(model_pct_checked, '50%',
+        self.assertEqual(model_pct_checked, '8%',
                          ('The get_pct_checked() method should return 50 pct'
                           ' from the model layer'))
         self.browser.refresh()
@@ -447,19 +437,27 @@ class TestQAScoreboard(StaticLiveServerTestCase):
         self.assertEqual(displayed_pct_checked, model_pct_checked,
                          ('The displayed percentage in the browser layer should '
                           'reflect the newly checked extracted text object'))
-        # A button for each row that will take you to the script's QA page
-        # https://github.com/HumanExposure/factotum/issues/36
+        # Create a new QAGroup and check that the only ext_texts displayed are
+        # the one's assigned to the group
         script_qa_link = self.browser.find_element_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr[contains(.,"Sun INDS (extract)")]/td[4]/a'
         )
+        script_pk = int(script_qa_link.get_attribute('href').split('/')[-1])
+        script = Script.objects.get(pk=script_pk)
         # Before clicking the link, the script's qa_done property
         # should be false
         self.assertEqual(Script.objects.get(pk=6).qa_begun, False,
                          'The qa_done property of the Script should be False')
 
         script_qa_link.click()
+        # this QAGroup will not exist before click
+        group = QAGroup.objects.get(extraction_script_id=script_pk)
+        texts = ExtractedText.objects.filter(qa_group=group,qa_checked=False)
+        row_count = len(self.browser.find_elements_by_xpath(
+            "//table[@id='extracted_text_table']/tbody/tr"))
+        self.assertEqual(row_count, len(texts),
+                         'The extractionscript view should only ExtractedTexts that are in the QAGroup and qa_checked is False')
         # The link should open a page where the h1 text matches the title
-
         # of the Script
         h1 = self.browser.find_element_by_xpath('/html/body/div/h1').text
         self.assertIn(Script.objects.get(pk=6).title, h1,
@@ -474,17 +472,18 @@ class TestQAScoreboard(StaticLiveServerTestCase):
         script_qa_link = self.browser.find_element_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr[contains(.,"Sun INDS (extract)")]/td[4]/a'
         )    
+
         self.assertEqual(script_qa_link.text, 'Continue QA',
                          'The QA button should now say "Continue QA" instead of "Begin QA"')
-        
+
         ### Testing the QA Group and Extracted Text-level views
         #
         # go to the QA Group page
         # find the row that contains the Sun INDS link, click the fourth td
         script_qa_link = self.browser.find_element_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr[contains(.,"Sun INDS (extract)")]/td[4]/a'
-        ) 
-        dd_test = DataDocument.objects.filter(title__startswith="Alba Hawaiian Coconut Milk Body Cream")[0] 
+        )
+        dd_test = DataDocument.objects.filter(title__startswith="Alba Hawaiian Coconut Milk Body Cream")[0]
         pk_test = dd_test.id
         script_qa_link.click()
         # confirm that the QA Group index page has opened
@@ -506,13 +505,13 @@ class TestQAScoreboard(StaticLiveServerTestCase):
         # TODO: add seed records that allow testing the Skip button
         btn_skip = self.browser.find_element_by_xpath('/html/body/div[1]/div[2]/div/button')
 
-        # clicking the exit button should return the browser to the 
+        # clicking the exit button should return the browser to the
         # QA Group page
         btn_exit = self.browser.find_element_by_xpath('/html/body/div[1]/div[2]/div/a[3]')
         btn_exit.click()
         self.assertIn("/qa/extractionscript" , self.browser.current_url, \
                 "The opened page should include the qa/extractionscript route")
-        
+
 
 
 
@@ -534,7 +533,7 @@ class TestFacetedSearch(StaticLiveServerTestCase):
     # Issue 104 https://github.com/HumanExposure/factotum/issues/104
     #
     fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
-            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml', 
+            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
             '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '09_productdocument.yaml']
 
     def setUp(self):

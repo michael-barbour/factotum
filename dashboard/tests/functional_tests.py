@@ -471,7 +471,7 @@ class TestQAScoreboard(StaticLiveServerTestCase):
         self.browser.get('%s%s' % (self.live_server_url, '/qa'))
         script_qa_link = self.browser.find_element_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr[contains(.,"Sun INDS (extract)")]/td[4]/a'
-        )    
+        )
 
         self.assertEqual(script_qa_link.text, 'Continue QA',
                          'The QA button should now say "Continue QA" instead of "Begin QA"')
@@ -483,14 +483,17 @@ class TestQAScoreboard(StaticLiveServerTestCase):
         script_qa_link = self.browser.find_element_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr[contains(.,"Sun INDS (extract)")]/td[4]/a'
         )
-        dd_test = DataDocument.objects.filter(title__startswith="Alba Hawaiian Coconut Milk Body Cream")[0]
-        pk_test = dd_test.id
         script_qa_link.click()
         # confirm that the QA Group index page has opened
         self.assertIn("/qa/extractionscript" , self.browser.current_url, \
             "The opened page should include the qa/extractionscript route")
+        dd_name = self.browser.find_element_by_xpath('//*[@id="extracted_text_table"]/tbody/tr/td[3]').text
+        #print(dd_name)
+        dd_test = DataDocument.objects.filter(title__startswith=dd_name)[0]
+        pk_test = dd_test.id
         ext_qa_link = self.browser.find_element_by_xpath('//*[@id="extracted_text_table"]/tbody/tr/td[6]/a')
         ext_qa_link.click()
+
         self.assertIn(str(pk_test) , self.browser.current_url, \
             "The opened page should include the pk of the data document")
         # confirm that the pdf was also opened
@@ -503,11 +506,13 @@ class TestQAScoreboard(StaticLiveServerTestCase):
         self.browser.switch_to_window(window_before)
 
         # TODO: add seed records that allow testing the Skip button
-        btn_skip = self.browser.find_element_by_xpath('/html/body/div[1]/div[2]/div/button')
+        # time.sleep(120)
+        # btn_skip = self.browser.find_element_by_xpath('/html/body/div[1]/div[2]/div/a[3]')
+        # print(btn_skip.text)
 
         # clicking the exit button should return the browser to the
         # QA Group page
-        btn_exit = self.browser.find_element_by_xpath('/html/body/div[1]/div[2]/div/a[3]')
+        btn_exit = self.browser.find_element_by_xpath('/html/body/div[1]/div[2]/div/a[4]')
         btn_exit.click()
         self.assertIn("/qa/extractionscript" , self.browser.current_url, \
                 "The opened page should include the qa/extractionscript route")

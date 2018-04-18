@@ -463,8 +463,7 @@ class TestQAScoreboard(StaticLiveServerTestCase):
         # this QAGroup will not exist before click
         group = QAGroup.objects.get(extraction_script_id=script_pk)
         texts = ExtractedText.objects.filter(qa_group=group,qa_checked=False)
-        # time.sleep(120)
-        # this is added
+        # this is added because DataTables displays 10 rows by default
         t_len = len(texts) if len(texts)<=10 else 10
         row_count = len(self.browser.find_elements_by_xpath(
             "//table[@id='extracted_text_table']/tbody/tr"))
@@ -658,8 +657,11 @@ class TestAPI(StaticLiveServerTestCase):
     def test_JSON(self):
         sid = 'DTXSID6026296'
         self.browser.get(self.live_server_url + '/api/' + sid)
-        pre = self.browser.find_element_by_tag_name("pre").text
-        api_out = json.loads(pre)
+        if 'chrome' in str(type(self.browser)):
+            pre = self.browser.find_element_by_tag_name("pre").text
+        if 'firefox' in str(type(self.browser)):
+            pre = self.browser.find_element_by_xpath('//div/pre').text
+        api_out = json.loads(pre) # this would error if not JSON too!
         # print(api_out)
         self.assertEqual(type(api_out[0]),type(dict()),
                          ("This should be JSON"))

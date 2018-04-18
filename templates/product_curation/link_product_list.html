@@ -4,7 +4,14 @@
 {% block content %}
 
 
-<h1 class="col-sm-12"><span class="oi oi-wrench" title="factotum" aria-hidden="true"></span> Documents w/o Products</h1>
+<h1 class="col-sm-12"><span class="oi oi-wrench" title="factotum" aria-hidden="true"></span> 
+    Documents in 
+    <a  title="datagroup detail"
+           href="{% url "data_group_detail" datagroup.id %}">
+           {{ datagroup.name }} 
+          </a>
+    
+    w/o Products</h1>
 <br>
 <table class="table table-striped table-bordered dataTable no-footer" id="products">
   <thead class="table-primary">
@@ -40,7 +47,39 @@
   {% endfor %}
   </tbody>
 </table>
+
+<nav aria-label="Paginated navigation">
+    <ul class="pagination">
+        {% if documents.has_previous %}
+    <li class="page-item">
+            <a class="page-link" href="?page=1">&laquo; first</a>
+    </li>
+    <li class="page-item">
+            <a class="page-link" href="?page={{ documents.previous_page_number }}" >previous</a>
+    </li>
+        {% endif %}
+    <li class="page-item">
+        <span class="current page-item page-link" >
+            Page {{ documents.number }} of {{ documents.paginator.num_pages }}
+        </span>
+    </li>
+
+        {% if documents.has_next %}
+        <li class="page-item">
+            <a href="?page={{ documents.next_page_number }}" class="page-link">next</a>
+        </li>
+        <li class="page-item">
+            <a href="?page={{ documents.paginator.num_pages }}" class="page-link">last &raquo;</a>
+        </li>
+        {% endif %}
+    </li>
+</ul>
+</nav>
+
 {% endblock %}
+
+
+
 {% block js %}
   <script type="text/javascript">
     $(document).ready(function () {
@@ -52,10 +91,11 @@
               "orderable": false
           },
       ],
-      dom:"<'row'<'col-md-4 form-inline'l><'col-md-4 form-inline'f>>" +
-          "<'row'<'col-sm-12 text-center'tr>>" +
-          "<'row'<'col-sm-5'i><'col-sm-7'p>>", // order the control divs
-      });
+      "serverSide": false,
+      "paging": false,
+      "searching": false,
+      "ordering": true,
+      "dom": 't',
     });
   </script>
 {% endblock %}

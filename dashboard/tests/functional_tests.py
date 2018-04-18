@@ -23,7 +23,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from dashboard.models import (DataGroup, DataSource, DataDocument,
-                              Script, ExtractedText, Product, ProductCategory, ProductDocument)
+                              Script, ExtractedText, Product, ProductCategory, ProductDocument, QAGroup)
 
 from haystack import connections
 from haystack.query import SearchQuerySet
@@ -208,19 +208,7 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
 
 
 
-class TestProductCuration(StaticLiveServerTestCase):
 
-    fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
-            '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
-            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '08_extractedtext.yaml',
-            '09_productdocument.yaml']
-
-    def setUp(self):
-        self.browser = webdriver.Chrome()
-        log_karyn_in(self)
-
-    def tearDown(self):
-        self.browser.quit()
 
     def test_unlinked_documents(self):
         self.browser.get(self.live_server_url + '/product_curation/')
@@ -233,8 +221,8 @@ class TestProductCuration(StaticLiveServerTestCase):
                          str(ds.pk))
 
     def test_link_product(self):
-        dspk = DataSource.objects.filter(title='Georgia Pacific')[0].pk
-        self.browser.get(self.live_server_url + '/link_product_list/' + str(dspk))
+        dgpk = DataGroup.objects.filter(name='Walmart MSDS 2')[0].pk
+        self.browser.get(self.live_server_url + '/link_product_list/' + str(dgpk))
         create_prod_link = self.browser.find_element_by_xpath('//*[@id="products"]/tbody/tr[1]/td[2]/a')
         create_prod_link.click()
 
@@ -459,19 +447,30 @@ class TestQAScoreboard(StaticLiveServerTestCase):
         self.assertEqual(displayed_pct_checked, model_pct_checked,
                          ('The displayed percentage in the browser layer should '
                           'reflect the newly checked extracted text object'))
-        # A button for each row that will take you to the script's QA page
-        # https://github.com/HumanExposure/factotum/issues/36
+        # Create a new QAGroup and check that the only ext_texts displayed are
+        # the one's assigned to the group
         script_qa_link = self.browser.find_element_by_xpath(
-            '//*[@id="extraction_script_table"]/tbody/tr[2]/td[4]/a'
+            '//*[@id="extraction_script_table"]/tbody/tr[contains(.,"Sun INDS (extract)")]/td[4]/a'
         )
+        script_pk = int(script_qa_link.get_attribute('href').split('/')[-1])
+        script = Script.objects.get(pk=script_pk)
         # Before clicking the link, the script's qa_done property
         # should be false
         self.assertEqual(Script.objects.get(pk=6).qa_begun, False,
                          'The qa_done property of the Script should be False')
 
         script_qa_link.click()
+        # this QAGroup will not exist before click
+        group = QAGroup.objects.get(extraction_script_id=script_pk)
+        texts = ExtractedText.objects.filter(qa_group=group,qa_checked=False)
+        # time.sleep(120)
+        # this is added
+        t_len = len(texts) if len(texts)<=10 else 10
+        row_count = len(self.browser.find_elements_by_xpath(
+            "//table[@id='extracted_text_table']/tbody/tr"))
+        self.assertEqual(row_count, t_len,
+                         'The extractionscript view should only ExtractedTexts that are in the QAGroup and qa_checked is False')
         # The link should open a page where the h1 text matches the title
-
         # of the Script
         h1 = self.browser.find_element_by_xpath('/html/body/div/h1').text
         self.assertIn(Script.objects.get(pk=6).title, h1,
@@ -484,10 +483,56 @@ class TestQAScoreboard(StaticLiveServerTestCase):
         # Go back to the QA index page to confirm
         self.browser.get('%s%s' % (self.live_server_url, '/qa'))
         script_qa_link = self.browser.find_element_by_xpath(
-            '//*[@id="extraction_script_table"]/tbody/tr[2]/td[4]/a'
+            '//*[@id="extraction_script_table"]/tbody/tr[contains(.,"Sun INDS (extract)")]/td[4]/a'
         )
+
         self.assertEqual(script_qa_link.text, 'Continue QA',
                          'The QA button should now say "Continue QA" instead of "Begin QA"')
+
+        ### Testing the QA Group and Extracted Text-level views
+        #
+        # go to the QA Group page
+        # find the row that contains the Sun INDS link, click the fourth td
+        script_qa_link = self.browser.find_element_by_xpath(
+            '//*[@id="extraction_script_table"]/tbody/tr[contains(.,"Sun INDS (extract)")]/td[4]/a'
+        )
+        script_qa_link.click()
+        # confirm that the QA Group index page has opened
+        self.assertIn("/qa/extractionscript" , self.browser.current_url, \
+            "The opened page should include the qa/extractionscript route")
+        dd_name = self.browser.find_element_by_xpath('//*[@id="extracted_text_table"]/tbody/tr/td[3]').text
+        #print(dd_name)
+        dd_test = DataDocument.objects.filter(title__startswith=dd_name)[0]
+        pk_test = dd_test.id
+        ext_qa_link = self.browser.find_element_by_xpath('//*[@id="extracted_text_table"]/tbody/tr/td[6]/a')
+        ext_qa_link.click()
+
+        self.assertIn(str(pk_test) , self.browser.current_url, \
+            "The opened page should include the pk of the data document")
+        # confirm that the pdf was also opened
+        window_before = self.browser.window_handles[0]
+        window_after = self.browser.window_handles[1]
+        self.browser.switch_to_window(window_after)
+        self.assertIn(dd_test.filename, self.browser.current_url, \
+            "The opened page should include the pdf file name")
+        self.browser.close()
+        self.browser.switch_to_window(window_before)
+
+        # TODO: add seed records that allow testing the Skip button
+        # time.sleep(120)
+        # btn_skip = self.browser.find_element_by_xpath('/html/body/div[1]/div[2]/div/a[3]')
+        # print(btn_skip.text)
+
+        # clicking the exit button should return the browser to the
+        # QA Group page
+        btn_exit = self.browser.find_element_by_xpath('/html/body/div[1]/div[2]/div/a[4]')
+        btn_exit.click()
+        self.assertIn("/qa/extractionscript" , self.browser.current_url, \
+                "The opened page should include the qa/extractionscript route")
+
+
+
+
 
 
 def clean_label(self, label):

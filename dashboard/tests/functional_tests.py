@@ -488,7 +488,7 @@ class TestQAScoreboard(StaticLiveServerTestCase):
         self.assertIn("/qa/extractionscript" , self.browser.current_url, \
             "The opened page should include the qa/extractionscript route")
         dd_name = self.browser.find_element_by_xpath('//*[@id="extracted_text_table"]/tbody/tr/td[3]').text
-        print(dd_name)
+        #print(dd_name)
         dd_test = DataDocument.objects.filter(title__startswith=dd_name)[0]
         pk_test = dd_test.id
         ext_qa_link = self.browser.find_element_by_xpath('//*[@id="extracted_text_table"]/tbody/tr/td[6]/a')

@@ -648,7 +648,7 @@ class TestAPI(StaticLiveServerTestCase):
             '10_extractedchemical.yaml', '11_dsstoxsubstance.yaml' ]
 
     def setUp(self):
-        self.browser = webdriver.Chrome()
+        self.browser = webdriver.Firefox()
         log_karyn_in(self)
 
     def tearDown(self):
@@ -660,7 +660,8 @@ class TestAPI(StaticLiveServerTestCase):
         if 'chrome' in str(type(self.browser)):
             pre = self.browser.find_element_by_tag_name("pre").text
         if 'firefox' in str(type(self.browser)):
-            data_tab = browser.find_element_by_id('tab-1')
+            time.sleep(10)
+            data_tab = self.browser.find_element_by_id('tab-1')
             data_tab.click()
             pre = self.browser.find_element_by_xpath('//div/pre').text
         api_out = json.loads(pre) # this would error if not JSON too!

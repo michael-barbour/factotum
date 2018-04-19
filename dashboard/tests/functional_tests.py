@@ -406,27 +406,37 @@ class TestQAScoreboard(StaticLiveServerTestCase):
                           ' the extraction script'))
 
         displayed_pct_checked = self.browser.find_elements_by_xpath(
-            '//*[@id="extraction_script_table"]/tbody/tr/td[3]')[0].text
-        es = Script.objects.get(pk=5)
-        model_pct_checked = es.get_pct_checked()
+            '//*[@id="extraction_script_table"]/tbody/tr[2]/td[3]')[0].text
+        model_pct_checked = Script.objects.get(pk=6).get_pct_checked()
         self.assertEqual(displayed_pct_checked, model_pct_checked,
                          ('The displayed percentage should match what is '
                           'derived from the model'))
 
-
-        self.assertEqual(es.get_qa_complete_extractedtext_count(), 0,
-                         ('The ExtractionScript object should return 0'
-                          'qa_checked ExtractedText objects'))
-        self.assertEqual(model_pct_checked, '0%')
-
         es = Script.objects.get(pk=6)
         self.assertEqual(es.get_qa_complete_extractedtext_count(), 1,
-                         ('The ExtractionScript object should return 1 '
-                          'qa_checked ExtractedText object'))
+                         ('The ExtractionScript object should return 1'
+                          'qa_checked ExtractedText objects'))
+        self.assertEqual(model_pct_checked, '8%')
+        # Set qa_checked property to True for one of the ExtractedText objects
+        # what are we testing in the 5 lines below?  rick
+        self.assertEqual(ExtractedText.objects.get(pk=121647).qa_checked, False)
+        et_change = ExtractedText.objects.get(pk=121647)
+        et_change.qa_checked = True
+        et_change.save()
+        self.assertEqual(ExtractedText.objects.get(pk=121647).qa_checked, True,
+                         'The object should now have qa_checked = True')
+
+        es = Script.objects.get(pk=6)
+        self.assertEqual(es.get_qa_complete_extractedtext_count(), 2,
+                         ('The ExtractionScript object should return 2 '
+                          'qa_checked ExtractedText objects'))
+
+        self.assertEqual(2, es.get_qa_complete_extractedtext_count(),
+                         'Check the numerator in the model layer')
         self.assertEqual(13, es.get_datadocument_count(),
                          'Check the denominator in the model layer')
         model_pct_checked = Script.objects.get(pk=6).get_pct_checked()
-        self.assertEqual(model_pct_checked, '8%',
+        self.assertEqual(model_pct_checked, '15%',
                          ('The get_pct_checked() method should return 50 pct'
                           ' from the model layer'))
         self.browser.refresh()
@@ -453,9 +463,11 @@ class TestQAScoreboard(StaticLiveServerTestCase):
         # this QAGroup will not exist before click
         group = QAGroup.objects.get(extraction_script_id=script_pk)
         texts = ExtractedText.objects.filter(qa_group=group,qa_checked=False)
+        # this is added because DataTables displays 10 rows by default
+        t_len = len(texts) if len(texts)<=10 else 10
         row_count = len(self.browser.find_elements_by_xpath(
             "//table[@id='extracted_text_table']/tbody/tr"))
-        self.assertEqual(row_count, len(texts),
+        self.assertEqual(row_count, t_len,
                          'The extractionscript view should only ExtractedTexts that are in the QAGroup and qa_checked is False')
         # The link should open a page where the h1 text matches the title
         # of the Script
@@ -626,3 +638,35 @@ class TestExtractedText(StaticLiveServerTestCase):
         self.assertEqual(submit_button.is_enabled(),True,
                          ("This button should be enabled now that there "
                          "is a file selected in the file input."))
+
+class TestAPI(StaticLiveServerTestCase):
+
+    fixtures = ['00_superuser.yaml', '01_sourcetype.yaml',
+            '02_datasource.yaml', '03_datagroup.yaml','04_productcategory.yaml',
+            '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml',
+            '08_extractedtext.yaml','09_productdocument.yaml',
+            '10_extractedchemical.yaml', '11_dsstoxsubstance.yaml' ]
+
+    def setUp(self):
+        self.browser = webdriver.Firefox()
+        log_karyn_in(self)
+
+    def tearDown(self):
+        self.browser.quit()
+
+    def test_JSON(self):
+        sid = 'DTXSID6026296'
+        self.browser.get(self.live_server_url + '/api/' + sid)
+        if 'chrome' in str(type(self.browser)):
+            pre = self.browser.find_element_by_tag_name("pre").text
+        if 'firefox' in str(type(self.browser)):
+            time.sleep(10)
+            data_tab = self.browser.find_element_by_id('tab-1')
+            data_tab.click()
+            pre = self.browser.find_element_by_xpath('//div/pre').text
+        api_out = json.loads(pre) # this would error if not JSON too!
+        # print(api_out)
+        self.assertEqual(type(api_out[0]),type(dict()),
+                         ("This should be JSON"))
+        self.assertIn("upc", api_out[0].keys(),
+                      'A Product should contain a "upc" code.')

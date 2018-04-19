@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'dashboard.apps.DashboardConfig',
+    'api.apps.ApiConfig',
     'widget_tweaks',
     'django.contrib.humanize',
     'factotum',

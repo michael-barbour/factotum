@@ -14,7 +14,9 @@ class DataDocument(models.Model):
 	matched = models.BooleanField(default=False)
 	extracted = models.BooleanField(default=False)
 	uploaded_at = models.DateTimeField(default=timezone.now)
-	
+
+	class Meta:
+		ordering = ['-id']
 
 	def __str__(self):
 		return str(self.title)

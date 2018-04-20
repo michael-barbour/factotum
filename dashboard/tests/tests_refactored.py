@@ -56,14 +56,13 @@ def connections_support_transactions():
     return True
 
 class RollbackStaticLiveServerTestCase(StaticLiveServerTestCase):
-    # Everything below was first pasted in from the TestCase class to override
+    # Everything below is intended to override
     # the StaticLiveServerTestCase methods that inherit from TransactionTestCase
     # The idea is extend StaticLiveServerTestCase the same way TestCase extends
     # TransactionTestCase
     @classmethod
     def _enter_atomics(cls):
         """Open atomic blocks for multiple databases."""
-        print('--atomic blocks opened--')
         atomics = {}
         for db_name in cls._databases_names():
             atomics[db_name] = transaction.atomic(using=db_name)
@@ -76,15 +75,14 @@ class RollbackStaticLiveServerTestCase(StaticLiveServerTestCase):
         for db_name in reversed(cls._databases_names()):
             transaction.set_rollback(True, using=db_name)
             atomics[db_name].__exit__(None, None, None)
-        print('--atomic blocks closed--')
-
 
     @classmethod
     def setUpClass(cls):
-        #super().setUpClass()
-        if not connections_support_transactions():
-            return
+        print('about to run super().setUpClass() from custom class')
+        super().setUpClass()
+        print('about to open transaction for loading fixtures')
         cls.cls_atomics = cls._enter_atomics()
+
         if cls.fixtures:
             for db_name in cls._databases_names(include_mirrors=False):
                 try:
@@ -106,14 +104,9 @@ class RollbackStaticLiveServerTestCase(StaticLiveServerTestCase):
         # in the case of a local in-memory sqlite database
         connections_override = {}
         for conn in connections.all():
-            # If using in-memory sqlite databases, pass the connections to
-            # the server thread.
-            # CHANGED:                                           <|       ADDED THIS     |>
-            if conn.vendor == 'sqlite' and conn.is_in_memory_db() or conn.vendor == 'mysql':
                 # Explicitly enable thread-shareability for this connection
-                conn.allow_thread_sharing = True
-                connections_override[conn.alias] = conn
-
+            conn.allow_thread_sharing = True
+            connections_override[conn.alias] = conn
         cls._live_server_modified_settings = modify_settings(
             ALLOWED_HOSTS={'append': cls.host},
         )
@@ -140,6 +133,7 @@ class RollbackStaticLiveServerTestCase(StaticLiveServerTestCase):
 
     @classmethod
     def setUpTestData(cls):
+        print('running setUpTestData()')
         """Load initial data for the TestCase."""
         pass
 
@@ -149,14 +143,9 @@ class RollbackStaticLiveServerTestCase(StaticLiveServerTestCase):
         return super()._should_reload_connections()
 
     def _fixture_setup(self):
-        if not connections_support_transactions():
-            # If the backend does not support transactions, we should reload
-            # class data before each test
-            self.setUpTestData()
-            return super()._fixture_setup()
-
         assert not self.reset_sequences, 'reset_sequences cannot be used on TestCase instances'
         self.atomics = self._enter_atomics()
+
 
     def _fixture_teardown(self):
         if not connections_support_transactions():
@@ -175,13 +164,11 @@ class RollbackStaticLiveServerTestCase(StaticLiveServerTestCase):
         )
 
 
-
 class FunctionalTests(RollbackStaticLiveServerTestCase):
     fixtures = ['00_superuser.yaml', '01_sourcetype.yaml',
-    '02_datasource.yaml']
-    #, '03_datagroup.yaml', '04_productcategory.yaml',
-    #'05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', 
-    #'08_extractedtext.yaml','09_productdocument.yaml']
+    '02_datasource.yaml'] #  , '03_datagroup.yaml', '04_productcategory.yaml',
+    # '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', 
+    # '08_extractedtext.yaml','09_productdocument.yaml']
 
     @classmethod
     def setUpTestData(cls):
@@ -206,16 +193,15 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         #print('  running test case tearDown()')
         self.test_elapsed = time.time() - self.test_start
         self.browser.quit()
-        print("  test case took {:.2f}s".format(self.test_elapsed))
+        print('Finished with ' + self._testMethodName)
+        print("\n  test case took {:.2f}s".format(self.test_elapsed))
 
     def test_data_source_name(self):
-        with transaction.atomic():
-        # This code executes inside a transaction.
-            dspk = DataSource.objects.filter(title='Walmart MSDS')[0].pk
-            self.browser.get(self.live_server_url + '/datasource/' + str(dspk))
-            h1 = self.browser.find_element_by_name('title')
-            self.assertIn('Walmart MSDS', h1.text,
-                        'The h1 text should include "Walmart MSDS"')
+        dspk = DataSource.objects.filter(title='Walmart MSDS')[0].pk
+        self.browser.get(self.live_server_url + '/datasource/' + str(dspk))
+        h1 = self.browser.find_element_by_name('title')
+        self.assertIn('Walmart MSDS', h1.text,
+                    'The h1 text should include "Walmart MSDS"')
 
     # When a new data source is entered, the data source is automatically
     # assigned the state 'awaiting triage.'

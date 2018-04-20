@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^logout/$', auth_views.logout, {'next_page': '/login'}, name='logout'),
     url(r'^admin/', admin.site.urls),
     url(r'', include('dashboard.urls')),
+    url(r'', include('api.urls')),
 ]
 
 if settings.DEBUG:
@@ -30,4 +31,3 @@ if settings.DEBUG:
     urlpatterns = [
                       url(r'^__debug__/', include(debug_toolbar.urls)),
                   ] + urlpatterns
-

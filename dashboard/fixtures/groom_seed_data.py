@@ -36,7 +36,7 @@ DataGroup.objects.filter(id__in=[19,23,24]).delete()
 ######## At the command prompt:
 
 """ 
-python manage.py dumpdata dashboard.sourcetype --format=yaml > ./dashboard/fixtures/01_sourcetype.yaml
+python manage.py dumpdata dashboard.sourcetype --format=yaml > ./dashboard/fixtures/01_lookups.yaml
 python manage.py dumpdata dashboard.datasource --format=yaml > ./dashboard/fixtures/02_datasource.yaml
 python manage.py dumpdata dashboard.datagroup --format=yaml > ./dashboard/fixtures/03_datagroup.yaml
 python manage.py dumpdata dashboard.productcategory --format=yaml > ./dashboard/fixtures/04_productcategory.yaml

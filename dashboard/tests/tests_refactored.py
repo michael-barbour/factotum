@@ -61,121 +61,73 @@ class RollbackStaticLiveServerTestCase(StaticLiveServerTestCase):
     # The idea is extend StaticLiveServerTestCase the same way TestCase extends
     # TransactionTestCase
     @classmethod
-    def _enter_atomics(cls):
-        """Open atomic blocks for multiple databases."""
-        atomics = {}
-        for db_name in cls._databases_names():
-            atomics[db_name] = transaction.atomic(using=db_name)
-            atomics[db_name].__enter__()
-        return atomics
-
-    @classmethod
-    def _rollback_atomics(cls, atomics):
-        """Rollback atomic blocks opened by the previous method."""
-        for db_name in reversed(cls._databases_names()):
-            transaction.set_rollback(True, using=db_name)
-            atomics[db_name].__exit__(None, None, None)
-
-    @classmethod
     def setUpClass(cls):
-        print('about to run super().setUpClass() from custom class')
+        print('running super().setUpClass() from within RollbackStaticLiveServerTestCase')
         super().setUpClass()
-        print('about to open transaction for loading fixtures')
-        cls.cls_atomics = cls._enter_atomics()
-
         if cls.fixtures:
+            print('loading fixtures')
             for db_name in cls._databases_names(include_mirrors=False):
                 try:
                     call_command('loaddata', *cls.fixtures, **{'verbosity': 0, 'database': db_name})
                 except Exception:
-                    cls._rollback_atomics(cls.cls_atomics)
                     raise
-        try:
-            cls.setUpTestData()
-        except Exception:
-            cls._rollback_atomics(cls.cls_atomics)
-            raise
-        
-        #
-        # From the TransactionTestCase class (with modifications):
-        #
-        # We are trying to force the database and server
-        # connections into sharing threads, as they would 
-        # in the case of a local in-memory sqlite database
-        connections_override = {}
-        for conn in connections.all():
-                # Explicitly enable thread-shareability for this connection
-            conn.allow_thread_sharing = True
-            connections_override[conn.alias] = conn
-        cls._live_server_modified_settings = modify_settings(
-            ALLOWED_HOSTS={'append': cls.host},
-        )
-        cls._live_server_modified_settings.enable()
-        cls.server_thread = cls._create_server_thread(connections_override)
-        cls.server_thread.daemon = True
-        cls.server_thread.start()
-
-        # Wait for the live server to be ready
-        cls.server_thread.is_ready.wait()
-        if cls.server_thread.error:
-            # Clean up behind ourselves, since tearDownClass won't get called in
-            # case of errors.
-            cls._tearDownClassInternal()
-            raise cls.server_thread.error
-
-    @classmethod
-    def tearDownClass(cls):
-        if connections_support_transactions():
-            cls._rollback_atomics(cls.cls_atomics)
-            for conn in connections.all():
-                conn.close()
-        super().tearDownClass()
-
-    @classmethod
-    def setUpTestData(cls):
-        print('running setUpTestData()')
-        """Load initial data for the TestCase."""
-        pass
-
-    def _should_reload_connections(self):
-        if connections_support_transactions():
-            return False
-        return super()._should_reload_connections()
 
     def _fixture_setup(self):
-        assert not self.reset_sequences, 'reset_sequences cannot be used on TestCase instances'
-        self.atomics = self._enter_atomics()
+        print('Running custom _fixture_setup()')
+        for db_name in self._databases_names(include_mirrors=False):
+            # Reset sequences
+            if self.reset_sequences:
+                self._reset_sequences(db_name)
 
+            # If we need to provide replica initial data from migrated apps,
+            # then do so.
+            if self.serialized_rollback and hasattr(connections[db_name], "_test_serialized_contents"):
+                if self.available_apps is not None:
+                    apps.unset_available_apps()
+                connections[db_name].creation.deserialize_db_from_string(
+                    connections[db_name]._test_serialized_contents
+                )
+                if self.available_apps is not None:
+                    apps.set_available_apps(self.available_apps)
+
+            #if self.fixtures:
+                # We have to use this slightly awkward syntax due to the fact
+                # that we're using *args and **kwargs together.
+                #call_command('loaddata', *self.fixtures,
+                #             **{'verbosity': 0, 'database': db_name})
 
     def _fixture_teardown(self):
-        if not connections_support_transactions():
-            return super()._fixture_teardown()
-        try:
-            for db_name in reversed(self._databases_names()):
-                if self._should_check_constraints(connections[db_name]):
-                    connections[db_name].check_constraints()
-        finally:
-            self._rollback_atomics(self.atomics)
+        print('Running custom _fixture_teardown')
+        # Allow TRUNCATE ... CASCADE and don't emit the post_migrate signal
+        # when flushing only a subset of the apps
+        for db_name in self._databases_names(include_mirrors=False):
+            # Flush the database
+            inhibit_post_migrate = (
+                self.available_apps is not None or
+                (   # Inhibit the post_migrate signal when using serialized
+                    # rollback to avoid trying to recreate the serialized data.
+                    self.serialized_rollback and
+                    hasattr(connections[db_name], '_test_serialized_contents')
+                )
+            )
+            #call_command('flush', verbosity=0, interactive=False,
+            #             database=db_name, reset_sequences=False,
+            #             allow_cascade=self.available_apps is not None,
+            #             inhibit_post_migrate=inhibit_post_migrate)
 
-    def _should_check_constraints(self, connection):
-        return (
-            connection.features.can_defer_constraint_checks and
-            not connection.needs_rollback and connection.is_usable()
-        )
+
 
 
 class FunctionalTests(RollbackStaticLiveServerTestCase):
     fixtures = ['00_superuser.yaml', '01_sourcetype.yaml',
-    '02_datasource.yaml'] #  , '03_datagroup.yaml', '04_productcategory.yaml',
-    # '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', 
-    # '08_extractedtext.yaml','09_productdocument.yaml']
+    '02_datasource.yaml' , '03_datagroup.yaml', '04_productcategory.yaml',
+    '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', 
+     '08_extractedtext.yaml','09_productdocument.yaml']
 
     @classmethod
-    def setUpTestData(cls):
-        # Set up data for the whole TestCase
-        # If fixtures are in place, the parent class will load fixtures first, 
-        # then run this. It's therefore a good place to update the search index
-        # First confirm that the model objects have been loaded
+    def setUpClass(cls):
+        super().setUpClass()
+        # see if fixtures have been loaded yet
         print("DataSource objects: {}".format(DataSource.objects.count()))
         index_start = time.time()
         update_index.Command().handle(using=['default'])
@@ -193,8 +145,8 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         #print('  running test case tearDown()')
         self.test_elapsed = time.time() - self.test_start
         self.browser.quit()
-        print('Finished with ' + self._testMethodName)
-        print("\n  test case took {:.2f}s".format(self.test_elapsed))
+        print('\nFinished with ' + self._testMethodName)
+        print("Test case took {:.2f}s".format(self.test_elapsed))
 
     def test_data_source_name(self):
         dspk = DataSource.objects.filter(title='Walmart MSDS')[0].pk

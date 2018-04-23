@@ -62,10 +62,9 @@ class RollbackStaticLiveServerTestCase(StaticLiveServerTestCase):
     # TransactionTestCase
     @classmethod
     def setUpClass(cls):
-        print('running super().setUpClass() from within RollbackStaticLiveServerTestCase')
         super().setUpClass()
         if cls.fixtures:
-            print('loading fixtures')
+            #print('loading fixtures')
             for db_name in cls._databases_names(include_mirrors=False):
                 try:
                     call_command('loaddata', *cls.fixtures, **{'verbosity': 0, 'database': db_name})
@@ -73,7 +72,6 @@ class RollbackStaticLiveServerTestCase(StaticLiveServerTestCase):
                     raise
 
     def _fixture_setup(self):
-        print('Running custom _fixture_setup()')
         for db_name in self._databases_names(include_mirrors=False):
             # Reset sequences
             if self.reset_sequences:
@@ -90,6 +88,7 @@ class RollbackStaticLiveServerTestCase(StaticLiveServerTestCase):
                 if self.available_apps is not None:
                     apps.set_available_apps(self.available_apps)
 
+            # don't reload the fixtures here as per the original coe in TransactionTestCase
             #if self.fixtures:
                 # We have to use this slightly awkward syntax due to the fact
                 # that we're using *args and **kwargs together.
@@ -97,7 +96,6 @@ class RollbackStaticLiveServerTestCase(StaticLiveServerTestCase):
                 #             **{'verbosity': 0, 'database': db_name})
 
     def _fixture_teardown(self):
-        print('Running custom _fixture_teardown')
         # Allow TRUNCATE ... CASCADE and don't emit the post_migrate signal
         # when flushing only a subset of the apps
         for db_name in self._databases_names(include_mirrors=False):
@@ -213,6 +211,11 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
                                         downloaded_at=timezone.now(),
                                         download_script=None,
                                         csv=SimpleUploadedFile('walmart_msds_3.csv', source_csv.read()))
+        
+
+    def test_edit_persistence(self):
+        print("DataGroup objects in test_edit_persistence: {}".format(DataGroup.objects.count()))
+
 
     def upload_pdfs(self):
         store = settings.MEDIA_URL + self.dg.dgurl()
@@ -256,6 +259,7 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         ds = DataSource.objects.filter(title='Walmart MSDS')[0]
         self.dg = self.create_data_group(data_source=ds)
         dg_count_after = DataGroup.objects.count()
+        print('DataGroup count after test_new_data_group: {}'.format(dg_count_after))
         self.assertEqual(dg_count_after, dg_count_before + 1,
                          "Confirm the DataGroup object has been created")
         new_dg_pk = self.dg.pk

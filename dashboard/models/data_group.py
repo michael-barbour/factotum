@@ -33,6 +33,9 @@ class DataGroup(models.Model):
 	def registered_docs(self):
 		return self.datadocument_set.count()
 
+	def extracted_docs(self):
+		return self.datadocument_set.filter(extracted=True).count()
+
 	def __str__(self):
 		return self.name
 

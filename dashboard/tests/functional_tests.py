@@ -47,7 +47,7 @@ def log_karyn_in(object):
 
 class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
 
-    fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
+    fixtures = [ '00_superuser.yaml', '01_lookups.yaml',
             '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
             '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml',
             '08_extractedtext.yaml','09_productdocument.yaml']
@@ -364,7 +364,7 @@ class TestQAScoreboard(StaticLiveServerTestCase):
     # A link in the nav bar to the QA Home page
     # A Table on the QA Home page
     # A button for each row in the table that will take you to #36 (Not Implemented Yet)
-    fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
+    fixtures = [ '00_superuser.yaml', '01_lookups.yaml',
             '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
             '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '08_extractedtext.yaml']
 
@@ -549,7 +549,7 @@ def wait_for_element(self, elm, by='id', timeout=10):
 class TestFacetedSearch(StaticLiveServerTestCase):
     # Issue 104 https://github.com/HumanExposure/factotum/issues/104
     #
-    fixtures = [ '00_superuser.yaml', '01_sourcetype.yaml',
+    fixtures = [ '00_superuser.yaml', '01_lookups.yaml',
             '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
             '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', '09_productdocument.yaml']
 
@@ -641,7 +641,7 @@ class TestExtractedText(StaticLiveServerTestCase):
 
 class TestAPI(StaticLiveServerTestCase):
 
-    fixtures = ['00_superuser.yaml', '01_sourcetype.yaml',
+    fixtures = ['00_superuser.yaml', '01_lookups.yaml',
             '02_datasource.yaml', '03_datagroup.yaml','04_productcategory.yaml',
             '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml',
             '08_extractedtext.yaml','09_productdocument.yaml',

@@ -195,7 +195,7 @@ def data_group_detail(request, pk,
     docs_page = paginator.page(page)
 
     inc_upload = all([d.matched for d in docs])
-    include_extract = any([d.matched
+    include_extract = all([d.matched
                             for d in docs]) and not all([d.extracted
                                                             for d in docs])
     return render(request, template_name,{

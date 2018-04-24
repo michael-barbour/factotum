@@ -75,7 +75,7 @@ def data_group_detail(request, pk,
                       template_name='data_group/datagroup_detail.html'):
     datagroup = get_object_or_404(DataGroup, pk=pk, )
     docs = DataDocument.objects.filter(data_group_id=pk)
-    npage = 20 # TODO: make this dynamic someday in its own ticket
+    npage = 50 # TODO: make this dynamic someday in its own ticket
     paginator = Paginator(docs, npage) # Show npage data documents per page
     page = request.GET.get('page')
     page = 1 if page is None else page

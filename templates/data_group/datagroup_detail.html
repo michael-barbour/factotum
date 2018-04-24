@@ -137,11 +137,10 @@
     </div>
       <table class="table table-striped table-bordered dataTable no-footer table-sm" id="docs">
         <thead class="table-primary">
-        <th>Title</th>
-        <th>URL</th>
-        <th>Product Category</th>
-        <th>Matched</th>
-        <th>Extracted</th>
+          <th>Title</th>
+
+          <th>Matched</th>
+          <th>Extracted</th>
         </thead>
         <tbody>
         {% for doc in documents %}
@@ -154,16 +153,11 @@
           {% else %}
             <td>{{ doc.title }}</td>
           {% endif %}
-            <td>
-                <a href="{{ doc.url }}" title="Link to {{ doc.title }}">
-                    {{ doc.url }}
-                </a>
-            </td>
-            <td>{{ doc.product_category }}</td>
+
             <td align="center">
           {% if doc.matched %}
             <span class="oi oi-circle-check" style="color:green;"></span>
-            <p hidden>1</p>  <!-- for sorting DataTable -->
+
           {% else %}
             <span class="oi oi-circle-x" style="color:red;"></span>
           {% endif %}
@@ -171,7 +165,7 @@
             <td align="center">
           {% if doc.extracted %}
             <span class="oi oi-circle-check" style="color:green;"></span>
-            <p hidden>1</p>  <!-- for sorting DataTable -->
+
           {% else %}
             <span class="oi oi-circle-x" style="color:red;"></span>
           {% endif %}

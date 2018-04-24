@@ -51,17 +51,20 @@ def log_karyn_in(object):
     object.browser.find_element_by_class_name('btn').click()
 
 def connections_support_transactions():
-    """Return True if all connections support transactions."""
+    """Force these tests to assume that we're using a transaction-capable database backend."""
     #return all(conn.features.supports_transactions for conn in connections.all())
     return True
 
 class RollbackStaticLiveServerTestCase(StaticLiveServerTestCase):
-    # Everything below is intended to override
-    # the StaticLiveServerTestCase methods that inherit from TransactionTestCase
-    # The idea is extend StaticLiveServerTestCase the same way TestCase extends
-    # TransactionTestCase
+    """Because StaticLiveServerTestCase extends TransactionTestCase, it lacks \
+    the efficient rollback approach of TestCase. TransactionTestCase loads the \
+    fixtures with every test method and destroys the test database after each one.\
+    The following methods override this slow behavior in favor of TestCase's \
+    rollback approach. 
+    """
     @classmethod
     def setUpClass(cls):
+        """Load the fixtures at the beginning of the class"""
         super().setUpClass()
         if cls.fixtures:
             #print('loading fixtures')
@@ -88,14 +91,8 @@ class RollbackStaticLiveServerTestCase(StaticLiveServerTestCase):
                 if self.available_apps is not None:
                     apps.set_available_apps(self.available_apps)
 
-            # don't reload the fixtures here as per the original coe in TransactionTestCase
-            #if self.fixtures:
-                # We have to use this slightly awkward syntax due to the fact
-                # that we're using *args and **kwargs together.
-                #call_command('loaddata', *self.fixtures,
-                #             **{'verbosity': 0, 'database': db_name})
-
     def _fixture_teardown(self):
+        """TransactionTestCase would flush the database here - this override avoids it"""
         # Allow TRUNCATE ... CASCADE and don't emit the post_migrate signal
         # when flushing only a subset of the apps
         for db_name in self._databases_names(include_mirrors=False):
@@ -108,10 +105,7 @@ class RollbackStaticLiveServerTestCase(StaticLiveServerTestCase):
                     hasattr(connections[db_name], '_test_serialized_contents')
                 )
             )
-            #call_command('flush', verbosity=0, interactive=False,
-            #             database=db_name, reset_sequences=False,
-            #             allow_cascade=self.available_apps is not None,
-            #             inhibit_post_migrate=inhibit_post_migrate)
+
 
 
 
@@ -213,8 +207,8 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
                                         csv=SimpleUploadedFile('walmart_msds_3.csv', source_csv.read()))
         
 
-    def test_edit_persistence(self):
-        print("DataGroup objects in test_edit_persistence: {}".format(DataGroup.objects.count()))
+    #def test_edit_persistence(self):
+    #    print("DataGroup objects in test_edit_persistence: {}".format(DataGroup.objects.count()))
 
 
     def upload_pdfs(self):
@@ -353,8 +347,8 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
             '//*[@id="products"]/tbody/tr[3]/td[4]')[0]
         products_missing_PUC = str(
             len(ds.source.filter(prod_cat__isnull=True)))
-        self.assertEqual(puc_link.text, products_missing_PUC, ('The Assign PUC '
-                                                               'link should display # of Products without a PUC'))
+        self.assertEqual(puc_link.text, products_missing_PUC, ('The Assign PUC \
+                                    link should display # of Products without a PUC'))
 
     def test_puc(self):
 
@@ -388,6 +382,7 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         puc_sibling = self.browser.find_element_by_xpath(
             '//*[@id="id_prod_cat"]/following::*')
         puc_sibling.click()
+        print('clicked on product sibling link')
 
         #wait_for_element(self, "select2-search__field", "class").click()
         puc_input = self.browser.find_element_by_class_name(
@@ -609,7 +604,7 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         p1.prod_cat = pc252
         p1.save()
         # update the search engine index
-        update_index.Command().handle(using=['default'], age=1)
+        update_index.Command().handle(using=['default'])
 
         # Check for the elasticsearch engine
         self.browser.get('http://127.0.0.1:9200/')

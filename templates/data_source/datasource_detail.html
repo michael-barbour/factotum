@@ -73,7 +73,10 @@
         <td>{{ data_group.downloaded_by }}</td>
         <td>{{ data_group.downloaded_at }}</td>
         <td>
-          <a href="{{ data_group.download_script.url }}" title="Link to {{ data_group.download_script }}"><span class="oi oi-globe"></span><p hidden>{{ data_group.download_script.url }}</p></a>
+            {% if data_group.download_script %}
+                <a href="{{ data_group.download_script.url }}" target="_blank" title="Link to {{ data_group.download_script }}"><span class="oi oi-globe"></span><p hidden>{{ data_group.download_script.url }}</p></a>
+            {% endif %}
+
         </td>
         <td class="float-sm-center">
           <div class="btn-group">

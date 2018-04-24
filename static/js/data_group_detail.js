@@ -6,14 +6,14 @@
       "paging": false,
       "searching": false,
       "ordering": true,
-      "dom": 't',
+      "dom": 't'
     // "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
-    "columnDefs": [
-        {
-            "targets": [1,2,3,4],
-            "orderable": false
-        },
-    ],
+    // "columnDefs": [
+    //     {
+    //         "targets": [1,2,3,4],
+    //         "orderable": false
+    //     },
+    // ],
     });
 
     function exportTableToCSV($table, filename) {

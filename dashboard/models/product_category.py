@@ -12,7 +12,8 @@ class ProductCategory(models.Model):
 	last_edited_by = models.ForeignKey('auth.User', default = 1, on_delete=models.CASCADE)
 
 	class Meta:
-		ordering = ['id']
+		ordering = ['gen_cat', 'prod_fam', 'prod_type']
+		verbose_name_plural = 'Product categories'
 
 	def __str__(self):
 		return self.gen_cat + ' - ' + self.prod_fam + ' - ' + self.prod_type # this may need to change
@@ -20,6 +21,4 @@ class ProductCategory(models.Model):
 	def natural_key(self):
 		return self.gen_cat
 
-	class Meta:
-		verbose_name_plural = 'Product categories'
 

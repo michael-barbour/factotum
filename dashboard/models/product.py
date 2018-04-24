@@ -38,3 +38,6 @@ class Product(models.Model):
 
 	def get_absolute_url(self):
 		return reverse('product_detail', kwargs={'pk': self.pk})
+
+	class Meta:
+		ordering = ['-created_at']

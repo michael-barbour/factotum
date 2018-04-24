@@ -68,7 +68,7 @@ def category_assignment(request, pk, template_name=('product_curation/'
                                                 'category_assignment.html')):
     """Deliver a datasource and its associated products"""
     ds = DataSource.objects.get(pk=pk)
-    products = ds.source.filter(prod_cat__isnull=True)
+    products = ds.source.filter(prod_cat__isnull=True).order_by('-created_at')
     return render(request, template_name, {'datasource': ds, 'products': products})
 
 @login_required()

@@ -90,7 +90,7 @@ def data_group_detail(request, pk,
                       template_name='data_group/datagroup_detail.html'):
     datagroup = get_object_or_404(DataGroup, pk=pk, )
     docs = DataDocument.objects.filter(data_group_id=pk).order_by('title')
-    npage = 20 # TODO: make this dynamic someday in its own ticket
+    npage = 50 # TODO: make this dynamic someday in its own ticket
     page = request.GET.get('page')
     page = 1 if page is None else page
 
@@ -224,9 +224,8 @@ def data_group_detail(request, pk,
     docs_page = paginator.page(page)
 
     include_upload = not all([d.matched for d in docs])
-    include_extract = any([d.matched for d in docs])\
+    include_extract = all([d.matched for d in docs])\
                       and not all([d.extracted for d in docs])
-    print(all([d.extracted for d in docs]))
 
     return render(request, template_name,{
                                     'datagroup'         : datagroup,

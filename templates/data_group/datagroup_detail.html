@@ -122,64 +122,52 @@
         {% endif %}
 
 
-        {% if documents %}
-            <br>
-            <br>
-            <h4>{{ datagroup.registered_docs }} documents registered, {{ datagroup.matched_docs }} matched, {{ datagroup.extracted_docs }} extracted</h4>
-            <p>
-              <a class="btn btn-secondary" href="docs_csv/{{ datagroup.id }}">
-                <span class="oi oi-spreadsheet"></span>
-                &nbsp;Export all records in {{ datagroup.name }} to csv</a>
-            </p>
-
-              <table class="table table-striped table-bordered dataTable no-footer table-sm" id="docs">
-                <thead class="table-primary">
-                <th>Title</th>
-                <th>URL</th>
-                <th>Product Category</th>
-                <th>Matched</th>
-                <th>Extracted</th>
-                </thead>
-                <tbody>
-                {% for doc in documents %}
-                  <tr>
-                  {% if doc.matched %}
-                    <td>
-                      <a href="/media/{{ datagroup.dgurl }}/pdf/{{ doc.filename }}"
-                         title="Link to {{ doc.filename }}" target="_blank">{{ doc.title }}</a>
-                    </td>
-                  {% else %}
-                    <td>{{ doc.title }}</td>
-                  {% endif %}
-                    <td>
-                        <a href="{{ doc.url }}" title="Link to {{ doc.title }}">
-                            {{ doc.url }}
-                        </a>
-                    </td>
-                    <td>{{ doc.product_category }}</td>
-                    <td align="center">
-                  {% if doc.matched %}
-                    <span class="oi oi-circle-check" style="color:green;"></span>
-                    <p hidden>1</p>  <!-- for sorting DataTable -->
-                  {% else %}
-                    <span class="oi oi-circle-x" style="color:red;"></span>
-                  {% endif %}
-                    </td>
-                    <td align="center">
-                  {% if doc.extracted %}
-                    <span class="oi oi-circle-check" style="color:green;"></span>
-                    <p hidden>1</p>  <!-- for sorting DataTable -->
-                  {% else %}
-                    <span class="oi oi-circle-x" style="color:red;"></span>
-                  {% endif %}
-                    </td>
-                  </tr>
-                {% endfor %}
-                </tbody>
-              </table>
-        {% endif %}
-
-
+    {% if documents %}
+    <br>
+    <br>
+    <h4>{{ datagroup.registered_docs }} documents registered, {{ datagroup.matched_docs }} matched</h4>
+    <p>
+      <a class="btn btn-secondary" href="docs_csv/{{ datagroup.id }}">
+        <span class="oi oi-spreadsheet"></span>
+        &nbsp;Export all records in {{ datagroup.name }} to csv</a>
+    </p>
+        </div>
+      <table class="table table-striped table-bordered dataTable no-footer table-sm" id="docs">
+        <thead class="table-primary">
+        <th>Title</th>
+        <th>Matched</th>
+        <th>Extracted</th>
+        </thead>
+        <tbody>
+        {% for doc in documents %}
+          <tr>
+          {% if doc.matched %}
+            <td>
+              <a href="/media/{{ datagroup.dgurl }}/pdf/{{ doc.filename }}"
+                 title="Link to {{ doc.filename }}" target="_blank">{{ doc.title }}</a>
+            </td>
+          {% else %}
+            <td>{{ doc.title }}</td>
+          {% endif %}
+            <td align="center">
+          {% if doc.matched %}
+            <span class="oi oi-circle-check" style="color:green;"></span>
+          {% else %}
+            <span class="oi oi-circle-x" style="color:red;"></span>
+          {% endif %}
+            </td>
+            <td align="center">
+          {% if doc.extracted %}
+            <span class="oi oi-circle-check" style="color:green;"></span>
+          {% else %}
+            <span class="oi oi-circle-x" style="color:red;"></span>
+          {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
     <br>
     <div class=".col-md-4">
         <ul class="list-group pre-scrollable" style="max-height: 30vh">

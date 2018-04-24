@@ -111,7 +111,7 @@ class RollbackStaticLiveServerTestCase(StaticLiveServerTestCase):
 
 
 class FunctionalTests(RollbackStaticLiveServerTestCase):
-    fixtures = ['00_superuser.yaml', '01_sourcetype.yaml',
+    fixtures = ['00_superuser.yaml', '01_lookups.yaml',
     '02_datasource.yaml' , '03_datagroup.yaml', '04_productcategory.yaml',
     '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', 
      '08_extractedtext.yaml','09_productdocument.yaml']

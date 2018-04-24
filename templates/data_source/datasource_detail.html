@@ -73,7 +73,7 @@
         <td>{{ data_group.downloaded_by }}</td>
         <td>{{ data_group.downloaded_at }}</td>
         <td>
-          <a href="{{ data_group.download_script.url }}" title="Link to {{ data_group.download_script }}"><span class="oi oi-globe"></span></a>
+          <a href="{{ data_group.download_script.url }}" title="Link to {{ data_group.download_script }}"><span class="oi oi-globe"></span><p hidden>{{ data_group.download_script.url }}</p></a>
         </td>
         <td class="float-sm-center">
           <div class="btn-group">
@@ -94,11 +94,7 @@
   <script type="text/javascript">
     $(document).ready(function () {
       var table = $('#groups').DataTable({
-        "serverSide": true,
-        "ajax": {
-                 "processing": true,
-                 "url": "{% url 'dg_ajax_url' %}"             },
-      // "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
+      "lengthMenu": [ 25, 50, 75, 100 ], // change number of records shown
       "columnDefs": [
           {
               "targets": 4, // sixth column is edit/delete links
@@ -111,7 +107,7 @@
       buttons: [{
         extend: 'csv',
         text: 'Download CSV',
-        title: 'Data_Groups_Factotum',
+        title:  '{{ object.title }}_Data_Groups',
         exportOptions : {
           columns: [ 0, 1, 2, 3 ],
           },

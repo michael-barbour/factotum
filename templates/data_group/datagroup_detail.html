@@ -78,7 +78,7 @@
                 <form method="post" enctype="multipart/form-data" novalidate>
                     {% csrf_token %}
                     {% include 'core/bs4_form.html' with form=extract_form %}
-                    <input type="submit" class="btn btn-primary" name="extract_button" value="Submit">
+                    <input type="submit" class="btn btn-primary" name="extract_button" value="Submit" disabled>
 
                     <a id="xx" href="" class="btn btn-secondary"
                        {% if not doc.matched %}disabled{% endif %}><span class="oi oi-spreadsheet"></span>&nbsp;Download Extracted Text CSV Template

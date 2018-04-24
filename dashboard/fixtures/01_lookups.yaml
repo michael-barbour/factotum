@@ -1,0 +1,43 @@
+- model: dashboard.sourcetype
+  pk: 1
+  fields: {title: msds, description: '', created_at: !!timestamp '2018-03-08 14:15:13',
+    updated_at: null}
+- model: dashboard.sourcetype
+  pk: 2
+  fields: {title: products, description: '', created_at: !!timestamp '2018-03-08 14:15:42',
+    updated_at: null}
+- model: dashboard.sourcetype
+  pk: 3
+  fields: {title: sds, description: '', created_at: !!timestamp '2018-03-08 14:25:47',
+    updated_at: null}
+- model: dashboard.sourcetype
+  pk: 4
+  fields: {title: ingredient list, description: '', created_at: !!timestamp '2018-03-08
+      14:25:52', updated_at: null}
+- model: dashboard.sourcetype
+  pk: 5
+  fields: {title: ingredient disclosure, description: '', created_at: !!timestamp '2018-03-12
+      14:19:43', updated_at: null}
+
+
+- model: dashboard.unittype
+  pk: 1
+  fields: {title: 'percent composition', description: 'percent composition', created_at: !!timestamp '2018-03-08 14:15:13',
+    updated_at: null}
+- model: dashboard.unittype
+  pk: 2
+  fields: {title: 'weight fraction', description: 'weight fraction', created_at: !!timestamp '2018-03-08 14:15:42',
+    updated_at: null}
+
+- model: dashboard.weightfractiontype
+  pk: 1
+  fields: {title: 'reported', description: 'reported', created_at: !!timestamp '2018-03-08 14:15:13',
+    updated_at: null}
+- model: dashboard.weightfractiontype
+  pk: 2
+  fields: {title: 'predicted', description: 'predicted', created_at: !!timestamp '2018-03-08 14:15:42',
+    updated_at: null}
+- model: dashboard.weightfractiontype
+  pk: 3
+  fields: {title: 'measured', description: 'measured', created_at: !!timestamp '2018-03-08 14:15:42',
+    updated_at: null}

@@ -62,67 +62,64 @@
         {% endif %}
     </dl>
 
-
-
-
     <div class="col-sm-12">
-      <a id="rr" href="" class="btn btn-secondary"><span class="oi oi-spreadsheet"></span>&nbsp; Download Registered CSV</a>
-      {% if not inc_upload %}
-        <div class="col-md-4 btn-group border rounded float-right">
-          <form enctype="multipart/form-data" action="" method="post">
-            <h5 align="center">Upload data group PDFs:</h5>
-            {% csrf_token %}
-            <input type="file" id="files" class="btn btn-light" name="multifiles" webkitdirectory multiple>
-            <input type="submit" class="btn btn-primary" name="upload" value="Upload">
-          </form>
-        </div>
-      {% endif %}
-      <button class="btn btn-secondary" onclick="location.href = '/{{ datagroup.zip_file }}';"
+        <a id="rr" href="" class="btn btn-secondary"><span class="oi oi-spreadsheet"></span>&nbsp; Download Registered CSV</a>
+        <button class="btn btn-secondary" onclick="location.href = '/{{ datagroup.zip_file }}';"
               {% if datagroup.matched_docs == 0 %}disabled{% endif %}>
           <span class="oi oi-data-transfer-download"></span> Download All PDF Documents
-      </button>
-      <br>
-      <br>
-    {% if include_extract %}
-      <div class="col-sm-12">
-        <h5>Work with uploaded documents:</h5>
+        </button>
 
-            <div class="col-md-4 btn-group border rounded"  style="text-align:center">
-                <form enctype="multipart/form-data" action="" method="post">
-                    <h5 align="center">Extraction Script:</h5>
+        {% if include_extract %}
+            <br><br>
+            <a class="btn btn-secondary" data-toggle="collapse" href="#extract_form">
+              <span class="oi oi-data-transfer-upload"></span>&nbsp;Upload Extracted Text
+            </a>
+            <div id="extract_form" class="col-md-12 border rounded {% if extract_form.collapsed %}collapse{% endif %}">
+                <form method="post" enctype="multipart/form-data" novalidate>
                     {% csrf_token %}
-                    <select name="script_selection">
-                      {% for script in scripts %}
-                      <option value="{{ script.pk }}">{{ script.title }}</option>
-                      {% endfor %}
-                    </select>
-                    <br>
-                    <input type="file" accept=".csv" class="form-control btn btn-light" name="extract_file">
-                    <br>
-                    <input type="submit" class="btn btn-primary" name="extract_button" disabled>
+                    {% include 'core/bs4_form.html' with form=extract_form %}
+                    <input type="submit" class="btn btn-primary" name="extract_button" value="Submit" disabled>
+
+                    <a id="xx" href="" class="btn btn-secondary"
+                       {% if not doc.matched %}disabled{% endif %}><span class="oi oi-spreadsheet"></span>&nbsp;Download Extracted Text CSV Template
+                    </a>
                 </form>
             </div>
-        <a id="xx" href="" class="btn btn-secondary"
-           {% if not doc.matched %}disabled{% endif %}><span class="oi oi-spreadsheet"></span>&nbsp;Extracted Text CSV Template</a>
-      </div>
-      <table class="table" id="extract" style="display:none;">
-          <thead class="table-primary">
-          {% for field in extract_fieldnames %}
-            <th>{{ field }}</th>
-          {% endfor %}
-          </thead>
-          <tbody>
-          {% for doc in all_documents %}
-              <tr>
-                  {% if doc.matched and not doc.extracted %}
-                      <td>{{ doc.pk }}</td>
-                      <td>{{ doc.filename }}</td>
-                  {% endif %}
-              </tr>
-          {% endfor %}
-          </tbody>
-      </table>
-    {% endif %}
+            <table class="table" id="extract" style="display:none;">
+              <thead class="table-primary">
+              {% for field in extract_fieldnames %}
+                <th>{{ field }}</th>
+              {% endfor %}
+              </thead>
+              <tbody>
+              {% for doc in all_documents %}
+                  <tr>
+                      {% if doc.matched and not doc.extracted %}
+                          <td>{{ doc.pk }}</td>
+                          <td>{{ doc.filename }}</td>
+                      {% endif %}
+                  </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+        {% endif %}
+
+        {% if include_upload %}
+            <br><br>
+            <a class="btn btn-secondary" data-toggle="collapse" href="#upload_form">
+                <span class="oi oi-data-transfer-upload"></span>&nbsp;Upload Data Group PDFs
+            </a>
+            <div id="upload_form" class="col-md-12 border rounded collapse">
+                <form enctype="multipart/form-data" action="" method="post">
+                    {% csrf_token %}
+                    <div class="form-group col-md-9">
+                        <label class="required" for="id_extract_file">Data Group PDF Directory:</label>
+                        <input type="file" id="files" class="btn btn-light form-control is-valid" name="multifiles" webkitdirectory multiple>
+                    </div>
+                    <input type="submit" class="btn btn-primary" name="upload" value="Submit">
+                </form>
+            </div>
+        {% endif %}
 
 
     {% if documents %}
@@ -134,13 +131,12 @@
         <span class="oi oi-spreadsheet"></span>
         &nbsp;Export all records in {{ datagroup.name }} to csv</a>
     </p>
-    </div>
+        </div>
       <table class="table table-striped table-bordered dataTable no-footer table-sm" id="docs">
         <thead class="table-primary">
-          <th>Title</th>
-
-          <th>Matched</th>
-          <th>Extracted</th>
+        <th>Title</th>
+        <th>Matched</th>
+        <th>Extracted</th>
         </thead>
         <tbody>
         {% for doc in documents %}
@@ -153,11 +149,9 @@
           {% else %}
             <td>{{ doc.title }}</td>
           {% endif %}
-
             <td align="center">
           {% if doc.matched %}
             <span class="oi oi-circle-check" style="color:green;"></span>
-
           {% else %}
             <span class="oi oi-circle-x" style="color:red;"></span>
           {% endif %}
@@ -165,7 +159,6 @@
             <td align="center">
           {% if doc.extracted %}
             <span class="oi oi-circle-check" style="color:green;"></span>
-
           {% else %}
             <span class="oi oi-circle-x" style="color:red;"></span>
           {% endif %}
@@ -209,8 +202,7 @@
             <a href="?page={{ documents.paginator.num_pages }}" class="page-link">last &raquo;</a>
         </li>
       {% endif %}
-      </li>
-  </ul>
+      </ul>
     </nav>
 
   <table class="table" id="registered" style="display:none;">

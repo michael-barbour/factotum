@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from dashboard.models import DataGroup, DataDocument, DataSource, Product
-from django.db.models import Count, F, DateField
-import datetime
+from django.db.models import Count, F, DateField, DateTimeField
+import datetime, logging
+from dateutil.relativedelta import relativedelta
 from django.db.models.functions import Trunc
 
 current_date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d')
-chart_start_datetime = datetime.datetime(datetime.datetime.now().year - 1, datetime.datetime.now().month, 1)
+chart_start_datetime = datetime.datetime(datetime.datetime.now().year - 1, datetime.datetime.now().month + 1, 1)
 
 
 @login_required(login_url='/login')
@@ -58,20 +59,30 @@ def datadocument_count_by_date():
 
 def datadocument_count_by_month():
 	# GROUP BY issue solved with https://stackoverflow.com/questions/8746014/django-group-by-date-day-month-year
-	document_stats = DataDocument.objects.filter(uploaded_at__gte=chart_start_datetime)\
-		.annotate(upload_month = (Trunc('uploaded_at', 'month', output_field=DateField()))) \
+	document_stats = list(DataDocument.objects.filter(uploaded_at__gte=chart_start_datetime)\
+		.annotate(upload_month = (Trunc('uploaded_at', 'month', output_field=DateTimeField()))) \
 		.values('upload_month') \
 		.annotate(document_count = (Count('id'))) \
 		.values('document_count', 'upload_month') \
-		.order_by('upload_month')
+		.order_by('upload_month'))
+	if len(document_stats) < 12:
+		for i in range(0, 12):
+			chart_month = chart_start_datetime + relativedelta(months=i)
+			if i + 1 > len(document_stats) or document_stats[i]['upload_month'] != chart_month:
+				document_stats.insert(i, {'document_count': '0', 'upload_month': chart_month})
 	return document_stats
 
 def product_with_puc_count_by_month():
 	# GROUP BY issue solved with https://stackoverflow.com/questions/8746014/django-group-by-date-day-month-year
-	product_stats = Product.objects.filter(puc_assigned_time__gte=chart_start_datetime) \
+	product_stats = list(Product.objects.filter(puc_assigned_time__gte=chart_start_datetime) \
 		.annotate(puc_assigned_month = (Trunc('puc_assigned_time', 'month', output_field=DateField()))) \
 		.values('puc_assigned_month') \
 		.annotate(product_count = (Count('id'))) \
 		.values('product_count', 'puc_assigned_month') \
-		.order_by('puc_assigned_month')
+		.order_by('puc_assigned_month'))
+	if len(product_stats) < 12:
+		for i in range(0, 12):
+			chart_month = chart_start_datetime + relativedelta(months=i)
+			if i + 1 > len(product_stats) or product_stats[i]['puc_assigned_month'] != chart_month:
+				product_stats.insert(i, {'product_count': '0', 'puc_assigned_month': chart_month})
 	return product_stats

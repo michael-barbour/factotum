@@ -11,3 +11,7 @@ from .extracted_chemical import ExtractedChemical
 from .script import Script
 from .dsstox_substance import DSSToxSubstance
 from .qa_group import QAGroup
+from .unit_type import UnitType
+from .weight_fraction_type import WeightFractionType
+
+

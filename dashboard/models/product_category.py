@@ -11,6 +11,9 @@ class ProductCategory(models.Model):
 	updated_at = models.DateTimeField(null=True, blank=True)
 	last_edited_by = models.ForeignKey('auth.User', default = 1, on_delete=models.CASCADE)
 
+	class Meta:
+		ordering = ['id']
+
 	def __str__(self):
 		return self.gen_cat + ' - ' + self.prod_fam + ' - ' + self.prod_type # this may need to change
 

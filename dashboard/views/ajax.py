@@ -3,15 +3,6 @@ from django.core import serializers
 from dashboard.models import DataGroup, Product
 import json
 
-
-
-
-
-def DataGroups_asJson(request):
-    object_list = DataGroup.objects.all() 
-    json = serializers.serialize('json', object_list)
-    return HttpResponse(json, content_type='application/json')
-
 def product_ajax(request):
 
     draw = request.GET['draw']
@@ -37,4 +28,3 @@ def product_ajax(request):
         "recordsFiltered": filtered_count,
         "data": objects,
     })
-

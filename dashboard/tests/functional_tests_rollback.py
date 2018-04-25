@@ -640,7 +640,10 @@ class TestExtractedText(StaticLiveServerTestCase):
     fixtures = ['seed_data']
 
     def setUp(self):
-        self.browser = webdriver.Chrome()
+        if settings.TEST_BROWSER == 'firefox':
+            self.browser = webdriver.Firefox()
+        else:
+            self.browser = webdriver.Chrome() 
         log_karyn_in(self)
 
     def tearDown(self):

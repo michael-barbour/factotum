@@ -109,7 +109,7 @@ def link_product_form(request, pk, template_name=('product_curation/'
                                                  updated_at=timezone.now())
             p = ProductDocument(product=product, document=doc)
             p.save()
-        return redirect('link_product_list', pk=data_source_id)
+        return redirect('link_product_list', pk=doc.data_group.pk)
     return render(request, template_name,{'document': doc, 'form': form})
 
 @login_required()

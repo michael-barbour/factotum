@@ -476,7 +476,7 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
                           ' the extraction script'))
 
         displayed_pct_checked = self.browser.find_elements_by_xpath(
-            '//*[@id="extraction_script_table"]/tbody/tr/td[3]')[0].text
+            '//*[@id="extraction_script_table"]/tbody/tr[2]/td[3]')[0].text
         # this assumes that pk=1 will be a script_type of 'EX'
         model_pct_checked = Script.objects.get(pk=6).get_pct_checked()
         self.assertEqual(displayed_pct_checked, model_pct_checked,
@@ -484,16 +484,15 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
                           'derived from the model'))
 
         es = Script.objects.get(pk=6)
-        self.assertEqual(es.get_qa_complete_extractedtext_count(), 0,
-                         ('The ExtractionScript object should return 0'
+        self.assertEqual(es.get_qa_complete_extractedtext_count(), 1,
+                         ('The ExtractionScript object should return 1 '
                           'qa_checked ExtractedText objects'))
-        self.assertEqual(model_pct_checked, '0%')
         # Set qa_checked property to True for one of the ExtractedText objects
-        self.assertEqual(ExtractedText.objects.get(pk=121627).qa_checked, False)
-        et_change = ExtractedText.objects.get(pk=121627)
+        self.assertEqual(ExtractedText.objects.get(pk=121647).qa_checked, False)
+        et_change = ExtractedText.objects.get(pk=121647)
         et_change.qa_checked = True
         et_change.save()
-        self.assertEqual(ExtractedText.objects.get(pk=121627).qa_checked, True,
+        self.assertEqual(ExtractedText.objects.get(pk=121647).qa_checked, True,
                          'The object should now have qa_checked = True')
 
         es = Script.objects.get(pk=6)

@@ -240,6 +240,8 @@ class TestDataSourceAndDataGroup(StaticLiveServerTestCase):
         save_button.click()
         # Saving the product should return the browser to the list of documents without products
         self.assertIn("link_product_list", self.browser.current_url)
+        # The URL of the link_product_list page should be keyed to the DataGroup, not DataSource
+        self.assertEqual(self.live_server_url + '/link_product_list/' + str(dgpk), self.browser.current_url)
 
         #check at the model level to confirm that the edits have been applied
         # self.assertEqual(dd_pk, 'x')

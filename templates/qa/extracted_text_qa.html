@@ -55,6 +55,12 @@
                 <dd class="col-sm-9">{{ extracted.prod_name }}</dd>
                 <dt class="col-sm-3">Document Date</dt>
                 <dd class="col-sm-9">{{ extracted.doc_date }}</dd>
+                <dt class="col-sm-3">QA Status</dt>
+                <dd class="col-sm-9">{{ extracted.qa_status }}</dd>
+                <dt class="col-sm-3">QA Approval Date</dt>
+                <dd class="col-sm-9">{{ extracted.qa_approved_date }}</dd>
+                <dt class="col-sm-3">QA Approved By</dt>
+                <dd class="col-sm-9">{{ extracted.qa_approved_by }}</dd>
             </dl>
 
 
@@ -82,7 +88,7 @@
                     {% endfor %}
                     </tbody>
                   </table>
-                  <a class="btn btn-success" href="#" role="button">Approve</a>
+                  <input class="btn btn-success" type="submit" value="Approve" />
                   <a class="btn btn-primary" href="#" role="button">Edit</a>
                   {% if nextid > 0 %}
                     <a class="btn btn-warning" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>

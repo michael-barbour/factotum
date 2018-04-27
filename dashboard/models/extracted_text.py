@@ -6,31 +6,44 @@ from .script import Script
 
 
 class ExtractedText(models.Model):
-	data_document = models.OneToOneField(DataDocument, on_delete=models.CASCADE, primary_key=True)
-	record_type = models.CharField(max_length=50, null=True, blank=True)
-	prod_name = models.CharField(max_length=500, null=True, blank=True)
-	doc_date = models.CharField(max_length=10, null=True, blank=True)
-	rev_num = models.CharField(max_length=50, null=True, blank=True)
-	extraction_script = models.ForeignKey(Script, on_delete=models.CASCADE, limit_choices_to={'script_type': 'EX'}, )
-	qa_checked = models.BooleanField(default=False)
-	qa_group = models.ForeignKey('QAGroup', null=True, blank=True,
-											on_delete=models.SET_NULL)
+    data_document = models.OneToOneField(DataDocument, on_delete=models.CASCADE, primary_key=True)
+    record_type = models.CharField(max_length=50, null=True, blank=True)
+    prod_name = models.CharField(max_length=500, null=True, blank=True)
+    doc_date = models.CharField(max_length=10, null=True, blank=True)
+    rev_num = models.CharField(max_length=50, null=True, blank=True)
+    extraction_script = models.ForeignKey(Script, on_delete=models.CASCADE, limit_choices_to={'script_type': 'EX'}, )
+    qa_checked = models.BooleanField(default=False)
+    APPROVED_WITH_ERROR = "APPROVED_WITH_ERROR"
+    APPROVED_WITHOUT_ERROR = "APPROVED_WITHOUT_ERROR"
+    APPROVAL_CHOICES = (
+        (APPROVED_WITHOUT_ERROR, "Approved without errors"),
+        (APPROVED_WITH_ERROR, "Approved with errors")
+        )
+    qa_status = models.CharField(max_length=30,
+                  choices=APPROVAL_CHOICES,
+                  default=None,
+                  blank=True,
+                  null=True)
+    qa_approved_date = models.DateTimeField(null=True, blank=True)
+    qa_approved_by = models.ForeignKey('auth.User', null=True, blank=True, on_delete=models.SET_NULL)
+    qa_group = models.ForeignKey('QAGroup', null=True, blank=True,
+                                            on_delete=models.SET_NULL)
 
-	def __str__(self):
-		return str(self.prod_name)
+    def __str__(self):
+        return str(self.prod_name)
 
-	def clean(self):
-		if self.doc_date[4] != '-' or self.doc_date[7] != '-':
-			raise ValidationError('Date format is off, should be  YYYY-MM-DD.')
-		try:
-			int(self.doc_date[:4])
-			int(self.doc_date[5:7])
-			int(self.doc_date[8:10])
-		except ValueError:
-			raise ValidationError("Not all characters are integers.")
-		if not int(self.doc_date[:4]) <= datetime.now().year:
-			raise ValidationError('Date is off, year is invalid.')
-		if not int(self.doc_date[5:7]) in range(1, 13):
-			raise ValidationError('Date is off, month is invalid.')
-		if not int(self.doc_date[8:10]) in range(1, 32):
-			raise ValidationError('Date is off, day is invalid.')
+    def clean(self):
+        if self.doc_date[4] != '-' or self.doc_date[7] != '-':
+            raise ValidationError('Date format is off, should be  YYYY-MM-DD.')
+        try:
+            int(self.doc_date[:4])
+            int(self.doc_date[5:7])
+            int(self.doc_date[8:10])
+        except ValueError:
+            raise ValidationError("Not all characters are integers.")
+        if not int(self.doc_date[:4]) <= datetime.now().year:
+            raise ValidationError('Date is off, year is invalid.')
+        if not int(self.doc_date[5:7]) in range(1, 13):
+            raise ValidationError('Date is off, month is invalid.')
+        if not int(self.doc_date[8:10]) in range(1, 32):
+            raise ValidationError('Date is off, day is invalid.')

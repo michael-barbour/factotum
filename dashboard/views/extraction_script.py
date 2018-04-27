@@ -106,6 +106,12 @@ def extraction_script_detail(request, pk,
     data['object_list'] = extractionscript
     return render(request, template_name, data)
 
+class ExtractedTextQAForm(ModelForm):
+    required_css_class = 'required' # adds to label tag
+    class Meta:
+        model = ExtractedText
+        fields = ['record_type', 'prod_name', 'data_document']
+
 @login_required()
 def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html'):
 
@@ -127,3 +133,14 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html'):
     stats = '%s document(s) approved, %s documents remaining' % (a, r)
     return render(request, template_name, {'extracted': extext, \
         'doc': datadoc, 'script': exscript, 'chems':chems, 'stats':stats, 'nextid':nextid})
+
+@login_required
+def approve_extractedtext(request, pk):
+    extext=get_object_or_404(ExtractedText, pk = pk)
+    form = ExtractedTextQAForm(request.POST or None, instance=extext)
+    if form.is_valid():
+        extext.updated_at = datetime.now()
+        extext.updated_by = request.user
+        form.save()
+        return redirect('data_source_list')
+    return render(request, template_name, {'pk': extext.data})

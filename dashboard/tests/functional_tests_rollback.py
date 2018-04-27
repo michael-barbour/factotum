@@ -121,9 +121,9 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         super().setUpClass()
         # see if fixtures have been loaded yet
         print("DataSource objects: {}".format(DataSource.objects.count()))
-        index_start = time.time()
-        update_index.Command().handle(using=['test_index'], remove=True)
-        index_elapsed = time.time() - index_start
+        #index_start = time.time()
+        #update_index.Command().handle(using=['test_index'], remove=True)
+        #index_elapsed = time.time() - index_start
 
     def setUp(self):
         if settings.TEST_BROWSER == 'firefox':
@@ -591,65 +591,6 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         btn_exit.click()
         self.assertIn("/qa/extractionscript" , self.browser.current_url, \
                 "The opened page should include the qa/extractionscript route")
-
-    def test_elasticsearch_isolation(self):
-        # update the search engine index
-        update_index.Command().handle(using=['test_index'],remove=True)
-        self.browser.get('http://localhost:9200/product-index/_search?q=obscurity')    
-        # "brand_name": "obscurity"
-        
-        # self.assertNotIn('"brand_name": "obscurity"', self.browser.page_source,
-        #                "The 'obscurity reference should not be in the results")     
-
-    def test_elasticsearch(self):
-        # Implement faceted search within application. Desire ability to search on Products by title,
-        # with the following two facets
-        #
-        # Data documents, by type of data document
-        # (e.g. no data document, MSDS, SDS, ingredient list, etc.)
-        # Product category, by general category (e.g., no product
-        # category, list of ~12 general categories)
-        #
-        # Search bar appears on far right side of the navigation bar, on every page of the application.
-        # User enters a product title in the search bar. User is then taken to a landing page with
-        # search results on product title, with the two facets visible on the left side of the page.
-
-        # Temporary fix: assign a PUC to the product, then update the index
-
-        p1 = Product.objects.get(pk=22)
-"""        pc252 = ProductCategory.objects.get(pk=252)
-        p1.prod_cat = pc252
-        p1.save()
-        # update the search engine index
-        update_index.Command().handle(using=['test_index'],remove=True)
-
-        # Check for the elasticsearch engine
-        self.browser.get('http://127.0.0.1:9200/')
-        self.assertIn("9200", self.browser.current_url)
-        self.assertIn("elasticsearch", self.browser.page_source,
-                      "The search engine's server needs to be running")
-        # if a Product object has a PUC assigned, that PUC should appear in the facet index
-        sqs = SearchQuerySet().using('test_index').facet('prod_cat')
-        self.assertIn('insect', json.dumps(sqs.facet_counts()),
-                      'The search engine should return "["Pesticides - insect repellent - insect repellent - skin", 1]" among the product category facets.')
-
-        # use the input box to enter a search query
-        self.browser.get(self.live_server_url)
-        searchbox = self.browser.find_element_by_id('q')
-        searchbox.send_keys('Skinsations')
-        searchbox.send_keys(Keys.RETURN)
-        self.assertIn("Skinsations", self.browser.current_url,
-                      'The URL should contain the search string')
-        facetcheck = self.browser.find_element_by_xpath(
-            '/html/body/div/div/div/div[1]')
-        self.assertIn('insect', facetcheck.text,
-                      'The faceting controls should include a "Pesticides - insect repellent" entry')
-        facetcheck = self.browser.find_element_by_id('Pesticides-insectrepellent-insectrepellent-skin')
-        facetcheck.click()
-        facetapply = self.browser.find_element_by_id('btn-apply-filters')
-        facetapply.click()
-        self.assertIn("insect%20repellent",
-                      self.browser.current_url, 'The URL should contain the facet search string') """
 
 
 class TestExtractedText(StaticLiveServerTestCase):

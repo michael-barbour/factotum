@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from dashboard.models import DataSource, DataGroup, DataDocument, SourceType, ExtractedText, ExtractedChemical, DSSToxSubstance, Script
+from dashboard.models import DataSource, DataGroup, DataDocument, SourceType, ExtractedText, ExtractedChemical, UnitType, WeightFractionType, DSSToxSubstance, Script
 from dashboard.views import data_source, data_group
 from django.test import TestCase, RequestFactory
 from django.utils import timezone
@@ -51,8 +51,17 @@ class ModelsTest(TestCase):
         # ExtractedText
         self.et = self.create_extracted_text(data_documents=self.dds, extraction_script=self.ex)
 
+        # UnitType
+        self.ut = self.create_unit_type(title='percent composition')
+
+        # WeightFractionType
+        self.wft = self.create_weight_fraction_type(title= 'reported', description= 'reported')
+
         # ExtractedChemical
-        self.ec = self.create_extracted_chemical(extracted_text=self.et)
+        self.ec = self.create_extracted_chemical(extracted_text=self.et, 
+        unit_type=UnitType.objects.all()[0],
+        weight_fraction_type = WeightFractionType.objects.all()[0]
+        )
 
         # DSSToxSubstance
         self.dsstox = self.create_dsstox_substance(extracted_chemical=self.ec)
@@ -126,12 +135,22 @@ class ModelsTest(TestCase):
                                             prod_name='Test Prod Name', doc_date='TstDocDate', rev_num='Test Rev Num',
                                             extraction_script=extraction_script, qa_checked=False)
 
+    def create_unit_type(self, title='percent composition'):
+        return UnitType.objects.create(title=title)
+    
+    def create_weight_fraction_type(self, title= 'reported', description= 'reported'):
+        return WeightFractionType.objects.create(title=title, description=description)
+
     def create_extracted_chemical(self, extracted_text, raw_cas='Test CAS', raw_chem_name='Test Chem Name',
                                   raw_min_comp='Test Raw Min Comp', raw_max_comp='Test Raw Max Comp',
-                                  units='Test Units', report_funcuse='Test Report Funcuse'):
+                                  unit_type=UnitType.objects.first(), 
+                                  weight_fraction_type=WeightFractionType.objects.first(), 
+                                  report_funcuse='Test Report Funcuse'):
         return ExtractedChemical.objects.create(extracted_text=extracted_text, raw_cas=raw_cas,
                                                 raw_chem_name=raw_chem_name, raw_min_comp=raw_min_comp,
-                                                raw_max_comp=raw_max_comp, units=units, report_funcuse=report_funcuse)
+                                                raw_max_comp=raw_max_comp, unit_type=unit_type, 
+                                                weight_fraction_type=weight_fraction_type,
+                                                report_funcuse=report_funcuse)
 
     def create_dsstox_substance(self, extracted_chemical, true_cas='Test True CAS',
                                 true_chemname='Test Chem Name', rid='Test RID', sid='Test SID'):

@@ -46,8 +46,8 @@ def product_curation_index(request, template_name='product_curation/product_cura
     data_sources = DataSource.objects.annotate(uploaded=Count('datagroup__datadocument'))\
         .filter(uploaded__gt=0)
     # A separate queryset of data sources and their related products without PUCs assigned
-    qs_no_puc = Product.objects.filter(prod_cat__isnull=True).filter(data_source__isnull=False)\
-        .values('data_source').annotate(no_category=Count('id'))
+    qs_no_puc = Product.objects.values('data_source').filter(prod_cat__isnull=True).\
+        filter(data_source__isnull=False).annotate(no_category=Count('id')).order_by('data_source')
     # Convert the queryset to a list
     list_no_puc = [ds_no_puc for ds_no_puc in qs_no_puc]
 
@@ -68,7 +68,7 @@ def category_assignment(request, pk, template_name=('product_curation/'
                                                 'category_assignment.html')):
     """Deliver a datasource and its associated products"""
     ds = DataSource.objects.get(pk=pk)
-    products = ds.source.filter(prod_cat__isnull=True)
+    products = ds.source.filter(prod_cat__isnull=True).order_by('-created_at')
     return render(request, template_name, {'datasource': ds, 'products': products})
 
 @login_required()

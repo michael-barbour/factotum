@@ -609,6 +609,9 @@ class TestExtractedText(StaticLiveServerTestCase):
 
     def test_submit_button(self):
         self.browser.get(self.live_server_url + '/datagroup/1')
+        extract_text_form_button = self.browser.find_element_by_id('btn_extract_text_form')
+        extract_text_form_button.click()
+
         submit_button = self.browser.find_element_by_name('extract_button')
         self.assertEqual(submit_button.is_enabled(),False,
                          ("This button shouldn't be enabled until there "

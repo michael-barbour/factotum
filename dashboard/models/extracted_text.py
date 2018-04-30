@@ -32,6 +32,15 @@ class ExtractedText(models.Model):
     def __str__(self):
         return str(self.prod_name)
 
+    def next_extracted_text_in_qa_group(self):
+        extextnext = get_next_or_prev(ExtractedText.objects.filter(qa_group=self.qa_group, qa_checked=False ), self, 'next')
+        if extextnext:
+            # Replace our item with the next one
+            nextid = extextnext.pk
+        if extextnext == extext:
+            nextid = 0
+        return nextid
+
     def clean(self):
         if self.doc_date[4] != '-' or self.doc_date[7] != '-':
             raise ValidationError('Date format is off, should be  YYYY-MM-DD.')

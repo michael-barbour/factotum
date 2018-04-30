@@ -1,6 +1,7 @@
 import math
 from random import shuffle
 import os
+from datetime import datetime
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import ModelForm
@@ -8,6 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 from dashboard.models import (DataGroup, DataDocument, DataSource,
                               ExtractedText, Script, QAGroup, ExtractedChemical)
@@ -110,12 +113,12 @@ class ExtractedTextQAForm(ModelForm):
     required_css_class = 'required' # adds to label tag
     class Meta:
         model = ExtractedText
-        fields = ['record_type', 'prod_name', 'data_document']
+        fields = ['record_type', 'prod_name', 'data_document', 'qa_checked']
 
 @login_required()
-def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html'):
+def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', nextid = 0):
 
-    extext = ExtractedText.objects.get(pk=pk)
+    extext = get_object_or_404(ExtractedText, pk = pk)
     datadoc = DataDocument.objects.get(pk=pk)
     exscript = extext.extraction_script
     chems = ExtractedChemical.objects.filter(extracted_text=extext)
@@ -131,16 +134,19 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html'):
     a = extext.qa_group.get_approved_doc_count()
     r = ExtractedText.objects.filter(qa_group=extext.qa_group).count() - a
     stats = '%s document(s) approved, %s documents remaining' % (a, r)
+
     return render(request, template_name, {'extracted': extext, \
         'doc': datadoc, 'script': exscript, 'chems':chems, 'stats':stats, 'nextid':nextid})
 
-@login_required
-def approve_extractedtext(request, pk):
-    extext=get_object_or_404(ExtractedText, pk = pk)
-    form = ExtractedTextQAForm(request.POST or None, instance=extext)
-    if form.is_valid():
-        extext.updated_at = datetime.now()
-        extext.updated_by = request.user
-        form.save()
-        return redirect('data_source_list')
-    return render(request, template_name, {'pk': extext.data})
+@login_required()
+def extracted_text_approve(request, pk):
+    extracted = get_object_or_404(ExtractedText, pk=pk)
+
+    extracted.qa_checked = True
+    extracted.qa_status = ExtractedText.APPROVED_WITHOUT_ERROR
+    extracted.qa_approved_date = datetime.now()
+    extracted.qa_approved_by = request.user
+    extracted.save()
+    return HttpResponseRedirect(
+        reverse('extracted_text_qa', args=([nextpk, ]))
+        )

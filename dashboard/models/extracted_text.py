@@ -1,11 +1,12 @@
-from datetime import datetime
 from django.db import models
+from .common_info import CommonInfo
+from datetime import datetime
 from django.core.exceptions import ValidationError
 from .data_document import DataDocument
 from .script import Script
 
 
-class ExtractedText(models.Model):
+class ExtractedText(CommonInfo):
 	data_document = models.OneToOneField(DataDocument, on_delete=models.CASCADE, primary_key=True)
 	record_type = models.CharField(max_length=50, null=True, blank=True)
 	prod_name = models.CharField(max_length=500, null=True, blank=True)

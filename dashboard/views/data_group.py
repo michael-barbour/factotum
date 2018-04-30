@@ -26,14 +26,9 @@ class DataGroupForm(ModelForm):
 
     class Meta:
         model = DataGroup
-        fields = ['name', 'description', 'downloaded_by', 'downloaded_at', 'download_script', 'data_source',
-                  'updated_at', 'csv']
+        fields = ['name', 'description', 'downloaded_by', 'downloaded_at', 'download_script', 'data_source', 'csv']
         widgets = {
                 'downloaded_at': DatePicker(options={
-                                                    "format": "yyyy-mm-dd",
-                                                    "autoclose": True
-                                                }),
-                'updated_at': DatePicker(options={
                                                     "format": "yyyy-mm-dd",
                                                     "autoclose": True
                                                 })
@@ -93,7 +88,6 @@ def data_group_detail(request, pk,
     npage = 50 # TODO: make this dynamic someday in its own ticket
     page = request.GET.get('page')
     page = 1 if page is None else page
-
     scripts = Script.objects.filter(script_type='EX')
     store = settings.MEDIA_URL + datagroup.name.replace(' ','_')
     extract_fieldnames = ['data_document_pk','data_document_filename',
@@ -309,7 +303,7 @@ def data_group_update(request, pk):
     datagroup = get_object_or_404(DataGroup, pk=pk)
     form = DataGroupForm(request.POST or None, instance=datagroup)
     if form.is_valid():
-        datagroup.updated_at = datetime.now()
+        # datagroup.updated_at = datetime.now()
         form.save()
         return redirect('data_group_list')
     return render(request, 'data_group/datagroup_form.html', {'form': form})

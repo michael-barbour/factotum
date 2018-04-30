@@ -104,9 +104,7 @@ def link_product_form(request, pk, template_name=('product_curation/'
                                                  manufacturer=manufacturer,
                                                  brand_name=brand_name,
                                                  upc=upc_stub,
-                                                 data_source_id=data_source_id,
-                                                 created_at=timezone.now(),
-                                                 updated_at=timezone.now())
+                                                 data_source_id=data_source_id)
             p = ProductDocument(product=product, document=doc)
             p.save()
         return redirect('link_product_list', pk=doc.data_group.pk)
@@ -119,7 +117,6 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
     p = Product.objects.get(pk=pk)
     form = ProductPUCForm(request.POST or None, instance=p)
     if form.is_valid():
-        p.updated_at = datetime.now()
         p.puc_assigned_time = datetime.now()
         p.puc_assigned_usr = request.user
         form.save()

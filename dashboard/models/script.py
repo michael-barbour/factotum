@@ -1,12 +1,12 @@
 from django.db import models
-from django.utils import timezone
+from .common_info import CommonInfo
 from django.core.urlresolvers import reverse
 from django.core.validators import URLValidator
 from django.db import models
 from dashboard.models import DataDocument
 
 
-class Script(models.Model):
+class Script(CommonInfo):
 
 	TYPE_CHOICES = (('DL', 'download'),
 					('EX', 'extraction'),

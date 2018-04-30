@@ -2,7 +2,7 @@ import os
 import shutil
 
 from django.db import models
-from django.utils import timezone
+from .common_info import CommonInfo
 from django.core.urlresolvers import reverse
 from django.dispatch import receiver
 
@@ -15,7 +15,7 @@ def update_filename(instance, filename):
 	return name
 
 
-class DataGroup(models.Model):
+class DataGroup(CommonInfo):
 
 	name = models.CharField(max_length=50)
 	description = models.TextField(null=True, blank=True)
@@ -23,7 +23,6 @@ class DataGroup(models.Model):
 	downloaded_at = models.DateTimeField()
 	download_script = models.ForeignKey('Script', on_delete=models.SET_NULL, default=None, null=True, blank=True)
 	data_source = models.ForeignKey('DataSource', on_delete=models.CASCADE)
-	updated_at = models.DateTimeField(default=timezone.now, null=True, blank=True)
 	csv = models.FileField(upload_to=update_filename, null=True)
 	zip_file = models.CharField(max_length=100)
 

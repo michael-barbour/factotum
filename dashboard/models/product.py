@@ -1,4 +1,5 @@
 from django.db import models
+from .common_info import CommonInfo
 from .data_source import DataSource
 from .data_document import DataDocument
 from .source_category import SourceCategory
@@ -7,7 +8,7 @@ from django.utils import timezone
 from django.core.urlresolvers import reverse
 
 
-class Product(models.Model):
+class Product(CommonInfo):
 	prod_cat = models.ForeignKey(ProductCategory, related_name='category', on_delete=models.CASCADE, null=True, blank=True)
 	data_source = models.ForeignKey(DataSource, related_name='source', on_delete=models.CASCADE)
 	documents = models.ManyToManyField(DataDocument, through='ProductDocument')
@@ -27,8 +28,6 @@ class Product(models.Model):
 	thumb_image = models.CharField(max_length=500, null=True, blank=True)
 	medium_image = models.CharField(max_length=500, null=True, blank=True)
 	large_image = models.CharField(max_length=500, null=True, blank=True)
-	created_at = models.DateTimeField(default=timezone.now)
-	updated_at = models.DateTimeField(null=True, blank=True)
 	puc_assigned_usr = models.ForeignKey('auth.User', on_delete=models.SET_NULL, null=True, blank = True)
 	puc_assigned_script = models.ForeignKey('Script', on_delete=models.SET_NULL, null=True, blank = True)
 	puc_assigned_time = models.DateTimeField(null=True, blank=True)

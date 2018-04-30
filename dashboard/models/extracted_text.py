@@ -34,10 +34,11 @@ class ExtractedText(models.Model):
 
     def next_extracted_text_in_qa_group(self):
         extextnext = get_next_or_prev(ExtractedText.objects.filter(qa_group=self.qa_group, qa_checked=False ), self, 'next')
+        nextid = 0
         if extextnext:
             # Replace our item with the next one
             nextid = extextnext.pk
-        if extextnext == extext:
+        if extextnext == self:
             nextid = 0
         return nextid
 
@@ -56,3 +57,28 @@ class ExtractedText(models.Model):
             raise ValidationError('Date is off, month is invalid.')
         if not int(self.doc_date[8:10]) in range(1, 32):
             raise ValidationError('Date is off, day is invalid.')
+
+def get_next_or_prev(models, item, direction):
+    '''
+    Returns the next or previous item of
+    a query-set for 'item'.
+
+    'models' is a query-set containing all
+    items of which 'item' is a part of.
+
+    direction is 'next' or 'prev'
+
+    '''
+    getit = False
+    if direction == 'prev':
+        models = models.reverse()
+    for m in models:
+        if getit:
+            return m
+        if item == m:
+            getit = True
+    if getit:
+        # This would happen when the last
+        # item made getit True
+        return models[0]
+    return False

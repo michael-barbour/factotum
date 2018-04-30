@@ -88,7 +88,11 @@
                     {% endfor %}
                     </tbody>
                   </table>
+                  {% if extracted.qa_checked %}
+                  <a class="btn btn-success disabled" title="This extracted document has already been approved" href="{% url "extracted_text_approve" extracted.pk %}" role="button" aria-disabled="true">Approve</a>
+                  {% else %}
                   <a class="btn btn-success" href="{% url "extracted_text_approve" extracted.pk %}" role="button">Approve</a>
+                  {% endif %}
                   <a class="btn btn-primary" href="#" role="button">Edit</a>
                   {% if nextid > 0 %}
                     <a class="btn btn-warning" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>

@@ -28,30 +28,6 @@ class ExtractionScriptForm(ModelForm):
         self.user = kwargs.pop('user', None)
         super(ExtractionScriptForm, self).__init__(*args, **kwargs)
 
-def get_next_or_prev(models, item, direction):
-    '''
-    Returns the next or previous item of
-    a query-set for 'item'.
-
-    'models' is a query-set containing all
-    items of which 'item' is a part of.
-
-    direction is 'next' or 'prev'
-
-    '''
-    getit = False
-    if direction == 'prev':
-        models = models.reverse()
-    for m in models:
-        if getit:
-            return m
-        if item == m:
-            getit = True
-    if getit:
-        # This would happen when the last
-        # item made getit True
-        return models[0]
-    return False
 
 
 @login_required()
@@ -124,12 +100,7 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
     chems = ExtractedChemical.objects.filter(extracted_text=extext)
     # get the next unapproved Extracted Text object
     # Its ID will populate the URL for the "Skip" button
-    extextnext = get_next_or_prev(ExtractedText.objects.filter(qa_group=extext.qa_group, qa_checked=False ), extext, 'next')
-    if extextnext:
-        # Replace our item with the next one
-        nextid = extextnext.pk
-    if extextnext == extext:
-        nextid = 0
+    nextid = extext.next_extracted_text_in_qa_group()
     # derive the number of approved records and remaining unapproved ones in the QA Group
     a = extext.qa_group.get_approved_doc_count()
     r = ExtractedText.objects.filter(qa_group=extext.qa_group).count() - a
@@ -141,12 +112,12 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
 @login_required()
 def extracted_text_approve(request, pk):
     extracted = get_object_or_404(ExtractedText, pk=pk)
-
+    nextpk    = extracted.next_extracted_text_in_qa_group()
     extracted.qa_checked = True
     extracted.qa_status = ExtractedText.APPROVED_WITHOUT_ERROR
     extracted.qa_approved_date = datetime.now()
     extracted.qa_approved_by = request.user
     extracted.save()
     return HttpResponseRedirect(
-        reverse('extracted_text_qa', args=([nextpk, ]))
+        reverse('extracted_text_qa', args=([nextpk]))
         )

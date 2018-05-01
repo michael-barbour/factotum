@@ -1,15 +1,14 @@
 from django.contrib.auth.models import User
-from dashboard.models import DataSource, DataGroup, DataDocument, SourceType, ExtractedText, ExtractedChemical, UnitType, WeightFractionType, DSSToxSubstance, Script
-from dashboard.views import data_source, data_group
+from dashboard.models import DataSource, DataGroup, DataDocument, SourceType, ExtractedText,\
+    ExtractedChemical, UnitType, WeightFractionType, DSSToxSubstance, Script, Product, ProductDocument,\
+    Ingredient, ProductIngredient, DSSToxSubstanceIngredient
 from django.test import TestCase, RequestFactory
 from django.utils import timezone
-import os
 import csv
 import collections
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.files.storage import FileSystemStorage
-from django.core.urlresolvers import reverse
 
 
 def file_len(fname):
@@ -58,13 +57,31 @@ class ModelsTest(TestCase):
         self.wft = self.create_weight_fraction_type(title= 'reported', description= 'reported')
 
         # ExtractedChemical
-        self.ec = self.create_extracted_chemical(extracted_text=self.et, 
-        unit_type=UnitType.objects.all()[0],
-        weight_fraction_type = WeightFractionType.objects.all()[0]
-        )
+        self.ec = self.create_extracted_chemical(extracted_text=self.et,
+                                                 unit_type=UnitType.objects.all()[0],
+                                                 weight_fraction_type = WeightFractionType.objects.all()[0]
+                                                )
 
         # DSSToxSubstance
         self.dsstox = self.create_dsstox_substance(extracted_chemical=self.ec)
+
+        # Product
+        self.p = Product.objects.create(data_source=self.ds, title="Test Product")
+        self.p.save()
+
+        # ProductDocument
+        self.pd = ProductDocument.objects.create(product=self.p, document=self.dds[0] )
+
+        # Ingredient
+        self.i = self.create_ingredient(self.wft)
+        self.i.save()
+
+        # ProductIngredient
+        self.pi = ProductIngredient.objects.create(product=self.p, ingredient=self.i)
+
+        # DSSToxSubstanceIngredient
+        self.dsi = DSSToxSubstanceIngredient.objects.create(dsstox_substance=self.dsstox, ingredient=self.i)
+
 
     def tearDown(self):
         del self.dg
@@ -105,8 +122,6 @@ class ModelsTest(TestCase):
 
     def create_data_documents(self, data_group):
         dds = []
-        #pdfs = [f for f in os.listdir('/media/' + self.dg.dgurl() + '/pdf') if f.endswith('.pdf')]
-        #pdfs
         with open(data_group.csv.path) as dg_csv:
             table = csv.DictReader(dg_csv)
             text = ['DataDocument_id,' + ','.join(table.fieldnames)+'\n']
@@ -124,6 +139,7 @@ class ModelsTest(TestCase):
                     url=line['url'],
                     matched = line['filename'] in self.pdfs,
                     data_group=data_group)
+                dd.save()
                 dds.append(dd)
             return dds
 
@@ -157,6 +173,15 @@ class ModelsTest(TestCase):
         return DSSToxSubstance.objects.create(extracted_chemical=extracted_chemical, true_cas=true_cas,
                                               true_chemname=true_chemname, rid=rid, sid=sid)
 
+
+    def create_ingredient(self, weight_fraction_type, lower_wf_analysis=0.123456789012345,
+                          central_wf_analysis=0.2, upper_wf_analysis = 1):
+        return Ingredient.objects.create(weight_fraction_type = weight_fraction_type,
+                                         lower_wf_analysis = lower_wf_analysis,
+                                         central_wf_analysis = central_wf_analysis,
+                                         upper_wf_analysis = upper_wf_analysis)
+
+
     def test_object_creation(self):
         self.assertTrue(isinstance(self.ds, DataSource))
         self.assertTrue(isinstance(self.dg, DataGroup))
@@ -165,6 +190,11 @@ class ModelsTest(TestCase):
         self.assertTrue(isinstance(self.et, ExtractedText))
         self.assertTrue(isinstance(self.ec, ExtractedChemical))
         self.assertTrue(isinstance(self.dsstox, DSSToxSubstance))
+        self.assertTrue(isinstance(self.i, Ingredient))
+        self.assertTrue(isinstance(self.p, Product))
+        self.assertTrue(isinstance(self.pi, ProductIngredient))
+        self.assertTrue(isinstance(self.pd, ProductDocument))
+        self.assertTrue(isinstance(self.dsi, DSSToxSubstanceIngredient))
 
     def test_object_properties(self):
         # Test properties of objects

@@ -4,7 +4,7 @@ from .data_source import DataSource
 from .data_document import DataDocument
 from .source_category import SourceCategory
 from .product_category import ProductCategory
-from django.utils import timezone
+from .ingredient import Ingredient
 from django.core.urlresolvers import reverse
 
 
@@ -12,6 +12,7 @@ class Product(CommonInfo):
 	prod_cat = models.ForeignKey(ProductCategory, related_name='category', on_delete=models.CASCADE, null=True, blank=True)
 	data_source = models.ForeignKey(DataSource, related_name='source', on_delete=models.CASCADE)
 	documents = models.ManyToManyField(DataDocument, through='ProductDocument')
+	ingredients = models.ManyToManyField(Ingredient, through='ProductIngredient')
 	source_category = models.ForeignKey(SourceCategory, on_delete=models.CASCADE, null=True, blank=True)
 	title = models.CharField(max_length=255)
 	manufacturer = models.CharField(db_index=True, max_length=250, null=True, blank=True, default = '')

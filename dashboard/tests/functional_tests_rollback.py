@@ -592,6 +592,58 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         self.assertIn("/qa/extractionscript" , self.browser.current_url, \
                 "The opened page should include the qa/extractionscript route")
 
+    def testApproval(self):
+        testpk = 156051
+        dd = DataDocument.objects.get(pk=testpk)
+        et = ExtractedText.objects.get(pk=testpk)
+        next_pk = et.next_extracted_text_in_qa_group()
+        # the example document is Sun_INDS_89
+        # start on the QA page
+        self.browser.get('%s%s' % (self.live_server_url, '/qa'))
+        # go to the Sun INDS script's page
+        script_qa_link = self.browser.find_element_by_xpath(
+            '//*[@id="extraction_script_table"]/tbody/tr[contains(.,"Sun INDS (extract)")]/td[4]/a'
+        )
+        script_qa_link.click()    
+        # Open the data document's page
+        dd_qa_link = self.browser.find_element_by_xpath(
+            '//*[@id="extracted_text_table"]/tbody/tr[contains(.,"Sun_INDS_89")]/td[6]/a'
+        )
+        dd_qa_link.click()
+        # one of the open windows is the pdf, the other is the editing screen
+        self.browser.switch_to_window(self.browser.window_handles[0])
+        print(self.browser.current_url)
+        if 'media' in self.browser.current_url:
+            print(self.browser.current_url)
+            pdf_window = self.browser.window_handles[0]
+            qa_window =  self.browser.window_handles[1]
+        else:
+            pdf_window = self.browser.window_handles[1]
+            qa_window =  self.browser.window_handles[0]
+        # close the pdf window
+        self.browser.switch_to_window(pdf_window)
+        self.browser.close()
+        # Now in the QA window:
+        self.browser.switch_to_window(qa_window)
+        btn_approve = self.browser.find_element_by_xpath('/html/body/div[1]/div[2]/div/a[1]')
+        self.assertTrue(et.qa_checked==False, "Before clicking, qa_checked should be False")
+        btn_approve.click()
+        #post-click
+        et = ExtractedText.objects.get(pk=testpk)
+        print(self.browser.current_url)
+        self.assertTrue(et.qa_checked, "After clicking, qa_checked should be True")
+        # the status and the user should have been updated
+        self.assertEqual(ExtractedText.APPROVED_WITHOUT_ERROR, et.qa_status, \
+            "qa_status should be Approved without errors")
+        self.assertEqual("Karyn", et.qa_approved_by.username, \
+            "The qa_approved_by user should be Karyn")
+        
+        self.assertIn(str(next_pk), self.browser.current_url, \
+            "Now the current URL should include the original ExtractedText object's next id")
+
+
+    
+
 
 class TestExtractedText(StaticLiveServerTestCase):
 

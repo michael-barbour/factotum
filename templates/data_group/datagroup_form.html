@@ -29,3 +29,13 @@
       </button>
     </form>
 {% endblock %}
+
+{% block js %}
+    <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker.min.css' %}">
+    <!-- Font Awesome CSS - used by datepicker -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}

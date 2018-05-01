@@ -16,15 +16,15 @@ class ProductForm(ModelForm):
     required_css_class = 'required' # adds to label tag
     class Meta:
         model = Product
-        fields = ['title', 'manufacturer', 'brand_name']
+        fields = ['title', 'manufacturer', 'brand_name', 'upc', 'size', 'color']
 
 class ProductPUCForm(ModelForm):
     prod_cat = ModelChoiceField(
         queryset=ProductCategory.objects.all(),
-		label='Category',
+        label='Category',
         widget=autocomplete.ModelSelect2(
-			url='puc-autocomplete',
-          	attrs={'data-minimum-input-length': 3,  })
+            url='puc-autocomplete',
+            attrs={'data-minimum-input-length': 3,  })
     )
 
     class Meta:
@@ -52,13 +52,13 @@ def product_curation_index(request, template_name='product_curation/product_cura
     list_no_puc = [ds_no_puc for ds_no_puc in qs_no_puc]
 
     for ds in data_sources:
-        try: 
+        try:
             ds.no_category = next((item for item in list_no_puc if item["data_source"] == ds.id), False)['no_category']
         except:
             ds.no_category = 0
         dgs = ds.datagroup_set.all()
         for dg in dgs:
-            dg.unlinked = dg.datadocument_set.count() - dg.datadocument_set.filter(productdocument__document__isnull=False).count()      
+            dg.unlinked = dg.datadocument_set.count() - dg.datadocument_set.filter(productdocument__document__isnull=False).count()
         ds.data_groups = dgs
 
     return render(request, template_name, {'data_sources': data_sources})
@@ -86,27 +86,27 @@ def link_product_list(request,  pk, template_name='product_curation/link_product
 def link_product_form(request, pk, template_name=('product_curation/'
                                                     'link_product_form.html')):
     doc = DataDocument.objects.get(pk=pk)
-    form = ProductForm(request.POST or None)
-    data_source_id = doc.data_group.data_source_id
+    ds_id = doc.data_group.data_source_id
+    upc_stub = ('stub_' + str(Product.objects.all().count() + 1))
+    form = ProductForm(initial={'upc': upc_stub})
     if request.method == 'POST':
         form = ProductForm(request.POST or None)
         if form.is_valid():
             title = form['title'].value()
             brand_name = form['brand_name'].value()
             manufacturer = form['manufacturer'].value()
+            upc_stub = form['upc'].value()
             try:
                 product = Product.objects.get(title=title)
             except Product.DoesNotExist:
-                upc_stub = ('stub_' +
-                            # title +  ### Removed as title busts product UPC size limits
-                            str(Product.objects.all().count() + 1))
+                now = timezone.now()
                 product = Product.objects.create(title=title,
                                                  manufacturer=manufacturer,
                                                  brand_name=brand_name,
                                                  upc=upc_stub,
-                                                 data_source_id=data_source_id,
-                                                 created_at=timezone.now(),
-                                                 updated_at=timezone.now())
+                                                 data_source_id=ds_id,
+                                                 created_at=now,
+                                                 updated_at=now)
             p = ProductDocument(product=product, document=doc)
             p.save()
         return redirect('link_product_list', pk=doc.data_group.pk)

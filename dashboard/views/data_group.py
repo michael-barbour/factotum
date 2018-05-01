@@ -41,9 +41,11 @@ class DataGroupForm(ModelForm):
         labels = {'csv': _('Register Records CSV File'), }
 
     def __init__(self, *args, **kwargs):
+        qs = Script.objects.filter(script_type='DL')
         self.user = kwargs.pop('user', None)
         super(DataGroupForm, self).__init__(*args, **kwargs)
         self.fields['csv'].widget.attrs.update({'accept':'.csv'})
+        self.fields['download_script'].queryset = qs
 
 class ExtractionScriptForm(Form):
     required_css_class = 'required' # adds to label tag

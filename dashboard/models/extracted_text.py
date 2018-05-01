@@ -34,7 +34,6 @@ class ExtractedText(models.Model):
 
     def next_extracted_text_in_qa_group(self):
         extextnext = get_next_or_prev(ExtractedText.objects.filter(qa_group=self.qa_group, qa_checked=False ), self, 'next')
-        nextid = 0
         if extextnext:
             # Replace our item with the next one
             nextid = extextnext.pk

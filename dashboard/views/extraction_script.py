@@ -100,7 +100,10 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
     chems = ExtractedChemical.objects.filter(extracted_text=extext)
     # get the next unapproved Extracted Text object
     # Its ID will populate the URL for the "Skip" button
-    nextid = extext.next_extracted_text_in_qa_group()
+    if extext.qa_checked:
+        nextid = 0
+    else:
+        nextid = extext.next_extracted_text_in_qa_group()
     # derive the number of approved records and remaining unapproved ones in the QA Group
     a = extext.qa_group.get_approved_doc_count()
     r = ExtractedText.objects.filter(qa_group=extext.qa_group).count() - a

@@ -120,7 +120,8 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
     def setUpClass(cls):
         super().setUpClass()
         # see if fixtures have been loaded yet
-        print("DataSource objects: {}".format(DataSource.objects.count()))
+        print("DataGroup objects when class is created: {}".format(DataGroup.objects.count()))
+        print(' ')
         #index_start = time.time()
         #update_index.Command().handle(using=['test_index'], remove=True)
         #index_elapsed = time.time() - index_start
@@ -132,13 +133,23 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
             self.browser = webdriver.Chrome() 
         self.test_start = time.time()
         log_karyn_in(self)
+        print('\n------starting ' + self._testMethodName)
+        print("\nDataGroup objects when method runs: {}".format(DataGroup.objects.count()))
+        print('\nExtractedText objects where qa_checked = True: ')
+        print(Script.objects.get(pk=6).extractedtext_set.filter(qa_checked=True).values('prod_name','qa_checked'))
+
 
     def tearDown(self):
         #print('  running test case tearDown()')
         self.test_elapsed = time.time() - self.test_start
         self.browser.quit()
-        print('\nFinished with ' + self._testMethodName)
+        #print('\nFinished with ' + self._testMethodName)
+        print('\nExtractedText objects where qa_checked = True: ')
+        print(Script.objects.get(pk=6).extractedtext_set.filter(qa_checked=True).values('prod_name','qa_checked'))
+        print('\nDataGroup objects in test database: ')
+        print(DataGroup.objects.count())
         print("Test case took {:.2f}s".format(self.test_elapsed))
+        print(' ')
 
     def test_data_source_name(self):
         dspk = DataSource.objects.filter(title='Walmart MSDS')[0].pk
@@ -247,6 +258,7 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
             return dds
 
     # creation of another DataGroup from csv and pdf sources
+    #@transaction.atomic
     def test_new_data_group(self):
         # DataGroup, created using the model layer
         dg_count_before = DataGroup.objects.count()
@@ -479,25 +491,34 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
 
         displayed_pct_checked = self.browser.find_elements_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr[2]/td[3]')[0].text
-        # this assumes that pk=1 will be a script_type of 'EX'
+        # this assumes that pk=6 will be a script_type of 'EX'
         model_pct_checked = Script.objects.get(pk=6).get_pct_checked()
         self.assertEqual(displayed_pct_checked, model_pct_checked,
                          ('The displayed percentage should match what is '
                           'derived from the model'))
 
         es = Script.objects.get(pk=6)
+        
+        print('method version: ----- ExtractedText objects in Script 6 ------')
+        print(es.extractedtext_set.filter(qa_checked=True).values('prod_name','qa_checked'))
+            
+
         self.assertEqual(es.get_qa_complete_extractedtext_count(), 1,
                          ('The ExtractionScript object should return 1 '
                           'qa_checked ExtractedText objects'))
         # Set qa_checked property to True for one of the ExtractedText objects
-        self.assertEqual(ExtractedText.objects.get(pk=121647).qa_checked, False)
+        self.assertEqual(ExtractedText.objects.get(pk=121647).qa_checked, False, \
+            "The qa_checked value should be False before the change in the model")
         et_change = ExtractedText.objects.get(pk=121647)
         et_change.qa_checked = True
         et_change.save()
         self.assertEqual(ExtractedText.objects.get(pk=121647).qa_checked, True,
                          'The object should now have qa_checked = True')
+        # This checks the other ExtractedText object
+        self.assertEqual(ExtractedText.objects.get(pk=121627).qa_checked, True,
+                         'The other object has always had qa_checked = True')
 
-        es = Script.objects.get(pk=6)
+        es.refresh_from_db()
         self.assertEqual(es.get_qa_complete_extractedtext_count(), 2,
                          ('The ExtractionScript object should return 2 '
                           'qa_checked ExtractedText object'))
@@ -592,8 +613,9 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         self.assertIn("/qa/extractionscript" , self.browser.current_url, \
                 "The opened page should include the qa/extractionscript route")
 
-    def testApproval(self):
+    def test_approval(self):
         testpk = 156051
+        sid = transaction.savepoint()
         dd = DataDocument.objects.get(pk=testpk)
         et = ExtractedText.objects.get(pk=testpk)
         next_pk = et.next_extracted_text_in_qa_group()
@@ -612,7 +634,7 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         dd_qa_link.click()
         # one of the open windows is the pdf, the other is the editing screen
         self.browser.switch_to_window(self.browser.window_handles[0])
-        print(self.browser.current_url)
+        #print(self.browser.current_url)
         if 'media' in self.browser.current_url:
             print(self.browser.current_url)
             pdf_window = self.browser.window_handles[0]
@@ -630,7 +652,7 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         btn_approve.click()
         #post-click
         et = ExtractedText.objects.get(pk=testpk)
-        print(self.browser.current_url)
+        #print(self.browser.current_url)
         self.assertTrue(et.qa_checked, "After clicking, qa_checked should be True")
         # the status and the user should have been updated
         self.assertEqual(ExtractedText.APPROVED_WITHOUT_ERROR, et.qa_status, \
@@ -640,6 +662,12 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         
         self.assertIn(str(next_pk), self.browser.current_url, \
             "Now the current URL should include the original ExtractedText object's next id")
+        transaction.savepoint_rollback(sid)
+        et = ExtractedText.objects.get(pk=testpk)
+        print('\nafter rollback, et.qa_checked:')
+        print(et.qa_checked)
+
+
 
 
     

@@ -14,6 +14,7 @@ class DataDocument(models.Model):
 	matched = models.BooleanField(default=False)
 	extracted = models.BooleanField(default=False)
 	uploaded_at = models.DateTimeField(default=timezone.now)
+	source_type = models.ForeignKey('SourceType', on_delete=models.PROTECT)
 
 	class Meta:
 		ordering = ['-id']

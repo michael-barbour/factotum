@@ -23,15 +23,23 @@
         <a class="btn btn-secondary" href="{% url 'data_group_list' %}">Cancel</a>
     </form>
     <br>
-    <form method="get" action="{% static 'csv/register_records.csv' %}">
-      <button type="button submit" class="btn btn-secondary">
-          <span class="oi oi-file"></span>Registered Records CSV Template
-      </button>
-    </form>
+    <a id="reg" href="" class="btn btn-secondary">
+      <span class="oi oi-spreadsheet"></span>&nbsp;Registered Records CSV Template
+    </a>
+    <table class="table" id="register" style="display:none;">
+      <thead class="table-primary">
+        <th>filename</th>
+        <th>title</th>
+        <th>product</th>
+        <th>url</th>
+      </thead>
+    </table>
 {% endblock %}
 
 {% block js %}
     <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
+    <script src="{% static 'js/export.js' %}"></script>
+    <script src="{% static 'js/data_group_form.js' %}"></script>
 {% endblock %}
 
 {% block css %}

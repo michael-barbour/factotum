@@ -11,7 +11,7 @@ class DataDocument(CommonInfo):
     url = models.CharField(null=True, blank=True, max_length=200)
     product_category = models.CharField(null=True, blank=True, max_length=50)
     data_group = models.ForeignKey('DataGroup', on_delete=models.CASCADE)
-    products = models.ManyToManyField('Product', through='ProductDocument')
+    products = models.ManyToManyField(through='dashboard.ProductDocument', to='dashboard.Product')
     matched = models.BooleanField(default=False)
     extracted = models.BooleanField(default=False)
     uploaded_at = models.DateTimeField(default=timezone.now)

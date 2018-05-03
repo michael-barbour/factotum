@@ -1,10 +1,8 @@
 from django.db import models
 from .common_info import CommonInfo
 from .data_source import DataSource
-from .data_document import DataDocument
 from .source_category import SourceCategory
 from .product_category import ProductCategory
-from .ingredient import Ingredient
 from django.core.urlresolvers import reverse
 
 
@@ -13,8 +11,10 @@ class Product(CommonInfo):
                                  on_delete=models.CASCADE, null=True, blank=True)
 	data_source = models.ForeignKey(DataSource, related_name='source',
                                     on_delete=models.CASCADE)
-	documents = models.ManyToManyField(DataDocument, through='ProductDocument')
-	ingredients = models.ManyToManyField(Ingredient, through='ProductIngredient')
+	documents = models.ManyToManyField(through='dashboard.ProductDocument',
+									   to='dashboard.DataDocument')
+	ingredients = models.ManyToManyField(through='dashboard.ProductToIngredient',
+										 to='dashboard.Ingredient')
 	source_category = models.ForeignKey(SourceCategory,
                                         on_delete=models.CASCADE, null=True, blank=True)
 	title = models.CharField(max_length=255)

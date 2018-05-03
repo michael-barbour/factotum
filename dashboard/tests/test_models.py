@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from dashboard.models import DataSource, DataGroup, DataDocument, SourceType, ExtractedText,\
     ExtractedChemical, UnitType, WeightFractionType, DSSToxSubstance, Script, Product, ProductDocument,\
-    Ingredient, ProductIngredient, DSSToxSubstanceIngredient
+    Ingredient, ProductToIngredient, DSSToxSubstanceToIngredient
 from django.test import TestCase, RequestFactory
 from django.utils import timezone
 import csv
@@ -70,17 +70,17 @@ class ModelsTest(TestCase):
         self.p.save()
 
         # ProductDocument
-        self.pd = ProductDocument.objects.create(product=self.p, document=self.dds[0] )
+        self.pd = ProductDocument.objects.create(product=self.p, document=self.dds[0])
 
         # Ingredient
         self.i = self.create_ingredient(self.wft)
         self.i.save()
 
-        # ProductIngredient
-        self.pi = ProductIngredient.objects.create(product=self.p, ingredient=self.i)
+        # ProductToIngredient
+        self.pi = ProductToIngredient.objects.create(product=self.p, ingredient=self.i)
 
-        # DSSToxSubstanceIngredient
-        self.dsi = DSSToxSubstanceIngredient.objects.create(dsstox_substance=self.dsstox, ingredient=self.i)
+        # DSSToxSubstanceToIngredient
+        self.dsi = DSSToxSubstanceToIngredient.objects.create(dsstox_substance=self.dsstox, ingredient=self.i)
 
 
     def tearDown(self):
@@ -192,9 +192,9 @@ class ModelsTest(TestCase):
         self.assertTrue(isinstance(self.dsstox, DSSToxSubstance))
         self.assertTrue(isinstance(self.i, Ingredient))
         self.assertTrue(isinstance(self.p, Product))
-        self.assertTrue(isinstance(self.pi, ProductIngredient))
+        self.assertTrue(isinstance(self.pi, ProductToIngredient))
         self.assertTrue(isinstance(self.pd, ProductDocument))
-        self.assertTrue(isinstance(self.dsi, DSSToxSubstanceIngredient))
+        self.assertTrue(isinstance(self.dsi, DSSToxSubstanceToIngredient))
 
     def test_object_properties(self):
         # Test properties of objects

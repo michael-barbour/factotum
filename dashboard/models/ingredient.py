@@ -11,8 +11,10 @@ def validate_wf_analysis(value):
 
 
 class Ingredient(CommonInfo):
-	products = models.ManyToManyField('Product', through='ProductIngredient')
-	dsstox_substances = models.ManyToManyField('DSSToxSubstance', through='DSSToxSubstanceIngredient')
+	products = models.ManyToManyField(through='dashboard.ProductToIngredient',
+									  to='dashboard.Product')
+	dsstox_substances = models.ManyToManyField(through='dashboard.DSSToxSubstanceToIngredient',
+											   to='dashboard.DSSToxSubstance')
 	lower_wf_analysis = models.DecimalField(max_digits=16, decimal_places=15,
 											null=True, blank=True, validators=[validate_wf_analysis])
 	central_wf_analysis = models.DecimalField(max_digits=16, decimal_places=15,
@@ -22,5 +24,5 @@ class Ingredient(CommonInfo):
 	weight_fraction_type = models.ForeignKey(WeightFractionType, on_delete=models.PROTECT, null=True, default='1')
 
 	def __str__(self):
-		return str("")
+		return self.id
 

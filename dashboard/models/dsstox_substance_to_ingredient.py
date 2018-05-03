@@ -4,10 +4,10 @@ from .ingredient import Ingredient
 from .dsstox_substance import DSSToxSubstance
 
 
-class DSSToxSubstanceIngredient(CommonInfo):
+class DSSToxSubstanceToIngredient(CommonInfo):
 	dsstox_substance = models.ForeignKey(DSSToxSubstance, on_delete=models.CASCADE)
 	ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
 
 	def __str__(self):
-		return ""
+		return self.id
 

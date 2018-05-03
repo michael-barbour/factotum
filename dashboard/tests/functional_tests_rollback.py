@@ -63,6 +63,22 @@ class RollbackStaticLiveServerTestCase(StaticLiveServerTestCase):
     rollback approach. 
     """
     @classmethod
+    def _enter_atomics(cls):
+        """Open atomic blocks for multiple databases."""
+        atomics = {}
+        for db_name in cls._databases_names():
+            atomics[db_name] = transaction.atomic(using=db_name)
+            atomics[db_name].__enter__()
+        return atomics
+
+    @classmethod
+    def _rollback_atomics(cls, atomics):
+        """Rollback atomic blocks opened by the previous method."""
+        for db_name in reversed(cls._databases_names()):
+            transaction.set_rollback(True, using=db_name)
+            atomics[db_name].__exit__(None, None, None)
+
+    @classmethod
     def setUpClass(cls):
         """Load the fixtures at the beginning of the class"""
         super().setUpClass()
@@ -119,12 +135,6 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        # see if fixtures have been loaded yet
-        print("DataGroup objects when class is created: {}".format(DataGroup.objects.count()))
-        print(' ')
-        #index_start = time.time()
-        #update_index.Command().handle(using=['test_index'], remove=True)
-        #index_elapsed = time.time() - index_start
 
     def setUp(self):
         if settings.TEST_BROWSER == 'firefox':
@@ -133,21 +143,23 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
             self.browser = webdriver.Chrome() 
         self.test_start = time.time()
         log_karyn_in(self)
-        print('\n------starting ' + self._testMethodName)
-        print("\nDataGroup objects when method runs: {}".format(DataGroup.objects.count()))
-        print('\nExtractedText objects where qa_checked = True: ')
-        print(Script.objects.get(pk=6).extractedtext_set.filter(qa_checked=True).values('prod_name','qa_checked'))
+        print('\n------ setUp() for ' + self._testMethodName)
+        #print("\nDataGroup objects when method runs: {}".format(DataGroup.objects.count()))
+        #print('\nExtractedText objects where qa_checked = True: ')
+        #print(Script.objects.get(pk=6).extractedtext_set.filter(qa_checked=True).values('pk','prod_name','qa_checked'))
+        #print('\n------\n')
+
 
 
     def tearDown(self):
         #print('  running test case tearDown()')
         self.test_elapsed = time.time() - self.test_start
         self.browser.quit()
-        #print('\nFinished with ' + self._testMethodName)
-        print('\nExtractedText objects where qa_checked = True: ')
-        print(Script.objects.get(pk=6).extractedtext_set.filter(qa_checked=True).values('prod_name','qa_checked'))
-        print('\nDataGroup objects in test database: ')
-        print(DataGroup.objects.count())
+        print('\n------ tearDown() for ' + self._testMethodName)
+        #print('\nExtractedText objects where qa_checked = True: ')
+        #print(Script.objects.get(pk=6).extractedtext_set.filter(qa_checked=True).values('pk','prod_name','qa_checked'))
+        #print('\nDataGroup objects in test database: ')
+        #print(DataGroup.objects.count())
         print("Test case took {:.2f}s".format(self.test_elapsed))
         print(' ')
 
@@ -545,7 +557,7 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
             '//*[@id="extraction_script_table"]/tbody/tr[contains(.,"Sun INDS (extract)")]/td[4]/a'
         )
         self.assertIn('extractionscript/6', script_qa_link.get_attribute('outerHTML') )
-        # Before clicking the link, the script's qa_done property
+        # Before clicking the link, the script's qa_begun property
         # should be false
         self.assertEqual(Script.objects.get(pk=6).qa_begun, False,
                          'The qa_done property of the Script should be False')
@@ -615,62 +627,95 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
 
     def test_approval(self):
         testpk = 156051
-        sid = transaction.savepoint()
-        dd = DataDocument.objects.get(pk=testpk)
-        et = ExtractedText.objects.get(pk=testpk)
-        next_pk = et.next_extracted_text_in_qa_group()
-        # the example document is Sun_INDS_89
-        # start on the QA page
-        self.browser.get('%s%s' % (self.live_server_url, '/qa'))
-        # go to the Sun INDS script's page
-        script_qa_link = self.browser.find_element_by_xpath(
-            '//*[@id="extraction_script_table"]/tbody/tr[contains(.,"Sun INDS (extract)")]/td[4]/a'
-        )
-        script_qa_link.click()    
-        # Open the data document's page
-        dd_qa_link = self.browser.find_element_by_xpath(
-            '//*[@id="extracted_text_table"]/tbody/tr[contains(.,"Sun_INDS_89")]/td[6]/a'
-        )
-        dd_qa_link.click()
-        # one of the open windows is the pdf, the other is the editing screen
-        self.browser.switch_to_window(self.browser.window_handles[0])
-        #print(self.browser.current_url)
-        if 'media' in self.browser.current_url:
-            print(self.browser.current_url)
-            pdf_window = self.browser.window_handles[0]
-            qa_window =  self.browser.window_handles[1]
-        else:
-            pdf_window = self.browser.window_handles[1]
-            qa_window =  self.browser.window_handles[0]
-        # close the pdf window
-        self.browser.switch_to_window(pdf_window)
-        self.browser.close()
-        # Now in the QA window:
-        self.browser.switch_to_window(qa_window)
-        btn_approve = self.browser.find_element_by_xpath('/html/body/div[1]/div[2]/div/a[1]')
-        self.assertTrue(et.qa_checked==False, "Before clicking, qa_checked should be False")
-        btn_approve.click()
-        #post-click
-        et = ExtractedText.objects.get(pk=testpk)
-        #print(self.browser.current_url)
-        self.assertTrue(et.qa_checked, "After clicking, qa_checked should be True")
-        # the status and the user should have been updated
-        self.assertEqual(ExtractedText.APPROVED_WITHOUT_ERROR, et.qa_status, \
-            "qa_status should be Approved without errors")
-        self.assertEqual("Karyn", et.qa_approved_by.username, \
-            "The qa_approved_by user should be Karyn")
+        with transaction.atomic():
+            et = ExtractedText.objects.get(pk=testpk)
+            next_pk = et.next_extracted_text_in_qa_group()
+            # the example document is Sun_INDS_89
+            # start on the QA page
+            self.browser.get('%s%s' % (self.live_server_url, '/qa'))
+            # go to the Sun INDS script's page
+            script_qa_link = self.browser.find_element_by_xpath(
+                '//*[@id="extraction_script_table"]/tbody/tr[contains(.,"Sun INDS (extract)")]/td[4]/a'
+            )
+            script_qa_link.click()    
+            # Open the data document's page
+            dd_qa_link = self.browser.find_element_by_xpath(
+                '//*[@id="extracted_text_table"]/tbody/tr[contains(.,"Sun_INDS_89")]/td[6]/a'
+            )
+            dd_qa_link.click()
+            # one of the open windows is the pdf, the other is the editing screen
+            self.browser.switch_to_window(self.browser.window_handles[0])
+            #print(self.browser.current_url)
+            if 'media' in self.browser.current_url:
+                print(self.browser.current_url)
+                pdf_window = self.browser.window_handles[0]
+                qa_window =  self.browser.window_handles[1]
+            else:
+                pdf_window = self.browser.window_handles[1]
+                qa_window =  self.browser.window_handles[0]
+            # close the pdf window
+            self.browser.switch_to_window(pdf_window)
+            self.browser.close()
+            # Now in the QA window:
+            self.browser.switch_to_window(qa_window)
+            btn_approve = self.browser.find_element_by_xpath('/html/body/div[1]/div[2]/div/a[1]')
+            self.assertTrue(et.qa_checked==False, "Before clicking, qa_checked should be False")
+            btn_approve.click()
+            #post-click
+            #et = ExtractedText.objects.get(pk=testpk)
+            #print(self.browser.current_url)
+            self.assertTrue(et.qa_checked, "After clicking, qa_checked should be True")
+            # the status and the user should have been updated
+            self.assertEqual(ExtractedText.APPROVED_WITHOUT_ERROR, et.qa_status, \
+                "qa_status should be Approved without errors")
+            self.assertEqual("Karyn", et.qa_approved_by.username, \
+                "The qa_approved_by user should be Karyn")
+            
+            self.assertIn(str(next_pk), self.browser.current_url, \
+                "Now the current URL should include the original ExtractedText object's next id")
+            
+            transaction.set_rollback(True)
+            # see if it has been rolled back
+        print('\n Inside test method, after rollback')
+        print(ExtractedText.objects.get(pk=testpk).qa_checked)
         
-        self.assertIn(str(next_pk), self.browser.current_url, \
-            "Now the current URL should include the original ExtractedText object's next id")
-        transaction.savepoint_rollback(sid)
-        et = ExtractedText.objects.get(pk=testpk)
-        print('\nafter rollback, et.qa_checked:')
-        print(et.qa_checked)
 
 
 
 
-    
+
+
+    def check_persistence_model(self):
+        ds = DataSource.objects.filter(title='Walmart MSDS')[0]
+        # start the transaction here
+        atm = transaction.atomic()
+        atm.__enter__()
+
+        self.dg = self.create_data_group(data_source=ds)
+        print('\nDataGroup object count after adding one:')
+        print(DataGroup.objects.count())
+        transaction.set_rollback(True)
+        atm.__exit__(None, None, None)
+        print('Rollback done')
+        print('\nDataGroup object count after rollback:')
+        print(DataGroup.objects.count())
+
+    def check_persistence_ui(self):
+        print('\nDataSource object count before adding:')
+        print(DataSource.objects.count()) 
+        # start the transaction here
+        with transaction.atomic():
+            self.browser.get('%s%s' % (self.live_server_url , '/datasource/new'))
+            self.browser.find_element_by_xpath('//*[@id="id_title"]').send_keys('Test Data Source')
+            select = Select(self.browser.find_element_by_id('id_type'))
+            select.select_by_visible_text('msds')
+            self.browser.find_element_by_xpath('/html/body/div[1]/form/button').click()
+            print('\nDataSource object count after adding one:')
+            print(DataSource.objects.count())
+            transaction.set_rollback(True)
+
+        print('\nDataSource object count after rollback:')
+        print(DataSource.objects.count())   
 
 
 class TestExtractedText(StaticLiveServerTestCase):

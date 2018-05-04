@@ -1,7 +1,9 @@
 from django.contrib.auth.models import User
-from dashboard.models import DataSource, DataGroup, DataDocument, SourceType, ExtractedText,\
-    ExtractedChemical, UnitType, WeightFractionType, DSSToxSubstance, Script, Product, ProductDocument,\
-    Ingredient, ProductToIngredient, DSSToxSubstanceToIngredient
+from dashboard.models import (DataSource, DataGroup, DataDocument, SourceType,
+                              ExtractedText, ExtractedChemical, UnitType,
+                              WeightFractionType, DSSToxSubstance, Script,
+                              Product, ProductDocument, Ingredient,
+                              ProductToIngredient, DSSToxSubstanceToIngredient)
 from django.test import TestCase, RequestFactory
 from django.utils import timezone
 import csv
@@ -153,18 +155,18 @@ class ModelsTest(TestCase):
 
     def create_unit_type(self, title='percent composition'):
         return UnitType.objects.create(title=title)
-    
+
     def create_weight_fraction_type(self, title= 'reported', description= 'reported'):
         return WeightFractionType.objects.create(title=title, description=description)
 
     def create_extracted_chemical(self, extracted_text, raw_cas='Test CAS', raw_chem_name='Test Chem Name',
                                   raw_min_comp='Test Raw Min Comp', raw_max_comp='Test Raw Max Comp',
-                                  unit_type=UnitType.objects.first(), 
-                                  weight_fraction_type=WeightFractionType.objects.first(), 
+                                  unit_type=UnitType.objects.first(),
+                                  weight_fraction_type=WeightFractionType.objects.first(),
                                   report_funcuse='Test Report Funcuse'):
         return ExtractedChemical.objects.create(extracted_text=extracted_text, raw_cas=raw_cas,
                                                 raw_chem_name=raw_chem_name, raw_min_comp=raw_min_comp,
-                                                raw_max_comp=raw_max_comp, unit_type=unit_type, 
+                                                raw_max_comp=raw_max_comp, unit_type=unit_type,
                                                 weight_fraction_type=weight_fraction_type,
                                                 report_funcuse=report_funcuse)
 

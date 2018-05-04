@@ -111,10 +111,14 @@ class RollbackStaticLiveServerTestCase(StaticLiveServerTestCase):
 
 
 class FunctionalTests(RollbackStaticLiveServerTestCase):
-    fixtures = ['00_superuser.yaml', '01_lookups.yaml',
-    '02_datasource.yaml' , '03_datagroup.yaml', '04_productcategory.yaml',
-    '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml',
-     '08_extractedtext.yaml','09_productdocument.yaml']
+    fixtures = ['00_superuser.yaml','01_lookups.yaml','02_datasource.yaml',
+                '03_datagroup.yaml','04_productattr.yaml',
+                '05_productcategory.yaml','06_product.yaml',
+                '07_datadocument.yaml','08_script.yaml',
+                '09_extractedtext.yaml','10_productdocument.yaml']
+
+
+
 
     @classmethod
     def setUpClass(cls):
@@ -592,6 +596,14 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         btn_exit.click()
         self.assertIn("/qa/extractionscript" , self.browser.current_url, \
                 "The opened page should include the qa/extractionscript route")
+
+    def test_product_attr(self):
+        self.browser.get(self.live_server_url + ('/admin/dashboard'
+                                                 '/productcategory/add/'))
+        attr_select = self.browser.find_element_by_name('attribute')
+        self.assertTrue(attr_select.get_property('required'),'ProductAttr is required when creating a ProductCategory')
+
+
 
 
 class TestExtractedText(StaticLiveServerTestCase):

@@ -1,8 +1,5 @@
 import django_filters
 
-from datatableview import helpers
-from datatableview.views import DatatableView, XEditableDatatableView
-
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
@@ -26,7 +23,7 @@ def qa_index(request, template_name='qa/qa_index.html'):
     return render(request, template_name, {'extraction_scripts': scripts})
 
 
-class ExtractedChemicalsEditView(XEditableDatatableView):
+""" class ExtractedChemicalsEditView(XEditableDatatableView):
     model = ExtractedChemical
     datatable_options = {
         'columns': [
@@ -38,4 +35,4 @@ class ExtractedChemicalsEditView(XEditableDatatableView):
             ("Units", 'units', helpers.make_xeditable),
             ("Reported Functional Use", "report_funcuse", helpers.make_xeditable),
         ]
-    }
+    } """

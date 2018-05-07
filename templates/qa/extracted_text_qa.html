@@ -65,11 +65,30 @@
             </dl>
 
 
-            <div class="col-xs-12">
-                    <div class="table-responsive">
-                        {{ datatable }}
-                    </div>
-                </div>
+            <table class="table table-striped table-bordered dataTable no-footer table-sm" id="extractedchemicals">
+                    <thead class="table-primary">
+                        <th>CAS</th>
+                        <th>Chemical Name</th>
+                        <th>raw_min_comp</th>
+                        <th>raw_max_comp</th>
+                        <th>Units</th>
+                        <th>Reported Functional Use</th>
+                    </thead>
+                    <tbody>
+                    {% for chem in chems %}
+                      <tr>
+                        <td>{{chem.raw_cas}}
+                        </td>
+                        <td>{{ chem.raw_chem_name}} %</td>
+                        <td>{{ chem.raw_min_comp | floatformat:0.00}} %</td>
+                        <td>{{ chem.raw_max_comp | floatformat:0.00 }} %</td>
+
+                        <td>{{ chem.units }}</td>
+                        <td>{{ chem.report_funcuse }}</td>
+                      </tr>
+                    {% endfor %}
+                    </tbody>
+                  </table>
 
                   {% if extracted.qa_checked %}
                   <a class="btn btn-success disabled" title="This extracted document has already been approved" href="{% url "extracted_text_approve" extracted.pk %}" role="button" aria-disabled="true">Approve</a>

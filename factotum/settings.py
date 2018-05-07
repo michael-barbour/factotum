@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'haystack',
     'haystack_elasticsearch',
     'bootstrap_datepicker',
-    'datatableview',
 ]
 
 MIDDLEWARE = [

@@ -308,7 +308,6 @@ def data_group_update(request, pk):
     datagroup = get_object_or_404(DataGroup, pk=pk)
     form = DataGroupForm(request.POST or None, instance=datagroup)
     if form.is_valid():
-        # datagroup.updated_at = datetime.now()
         form.save()
         return redirect('data_group_list')
     return render(request, 'data_group/datagroup_form.html', {'form': form})

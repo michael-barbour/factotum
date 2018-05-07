@@ -18,7 +18,6 @@ class DataSourceForm(forms.ModelForm):
 
 
 class PriorityForm(forms.ModelForm):
-
 	class Meta:
 		model = DataSource
 		fields = ['priority']
@@ -94,7 +93,6 @@ def data_source_update(request, pk, template_name=('data_source/'
 	datasource = get_object_or_404(DataSource, pk=pk)
 	form = DataSourceForm(request.POST or None, instance=datasource)
 	if form.is_valid():
-		datasource.updated_at = datetime.now()
 		form.save()
 		return redirect('data_source_list')
 	return render(request, template_name, {'form': form})

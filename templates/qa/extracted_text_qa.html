@@ -67,6 +67,7 @@
 
             <table class="table table-striped table-bordered dataTable no-footer table-sm" id="extractedchemicals">
                     <thead class="table-primary">
+                        <th>&nbsp;</th>
                         <th>CAS</th>
                         <th>Chemical Name</th>
                         <th>raw_min_comp</th>
@@ -77,6 +78,11 @@
                     <tbody>
                     {% for chem in chems %}
                       <tr>
+                        <td>          
+                            <a class="btn btn-success btn-sm" role="button" title="edit"
+                            href="{% url "extracted_chemical_edit" chem.id %}">
+                           <span class="oi oi-pencil"></span> </a>
+                        </td>
                         <td>{{chem.raw_cas}}
                         </td>
                         <td>{{ chem.raw_chem_name}} %</td>

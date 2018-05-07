@@ -6,15 +6,15 @@ from django.utils import timezone
 
 class DataDocument(CommonInfo):
 
-	  filename = models.CharField(max_length=100)
-	  title = models.CharField(max_length=255)
-	  url = models.CharField(null=True, blank=True, max_length=200)
-	  product_category = models.CharField(null=True, blank=True, max_length=50)
-	  data_group = models.ForeignKey('DataGroup', on_delete=models.CASCADE)
-	  products = models.ManyToManyField('Product', through='ProductDocument')
-	  matched = models.BooleanField(default=False)
-	  extracted = models.BooleanField(default=False)
-	  uploaded_at = models.DateTimeField(default=timezone.now)
+    filename = models.CharField(max_length=100)
+    title = models.CharField(max_length=255)
+    url = models.CharField(null=True, blank=True, max_length=200)
+    product_category = models.CharField(null=True, blank=True, max_length=50)
+    data_group = models.ForeignKey('DataGroup', on_delete=models.CASCADE)
+    products = models.ManyToManyField('Product', through='ProductDocument')
+    matched = models.BooleanField(default=False)
+    extracted = models.BooleanField(default=False)
+    uploaded_at = models.DateTimeField(default=timezone.now)
     source_type = models.ForeignKey('SourceType', on_delete=models.PROTECT)
 
     class Meta:

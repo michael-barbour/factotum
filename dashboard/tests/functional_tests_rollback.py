@@ -23,7 +23,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from dashboard.models import (DataGroup, DataSource, DataDocument,
-                              Script, ExtractedText, Product, ProductCategory, ProductDocument)
+                              Script, ExtractedText, Product, ProductCategory, ProductDocument, SourceType)
 
 from haystack import connections
 from haystack.query import SearchQuerySet
@@ -183,10 +183,6 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         self.browser.get(self.live_server_url + '/datagroup/' + str(dgpk))
         h1 = self.browser.find_element_by_name('title')
         self.assertIn('Walmart MSDS 1', h1.text)
-        # Checking the URL by row is too brittle
-        #pdflink = self.browser.find_elements_by_xpath(
-        #    '//*[@id="d-docs"]/tbody/tr[2]/td[1]/a')[0]
-        #self.assertIn('shampoo.pdf', pdflink.get_attribute('href'))
         rows = self.browser.find_elements_by_xpath(
                                         "//table[@id='registered']/tbody/tr")
         docs = DataDocument.objects.filter(data_group=dgpk)
@@ -223,7 +219,7 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         fs.save(pdf2_name, local_pdf)
         return [pdf1_name, pdf2_name]
 
-    def create_data_documents(self, data_group, data_source):
+    def create_data_documents(self, data_group, source_type):
         dds = []
         #pdfs = [f for f in os.listdir('/media/' + self.dg.dgurl() + '/pdf') if f.endswith('.pdf')]
         # pdfs
@@ -242,7 +238,8 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
                                                  product_category=line['product'],
                                                  url=line['url'],
                                                  matched=line['filename'] in self.pdfs,
-                                                 data_group=data_group)
+                                                 data_group=data_group,
+                                                 source_type=source_type)
                 dds.append(dd)
             return dds
 
@@ -252,13 +249,15 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         dg_count_before = DataGroup.objects.count()
         ds = DataSource.objects.filter(title='Walmart MSDS')[0]
         self.dg = self.create_data_group(data_source=ds)
+        st = SourceType.objects.create(title="title")
+
         dg_count_after = DataGroup.objects.count()
         print('DataGroup count after test_new_data_group: {}'.format(dg_count_after))
         self.assertEqual(dg_count_after, dg_count_before + 1,
                          "Confirm the DataGroup object has been created")
         new_dg_pk = self.dg.pk
         self.pdfs = self.upload_pdfs()
-        self.dds = self.create_data_documents(self.dg, ds)
+        self.dds = self.create_data_documents(self.dg, st)
 
         # Use the browser layer to confirm that the object has been created
         self.browser.get('%s%s%s' % (self.live_server_url, '/datagroup/', new_dg_pk))

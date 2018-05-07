@@ -11,6 +11,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('dashboard', '0039_auto_20180430_1240'),
+        ('dashboard', '0039_datadocument_source_type'),
     ]
 
     operations = [

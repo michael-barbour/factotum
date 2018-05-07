@@ -45,25 +45,26 @@
 - model: dashboard.datadocument
   pk: 1
   fields: {filename: adams_flea_tick_shampoo.pdf, title: Flea and Tick Shampoo, url: '',
-    product_category: pet shampoo, data_group: 1, matched: true, extracted: false, uploaded_at: ! '2018-02-01 14:45:22.570331'}
+    product_category: pet shampoo, data_group: 1, matched: true, extracted: false,
+    uploaded_at: ! '2018-02-01 14:45:22.570331', source_type: 1}
 - model: dashboard.datadocument
   pk: 2
   fields: {filename: raid_ant_killer.pdf, title: Ant Killer, url: '', product_category: pesticide,
-    data_group: 1, matched: true, extracted: false, uploaded_at: ! '2018-02-02 14:45:22.570331'}
+    data_group: 1, matched: true, extracted: false, uploaded_at: ! '2018-02-02 14:45:22.570331', source_type: 1}
 - model: dashboard.datadocument
   pk: 3
   fields: {filename: raid_msds.pdf, title: Raid bug killer, url: '', product_category: pesticide,
-    data_group: 1, matched: true, extracted: false, uploaded_at: ! '2018-02-03 14:45:22.570331'}
+    data_group: 1, matched: true, extracted: false, uploaded_at: ! '2018-02-03 14:45:22.570331', source_type: 1}
 - model: dashboard.datadocument
   pk: 4
   fields: {filename: 0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf, title: NUTRA NAIL OLIVE
       OIL NAIL & CUTICLE TREATMENT, url: '', product_category: OIL BASED NAIL TREATMENT,
-    data_group: 2, matched: true, extracted: true, uploaded_at: ! '2018-02-04 14:45:22.570331'}
+    data_group: 2, matched: true, extracted: true, uploaded_at: ! '2018-02-04 14:45:22.570331', source_type: 1}
 - model: dashboard.datadocument
   pk: 5
   fields: {filename: 0c68ab16-2065-4d9b-a8f2-e428eb192465.pdf, title: Hawaiian Body
       Cream Nourishing Coconut Milk, url: '', product_category: personal care product,
-    data_group: 2, matched: true, extracted: true}
+    data_group: 2, matched: true, extracted: true, source_type: 1}
 - model: dashboard.datagroup
   pk: 1
   fields: {name: Walmart MSDS 1, description: MSDS from Walmart group 1, downloaded_by: 1,

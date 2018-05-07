@@ -23,7 +23,8 @@ from dashboard.models import (DataGroup, DataDocument, Script, ExtractedText, Ex
 
 class DataGroupForm(ModelForm):
     required_css_class = 'required' # adds to label tag
-    source_type = forms.ModelChoiceField(queryset=SourceType.objects.all())
+    source_type = forms.ModelChoiceField(label='Document Default Source Type',
+                                         queryset=SourceType.objects.all())
     class Meta:
         model = DataGroup
         fields = ['name', 'description', 'downloaded_by', 'downloaded_at', 'download_script', 'data_source', 'csv']

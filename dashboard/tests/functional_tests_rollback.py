@@ -50,10 +50,12 @@ def log_karyn_in(object):
     password_input.send_keys('specialP@55word')
     object.browser.find_element_by_class_name('btn').click()
 
+
 def connections_support_transactions():
     """Force these tests to assume that we're using a transaction-capable database backend."""
-    #return all(conn.features.supports_transactions for conn in connections.all())
+    # return all(conn.features.supports_transactions for conn in connections.all())
     return True
+
 
 class RollbackStaticLiveServerTestCase(StaticLiveServerTestCase):
     """Because StaticLiveServerTestCase extends TransactionTestCase, it lacks \
@@ -86,7 +88,8 @@ class RollbackStaticLiveServerTestCase(StaticLiveServerTestCase):
             #print('loading fixtures')
             for db_name in cls._databases_names(include_mirrors=False):
                 try:
-                    call_command('loaddata', *cls.fixtures, **{'verbosity': 0, 'database': db_name})
+                    call_command('loaddata', *cls.fixtures, **
+                                 {'verbosity': 0, 'database': db_name})
                 except Exception:
                     raise
 
@@ -123,14 +126,11 @@ class RollbackStaticLiveServerTestCase(StaticLiveServerTestCase):
             )
 
 
-
-
-
 class FunctionalTests(RollbackStaticLiveServerTestCase):
     fixtures = ['00_superuser.yaml', '01_lookups.yaml',
-    '02_datasource.yaml' , '03_datagroup.yaml', '04_productcategory.yaml',
-    '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml', 
-     '08_extractedtext.yaml','09_productdocument.yaml']
+                '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
+                '05_product.yaml', '06_datadocument.yaml', '07_script.yaml',
+                '08_extractedtext.yaml', '09_productdocument.yaml']
 
     @classmethod
     def setUpClass(cls):
@@ -140,16 +140,14 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         if settings.TEST_BROWSER == 'firefox':
             self.browser = webdriver.Firefox()
         else:
-            self.browser = webdriver.Chrome() 
+            self.browser = webdriver.Chrome()
         self.test_start = time.time()
         log_karyn_in(self)
         print('\n------ setUp() for ' + self._testMethodName)
         #print("\nDataGroup objects when method runs: {}".format(DataGroup.objects.count()))
         #print('\nExtractedText objects where qa_checked = True: ')
-        #print(Script.objects.get(pk=6).extractedtext_set.filter(qa_checked=True).values('pk','prod_name','qa_checked'))
-        #print('\n------\n')
-
-
+        # print(Script.objects.get(pk=6).extractedtext_set.filter(qa_checked=True).values('pk','prod_name','qa_checked'))
+        # print('\n------\n')
 
     def tearDown(self):
         #print('  running test case tearDown()')
@@ -157,9 +155,9 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         self.browser.quit()
         print('\n------ tearDown() for ' + self._testMethodName)
         #print('\nExtractedText objects where qa_checked = True: ')
-        #print(Script.objects.get(pk=6).extractedtext_set.filter(qa_checked=True).values('pk','prod_name','qa_checked'))
+        # print(Script.objects.get(pk=6).extractedtext_set.filter(qa_checked=True).values('pk','prod_name','qa_checked'))
         #print('\nDataGroup objects in test database: ')
-        #print(DataGroup.objects.count())
+        # print(DataGroup.objects.count())
         print("Test case took {:.2f}s".format(self.test_elapsed))
         print(' ')
 
@@ -168,7 +166,7 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         self.browser.get(self.live_server_url + '/datasource/' + str(dspk))
         h1 = self.browser.find_element_by_name('title')
         self.assertIn('Walmart MSDS', h1.text,
-                    'The h1 text should include "Walmart MSDS"')
+                      'The h1 text should include "Walmart MSDS"')
 
     # When a new data source is entered, the data source is automatically
     # assigned the state 'awaiting triage.'
@@ -185,7 +183,6 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         selected_option = select.first_selected_option
         self.assertIn(selected_option.text, valid_priorities)
 
-
     def test_datagroup_list_length(self):
         b = len(DataGroup.objects.filter(data_source_id=1))
         self.browser.get(self.live_server_url + '/datasource/1')
@@ -196,7 +193,8 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
 
     def test_DataTables(self):
         self.browser.get(self.live_server_url + '/datasources/')
-        wrap_div = self.browser.find_element_by_class_name('dataTables_wrapper')
+        wrap_div = self.browser.find_element_by_class_name(
+            'dataTables_wrapper')
         self.assertIn("Show", wrap_div.text, 'DataTables missing...')
 
     # Data Groups
@@ -207,13 +205,14 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         h1 = self.browser.find_element_by_name('title')
         self.assertIn('Walmart MSDS 1', h1.text)
         # Checking the URL by row is too brittle
-        #pdflink = self.browser.find_elements_by_xpath(
+        # pdflink = self.browser.find_elements_by_xpath(
         #    '//*[@id="d-docs"]/tbody/tr[2]/td[1]/a')[0]
         #self.assertIn('shampoo.pdf', pdflink.get_attribute('href'))
         rows = self.browser.find_elements_by_xpath(
-                                        "//table[@id='registered']/tbody/tr")
+            "//table[@id='registered']/tbody/tr")
         docs = DataDocument.objects.filter(data_group=dgpk)
-        self.assertEqual(len(rows),len(docs),'This table needs to be the entire set of data documents for the group for downloading CSV.')
+        self.assertEqual(len(rows), len(
+            docs), 'This table needs to be the entire set of data documents for the group for downloading CSV.')
 
     def create_data_group(self, data_source, testusername='Karyn',
                           name='Walmart MSDS 3',
@@ -228,11 +227,9 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
                                         downloaded_at=timezone.now(),
                                         download_script=None,
                                         csv=SimpleUploadedFile('walmart_msds_3.csv', source_csv.read()))
-        
 
-    #def test_edit_persistence(self):
+    # def test_edit_persistence(self):
     #    print("DataGroup objects in test_edit_persistence: {}".format(DataGroup.objects.count()))
-
 
     def upload_pdfs(self):
         store = settings.MEDIA_URL + self.dg.dgurl()
@@ -285,7 +282,8 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         self.dds = self.create_data_documents(self.dg, ds)
 
         # Use the browser layer to confirm that the object has been created
-        self.browser.get('%s%s%s' % (self.live_server_url, '/datagroup/', new_dg_pk))
+        self.browser.get('%s%s%s' %
+                         (self.live_server_url, '/datagroup/', new_dg_pk))
         self.assertEqual('factotum', self.browser.title,
                          "Testing open of show page for new data group")
 
@@ -297,7 +295,8 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
 
         # Use the browser layer to delete the DataGroup object
         # deleting the DataGroup should clean up the file system
-        self.browser.get('%s%s%s' % (self.live_server_url, '/datagroup/delete/', new_dg_pk))
+        self.browser.get('%s%s%s' % (self.live_server_url,
+                                     '/datagroup/delete/', new_dg_pk))
         del_button = self.browser.find_elements_by_xpath(('/html/body/div/form/'
                                                           'input[2]'))[0]
         del_button.click()
@@ -308,18 +307,17 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         # The data group detail page uses server-side pagination to display the
         # related data documents
         dgpk = DataGroup.objects.get(name='Walmart MSDS 2').id
-        self.browser.get('%s%s%s' % (self.live_server_url, '/datagroup/', str(dgpk)))
-        pagebox = self.browser.find_element_by_xpath("/html/body/div[1]/nav/ul/li[1]/span")
+        self.browser.get('%s%s%s' %
+                         (self.live_server_url, '/datagroup/', str(dgpk)))
+        pagebox = self.browser.find_element_by_xpath(
+            "/html/body/div[1]/nav/ul/li[1]/span")
         self.assertIn('Page 1', pagebox.text,
-                         "Confirm the current page navigation box displays 'Page 1 of [some number]'")
-        nextbox = self.browser.find_element_by_xpath('/html/body/div[1]/nav/ul/li[2]/a')
+                      "Confirm the current page navigation box displays 'Page 1 of [some number]'")
+        nextbox = self.browser.find_element_by_xpath(
+            '/html/body/div[1]/nav/ul/li[2]/a')
         nextbox.click()
         self.assertIn("?page=2", self.browser.current_url,
                       'The newly opened URL should contain the new page number')
-
-
-
-
 
     def test_unlinked_documents(self):
         self.browser.get(self.live_server_url + '/product_curation/')
@@ -333,42 +331,46 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
 
     def test_link_product(self):
         dgpk = DataGroup.objects.filter(name='Walmart MSDS 2')[0].pk
-        self.browser.get(self.live_server_url + '/link_product_list/' + str(dgpk))
-        create_prod_link = self.browser.find_element_by_xpath('//*[@id="products"]/tbody/tr[1]/td[2]/a')
+        self.browser.get(self.live_server_url +
+                         '/link_product_list/' + str(dgpk))
+        create_prod_link = self.browser.find_element_by_xpath(
+            '//*[@id="products"]/tbody/tr[1]/td[2]/a')
         create_prod_link.click()
 
         title_input = self.browser.find_element_by_xpath('//*[@id="id_title"]')
-        manufacturer_input = self.browser.find_element_by_xpath('//*[@id="id_manufacturer"]')
-        brand_name_input = self.browser.find_element_by_xpath('//*[@id="id_brand_name"]')
+        manufacturer_input = self.browser.find_element_by_xpath(
+            '//*[@id="id_manufacturer"]')
+        brand_name_input = self.browser.find_element_by_xpath(
+            '//*[@id="id_brand_name"]')
 
         title_input.send_keys('A Product Title')
         manufacturer_input.send_keys('A Product Manufacturer')
         brand_name_input.send_keys('A Product Brand Name')
         # get the data document's ID from the URL, for later use
-        dd_pk = re.search('(?P<pk>\d+)$', self.browser.current_url ).group(0)
+        dd_pk = re.search('(?P<pk>\d+)$', self.browser.current_url).group(0)
 
-        save_button = self.browser.find_element_by_xpath('/html/body/div[1]/form/button')
+        save_button = self.browser.find_element_by_xpath(
+            '/html/body/div[1]/form/button')
         save_button.click()
         # Saving the product should return the browser to the list of documents without products
         self.assertIn("link_product_list", self.browser.current_url)
         # The URL of the link_product_list page should be keyed to the DataGroup, not DataSource
-        self.assertEqual(self.live_server_url + '/link_product_list/' + str(dgpk), self.browser.current_url)
+        self.assertEqual(self.live_server_url + '/link_product_list/' +
+                         str(dgpk), self.browser.current_url)
 
-        #check at the model level to confirm that the edits have been applied
+        # check at the model level to confirm that the edits have been applied
         # self.assertEqual(dd_pk, 'x')
         pd = ProductDocument.objects.get(document=dd_pk)
         p = Product.objects.get(pk=pd.product.id)
         self.assertEqual('A Product Title', p.title)
-
-
-
 
     def test_PUC_assignment(self):
         self.browser.get(self.live_server_url + '/product_curation/')
         src_title = self.browser.find_elements_by_xpath(
             '//*[@id="products"]/tbody/tr[3]/td[1]/a')[0]
         ds = DataSource.objects.get(title=src_title.text)
-        self.assertEqual(ds.title, 'Home Depot - ICF', 'Check the title of the group')
+        self.assertEqual(ds.title, 'Home Depot - ICF',
+                         'Check the title of the group')
         puc_link = self.browser.find_elements_by_xpath(
             '//*[@id="products"]/tbody/tr[3]/td[4]')[0]
         products_missing_PUC = str(
@@ -389,9 +391,10 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         # is typing (auto complete should work like Google), expect minimum of three
         # characters before auto complete appears
         ppk = Product.objects.get(title=' Skinsations Insect Repellent').id
-        self.browser.get('%s%s%s' % (self.live_server_url, '/product_puc/', str(ppk)))
+        self.browser.get('%s%s%s' %
+                         (self.live_server_url, '/product_puc/', str(ppk)))
         h2 = self.browser.find_element_by_xpath('/html/body/div/h2').text
-        self.assertIn(h2, Product.objects.get(pk=ppk).title ,
+        self.assertIn(h2, Product.objects.get(pk=ppk).title,
                       'The <h2> text should be within the .title of the product'
                       ' (accounting for padding spaces)')
 
@@ -430,14 +433,15 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         submit_button = self.browser.find_element_by_id('btn-assign-puc')
         submit_button.click()
         # Open the product page and confirm the PUC has changed
-        self.browser.get('%s%s%s' % (self.live_server_url, '/product/',ppk))
+        self.browser.get('%s%s%s' % (self.live_server_url, '/product/', ppk))
         puc_after = self.browser.find_element_by_id('prod_cat')
         self.assertNotEqual(puc_before, puc_after,
                             "The object's prod_cat should have changed")
         # Confirm that the puc_assigned_usr has been set to the current user
-        puc_assigned_usr_after = self.browser.find_element_by_id('puc_assigned_usr').text
+        puc_assigned_usr_after = self.browser.find_element_by_id(
+            'puc_assigned_usr').text
         self.assertEqual(puc_assigned_usr_after, 'Karyn',
-                            "The PUC assigning user should have changed")
+                         "The PUC assigning user should have changed")
 
     def test_cancelled_puc_assignment(self):
 
@@ -459,17 +463,19 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         prod = Product.objects.get(pk=ppk)
         ds_id = prod.data_source.id
         ds = DataSource.objects.get(pk=ds_id)
-        self.browser.get('%s%s%s' % (self.live_server_url, '/product_puc/',ppk))
-        cancel_a = self.browser.find_element_by_xpath('/html/body/div/div/form/a')
+        self.browser.get('%s%s%s' %
+                         (self.live_server_url, '/product_puc/', ppk))
+        cancel_a = self.browser.find_element_by_xpath(
+            '/html/body/div/div/form/a')
         # find out the path that the Cancel button will use
         cancel_a_href = cancel_a.get_attribute("href")
         # open that page
         self.browser.get(cancel_a_href)
         # make sure it shows a DataSource
-        h2 = self.browser.find_element_by_xpath('/html/body/div/div[1]/h2').text
+        h2 = self.browser.find_element_by_xpath(
+            '/html/body/div/div[1]/h2').text
         self.assertIn(ds.title, h2,
                       'The <h2> text should equal the .title of the DataSource')
-
 
     def test_scoreboard(self):
 
@@ -510,17 +516,17 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
                           'derived from the model'))
 
         es = Script.objects.get(pk=6)
-        
+
         print('method version: ----- ExtractedText objects in Script 6 ------')
-        print(es.extractedtext_set.filter(qa_checked=True).values('prod_name','qa_checked'))
-            
+        print(es.extractedtext_set.filter(
+            qa_checked=True).values('prod_name', 'qa_checked'))
 
         self.assertEqual(es.get_qa_complete_extractedtext_count(), 1,
                          ('The ExtractionScript object should return 1 '
                           'qa_checked ExtractedText objects'))
         # Set qa_checked property to True for one of the ExtractedText objects
-        self.assertEqual(ExtractedText.objects.get(pk=121647).qa_checked, False, \
-            "The qa_checked value should be False before the change in the model")
+        self.assertEqual(ExtractedText.objects.get(pk=121647).qa_checked, False,
+                         "The qa_checked value should be False before the change in the model")
         et_change = ExtractedText.objects.get(pk=121647)
         et_change.qa_checked = True
         et_change.save()
@@ -556,7 +562,8 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         script_qa_link = self.browser.find_element_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr[contains(.,"Sun INDS (extract)")]/td[4]/a'
         )
-        self.assertIn('extractionscript/6', script_qa_link.get_attribute('outerHTML') )
+        self.assertIn('extractionscript/6',
+                      script_qa_link.get_attribute('outerHTML'))
         # Before clicking the link, the script's qa_begun property
         # should be false
         self.assertEqual(Script.objects.get(pk=6).qa_begun, False,
@@ -578,28 +585,30 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         self.browser.get('%s%s' % (self.live_server_url, '/qa'))
         script_qa_link = self.browser.find_element_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr[contains(.,"Sun INDS (extract)")]/td[4]/a'
-        )    
+        )
         self.assertEqual(script_qa_link.text, 'Continue QA',
                          'The QA button should now say "Continue QA" instead of "Begin QA"')
-        
-        ### Testing the QA Group and Extracted Text-level views
+
+        # Testing the QA Group and Extracted Text-level views
         #
         # go to the QA Group page
         # find the row that contains the Sun INDS link, click the fourth td
         script_qa_link = self.browser.find_element_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr[contains(.,"Sun INDS (extract)")]/td[4]/a'
-        ) 
-        dd_test = DataDocument.objects.filter(title__startswith="Alba Hawaiian Coconut Milk Body Cream")[0] 
+        )
+        dd_test = DataDocument.objects.filter(
+            title__startswith="Alba Hawaiian Coconut Milk Body Cream")[0]
         pk_test = dd_test.id
         script_qa_link.click()
         # confirm that the QA Group index page has opened
-        self.assertIn("/qa/extractionscript" , self.browser.current_url, \
-            "The opened page should include the qa/extractionscript route")
-        # 
+        self.assertIn("/qa/extractionscript", self.browser.current_url,
+                      "The opened page should include the qa/extractionscript route")
+        #
         # The record with the test_pk ID is no longer going to appear in this page,
         # because it has been set to qa_checked = True
         # pick an arbitrary first record instead
-        ext_qa_link = self.browser.find_element_by_xpath('//*[@id="extracted_text_table"]/tbody/tr[1]/td[6]/a')
+        ext_qa_link = self.browser.find_element_by_xpath(
+            '//*[@id="extracted_text_table"]/tbody/tr[1]/td[6]/a')
         qa_url = ext_qa_link.get_attribute('href')
         qa_pk = qa_url.rsplit('/', 1)[-1]
         dd_test = DataDocument.objects.get(pk=qa_pk)
@@ -610,20 +619,22 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         window_before = self.browser.window_handles[0]
         window_after = self.browser.window_handles[1]
         self.browser.switch_to_window(window_after)
-        self.assertIn(dd_test.filename, self.browser.current_url, \
-            "The opened page should include the pdf file name")
+        self.assertIn(dd_test.filename, self.browser.current_url,
+                      "The opened page should include the pdf file name")
         self.browser.close()
         self.browser.switch_to_window(window_before)
 
         # TODO: add seed records that allow testing the Skip button
-        btn_skip = self.browser.find_element_by_xpath('/html/body/div[1]/div[2]/div/a[3]')
+        btn_skip = self.browser.find_element_by_xpath(
+            '/html/body/div[1]/div[2]/div/a[3]')
 
-        # clicking the exit button should return the browser to the 
+        # clicking the exit button should return the browser to the
         # QA Group page
-        btn_exit = self.browser.find_element_by_xpath('/html/body/div[1]/div[2]/div/a[4]')
+        btn_exit = self.browser.find_element_by_xpath(
+            '/html/body/div[1]/div[2]/div/a[4]')
         btn_exit.click()
-        self.assertIn("/qa/extractionscript" , self.browser.current_url, \
-                "The opened page should include the qa/extractionscript route")
+        self.assertIn("/qa/extractionscript", self.browser.current_url,
+                      "The opened page should include the qa/extractionscript route")
 
     def test_approval(self):
         testpk = 156051
@@ -637,7 +648,7 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
             script_qa_link = self.browser.find_element_by_xpath(
                 '//*[@id="extraction_script_table"]/tbody/tr[contains(.,"Sun INDS (extract)")]/td[4]/a'
             )
-            script_qa_link.click()    
+            script_qa_link.click()
             # Open the data document's page
             dd_qa_link = self.browser.find_element_by_xpath(
                 '//*[@id="extracted_text_table"]/tbody/tr[contains(.,"Sun_INDS_89")]/td[6]/a'
@@ -645,45 +656,42 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
             dd_qa_link.click()
             # one of the open windows is the pdf, the other is the editing screen
             self.browser.switch_to_window(self.browser.window_handles[0])
-            #print(self.browser.current_url)
+            # print(self.browser.current_url)
             if 'media' in self.browser.current_url:
                 print(self.browser.current_url)
                 pdf_window = self.browser.window_handles[0]
-                qa_window =  self.browser.window_handles[1]
+                qa_window = self.browser.window_handles[1]
             else:
                 pdf_window = self.browser.window_handles[1]
-                qa_window =  self.browser.window_handles[0]
+                qa_window = self.browser.window_handles[0]
             # close the pdf window
             self.browser.switch_to_window(pdf_window)
             self.browser.close()
             # Now in the QA window:
             self.browser.switch_to_window(qa_window)
-            btn_approve = self.browser.find_element_by_xpath('/html/body/div[1]/div[2]/div/a[1]')
-            self.assertTrue(et.qa_checked==False, "Before clicking, qa_checked should be False")
+            btn_approve = self.browser.find_element_by_xpath(
+                '/html/body/div[1]/div[2]/div/a[1]')
+            self.assertTrue(et.qa_checked == False,
+                            "Before clicking, qa_checked should be False")
             btn_approve.click()
-            #post-click
+            # post-click
             #et = ExtractedText.objects.get(pk=testpk)
-            #print(self.browser.current_url)
-            self.assertTrue(et.qa_checked, "After clicking, qa_checked should be True")
+            # print(self.browser.current_url)
+            self.assertTrue(
+                et.qa_checked, "After clicking, qa_checked should be True")
             # the status and the user should have been updated
-            self.assertEqual(ExtractedText.APPROVED_WITHOUT_ERROR, et.qa_status, \
-                "qa_status should be Approved without errors")
-            self.assertEqual("Karyn", et.qa_approved_by.username, \
-                "The qa_approved_by user should be Karyn")
-            
-            self.assertIn(str(next_pk), self.browser.current_url, \
-                "Now the current URL should include the original ExtractedText object's next id")
-            
+            self.assertEqual(ExtractedText.APPROVED_WITHOUT_ERROR, et.qa_status,
+                             "qa_status should be Approved without errors")
+            self.assertEqual("Karyn", et.qa_approved_by.username,
+                             "The qa_approved_by user should be Karyn")
+
+            self.assertIn(str(next_pk), self.browser.current_url,
+                          "Now the current URL should include the original ExtractedText object's next id")
+
             transaction.set_rollback(True)
             # see if it has been rolled back
         print('\n Inside test method, after rollback')
         print(ExtractedText.objects.get(pk=testpk).qa_checked)
-        
-
-
-
-
-
 
     def check_persistence_model(self):
         ds = DataSource.objects.filter(title='Walmart MSDS')[0]
@@ -702,20 +710,23 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
 
     def check_persistence_ui(self):
         print('\nDataSource object count before adding:')
-        print(DataSource.objects.count()) 
+        print(DataSource.objects.count())
         # start the transaction here
         with transaction.atomic():
-            self.browser.get('%s%s' % (self.live_server_url , '/datasource/new'))
-            self.browser.find_element_by_xpath('//*[@id="id_title"]').send_keys('Test Data Source')
+            self.browser.get('%s%s' %
+                             (self.live_server_url, '/datasource/new'))
+            self.browser.find_element_by_xpath(
+                '//*[@id="id_title"]').send_keys('Test Data Source')
             select = Select(self.browser.find_element_by_id('id_type'))
             select.select_by_visible_text('msds')
-            self.browser.find_element_by_xpath('/html/body/div[1]/form/button').click()
+            self.browser.find_element_by_xpath(
+                '/html/body/div[1]/form/button').click()
             print('\nDataSource object count after adding one:')
             print(DataSource.objects.count())
             transaction.set_rollback(True)
 
         print('\nDataSource object count after rollback:')
-        print(DataSource.objects.count())   
+        print(DataSource.objects.count())
 
 
 class TestExtractedText(StaticLiveServerTestCase):
@@ -726,7 +737,7 @@ class TestExtractedText(StaticLiveServerTestCase):
         if settings.TEST_BROWSER == 'firefox':
             self.browser = webdriver.Firefox()
         else:
-            self.browser = webdriver.Chrome() 
+            self.browser = webdriver.Chrome()
         log_karyn_in(self)
 
     def tearDown(self):
@@ -734,21 +745,23 @@ class TestExtractedText(StaticLiveServerTestCase):
 
     def test_submit_button(self):
         self.browser.get(self.live_server_url + '/datagroup/1')
-        extract_text_form_button = self.browser.find_element_by_id('btn_extract_text_form')
+        extract_text_form_button = self.browser.find_element_by_id(
+            'btn_extract_text_form')
         extract_text_form_button.click()
 
         submit_button = self.browser.find_element_by_name('extract_button')
-        self.assertEqual(submit_button.is_enabled(),False,
+        self.assertEqual(submit_button.is_enabled(), False,
                          ("This button shouldn't be enabled until there "
-                         "is a file selected in the file input."))
+                          "is a file selected in the file input."))
         file_input = self.browser.find_element_by_name('extract_file')
-        file_input.send_keys(os.path.join(os.getcwd(),"sample_files","test_extract.csv"))
+        file_input.send_keys(os.path.join(
+            os.getcwd(), "sample_files", "test_extract.csv"))
         submit_button = self.browser.find_element_by_name('extract_button')
         # if this fails here, the file likely isn't in the repo anymore
         # or has been deleted
-        self.assertEqual(submit_button.is_enabled(),True,
+        self.assertEqual(submit_button.is_enabled(), True,
                          ("This button should be enabled now that there "
-                         "is a file selected in the file input."))
+                          "is a file selected in the file input."))
 
 
 def clean_label(self, label):
@@ -760,6 +773,3 @@ def wait_for_element(self, elm, by='id', timeout=10):
     wait = WebDriverWait(self.browser, timeout)
     wait.until(EC.presence_of_element_located((By.XPATH, elm)))
     return self.browser.find_element_by_xpath(elm)
-
-
-

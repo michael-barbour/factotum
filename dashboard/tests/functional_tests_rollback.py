@@ -23,7 +23,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from dashboard.models import (DataGroup, DataSource, DataDocument,
-                              Script, ExtractedText, Product, ProductCategory, ProductDocument)
+                              Script, ExtractedText, Product, ProductCategory, ProductDocument, SourceType)
 
 from haystack import connections
 from haystack.query import SearchQuerySet
@@ -62,7 +62,7 @@ class RollbackStaticLiveServerTestCase(StaticLiveServerTestCase):
     the efficient rollback approach of TestCase. TransactionTestCase loads the \
     fixtures with every test method and destroys the test database after each one.\
     The following methods override this slow behavior in favor of TestCase's \
-    rollback approach. 
+    rollback approach.
     """
     @classmethod
     def _enter_atomics(cls):
@@ -128,9 +128,9 @@ class RollbackStaticLiveServerTestCase(StaticLiveServerTestCase):
 
 class FunctionalTests(RollbackStaticLiveServerTestCase):
     fixtures = ['00_superuser.yaml', '01_lookups.yaml',
-                '02_datasource.yaml', '03_datagroup.yaml', '04_productcategory.yaml',
-                '05_product.yaml', '06_datadocument.yaml', '07_script.yaml',
-                '08_extractedtext.yaml', '09_productdocument.yaml']
+    '02_datasource.yaml' , '03_datagroup.yaml', '04_productcategory.yaml',
+    '05_product.yaml', '06_datadocument.yaml' , '07_script.yaml',
+     '08_extractedtext.yaml','09_productdocument.yaml']
 
     @classmethod
     def setUpClass(cls):
@@ -204,10 +204,6 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         self.browser.get(self.live_server_url + '/datagroup/' + str(dgpk))
         h1 = self.browser.find_element_by_name('title')
         self.assertIn('Walmart MSDS 1', h1.text)
-        # Checking the URL by row is too brittle
-        # pdflink = self.browser.find_elements_by_xpath(
-        #    '//*[@id="d-docs"]/tbody/tr[2]/td[1]/a')[0]
-        #self.assertIn('shampoo.pdf', pdflink.get_attribute('href'))
         rows = self.browser.find_elements_by_xpath(
             "//table[@id='registered']/tbody/tr")
         docs = DataDocument.objects.filter(data_group=dgpk)
@@ -243,7 +239,7 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         fs.save(pdf2_name, local_pdf)
         return [pdf1_name, pdf2_name]
 
-    def create_data_documents(self, data_group, data_source):
+    def create_data_documents(self, data_group, source_type):
         dds = []
         #pdfs = [f for f in os.listdir('/media/' + self.dg.dgurl() + '/pdf') if f.endswith('.pdf')]
         # pdfs
@@ -262,7 +258,8 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
                                                  product_category=line['product'],
                                                  url=line['url'],
                                                  matched=line['filename'] in self.pdfs,
-                                                 data_group=data_group)
+                                                 data_group=data_group,
+                                                 source_type=source_type)
                 dds.append(dd)
             return dds
 
@@ -273,13 +270,15 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         dg_count_before = DataGroup.objects.count()
         ds = DataSource.objects.filter(title='Walmart MSDS')[0]
         self.dg = self.create_data_group(data_source=ds)
+        st = SourceType.objects.create(title="title")
+
         dg_count_after = DataGroup.objects.count()
         print('DataGroup count after test_new_data_group: {}'.format(dg_count_after))
         self.assertEqual(dg_count_after, dg_count_before + 1,
                          "Confirm the DataGroup object has been created")
         new_dg_pk = self.dg.pk
         self.pdfs = self.upload_pdfs()
-        self.dds = self.create_data_documents(self.dg, ds)
+        self.dds = self.create_data_documents(self.dg, st)
 
         # Use the browser layer to confirm that the object has been created
         self.browser.get('%s%s%s' %
@@ -336,7 +335,8 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         create_prod_link = self.browser.find_element_by_xpath(
             '//*[@id="products"]/tbody/tr[1]/td[2]/a')
         create_prod_link.click()
-
+        upc = self.browser.find_element_by_name('upc')
+        self.assertIn('stub_', upc.get_attribute('value'), 'Default value of upc input should be the stub_xx value.')
         title_input = self.browser.find_element_by_xpath('//*[@id="id_title"]')
         manufacturer_input = self.browser.find_element_by_xpath(
             '//*[@id="id_manufacturer"]')
@@ -589,20 +589,19 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         self.assertEqual(script_qa_link.text, 'Continue QA',
                          'The QA button should now say "Continue QA" instead of "Begin QA"')
 
-        # Testing the QA Group and Extracted Text-level views
+        ### Testing the QA Group and Extracted Text-level views
         #
         # go to the QA Group page
         # find the row that contains the Sun INDS link, click the fourth td
         script_qa_link = self.browser.find_element_by_xpath(
             '//*[@id="extraction_script_table"]/tbody/tr[contains(.,"Sun INDS (extract)")]/td[4]/a'
         )
-        dd_test = DataDocument.objects.filter(
-            title__startswith="Alba Hawaiian Coconut Milk Body Cream")[0]
+        dd_test = DataDocument.objects.filter(title__startswith="Alba Hawaiian Coconut Milk Body Cream")[0]
         pk_test = dd_test.id
         script_qa_link.click()
         # confirm that the QA Group index page has opened
-        self.assertIn("/qa/extractionscript", self.browser.current_url,
-                      "The opened page should include the qa/extractionscript route")
+        self.assertIn("/qa/extractionscript" , self.browser.current_url, \
+            "The opened page should include the qa/extractionscript route")
         #
         # The record with the test_pk ID is no longer going to appear in this page,
         # because it has been set to qa_checked = True

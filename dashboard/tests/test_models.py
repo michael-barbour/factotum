@@ -44,7 +44,7 @@ class ModelsTest(TestCase):
         self.pdfs = self.upload_pdfs()
 
         # DataDocuments
-        self.dds = self.create_data_documents(data_group = self.dg)
+        self.dds = self.create_data_documents(data_group = self.dg, source_type = self.st)
 
         # Script, type EX
         self.ex = self.create_extraction_script(script_type='EX')
@@ -122,7 +122,7 @@ class ModelsTest(TestCase):
         fs.save(pdf2_name, local_pdf)
         return [pdf1_name, pdf2_name]
 
-    def create_data_documents(self, data_group):
+    def create_data_documents(self, data_group, source_type):
         dds = []
         with open(data_group.csv.path) as dg_csv:
             table = csv.DictReader(dg_csv)
@@ -140,7 +140,8 @@ class ModelsTest(TestCase):
                     product_category=line['product'],
                     url=line['url'],
                     matched = line['filename'] in self.pdfs,
-                    data_group=data_group)
+                    data_group=data_group,
+                    source_type=source_type)
                 dd.save()
                 dds.append(dd)
             return dds

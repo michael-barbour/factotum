@@ -41,3 +41,13 @@
   pk: 3
   fields: {title: 'measured', description: 'measured', created_at: !!timestamp '2018-03-08 14:15:42',
     updated_at: null}
+
+- model: dashboard.prodcatattr
+  pk: 1
+  fields: {name: article}
+- model: dashboard.prodcatattr
+  pk: 2
+  fields: {name: formulation}
+- model: dashboard.prodcatattr
+  pk: 3
+  fields: {name: food contact}

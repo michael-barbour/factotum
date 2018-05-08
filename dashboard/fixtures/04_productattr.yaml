@@ -1,9 +1,0 @@
-- model: dashboard.productattr
-  pk: 1
-  fields: {name: article}
-- model: dashboard.productattr
-  pk: 2
-  fields: {name: formulation}
-- model: dashboard.productattr
-  pk: 3
-  fields: {name: food contact}

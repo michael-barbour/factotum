@@ -7,7 +7,7 @@ class ProductCategory(CommonInfo):
 	prod_type = models.CharField(max_length=100, null=True, blank=True)
 	description = models.TextField(null=False, blank=False)
 	last_edited_by = models.ForeignKey('auth.User', default = 1, on_delete=models.CASCADE)
-	attribute = models.ForeignKey('ProductAttr', on_delete=models.PROTECT)
+	attribute = models.ForeignKey('ProdCatAttr', on_delete=models.PROTECT)
 
 	class Meta:
 		ordering = ['gen_cat', 'prod_fam', 'prod_type']
@@ -20,7 +20,7 @@ class ProductCategory(CommonInfo):
 		return self.gen_cat
 
 
-class ProductAttr(models.Model):
+class ProdCatAttr(models.Model):
 
 	name = models.CharField(max_length=50)
 

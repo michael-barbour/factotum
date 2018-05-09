@@ -68,42 +68,10 @@
                 <dd class="col-sm-9">{{ extracted.qa_approved_by }}</dd>
             </dl>
 
-
-            <table class="table table-striped table-bordered dataTable no-footer table-sm" id="extractedchemicals">
-                    <thead class="table-primary">
-                        <th>&nbsp;</th>
-                        <th>CAS</th>
-                        <th>Chemical Name</th>
-                        <th>raw_min_comp</th>
-                        <th>raw_max_comp</th>
-                        <th>Units</th>
-                        <th>Reported Functional Use</th>
-                    </thead>
-                    <tbody>
-                    {% for chem in chems %}
-                      <tr>
-                        <td>          
-                            <a class="btn btn-success btn-sm" role="button" title="edit"
-                            href="{% url "extracted_chemical_edit" chem.id %}">
-                           <span class="oi oi-pencil"></span> </a>
-                        </td>
-                        <td>{{chem.raw_cas}}
-                        </td>
-                        <td>{{ chem.raw_chem_name}} </td>
-                        <td>{{ chem.raw_min_comp | floatformat:0.00}} %</td>
-                        <td>{{ chem.raw_max_comp | floatformat:0.00 }} %</td>
-
-                        <td>{{ chem.units }}</td>
-                        <td>{{ chem.report_funcuse }}</td>
-                      </tr>
-                    {% endfor %}
-                    </tbody>
-                  </table>
-
                   <form method="post">
                         {% csrf_token %}
                         {{ chem_formset.management_form }}
-                        <table class="table table-striped table-bordered no-footer table-sm" id="extractedchemicals_formset">
+                        <table class="table table-striped no-footer table-sm" id="extractedchemicals">
                         <thead class="table-primary">
                                 <th>CAS</th>
                                 <th>Chemical Name</th>

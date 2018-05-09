@@ -71,14 +71,17 @@
                   <form method="post">
                         {% csrf_token %}
                         {{ chem_formset.management_form }}
-                        <table class="table table-striped no-footer table-sm" id="extractedchemicals">
+                        <table class="table table-striped table-responsive no-footer table-sm" id="extractedchemicals">
                         <thead class="table-primary">
-                                <th>CAS</th>
-                                <th>Chemical Name</th>
-                                <th>raw_min_comp</th>
-                                <th>raw_max_comp</th>
-                                <th>Units</th>
-                                <th>Reported Functional Use</th>
+                                <th class="col-md-1">CAS</th>
+                                <th  class="col-md-2">Chemical Name</th>
+                                <th  class="col-md-1">raw_min_comp</th>
+                                <th class="col-md-1">raw_max_comp</th>
+                                <th class="col-md-2">Units</th>
+                                <th class="col-md-2">Reported <br/>Functional Use</th>
+                                <th>Weight Fraction Type</th>
+                                <th>Ingredient<br/>Rank</th>
+                                <th>Raw Central Comp</th>
                             </thead>
                         {% for chem_form in chem_formset %}
                         <tr class="chem-formset">
@@ -130,6 +133,30 @@
                                 {% endfor %}
                             {% endif %}
                             </td>
+                            <td>
+                            {{ chem_form.weight_fraction_type }}
+                            {% if chem_form.weight_fraction_type.errors %}
+                                {% for error in chem_form.weight_fraction_type.errors %}
+                                    {{ error|escape }}
+                                {% endfor %}
+                            {% endif %}
+                            </td>
+                            <td>
+                            {{ chem_form.ingredient_rank }}
+                            {% if chem_form.ingredient_rank.errors %}
+                                {% for error in chem_form.ingredient_rank.errors %}
+                                    {{ error|escape }}
+                                {% endfor %}
+                            {% endif %}
+                            </td>
+                            <td>
+                            {{ chem_form.raw_central_comp }}
+                            {% if chem_form.raw_central_comp.errors %}
+                                {% for error in chem_form.raw_central_comp.errors %}
+                                    {{ error|escape }}
+                                {% endfor %}
+                            {% endif %}
+                            </td>                                                        
                         </tr>
                     {% endfor %}
                     </table>

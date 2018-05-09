@@ -36,7 +36,18 @@ class ExtractedChemicalForm(Form):
     """
     Form for individual extracted chemical entries
     """
-
+    raw_cas = CharField(
+        max_length=50,
+        widget=TextInput(attrs={
+            'placeholder': 'CAS Number',
+        }),
+        required=False)
+    raw_chem_name = CharField(
+        max_length=500,
+        widget=TextInput(attrs={
+            'placeholder': 'Chemical Name',
+        }),
+        required=False)
 
 
 class BaseExtractedChemicalFormSet(BaseInlineFormSet):
@@ -185,8 +196,8 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
             'chemicals-INITIAL_FORMS': '0',
             'chemicals-MAX_NUM_FORMS': ''
             }
-        print('POST request, creating chem_formset from ChemFormset()')
-        chem_formset = ChemFormSet(data)
+        #print('POST request, creating chem_formset from ChemFormset()')
+        chem_formset = ChemFormSet(initial=chem_data)
 
         if chem_formset.is_valid():
 
@@ -228,14 +239,13 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
 
     else:
         #text_form = ExtractedTextForm(user=user)
-        print('GET request, creating chem_formset from ChemFormset()')
+        #print('GET request, creating chem_formset from ChemFormset()')
         data={        
             'chemicals-TOTAL_FORMS': '1',
             'chemicals-INITIAL_FORMS': '0',
             'chemicals-MAX_NUM_FORMS': ''
             }
-        chem_formset = ChemFormSet(data)
-        print(chem_formset)
+        chem_formset = ChemFormSet(initial=chem_data)
 
     context = {
         'extracted': extext,

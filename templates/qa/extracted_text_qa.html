@@ -89,7 +89,7 @@
                         </td>
                         <td>{{chem.raw_cas}}
                         </td>
-                        <td>{{ chem.raw_chem_name}} %</td>
+                        <td>{{ chem.raw_chem_name}} </td>
                         <td>{{ chem.raw_min_comp | floatformat:0.00}} %</td>
                         <td>{{ chem.raw_max_comp | floatformat:0.00 }} %</td>
 
@@ -103,23 +103,68 @@
                   <form method="post">
                         {% csrf_token %}
                         {{ chem_formset.management_form }}
+                        <table class="table table-striped table-bordered no-footer table-sm" id="extractedchemicals_formset">
+                        <thead class="table-primary">
+                                <th>CAS</th>
+                                <th>Chemical Name</th>
+                                <th>raw_min_comp</th>
+                                <th>raw_max_comp</th>
+                                <th>Units</th>
+                                <th>Reported Functional Use</th>
+                            </thead>
                         {% for chem_form in chem_formset %}
-                        <div class="chem-formset">
+                        <tr class="chem-formset">
+                            <td>
                             {{ chem_form.raw_cas }}
                             {% if chem_form.raw_cas.errors %}
                                 {% for error in chem_form.raw_cas.errors %}
                                     {{ error|escape }}
                                 {% endfor %}
                             {% endif %}
-
+                            </td>
+                            <td>
                             {{ chem_form.raw_chem_name }}
-                            {% if link_form.url.errors %}
-                                {% for error in link_form.url.errors %}
+                            {% if chem_form.raw_chem_name.errors %}
+                                {% for error in chem_form.raw_chem_name.errors %}
                                     {{ error|escape }}
                                 {% endfor %}
                             {% endif %}
-                        </div>
+                            </td>
+                            <td>
+                            {{ chem_form.raw_min_comp }}
+                            {% if chem_form.raw_min_comp.errors %}
+                                {% for error in chem_form.raw_min_comp.errors %}
+                                    {{ error|escape }}
+                                {% endfor %}
+                            {% endif %}
+                            </td>
+                            <td>
+                            {{ chem_form.raw_max_comp }}
+                            {% if chem_form.raw_max_comp.errors %}
+                                {% for error in chem_form.raw_max_comp.errors %}
+                                    {{ error|escape }}
+                                {% endfor %}
+                            {% endif %}
+                            </td>
+                            <td>
+                            {{ chem_form.unit_type }}
+                            {% if chem_form.unit_type.errors %}
+                                {% for error in chem_form.unit_type.errors %}
+                                    {{ error|escape }}
+                                {% endfor %}
+                            {% endif %}
+                            </td>
+                            <td>
+                            {{ chem_form.report_funcuse }}
+                            {% if chem_form.report_funcuse.errors %}
+                                {% for error in chem_form.report_funcuse.errors %}
+                                    {{ error|escape }}
+                                {% endfor %}
+                            {% endif %}
+                            </td>
+                        </tr>
                     {% endfor %}
+                    </table>
 
                     {% if chem_formset.non_form_errors %}
                         {% for error in chem_formset.non_form_errors %}
@@ -128,16 +173,12 @@
                     {% endif %}
                 
 
-                  <input type="submit" value="Update Chemicals" class="button"/>
-
-
-
                   {% if extracted.qa_checked %}
                   <a class="btn btn-success disabled" title="This extracted document has already been approved" href="{% url "extracted_text_approve" extracted.pk %}" role="button" aria-disabled="true">Approve</a>
                   {% else %}
                   <a class="btn btn-success" href="{% url "extracted_text_approve" extracted.pk %}" role="button">Approve</a>
                   {% endif %}
-                  <a class="btn btn-primary" href="#" role="button">Edit</a>
+                  <button type = "submit" class="btn btn-primary" role="button">Approve with edits</button>
                   {% if nextid > 0 %}
                     <a class="btn btn-warning" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>
                   {% else %}

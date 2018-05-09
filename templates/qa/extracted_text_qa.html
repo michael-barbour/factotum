@@ -1,7 +1,11 @@
 {% extends 'core/base.html' %}
 {% load staticfiles %}
 {% load humanize %}
-<script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}js/datatableview.js"></script>
+{% if messages %}
+    {% for message in messages %}
+        <p>{{ message }}</p>
+    {% endfor %}
+{% endif %}
 
 {% block content %}
 <nav aria-label="breadcrumb">
@@ -95,6 +99,38 @@
                     {% endfor %}
                     </tbody>
                   </table>
+
+                  <form method="post">
+                        {% csrf_token %}
+                        {{ chem_formset.management_form }}
+                        {% for chem_form in chem_formset %}
+                        <div class="chem-formset">
+                            {{ chem_form.raw_cas }}
+                            {% if chem_form.raw_cas.errors %}
+                                {% for error in chem_form.raw_cas.errors %}
+                                    {{ error|escape }}
+                                {% endfor %}
+                            {% endif %}
+
+                            {{ chem_form.raw_chem_name }}
+                            {% if link_form.url.errors %}
+                                {% for error in link_form.url.errors %}
+                                    {{ error|escape }}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    {% if chem_formset.non_form_errors %}
+                        {% for error in chem_formset.non_form_errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    {% endif %}
+                
+
+                  <input type="submit" value="Update Chemicals" class="button"/>
+
+
 
                   {% if extracted.qa_checked %}
                   <a class="btn btn-success disabled" title="This extracted document has already been approved" href="{% url "extracted_text_approve" extracted.pk %}" role="button" aria-disabled="true">Approve</a>

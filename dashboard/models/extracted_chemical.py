@@ -13,7 +13,7 @@ def validate_ingredient_rank(value):
 
 
 class ExtractedChemical(CommonInfo):
-	extracted_text = models.ForeignKey(ExtractedText, on_delete=models.CASCADE)
+	extracted_text = models.ForeignKey(ExtractedText, on_delete=models.CASCADE, related_name='chemicals')
 	raw_cas = models.CharField(max_length=50, null=True, blank=True)
 	raw_chem_name = models.CharField(max_length=500, null=True, blank=True)
 	raw_min_comp = models.CharField(max_length=100, null=True, blank=True)

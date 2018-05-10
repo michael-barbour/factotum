@@ -599,7 +599,7 @@ class FunctionalTests(RollbackStaticLiveServerTestCase):
         self.browser.get(self.live_server_url + ('/admin/dashboard'
                                                  '/productcategory/add/'))
         attr_select = self.browser.find_element_by_name('attribute')
-        self.assertTrue(attr_select.get_property('required'),'ProdCatAttr is required when creating a ProductCategory')
+        self.assertTrue(attr_select.get_property('required'),'ProductCategoryAttribute is required when creating a ProductCategory')
 
 
 

@@ -159,8 +159,8 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
     r = ExtractedText.objects.filter(qa_group=extext.qa_group).count() - a
     stats = '%s document(s) approved, %s documents remaining' % (a, r)
 
-    # Create the formset
-    ChemFormSet = inlineformset_factory(ExtractedText, ExtractedChemical,
+    # Create the formset factory
+    ChemFormSet = inlineformset_factory(parent_model=ExtractedText, model=ExtractedChemical,
                                         formset=BaseExtractedChemicalFormSet,
                                         fields=['raw_cas', 'raw_chem_name', 'raw_min_comp',
                                                 'raw_max_comp', 'unit_type', 'report_funcuse',
@@ -171,7 +171,8 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
     # The initial data are the extracted chemicals related to the extracted text
     text_chems = ExtractedChemical.objects.filter(
         extracted_text=et).order_by('ingredient_rank')
-    chem_data = [{'raw_cas': chem.raw_cas,
+    chem_data = [{'extracted_text':et.pk,
+                  'raw_cas': chem.raw_cas,
                   'raw_chem_name': chem.raw_chem_name,
                   'raw_min_comp': chem.raw_min_comp,
                   'raw_max_comp': chem.raw_max_comp,
@@ -185,47 +186,15 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
 
     if request.method == 'POST':
         #text_form = ExtractedTextForm(request.POST, user=user)
-        print('POST request, creating chem_formset from ChemFormset()')
-        chem_formset = ChemFormSet(initial=request.POST)
+        print('------POST---------')
+        print(request.POST)
+        chem_formset = ChemFormSet(request.POST)
+        print('POST request, chem_formset has been created')
+
         if chem_formset.is_valid():
             print('chem_formset validated')
             chem_formset.save()
-            # Now save the data for each form in the formset
-            new_chems = []
 
-            for chem_form in chem_formset:
-                raw_cas = chem_form.cleaned_data.get('raw_cas')
-                raw_chem_name = chem_form.cleaned_data.get('raw_chem_name')
-                raw_min_comp = chem_form.cleaned_data.get('raw_min_comp')
-                raw_max_comp = chem_form.cleaned_data.get('raw_max_comp')
-                unit_type = chem_form.cleaned_data.get('unit_type')
-                report_funcuse = chem_form.cleaned_data.get('report_funcuse')
-                weight_fraction_type = chem_form.cleaned_data.get(
-                    'weight_fraction_type')
-                ingredient_rank = chem_form.cleaned_data.get('ingredient_rank')
-                raw_central_comp = chem_form.cleaned_data.get(
-                    'raw_central_comp')
-                chem_form.save()
-
-                if raw_cas and raw_chem_name:
-                    new_chems.append(ExtractedChemical(
-                        extracted_text=et, raw_cas=raw_cas, raw_chem_name=raw_chem_name))
-
-            try:
-                with transaction.atomic():
-                    # Replace the old with the new
-                    ExtractedChemical.objects.filter(
-                        extracted_text=et).delete()
-                    ExtractedChemical.objects.bulk_create(new_chems)
-
-                    # And notify our users that it worked
-                    messages.success(
-                        request, 'You have updated the chemicals.')
-
-            except IntegrityError:  # If the transaction failed
-                messages.error(
-                    request, 'There was an error saving the extracted chemicals.')
-                # return redirect(reverse('profile-settings'))
 
     else:
         # GET request
@@ -245,7 +214,7 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
         'nextid': nextid,
         'chem_formset': chem_formset,
     }
-
+    print(context)
     return render(request, template_name, context)
 
 

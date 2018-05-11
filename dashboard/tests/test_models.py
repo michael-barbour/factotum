@@ -1,15 +1,14 @@
 from django.contrib.auth.models import User
-from dashboard.models import DataSource, DataGroup, DataDocument, SourceType, ExtractedText, ExtractedChemical, DSSToxSubstance, Script
-from dashboard.views import data_source, data_group
+from dashboard.models import DataSource, DataGroup, DataDocument, SourceType, ExtractedText,\
+    ExtractedChemical, UnitType, WeightFractionType, DSSToxSubstance, Script, Product, ProductDocument,\
+    Ingredient, ProductToIngredient, DSSToxSubstanceToIngredient
 from django.test import TestCase, RequestFactory
 from django.utils import timezone
-import os
 import csv
 import collections
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.files.storage import FileSystemStorage
-from django.core.urlresolvers import reverse
 
 
 def file_len(fname):
@@ -43,7 +42,7 @@ class ModelsTest(TestCase):
         self.pdfs = self.upload_pdfs()
 
         # DataDocuments
-        self.dds = self.create_data_documents(data_group = self.dg)
+        self.dds = self.create_data_documents(data_group = self.dg, source_type = self.st)
 
         # Script, type EX
         self.ex = self.create_extraction_script(script_type='EX')
@@ -51,11 +50,38 @@ class ModelsTest(TestCase):
         # ExtractedText
         self.et = self.create_extracted_text(data_documents=self.dds, extraction_script=self.ex)
 
+        # UnitType
+        self.ut = self.create_unit_type(title='percent composition')
+
+        # WeightFractionType
+        self.wft = self.create_weight_fraction_type(title= 'reported', description= 'reported')
+
         # ExtractedChemical
-        self.ec = self.create_extracted_chemical(extracted_text=self.et)
+        self.ec = self.create_extracted_chemical(extracted_text=self.et,
+                                                 unit_type=UnitType.objects.all()[0],
+                                                 weight_fraction_type = WeightFractionType.objects.all()[0]
+                                                )
 
         # DSSToxSubstance
         self.dsstox = self.create_dsstox_substance(extracted_chemical=self.ec)
+
+        # Product
+        self.p = Product.objects.create(data_source=self.ds, title="Test Product")
+        self.p.save()
+
+        # ProductDocument
+        self.pd = ProductDocument.objects.create(product=self.p, document=self.dds[0])
+
+        # Ingredient
+        self.i = self.create_ingredient(self.wft)
+        self.i.save()
+
+        # ProductToIngredient
+        self.pi = ProductToIngredient.objects.create(product=self.p, ingredient=self.i)
+
+        # DSSToxSubstanceToIngredient
+        self.dsi = DSSToxSubstanceToIngredient.objects.create(dsstox_substance=self.dsstox, ingredient=self.i)
+
 
     def tearDown(self):
         del self.dg
@@ -94,10 +120,8 @@ class ModelsTest(TestCase):
         fs.save(pdf2_name, local_pdf)
         return [pdf1_name, pdf2_name]
 
-    def create_data_documents(self, data_group):
+    def create_data_documents(self, data_group, source_type):
         dds = []
-        #pdfs = [f for f in os.listdir('/media/' + self.dg.dgurl() + '/pdf') if f.endswith('.pdf')]
-        #pdfs
         with open(data_group.csv.path) as dg_csv:
             table = csv.DictReader(dg_csv)
             text = ['DataDocument_id,' + ','.join(table.fieldnames)+'\n']
@@ -114,7 +138,9 @@ class ModelsTest(TestCase):
                     product_category=line['product'],
                     url=line['url'],
                     matched = line['filename'] in self.pdfs,
-                    data_group=data_group)
+                    data_group=data_group,
+                    source_type=source_type)
+                dd.save()
                 dds.append(dd)
             return dds
 
@@ -126,17 +152,36 @@ class ModelsTest(TestCase):
                                             prod_name='Test Prod Name', doc_date='TstDocDate', rev_num='Test Rev Num',
                                             extraction_script=extraction_script, qa_checked=False)
 
+    def create_unit_type(self, title='percent composition'):
+        return UnitType.objects.create(title=title)
+    
+    def create_weight_fraction_type(self, title= 'reported', description= 'reported'):
+        return WeightFractionType.objects.create(title=title, description=description)
+
     def create_extracted_chemical(self, extracted_text, raw_cas='Test CAS', raw_chem_name='Test Chem Name',
                                   raw_min_comp='Test Raw Min Comp', raw_max_comp='Test Raw Max Comp',
-                                  units='Test Units', report_funcuse='Test Report Funcuse'):
+                                  unit_type=UnitType.objects.first(), 
+                                  weight_fraction_type=WeightFractionType.objects.first(), 
+                                  report_funcuse='Test Report Funcuse'):
         return ExtractedChemical.objects.create(extracted_text=extracted_text, raw_cas=raw_cas,
                                                 raw_chem_name=raw_chem_name, raw_min_comp=raw_min_comp,
-                                                raw_max_comp=raw_max_comp, units=units, report_funcuse=report_funcuse)
+                                                raw_max_comp=raw_max_comp, unit_type=unit_type, 
+                                                weight_fraction_type=weight_fraction_type,
+                                                report_funcuse=report_funcuse)
 
     def create_dsstox_substance(self, extracted_chemical, true_cas='Test True CAS',
                                 true_chemname='Test Chem Name', rid='Test RID', sid='Test SID'):
         return DSSToxSubstance.objects.create(extracted_chemical=extracted_chemical, true_cas=true_cas,
                                               true_chemname=true_chemname, rid=rid, sid=sid)
+
+
+    def create_ingredient(self, weight_fraction_type, lower_wf_analysis=0.123456789012345,
+                          central_wf_analysis=0.2, upper_wf_analysis = 1):
+        return Ingredient.objects.create(weight_fraction_type = weight_fraction_type,
+                                         lower_wf_analysis = lower_wf_analysis,
+                                         central_wf_analysis = central_wf_analysis,
+                                         upper_wf_analysis = upper_wf_analysis)
+
 
     def test_object_creation(self):
         self.assertTrue(isinstance(self.ds, DataSource))
@@ -146,6 +191,11 @@ class ModelsTest(TestCase):
         self.assertTrue(isinstance(self.et, ExtractedText))
         self.assertTrue(isinstance(self.ec, ExtractedChemical))
         self.assertTrue(isinstance(self.dsstox, DSSToxSubstance))
+        self.assertTrue(isinstance(self.i, Ingredient))
+        self.assertTrue(isinstance(self.p, Product))
+        self.assertTrue(isinstance(self.pi, ProductToIngredient))
+        self.assertTrue(isinstance(self.pd, ProductDocument))
+        self.assertTrue(isinstance(self.dsi, DSSToxSubstanceToIngredient))
 
     def test_object_properties(self):
         # Test properties of objects

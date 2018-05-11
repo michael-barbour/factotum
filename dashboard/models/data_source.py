@@ -1,4 +1,5 @@
 from django.db import models
+from .common_info import CommonInfo
 from django.utils import timezone
 from .source_type import SourceType
 from django.core.urlresolvers import reverse
@@ -14,7 +15,7 @@ def validate_nonzero(value):
 		)
 
 
-class DataSource(models.Model):
+class DataSource(CommonInfo):
 	STATE_CHOICES = (
 		('AT', 'Awaiting Triage'),
 		('IP', 'In Progress'),
@@ -35,10 +36,7 @@ class DataSource(models.Model):
 	state = models.CharField(max_length=2,
 							 choices=STATE_CHOICES,
 							 default='AT')
-
 	description = models.TextField(null=True, blank=True)
-	created_at = models.DateTimeField(default=timezone.now)
-	updated_at = models.DateTimeField(null=True, blank=True)
 	priority = models.CharField(max_length=2,
 								choices=PRIORITY_CHOICES,
 								default='HI')

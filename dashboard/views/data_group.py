@@ -18,40 +18,38 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from djqscsv import *
 
-from dashboard.models import (DataGroup, DataDocument, Script, ExtractedText, ExtractedChemical, WeightFractionType)
+from dashboard.models import (DataGroup, DataDocument, Script, ExtractedText, ExtractedChemical, WeightFractionType, SourceType)
 
 
 class DataGroupForm(ModelForm):
     required_css_class = 'required' # adds to label tag
-
+    source_type = forms.ModelChoiceField(label='Document Default Source Type',
+                                         queryset=SourceType.objects.all())
     class Meta:
         model = DataGroup
-        fields = ['name', 'description', 'downloaded_by', 'downloaded_at', 'download_script', 'data_source',
-                  'updated_at', 'csv']
+        fields = ['name', 'description', 'downloaded_by', 'downloaded_at', 'download_script', 'data_source', 'csv']
         widgets = {
-                'downloaded_at': DatePicker(options={
-                                                    "format": "yyyy-mm-dd",
-                                                    "autoclose": True
-                                                }),
-                'updated_at': DatePicker(options={
-                                                    "format": "yyyy-mm-dd",
-                                                    "autoclose": True
-                                                })
+            'downloaded_at': DatePicker(options={
+                "format": "yyyy-mm-dd",
+                "autoclose": True
+            })
         }
         labels = {'csv': _('Register Records CSV File'), }
 
     def __init__(self, *args, **kwargs):
+        qs = Script.objects.filter(script_type='DL')
         self.user = kwargs.pop('user', None)
         super(DataGroupForm, self).__init__(*args, **kwargs)
         self.fields['csv'].widget.attrs.update({'accept':'.csv'})
+        self.fields['download_script'].queryset = qs
 
 class ExtractionScriptForm(Form):
     required_css_class = 'required' # adds to label tag
     script_selection = forms.ModelChoiceField(queryset=Script.objects.filter(script_type='EX')
                                               , label="Extraction Script")
     weight_fraction_type = forms.ModelChoiceField(queryset=WeightFractionType.objects.all()
-                                             , label="Weight Fraction Type"
-                                             , initial="1")
+                                                  , label="Weight Fraction Type"
+                                                  , initial="1")
     extract_file = forms.FileField(label="Extracted Text CSV File")
 
     def __init__(self, *args, **kwargs):
@@ -77,11 +75,11 @@ def loadExtracted (row, dd, sc):
         return t
     else:
         t = ExtractedText(	data_document     = dd,
-                            record_type       = row['record_type'],
-                            prod_name         = row['prod_name'],
-                            doc_date          = row['doc_date'],
-                            rev_num           = row['rev_num'],
-                            extraction_script = sc)
+                              record_type       = row['record_type'],
+                              prod_name         = row['prod_name'],
+                              doc_date          = row['doc_date'],
+                              rev_num           = row['rev_num'],
+                              extraction_script = sc)
     return t
 
 
@@ -93,7 +91,6 @@ def data_group_detail(request, pk,
     npage = 50 # TODO: make this dynamic someday in its own ticket
     page = request.GET.get('page')
     page = 1 if page is None else page
-
     scripts = Script.objects.filter(script_type='EX')
     store = settings.MEDIA_URL + datagroup.name.replace(' ','_')
     extract_fieldnames = ['data_document_pk','data_document_filename',
@@ -143,15 +140,15 @@ def data_group_detail(request, pk,
                     if not col in table.fieldnames:
                         ext_err['every'] = {col:['needs to be a column in the uploaded file']}
                 return render(request, template_name,
-                                {   'datagroup'         : datagroup,
-                                    'documents'         : docs,
-                                    'include_upload'    : False,
-                                    'err'               : err,
-                                    'include_extract'   : True,
-                                    'scripts'           : scripts,
-                                    'extract_fieldnames': extract_fieldnames,
-                                    'ext_err'           : ext_err,
-                                    'extract_form'      : extract_form})
+                              {   'datagroup'         : datagroup,
+                                  'documents'         : docs,
+                                  'include_upload'    : False,
+                                  'err'               : err,
+                                  'include_extract'   : True,
+                                  'scripts'           : scripts,
+                                  'extract_fieldnames': extract_fieldnames,
+                                  'ext_err'           : ext_err,
+                                  'extract_form'      : extract_form})
             record = 1
             for row in csv.DictReader(info):
                 doc_pk = (row['data_document_pk'])
@@ -168,15 +165,15 @@ def data_group_detail(request, pk,
                 record += 1
             if throw:
                 return render(request, template_name,
-                                {   'datagroup'         : datagroup,
-                                    'documents'         : docs,
-                                    'include_upload'        : False,
-                                    'err'               : err,
-                                    'include_extract'   : True,
-                                    'scripts'           : scripts,
-                                    'extract_fieldnames': extract_fieldnames,
-                                    'ext_err'           : ext_err,
-                                    'extract_form'      : extract_form})
+                              {   'datagroup'         : datagroup,
+                                  'documents'         : docs,
+                                  'include_upload'        : False,
+                                  'err'               : err,
+                                  'include_extract'   : True,
+                                  'scripts'           : scripts,
+                                  'extract_fieldnames': extract_fieldnames,
+                                  'ext_err'           : ext_err,
+                                  'extract_form'      : extract_form})
             good_chems = []
             record = 1
             for row in csv.DictReader(info):
@@ -187,24 +184,24 @@ def data_group_detail(request, pk,
                     text.save()
                 # see if chem already assigned to text ultimately DD
                 qs = ExtractedChemical.objects.filter(  # empty queryset if no
-                                        chem_name=row['chem_name']).values_list(
-                                                            'extracted_text_id')
+                    chem_name=row['chem_name']).values_list(
+                    'extracted_text_id')
                 #check qs if returned
                 check = any([t_id[0] == text.pk for t_id in qs])
                 if check:
                     continue
                 if not check:
                     chem = ExtractedChemical(extracted_text = text,
-                                            cas            = row['cas'],
-                                            chem_name      = row['chem_name'],
-                                            raw_min_comp   = row['raw_min_comp'],
-                                            raw_max_comp   = row['raw_max_comp'],
-                                            unit_type      = row['unit_type'],
-                                            report_funcuse = row['report_funcuse'],
-                                            weight_fraction_type = weight_fraction_type,
-                                            ingredient_rank = row['ingredient_rank'],
-                                            raw_central_comp = row['raw_central_comp'],
-                    )
+                                             cas            = row['cas'],
+                                             chem_name      = row['chem_name'],
+                                             raw_min_comp   = row['raw_min_comp'],
+                                             raw_max_comp   = row['raw_max_comp'],
+                                             unit_type      = row['unit_type'],
+                                             report_funcuse = row['report_funcuse'],
+                                             weight_fraction_type = weight_fraction_type,
+                                             ingredient_rank = row['ingredient_rank'],
+                                             raw_central_comp = row['raw_central_comp'],
+                                             )
                     try:
                         chem.full_clean()
                         good_chems.append([doc,chem])
@@ -224,20 +221,20 @@ def data_group_detail(request, pk,
     docs_page = paginator.page(page)
 
     include_upload = not all([d.matched for d in docs])
-    include_extract = all([d.matched for d in docs])\
+    include_extract = all([d.matched for d in docs]) \
                       and not all([d.extracted for d in docs])
 
     return render(request, template_name,{
-                                    'datagroup'         : datagroup,
-                                    'documents'         : docs_page,
-                                    'all_documents'     : docs,
-                                    'include_upload'    : include_upload,
-                                    'err'               : err,
-                                    'include_extract'   : include_extract,
-                                    'scripts'           : scripts,
-                                    'extract_fieldnames': extract_fieldnames,
-                                    'ext_err'           : ext_err,
-                                    'extract_form'      : extract_form})
+        'datagroup'         : datagroup,
+        'documents'         : docs_page,
+        'all_documents'     : docs,
+        'include_upload'    : include_upload,
+        'err'               : err,
+        'include_extract'   : include_extract,
+        'scripts'           : scripts,
+        'extract_fieldnames': extract_fieldnames,
+        'ext_err'           : ext_err,
+        'extract_form'      : extract_form})
 
 
 @login_required()
@@ -258,6 +255,7 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
         form = DataGroupForm(request.POST, request.FILES,
                              user    = request.user,
                              initial = initial_values)
+        source_type = SourceType.objects.get(pk=form.data['source_type'])
         if form.is_valid():
             datagroup = form.save()
             info = [x.decode('ascii',
@@ -266,8 +264,8 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
             if not table.fieldnames == ['filename','title','product','url']:
                 datagroup.delete()
                 return render(request, template_name,
-                                {'field_error': table.fieldnames,
-                                 'form': form})
+                              {'field_error': table.fieldnames,
+                               'form': form})
             text = ['DataDocument_id,' + ','.join(table.fieldnames)+'\n']
             errors = []
             count = 0
@@ -281,6 +279,7 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
                                  title=line['title'],
                                  product_category=line['product'],
                                  url=line['url'],
+                                 source_type=source_type,
                                  data_group=datagroup)
                 doc.save()
                 # update line to hold the pk for writeout
@@ -291,7 +290,7 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
                                                        'form': form})
             dg_dir = datagroup.name.replace(' ','_')
             zf = zipfile.ZipFile('media/{0}/{0}.zip'.format(dg_dir), 'w',
-                                zipfile.ZIP_DEFLATED)
+                                 zipfile.ZIP_DEFLATED)
             datagroup.zip_file = zf.filename
             zf.close()
             datagroup.save()
@@ -309,7 +308,6 @@ def data_group_update(request, pk):
     datagroup = get_object_or_404(DataGroup, pk=pk)
     form = DataGroupForm(request.POST or None, instance=datagroup)
     if form.is_valid():
-        datagroup.updated_at = datetime.now()
         form.save()
         return redirect('data_group_list')
     return render(request, 'data_group/datagroup_form.html', {'form': form})

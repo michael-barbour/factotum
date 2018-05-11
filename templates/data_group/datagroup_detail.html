@@ -71,7 +71,7 @@
 
         {% if include_extract %}
             <br><br>
-            <a class="btn btn-secondary" data-toggle="collapse" href="#extract_form">
+            <a class="btn btn-secondary" data-toggle="collapse" id="btn_extract_text_form" href="#extract_form">
               <span class="oi oi-data-transfer-upload"></span>&nbsp;Upload Extracted Text
             </a>
             <div id="extract_form" class="col-md-12 border rounded {% if extract_form.collapsed %}collapse{% endif %}">
@@ -216,13 +216,11 @@
     <tbody>
     {% for doc in all_documents %}
       <tr>
-      {% if doc.matched and not doc.extracted %}
         <td>{{ doc.pk }}</td>
         <td>{{ doc.filename }}</td>
         <td>{{ doc.title }}</td>
         <td>{{ doc.product_category }}</td>
         <td>{{ doc.url }}</td>
-      {% endif %}
       </tr>
     {% endfor %}
     </tbody>
@@ -232,5 +230,6 @@
 
 {% endblock %}
 {% block js %}
+  <script src="{% static 'js/export.js' %}"></script>
   <script src="{% static 'js/data_group_detail.js' %}"></script>
 {% endblock %}

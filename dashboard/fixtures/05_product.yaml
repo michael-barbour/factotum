@@ -1,7 +1,7 @@
 - model: dashboard.product
   pk: 1
   fields: {prod_cat: 119, data_source: 7, source_category: null, title: AVCAT (FSII
-      + Lubricity Improver Additive), manufacturer: '', upc: stub_1, url: null, brand_name: British
+      Lubricity Improver Additive), manufacturer: '', upc: stub_1, url: null, brand_name: British
       Petroleum, size: null, model_number: null, color: null, item_id: null, parent_item_id: null,
     short_description: null, long_description: null, thumb_image: null, medium_image: null,
     large_image: null, created_at: !!timestamp '2018-03-09 11:35:45.318077', updated_at: !!timestamp '2018-03-09
@@ -488,7 +488,7 @@
 - model: dashboard.product
   pk: 60
   fields: {prod_cat: null, data_source: 8, source_category: null, title: "Sikaflex\
-      \ Self\u2010Leveling Sealant", manufacturer: '', upc: stub_60, url: null, brand_name: Sika,
+      \ Leveling Sealant", manufacturer: '', upc: stub_60, url: null, brand_name: Sika,
     size: null, model_number: null, color: null, item_id: null, parent_item_id: null,
     short_description: null, long_description: null, thumb_image: null, medium_image: null,
     large_image: null, created_at: !!timestamp '2018-03-13 11:27:21.499807', updated_at: !!timestamp '2018-03-13

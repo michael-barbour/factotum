@@ -94,10 +94,10 @@ def data_group_detail(request, pk,
     scripts = Script.objects.filter(script_type='EX')
     store = settings.MEDIA_URL + datagroup.name.replace(' ','_')
     extract_fieldnames = ['data_document_pk','data_document_filename',
-                          'record_type','prod_name','doc_date','rev_num','cas',
-                          'chem_name','raw_min_comp','raw_max_comp','unit_type',
-                          'report_funcuse', 'weight_fraction_type', 'ingredient_rank',
-                          'raw_central_comp']
+                          'record_type','prod_name','doc_date','rev_num',
+                          'raw_cas', 'raw_chem_name','raw_min_comp',
+                          'raw_max_comp', 'unit_type', 'report_funcuse',
+                          'ingredient_rank', 'raw_central_comp']
     extract_form = ExtractionScriptForm(request.POST or None,request.FILES or None )
 
     err = False
@@ -192,15 +192,15 @@ def data_group_detail(request, pk,
                     continue
                 if not check:
                     chem = ExtractedChemical(extracted_text = text,
-                                             cas            = row['cas'],
-                                             chem_name      = row['chem_name'],
-                                             raw_min_comp   = row['raw_min_comp'],
-                                             raw_max_comp   = row['raw_max_comp'],
-                                             unit_type      = row['unit_type'],
-                                             report_funcuse = row['report_funcuse'],
-                                             weight_fraction_type = weight_fraction_type,
-                                             ingredient_rank = row['ingredient_rank'],
-                                             raw_central_comp = row['raw_central_comp'],
+                                cas                 = row['raw_cas'],
+                                chem_name           = row['raw_chem_name'],
+                                raw_min_comp        = row['raw_min_comp'],
+                                raw_max_comp        = row['raw_max_comp'],
+                                unit_type           = row['unit_type'],
+                                report_funcuse      = row['report_funcuse'],
+                                weight_fraction_type= weight_fraction_type,
+                                ingredient_rank     = row['ingredient_rank'],
+                                raw_central_comp    = row['raw_central_comp'],
                                              )
                     try:
                         chem.full_clean()

@@ -146,6 +146,8 @@ def extracted_text_approve(request, pk):
 def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', nextid=0):
 
     extext = get_object_or_404(ExtractedText, pk=pk)
+    print('related data_document:')
+    print(extext.data_document)
     datadoc = DataDocument.objects.get(pk=pk)
     exscript = extext.extraction_script
     # get the next unapproved Extracted Text object
@@ -166,12 +168,11 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
                                                 'raw_max_comp', 'unit_type', 'report_funcuse',
                                                 'weight_fraction_type', 'ingredient_rank', 'raw_central_comp'])
     user = request.user
-    et = ExtractedText.objects.get(pk=pk)
 
     # The initial data are the extracted chemicals related to the extracted text
     text_chems = ExtractedChemical.objects.filter(
-        extracted_text=et).order_by('ingredient_rank')
-    chem_data = [{'extracted_text':et.pk,
+        extracted_text=extext).order_by('ingredient_rank')
+    chem_data = [{'extracted_text':extext,
                   'raw_cas': chem.raw_cas,
                   'raw_chem_name': chem.raw_chem_name,
                   'raw_min_comp': chem.raw_min_comp,
@@ -214,7 +215,7 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
         'nextid': nextid,
         'chem_formset': chem_formset,
     }
-    print(context)
+    #print(context)
     return render(request, template_name, context)
 
 

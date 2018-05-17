@@ -68,6 +68,26 @@
                 <dd class="col-sm-9">{{ extracted.qa_approved_by }}</dd>
             </dl>
 
+
+            
+            <a class="btn btn-warning " data-toggle="collapse" id="edit_toggle" href="#extract_form{{extracted.qa_notes}}">
+                <span class="oi oi-wrench"></span>Edit Extracted Chemicals
+            </a>
+            <div id="qa_notes" class="col-md-12 border rounded collapse">
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    {% include 'core/bs4_form.html' %}
+                    <input type="text" id="qa_notes" name="{{qa_notes}}"><br>
+                    <input type="submit" class="btn btn-primary btn-sm" name="approve_edits" value="Submit">
+                </form>
+            </div>
+
+          {% if extracted.qa_checked %}
+            <button type = "submit" class="btn btn-primary disabled" role="button">Approve with edits</button>
+          {% else %}
+            <button type = "submit" class="btn btn-primary" role="button">Approve with edits</button>
+          {% endif %}
+
                   <form method="post">
                         {% csrf_token %}
                         {{ chem_formset.management_form }}
@@ -169,11 +189,12 @@
                 
 
                   {% if extracted.qa_checked %}
-                  <a class="btn btn-success disabled" title="This extracted document has already been approved" href="{% url "extracted_text_approve" extracted.pk %}" role="button" aria-disabled="true">Approve</a>
+                    <a class="btn btn-success disabled" title="This extracted document has already been approved" href="{% url "extracted_text_approve" extracted.pk %}" role="button" aria-disabled="true">Approve</a>
                   {% else %}
-                  <a class="btn btn-success" href="{% url "extracted_text_approve" extracted.pk %}" role="button">Approve</a>
+                    <a class="btn btn-success" href="{% url "extracted_text_approve" extracted.pk %}" role="button">Approve</a>
                   {% endif %}
-                  <button type = "submit" class="btn btn-primary" role="button">Approve with edits</button>
+                  
+
                   {% if nextid > 0 %}
                     <a class="btn btn-warning" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>
                   {% else %}

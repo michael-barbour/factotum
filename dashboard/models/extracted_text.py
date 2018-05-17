@@ -32,6 +32,7 @@ class ExtractedText(CommonInfo):
         'auth.User', null=True, blank=True, on_delete=models.SET_NULL)
     qa_group = models.ForeignKey('QAGroup', null=True, blank=True,
                                  on_delete=models.SET_NULL)
+    qa_notes = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
         return str(self.prod_name)

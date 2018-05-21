@@ -3,6 +3,7 @@ from .common_info import CommonInfo
 from .data_source import DataSource
 from .source_category import SourceCategory
 from .product_category import ProductCategory
+
 from django.core.urlresolvers import reverse
 
 
@@ -15,6 +16,8 @@ class Product(CommonInfo):
 									   to='dashboard.DataDocument')
 	ingredients = models.ManyToManyField(through='dashboard.ProductToIngredient',
 										 to='dashboard.Ingredient')
+	attributes = models.ManyToManyField(through='dashboard.ProductToAttribute',
+										to='dashboard.ProductAttribute')
 	source_category = models.ForeignKey(SourceCategory,
                                         on_delete=models.CASCADE, null=True, blank=True)
 	title = models.CharField(max_length=255)

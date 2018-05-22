@@ -8,7 +8,7 @@ from django.forms import ModelForm, ModelChoiceField
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
-from dashboard.models import DataSource, DataGroup, DataDocument, Product, ProductDocument, ProductCategory
+from dashboard.models import DataSource, DataGroup, DataDocument, Product, ProductDocument, PUC, ProductToPUC
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
@@ -18,9 +18,10 @@ class ProductForm(ModelForm):
         model = Product
         fields = ['title', 'manufacturer', 'brand_name', 'upc', 'size', 'color']
 
+
 class ProductPUCForm(ModelForm):
-    prod_cat = ModelChoiceField(
-        queryset=ProductCategory.objects.all(),
+    puc = ModelChoiceField(
+        queryset=PUC.objects.all(),
         label='Category',
         widget=autocomplete.ModelSelect2(
             url='puc-autocomplete',
@@ -28,15 +29,15 @@ class ProductPUCForm(ModelForm):
     )
 
     class Meta:
-        model = Product
-        fields = ['prod_cat']
+        model = ProductToPUC
+        fields = ['puc']
 
 
 @login_required()
-def product_detail(request, pk,
-						template_name='product_curation/product_detail.html'):
+def product_detail(request, pk, template_name='product_curation/product_detail.html'):
     product = get_object_or_404(Product, pk=pk, )
-    return render(request, template_name, {'product'  : product,})
+    puc = product.get_uber_puc()
+    return render(request, template_name, {'product': product, 'puc': puc, })
 
 @login_required()
 def product_curation_index(request, template_name='product_curation/product_curation_index.html'):
@@ -46,8 +47,13 @@ def product_curation_index(request, template_name='product_curation/product_cura
     data_sources = DataSource.objects.annotate(uploaded=Count('datagroup__datadocument'))\
         .filter(uploaded__gt=0)
     # A separate queryset of data sources and their related products without PUCs assigned
-    qs_no_puc = Product.objects.values('data_source').filter(prod_cat__isnull=True).\
+    # Changed in issue 232. Instead of filtering products based on their prod_cat being null,
+    #   we now exclude all products that have a product_id contained in the ProductToPUC object set
+    qs_no_puc = Product.objects.values('data_source').exclude(id__in=(ProductToPUC.objects.values_list('product_id', flat=True))).\
         filter(data_source__isnull=False).annotate(no_category=Count('id')).order_by('data_source')
+
+    #qs_no_puc = Product.objects.values('data_source').filter(prod_cat__isnull=True).\
+    #    filter(data_source__isnull=False).annotate(no_category=Count('id')).order_by('data_source')
     # Convert the queryset to a list
     list_no_puc = [ds_no_puc for ds_no_puc in qs_no_puc]
 
@@ -68,7 +74,7 @@ def category_assignment(request, pk, template_name=('product_curation/'
                                                 'category_assignment.html')):
     """Deliver a datasource and its associated products"""
     ds = DataSource.objects.get(pk=pk)
-    products = ds.source.filter(prod_cat__isnull=True).order_by('-created_at')
+    products = ds.source.exclude(id__in=(ProductToPUC.objects.values_list('product_id', flat=True))).order_by('-created_at')
     return render(request, template_name, {'datasource': ds, 'products': products})
 
 @login_required()
@@ -112,14 +118,15 @@ def link_product_form(request, pk, template_name=('product_curation/'
 
 @login_required()
 def assign_puc_to_product(request, pk, template_name=('product_curation/'
-                                                'product_puc.html')):
+                                                      'product_puc.html')):
     """Assign a PUC to a single product"""
+    form = ProductPUCForm(request.POST or None)
     p = Product.objects.get(pk=pk)
-    form = ProductPUCForm(request.POST or None, instance=p)
     if form.is_valid():
-        p.puc_assigned_time = datetime.now()
-        p.puc_assigned_usr = request.user
-        form.save()
+        puc = PUC.objects.get(id=form['puc'].value())
+        new_product_to_puc = ProductToPUC.objects.create(PUC=puc, product=p, classification_method='MA',
+                                                         puc_assigned_time=datetime.now(), puc_assigned_usr=request.user)
+        new_product_to_puc.save()
         return redirect('category_assignment', pk=p.data_source.id)
     return render(request, template_name,{'product': p, 'form': form})
 

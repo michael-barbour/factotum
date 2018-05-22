@@ -22,5 +22,4 @@ class ProductToPUC(CommonInfo):
     classification_confidence = models.DecimalField(max_digits=6, decimal_places=3, default=1, null=True, blank=True)
 
     def __str__(self):
-        return self.id
-
+        return str(self.id)

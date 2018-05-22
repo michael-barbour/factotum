@@ -41,14 +41,12 @@ class Product(CommonInfo):
     def get_absolute_url(self):
         return reverse('product_detail', kwargs={'pk': self.pk})
 
-    @property
     def get_uber_puc(self):
-        uber_puc = None
-        if self.producttopuc_set.filter(classification_method='MA').count() == 1:
-            uber_puc = self.producttopuc_set.filter(classification_method='MA').first().PUC
-        elif self.producttopuc_set.filter(classification_method='AU').count() == 1:
-            uber_puc = self.producttopuc_set.filter(classification_method='AU').first().PUC
-        return uber_puc
+        pucs = self.producttopuc_set
+        if pucs.filter(classification_method='MA').count() == 1:
+            return pucs.filter(classification_method='MA').first()
+        elif pucs.filter(classification_method='AU').count().PUC == 1:
+            return pucs.filter(classification_method='AU').first()
 
     class Meta:
         ordering = ['-created_at']

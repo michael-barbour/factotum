@@ -41,12 +41,17 @@ class Product(CommonInfo):
     def get_absolute_url(self):
         return reverse('product_detail', kwargs={'pk': self.pk})
 
-    def get_uber_puc(self):
+    def get_uber_product_to_puc(self):
         pucs = self.producttopuc_set
         if pucs.filter(classification_method='MA').count() == 1:
-            return pucs.filter(classification_method='MA').first().PUC
-        elif pucs.filter(classification_method='AU').count().PUC == 1:
-            return pucs.filter(classification_method='AU').first().PUC
+            return pucs.filter(classification_method='MA').first()
+        elif pucs.filter(classification_method='AU').count() == 1:
+            return pucs.filter(classification_method='AU').first()
+        else:
+            return "You're crazy to think this product has been categorized!"
+
+    def get_uber_puc(self):
+        return self.get_uber_product_to_puc().PUC
 
     class Meta:
         ordering = ['-created_at']

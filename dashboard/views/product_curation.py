@@ -34,12 +34,6 @@ class ProductPUCForm(ModelForm):
 
 
 @login_required()
-def product_detail(request, pk, template_name='product_curation/product_detail.html'):
-    product = get_object_or_404(Product, pk=pk, )
-    puc = product.get_uber_puc()
-    return render(request, template_name, {'product': product, 'puc': puc, })
-
-@login_required()
 def product_curation_index(request, template_name='product_curation/product_curation_index.html'):
     # List of all data groups which have had at least 1 data
     # document matched to a registered record
@@ -133,8 +127,10 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
 @login_required()
 def product_detail(request, pk, template_name=('product_curation/'
                                                 'product_detail.html')):
-    p = Product.objects.get(pk=pk)
-    return render(request, template_name,{'product': p})
+    p = get_object_or_404(Product, pk=pk, )
+    ptopuc = p.get_uber_product_to_puc()
+    puc = p.get_uber_puc()
+    return render(request, template_name, {'product': p, 'puc': puc, 'ptopuc': ptopuc, })
 
 @login_required()
 def product_list(request, template_name=('product_curation/'

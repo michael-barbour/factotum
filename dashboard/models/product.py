@@ -44,9 +44,9 @@ class Product(CommonInfo):
     def get_uber_puc(self):
         pucs = self.producttopuc_set
         if pucs.filter(classification_method='MA').count() == 1:
-            return pucs.filter(classification_method='MA').first()
+            return pucs.filter(classification_method='MA').first().PUC
         elif pucs.filter(classification_method='AU').count().PUC == 1:
-            return pucs.filter(classification_method='AU').first()
+            return pucs.filter(classification_method='AU').first().PUC
 
     class Meta:
         ordering = ['-created_at']

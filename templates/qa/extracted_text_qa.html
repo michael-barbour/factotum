@@ -101,7 +101,7 @@
                             <table id="extractedchemicals" class="form table table-striped table-responsive no-footer table-sm">
                             {% for form in chem_formset.forms %}
                               {% if forloop.first %}
-                              <thead><tr>
+                              <thead class="table-primary"><tr>
                                 {% for field in form.visible_fields %}
                                 <th>{{ field.label|capfirst }}</th>
                                 {% endfor %}

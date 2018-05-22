@@ -1,4 +1,3 @@
-import django_filters
 from django.forms import ModelForm, Form, BaseInlineFormSet, inlineformset_factory, TextInput, CharField
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -9,13 +8,6 @@ from dashboard.models import Script
 
 # we are not currently using this class
 
-
-class ExtractionScriptFilter(django_filters.FilterSet):
-    title = django_filters.CharFilter(lookup_expr='iexact')
-
-    class Meta:
-        model = Script
-        fields = ['url']
 
 
 @login_required()

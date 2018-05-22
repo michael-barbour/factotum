@@ -83,6 +83,12 @@
             </div>
 
           {% if extracted.qa_checked %}
+            <button type = "submit" class="btn btn-primary disabled" role="button">Save edits without approving</button>
+          {% else %}
+            <button type = "submit" class="btn btn-primary" role="button">Save edits without approving</button>
+          {% endif %}
+
+          {% if extracted.qa_checked %}
             <button type = "submit" class="btn btn-primary disabled" role="button">Approve with edits</button>
           {% else %}
             <button type = "submit" class="btn btn-primary" role="button">Approve with edits</button>
@@ -201,6 +207,7 @@
                     <button type="button" title="All the other documents in this QA group have been approved" class="btn btn-warning" aria-disabled="true" disabled>Skip</button>
                   {% endif %}
                   <a class="btn btn-primary" href="{% url "extraction_script_qa" script.id %}" role="button">Exit</a>
+                  </form>
 
         </div>
         <p class="card-footer"> {{stats}}</p>

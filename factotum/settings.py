@@ -36,7 +36,6 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'django.contrib.humanize',
     'factotum',
-    'django_filters',
     'debug_toolbar',
     'haystack',
     'haystack_elasticsearch',

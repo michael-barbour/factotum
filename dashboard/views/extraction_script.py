@@ -32,31 +32,17 @@ class ExtractionScriptForm(ModelForm):
         super(ExtractionScriptForm, self).__init__(*args, **kwargs)
 
 
-class ExtractedChemicalForm(Form):
-    """
-    Form for individual extracted chemical entries
-    """
-    raw_cas = CharField(
-        max_length=50,
-        widget=TextInput(attrs={
-            'placeholder': 'CAS Number',
-        }),
-        required=False)
-    raw_chem_name = CharField(
-        max_length=500,
-        widget=TextInput(attrs={
-            'placeholder': 'Chemical Name',
-        }),
-        required=False)
-
-
 class BaseExtractedChemicalFormSet(BaseInlineFormSet):
+    """
+    Base class for the form in which users edit the chemical composition data
+    """
     required_css_class = 'required'  # adds to label tag
 
     class Meta:
         model = ExtractedChemical
         fields = ['raw_cas', 'raw_chem_name', 'raw_min_comp',
                   'raw_max_comp', 'unit_type', 'report_funcuse', ]
+
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
@@ -65,7 +51,11 @@ class BaseExtractedChemicalFormSet(BaseInlineFormSet):
 
 @login_required()
 def extraction_script_list(request, template_name='qa/extraction_script_list.html'):
-
+    """
+    List view of extraction scripts
+    """
+    # TODO: the user is supposed to be able to click the filter button at the top of the table
+    # and toggle between seeing all scripts and seeing only the ones with incomplete QA
     extractionscript = Script.objects.filter(script_type='EX')
     data = {}
     data['object_list'] = extractionscript
@@ -75,6 +65,9 @@ def extraction_script_list(request, template_name='qa/extraction_script_list.htm
 @login_required()
 def extraction_script_qa(request, pk,
                          template_name='qa/extraction_script.html'):
+    """
+    The user reviews the extracted text and checks whether it was properly converted to data
+    """
     es = get_object_or_404(Script, pk=pk)
     if es.qa_begun:
         # has qa begun and not complete? if both T, return group to be finished
@@ -130,13 +123,24 @@ class ExtractedTextQAForm(ModelForm):
 
 @login_required()
 def extracted_text_approve(request, pk):
+    """
+    This view is posted when the user approves an ExtractedText object without changes.
+    Check if the approval puts the Script object across the QA Complete line
+    """
     extracted = get_object_or_404(ExtractedText, pk=pk)
     nextpk = extracted.next_extracted_text_in_qa_group()
     extracted.qa_checked = True
     extracted.qa_status = ExtractedText.APPROVED_WITHOUT_ERROR
     extracted.qa_approved_date = datetime.now()
     extracted.qa_approved_by = request.user
+    
+    script = extracted.extraction_script
+    # What share of the Script's ExtractedText objects have been approved before the save?
+    pct_before = script.get_pct_checked()
     extracted.save()
+    pct_after = script.get_pct_checked()
+    print("Percent checked before approval: %s \nAfter approval: %s" % (pct_before, pct_after))
+    print("Script's QA completion status: %s " % script.get_qa_status() )
     return HttpResponseRedirect(
         reverse('extracted_text_qa', args=([nextpk]))
     )
@@ -144,10 +148,11 @@ def extracted_text_approve(request, pk):
 
 @login_required()
 def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', nextid=0):
-
+    """
+    Detailed view of an ExtractedText object, where the user can approve, edit, skip, or exit
+    """
     extext = get_object_or_404(ExtractedText, pk=pk)
-    print('related data_document:')
-    print(extext.data_document)
+    # The related DataDocument has the same pk as the ExtractedText object
     datadoc = DataDocument.objects.get(pk=pk)
     exscript = extext.extraction_script
     # get the next unapproved Extracted Text object
@@ -222,7 +227,7 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
 @login_required()
 def extracted_chemical_update(request, pk):
     exchem = get_object_or_404(ExtractedChemical, pk=pk)
-    form = ExtractedChemicalForm(request.POST or None, instance=exchem)
+    form = ChemFormSet(request.POST or None, instance=exchem)
     if form.is_valid():
         form.save()
         return redirect('extracted_text_qa', exchem.extracted_text.pk)

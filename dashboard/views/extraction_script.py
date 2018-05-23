@@ -41,12 +41,13 @@ class BaseExtractedChemicalFormSet(BaseInlineFormSet):
     class Meta:
         model = ExtractedChemical
         fields = ['raw_cas', 'raw_chem_name', 'raw_min_comp',
-                  'raw_max_comp', 'unit_type', 'report_funcuse', ]
+                  'raw_max_comp', 'unit_type', 'report_funcuse', 'extracted_text']
 
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super(BaseExtractedChemicalFormSet, self).__init__(*args, **kwargs)
+
 
 
 @login_required()
@@ -167,9 +168,10 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
     stats = '%s document(s) approved, %s documents remaining' % (a, r)
 
     # Create the formset factory
-    ChemFormSet = inlineformset_factory(parent_model=ExtractedText, model=ExtractedChemical,
+    ChemFormSet = inlineformset_factory(parent_model=ExtractedText, 
+                                        model=ExtractedChemical,
                                         formset=BaseExtractedChemicalFormSet,
-                                        fields=['raw_cas', 'raw_chem_name', 'raw_min_comp',
+                                        fields=['extracted_text','raw_cas', 'raw_chem_name', 'raw_min_comp',
                                                 'raw_max_comp', 'unit_type', 'report_funcuse',
                                                 'weight_fraction_type', 'ingredient_rank', 'raw_central_comp'])
     user = request.user
@@ -191,28 +193,30 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
                  for chem in text_chems]
 
     if request.method == 'POST':
-        #text_form = ExtractedTextForm(request.POST, user=user)
+        data={        
+            'chemicals-TOTAL_FORMS': '1',
+            'chemicals-INITIAL_FORMS': '1',
+            'chemicals-MAX_NUM_FORMS': ''
+            }
         print('------POST---------')
         print(request.POST)
-        chem_formset = ChemFormSet(request.POST)
-        print('POST request, chem_formset has been created')
-
+        chem_formset = ChemFormSet(request.POST, instance=extext, prefix='chemicals')
+        print('------VALIDATING FORMSET------')
+        print(chem_formset.errors)
         if chem_formset.is_valid():
             print('chem_formset validated')
             chem_formset.save()
-
-
     else:
         # GET request
         data={        
             'chemicals-TOTAL_FORMS': '1',
-            'chemicals-INITIAL_FORMS': '0',
+            'chemicals-INITIAL_FORMS': '1',
             'chemicals-MAX_NUM_FORMS': ''
             }
         chem_formset = ChemFormSet(initial=chem_data)
 
     context = {
-        'extracted': extext,
+        'extracted_text': extext,
         'doc': datadoc, 
         'script': exscript, 
         'chem_formset': chem_formset, 
@@ -223,12 +227,3 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
     #print(context)
     return render(request, template_name, context)
 
-
-@login_required()
-def extracted_chemical_update(request, pk):
-    exchem = get_object_or_404(ExtractedChemical, pk=pk)
-    form = ChemFormSet(request.POST or None, instance=exchem)
-    if form.is_valid():
-        form.save()
-        return redirect('extracted_text_qa', exchem.extracted_text.pk)
-    return render(request, 'data_group/datagroup_form.html', {'form': form})

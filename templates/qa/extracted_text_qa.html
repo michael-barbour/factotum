@@ -55,22 +55,22 @@
         <div class="card-body">
         <dl class="row col-sm-12">
                 <dt class="col-sm-3">Record Type</dt>
-                <dd class="col-sm-9">{{ extracted.record_type }}</dd>
+                <dd class="col-sm-9">{{ extracted_text.record_type }}</dd>
                 <dt class="col-sm-3">Product Name</dt>
-                <dd class="col-sm-9">{{ extracted.prod_name }}</dd>
+                <dd class="col-sm-9">{{ extracted_text.prod_name }}</dd>
                 <dt class="col-sm-3">Document Date</dt>
-                <dd class="col-sm-9">{{ extracted.doc_date }}</dd>
+                <dd class="col-sm-9">{{ extracted_text.doc_date }}</dd>
                 <dt class="col-sm-3">QA Status</dt>
-                <dd class="col-sm-9">{{ extracted.get_qa_status_display }}</dd>
+                <dd class="col-sm-9">{{ extracted_text.get_qa_status_display }}</dd>
                 <dt class="col-sm-3">QA Approval Date</dt>
-                <dd class="col-sm-9">{{ extracted.qa_approved_date }}</dd>
+                <dd class="col-sm-9">{{ extracted_text.qa_approved_date }}</dd>
                 <dt class="col-sm-3">QA Approved By</dt>
-                <dd class="col-sm-9">{{ extracted.qa_approved_by }}</dd>
+                <dd class="col-sm-9">{{ extracted_text.qa_approved_by }}</dd>
             </dl>
 
 
             
-            <a class="btn btn-warning " data-toggle="collapse" id="edit_toggle" href="#extract_form{{extracted.qa_notes}}">
+            <a class="btn btn-warning " data-toggle="collapse" id="edit_toggle" href="#extract_form{{extracted_text.qa_notes}}">
                 <span class="oi oi-wrench"></span>Edit Extracted Chemicals
             </a>
             <div id="qa_notes" class="col-md-12 border rounded collapse">
@@ -82,60 +82,27 @@
                 </form>
             </div>
 
-          {% if extracted.qa_checked %}
-            <button type = "submit" class="btn btn-primary disabled" role="button">Save edits without approving</button>
-          {% else %}
-            <button type = "submit" class="btn btn-primary" role="button">Save edits without approving</button>
-          {% endif %}
-
-          {% if extracted.qa_checked %}
-            <button type = "submit" class="btn btn-primary disabled" role="button">Approve with edits</button>
-          {% else %}
-            <button type = "submit" class="btn btn-primary" role="button">Approve with edits</button>
-          {% endif %}
-
                   <form method="post">
                         {% csrf_token %}
                         {{ chem_formset.management_form }}
-                            {{ chem_formset.non_form_errors.as_ul }}
-                            <table id="extractedchemicals" class="form table table-striped table-responsive no-footer table-sm">
-                            {% for form in chem_formset.forms %}
-                              {% if forloop.first %}
-                              <thead class="table-primary"><tr>
-                                {% for field in form.visible_fields %}
-                                <th>{{ field.label|capfirst }}</th>
-                                {% endfor %}
-                              </tr></thead>
-                              {% endif %}
-                              
-                              {% for field in form.visible_fields %}
-                                <td>
-                                {# Include the hidden fields in the form #}
-                                {% if forloop.first %}
-                                  {% for hidden in form.hidden_fields %}
-                                  {{ hidden }}
-                                  {% endfor %}
-                                {% endif %}
-                                  {{ field.errors.as_ul }}
-                                  {{ field }}
-                                </td>
-                              {% endfor %}
-                              </tr>
-                            {% endfor %}
-                            </table>
-                    </table>
-
-                    {% if chem_formset.non_form_errors %}
-                        {% for error in chem_formset.non_form_errors %}
-                            {{ error|escape }}
-                        {% endfor %}
+                        {% include 'core/bs4_formset.html' with formset=chem_formset %}
+                        {% if extracted_text.qa_checked %}
+                        <button type = "submit" class="btn btn-primary disabled" role="button">Approve with edits</button>
+                      {% else %}
+                        <button type = "submit" class="btn btn-primary" role="button">Approve with edits</button>
+                      {% endif %}
+                      {% if extracted_text.qa_checked %}
+                      <button type = "submit" class="btn btn-secondary disabled" role="button">Save edits without approving</button>
+                    {% else %}
+                      <button type = "submit" class="btn btn-secondary" role="button">Save edits without approving</button>
                     {% endif %}
+                  </form>
                 
 
-                  {% if extracted.qa_checked %}
-                    <a class="btn btn-success disabled" title="This extracted document has already been approved" href="{% url "extracted_text_approve" extracted.pk %}" role="button" aria-disabled="true">Approve</a>
+                  {% if extracted_text.qa_checked %}
+                    <a class="btn btn-success disabled" title="This extracted document has already been approved" href="{% url "extracted_text_approve" extracted_text.pk %}" role="button" aria-disabled="true">Approve</a>
                   {% else %}
-                    <a class="btn btn-success" href="{% url "extracted_text_approve" extracted.pk %}" role="button">Approve</a>
+                    <a class="btn btn-success" href="{% url "extracted_text_approve" extracted_text.pk %}" role="button">Approve</a>
                   {% endif %}
                   
 

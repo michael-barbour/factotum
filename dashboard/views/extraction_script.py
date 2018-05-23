@@ -83,7 +83,6 @@ def extraction_script_qa(request, pk,
                                                    'extractedtexts': texts,
                                                    'qagroup': group})
     # pks of text and docs are the same!
-    doc_text_ids = ExtractedText.objects.filter(extraction_script=pk)
     doc_text_ids = list(ExtractedText.objects.filter(extraction_script=es,
                                                      qa_checked=False
                                                      ).values_list('pk',

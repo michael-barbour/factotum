@@ -25,9 +25,7 @@ def index(request):
     stats['product_count'] = Product.objects.count()
     #TODO: This may need to be updated later to handle both manual and automatically assigned PUCs
     stats['product_with_puc_count'] = ProductToPUC.objects.filter(classification_method='MA').count()
-    #stats['product_with_puc_count'] = Product.objects.filter(prod_cat__isnull = False).count()
-    #TODO: Fix the count by month to use the new linker table.
-    #stats['product_with_puc_count_by_month'] = product_with_puc_count_by_month()
+    stats['product_with_puc_count_by_month'] = product_with_puc_count_by_month()
 
     return render(request, 'dashboard/index.html', stats)
 
@@ -77,12 +75,14 @@ def datadocument_count_by_month():
 
 def product_with_puc_count_by_month():
     # GROUP BY issue solved with https://stackoverflow.com/questions/8746014/django-group-by-date-day-month-year
-    product_stats = list(Product.objects.filter(puc_assigned_time__gte=chart_start_datetime) \
+    # TODO: currently just grabs manually assigned PUCs, logic to be updated for handling Auto assigned PUCS
+    product_stats = list(ProductToPUC.objects.filter(classification_method__exact='MA').filter(puc_assigned_time__gte=chart_start_datetime) \
         .annotate(puc_assigned_month = (Trunc('puc_assigned_time', 'month', output_field=DateField()))) \
         .values('puc_assigned_month') \
         .annotate(product_count = (Count('id'))) \
         .values('product_count', 'puc_assigned_month') \
         .order_by('puc_assigned_month'))
+
     if len(product_stats) < 12:
         for i in range(0, 12):
             chart_month = chart_start_datetime + relativedelta(months=i)

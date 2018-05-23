@@ -69,49 +69,44 @@
             </dl>
 
 
-            
+            <form method="post">
+                {% csrf_token %}            
             <a class="btn btn-warning " data-toggle="collapse" id="edit_toggle" href="#extract_form{{extracted_text.qa_notes}}">
                 <span class="oi oi-wrench"></span>Edit Extracted Chemicals
             </a>
+            {% if extracted_text.qa_checked %}
+            <button type = "submit" name="save_no_approval" class="btn btn-secondary disabled" role="button">Save edits without approving</button>
+            {% else %}
+            <button type = "submit"  name="save_no_approval" class="btn btn-secondary" role="button">Save edits without approving</button>
+            {% endif %}
+           
+            {% if extracted_text.qa_checked %}
+                <button type = "submit"  name="save_with_approval" class="btn btn-primary disabled" role="button">Approve with edits</button>
+            {% else %}
+                <button type = "submit"  name="save_with_approval" class="btn btn-primary" role="button">Approve with edits</button>
+            {% endif %}
+
             <div id="qa_notes" class="col-md-12 border rounded collapse">
-                <form method="post" enctype="multipart/form-data" novalidate>
-                    {% csrf_token %}
-                    {% include 'core/bs4_form.html' %}
+                    {{ extracted_text.qa_notes }}
                     <input type="text" id="qa_notes" name="{{qa_notes}}"><br>
-                    <input type="submit" class="btn btn-primary btn-sm" name="approve_edits" value="Submit">
-                </form>
             </div>
 
-                  <form method="post">
-                        {% csrf_token %}
+
                         {{ chem_formset.management_form }}
                         {% include 'core/bs4_formset.html' with formset=chem_formset %}
-                        {% if extracted_text.qa_checked %}
-                        <button type = "submit" class="btn btn-primary disabled" role="button">Approve with edits</button>
-                      {% else %}
-                        <button type = "submit" class="btn btn-primary" role="button">Approve with edits</button>
-                      {% endif %}
-                      {% if extracted_text.qa_checked %}
-                      <button type = "submit" class="btn btn-secondary disabled" role="button">Save edits without approving</button>
-                    {% else %}
-                      <button type = "submit" class="btn btn-secondary" role="button">Save edits without approving</button>
-                    {% endif %}
-                  </form>
                 
-
-                  {% if extracted_text.qa_checked %}
-                    <a class="btn btn-success disabled" title="This extracted document has already been approved" href="{% url "extracted_text_approve" extracted_text.pk %}" role="button" aria-disabled="true">Approve</a>
-                  {% else %}
-                    <a class="btn btn-success" href="{% url "extracted_text_approve" extracted_text.pk %}" role="button">Approve</a>
-                  {% endif %}
+                    {% if extracted_text.qa_checked %}
+                        <a class="btn btn-success disabled" title="This extracted document has already been approved" href="{% url "extracted_text_approve" extracted_text.pk %}" role="button" aria-disabled="true">Approve</a>
+                    {% else %}
+                        <a class="btn btn-success" href="{% url "extracted_text_approve" extracted_text.pk %}" role="button">Approve</a>
+                    {% endif %}
                   
-
-                  {% if nextid > 0 %}
-                    <a class="btn btn-warning" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>
-                  {% else %}
-                    <button type="button" title="All the other documents in this QA group have been approved" class="btn btn-warning" aria-disabled="true" disabled>Skip</button>
-                  {% endif %}
-                  <a class="btn btn-primary" href="{% url "extraction_script_qa" script.id %}" role="button">Exit</a>
+                    {% if nextid > 0 %}
+                        <a class="btn btn-warning" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>
+                    {% else %}
+                        <button type="button" title="All the other documents in this QA group have been approved" class="btn btn-warning" aria-disabled="true" disabled>Skip</button>
+                    {% endif %}
+                    <a class="btn btn-primary" href="{% url "extraction_script_qa" script.id %}" role="button">Exit</a>
                   </form>
 
         </div>

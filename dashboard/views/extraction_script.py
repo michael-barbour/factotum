@@ -129,6 +129,7 @@ def extracted_text_approve(request, pk):
     Check if the approval puts the Script object across the QA Complete line
     """
     extracted = get_object_or_404(ExtractedText, pk=pk)
+    print('\nExtractedText object: %s' % extracted)
     nextpk = extracted.next_extracted_text_in_qa_group()
     extracted.qa_checked = True
     extracted.qa_status = ExtractedText.APPROVED_WITHOUT_ERROR
@@ -173,7 +174,8 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
                                         formset=BaseExtractedChemicalFormSet,
                                         fields=['extracted_text','raw_cas', 'raw_chem_name', 'raw_min_comp',
                                                 'raw_max_comp', 'unit_type', 'report_funcuse',
-                                                'weight_fraction_type', 'ingredient_rank', 'raw_central_comp'])
+                                                'weight_fraction_type', 'ingredient_rank', 'raw_central_comp'],
+                                                extra=1)
     user = request.user
 
     # The initial data are the extracted chemicals related to the extracted text
@@ -193,27 +195,39 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
                  for chem in text_chems]
 
     if request.method == 'POST':
-        data={        
-            'chemicals-TOTAL_FORMS': '1',
-            'chemicals-INITIAL_FORMS': '1',
-            'chemicals-MAX_NUM_FORMS': ''
-            }
         print('------POST---------')
         print(request.POST)
         chem_formset = ChemFormSet(request.POST, instance=extext, prefix='chemicals')
         print('------VALIDATING FORMSET------')
-        print(chem_formset.errors)
         if chem_formset.is_valid():
             print('chem_formset validated')
             chem_formset.save()
+            if 'save_with_approval' in request.POST :
+                # if the user was approving the extracted text with the edits, follow the
+                # appropriate path
+                extracted = get_object_or_404(ExtractedText, pk=pk)
+                print('\nExtractedText object: %s' % extracted)
+                nextpk = extracted.next_extracted_text_in_qa_group()
+                extracted.qa_checked = True
+                extracted.qa_status = ExtractedText.APPROVED_WITH_ERROR
+                extracted.qa_approved_date = datetime.now()
+                extracted.qa_approved_by = request.user
+                
+                script = extracted.extraction_script
+                # What share of the Script's ExtractedText objects have been approved before the save?
+                pct_before = script.get_pct_checked()
+                extracted.save()
+                pct_after = script.get_pct_checked()
+                print("Percent checked before approval: %s \nAfter approval: %s" % (pct_before, pct_after))
+                print("Script's QA completion status: %s " % script.get_qa_status() )
+                return HttpResponseRedirect(
+                    reverse('extracted_text_qa', args=([nextpk]))
+                )
+        else:
+            print(chem_formset.errors)
     else:
         # GET request
-        data={        
-            'chemicals-TOTAL_FORMS': '1',
-            'chemicals-INITIAL_FORMS': '1',
-            'chemicals-MAX_NUM_FORMS': ''
-            }
-        chem_formset = ChemFormSet(initial=chem_data)
+        chem_formset = ChemFormSet(instance=extext, prefix='chemicals')
 
     context = {
         'extracted_text': extext,

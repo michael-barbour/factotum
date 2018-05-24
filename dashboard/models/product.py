@@ -48,10 +48,14 @@ class Product(CommonInfo):
         elif pucs.filter(classification_method='AU').count() == 1:
             return pucs.filter(classification_method='AU').first()
         else:
-            return "You're crazy to think this product has been categorized!"
+            return None
 
     def get_uber_puc(self):
-        return self.get_uber_product_to_puc().PUC
+        thispuc = self.get_uber_product_to_puc()
+        if thispuc is not None:
+            return thispuc.PUC
+        else:
+            return None
 
     class Meta:
         ordering = ['-created_at']

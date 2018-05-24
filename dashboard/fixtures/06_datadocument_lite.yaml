@@ -1,0 +1,564 @@
+- model: dashboard.datadocument
+  pk: 7
+  fields: {filename: 11165872.pdf, title: Avgas 100LL (<0.1% Benzene), url: 'https://airbpmsds.bp.com/ussds/amersdsf.nsf/AllFiles_AIR_BP_FUELS/89C50579C812749A8025806F0057F0C0/$File/11165872.pdf',
+    product_category: '', data_group: 6, matched: true, extracted: false, uploaded_at: ! '2018-03-09
+      11:32:00.391711', source_type: 4}
+- model: dashboard.datadocument
+  pk: 8
+  fields: {filename: 11177849.pdf, title: AVCAT (FSII + Lubricity Improver Additive),
+    url: 'https://airbpmsds.bp.com/ussds/amersdsf.nsf/AllFiles_AIR_BP_FUELS/A419F6F11DA742518025808E0057F2DB/$File/11177849.pdf',
+    product_category: '', data_group: 6, matched: true, extracted: false, uploaded_at: ! '2018-03-09
+      11:32:00.392831', source_type: 4}
+- model: dashboard.datadocument
+  pk: 9
+  fields: {filename: 11023877.pdf, title: Jet A-1 (FSII + Lubricity Improver Additive),
+    url: 'https://airbpmsds.bp.com/ussds/amersdsf.nsf/AllFiles_AIR_BP_FUELS/7C668B5AE35FFD428025806B0057EC8D/$File/11023877.pdf',
+    product_category: '', data_group: 6, matched: true, extracted: false, uploaded_at: ! '2018-03-09
+      11:32:00.393863', source_type: 4}
+- model: dashboard.datadocument
+  pk: 10
+  fields: {filename: 11188741.pdf, title: Jet A-1 (FSII + Lubricity Improver Additive),
+    url: 'https://airbpmsds.bp.com/ussds/amersdsf.nsf/AllFiles_AIR_BP_FUELS/D6993E4EEE8DD981802580AC0058EFBD/$File/11188741.pdf',
+    product_category: '', data_group: 6, matched: true, extracted: false, uploaded_at: ! '2018-03-09
+      11:32:00.394768', source_type: 4}
+- model: dashboard.datadocument
+  pk: 11
+  fields: {filename: 11023868.pdf, title: Jet A-1, url: 'https://airbpmsds.bp.com/ussds/amersdsf.nsf/AllFiles_AIR_BP_FUELS/CD4C0C21A52FF1948025806B0057E95B/$File/11023868.pdf',
+    product_category: '', data_group: 6, matched: true, extracted: false, uploaded_at: ! '2018-03-09
+      11:32:00.395688', source_type: 4}
+- model: dashboard.datadocument
+  pk: 12
+  fields: {filename: 11023843.pdf, title: Jet A, url: 'https://airbpmsds.bp.com/ussds/amersdsf.nsf/AllFiles_AIR_BP_FUELS/CEEF674E836AF7B58025806B0057E93E/$File/11023843.pdf',
+    product_category: '', data_group: 6, matched: true, extracted: false, uploaded_at: ! '2018-03-09
+      11:32:00.396503', source_type: 4}
+- model: dashboard.datadocument
+  pk: 13
+  fields: {filename: 1.pdf, title: MATERIAL SAFETY DATA SHEET - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/aa/aae0fe79-7b1e-4cdf-90b5-60d9ffbd3594.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.401658', source_type: 4}
+- model: dashboard.datadocument
+  pk: 14
+  fields: {filename: 2.pdf, title: Material Safety Data Sheet - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/89/891878ba-ee92-425c-8fa6-49413f9c0fb5.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.402452', source_type: 4}
+- model: dashboard.datadocument
+  pk: 15
+  fields: {filename: 3.pdf, title: Material Safety Data Sheet - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/c8/c8038c56-e87f-48f5-9c06-49043d556129.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.403240', source_type: 4}
+- model: dashboard.datadocument
+  pk: 16
+  fields: {filename: 4.pdf, title: Material Safety Data Sheet (MSDS) - WD-40 Company,
+    url: 'http://www.homedepot.com/catalog/pdfImages/1a/1ad75868-8999-4910-9e41-8e557a3b7021.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.403886', source_type: 4}
+- model: dashboard.datadocument
+  pk: 17
+  fields: {filename: 5.pdf, title: Material Safety Data Sheet (MSDS) - WD-40 Company,
+    url: 'http://www.homedepot.com/catalog/pdfImages/26/2642c58b-aa70-4b10-9b9f-7340a521dbd1.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.404526', source_type: 4}
+- model: dashboard.datadocument
+  pk: 18
+  fields: {filename: 6.pdf, title: 'Material Safety Data Sheet # 305 - Home Depot',
+    url: 'http://www.homedepot.com/catalog/pdfImages/65/65f85a94-eb8e-450e-8a85-e92c0029c9f4.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.405154', source_type: 4}
+- model: dashboard.datadocument
+  pk: 19
+  fields: {filename: 7.pdf, title: Material Safety Data Sheet - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/22/226aebb5-0055-468f-b9cd-95ee5a071043.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.405895', source_type: 4}
+- model: dashboard.datadocument
+  pk: 20
+  fields: {filename: 8.pdf, title: MSDS - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/cb/cbb4bc52-aa37-49ec-b320-398ce6787777.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.406643', source_type: 4}
+- model: dashboard.datadocument
+  pk: 21
+  fields: {filename: 9.pdf, title: material safety data sheet - Glidden.com, url: 'http://www.homedepot.com/catalog/pdfImages/bd/bd602d63-fdd9-4958-9fa0-8c6757db3f44.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.407318', source_type: 4}
+- model: dashboard.datadocument
+  pk: 22
+  fields: {filename: 10.pdf, title: MSDS - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/da/dac7a777-6b76-444b-ab6b-c29d0e82a322.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.408081', source_type: 4}
+- model: dashboard.datadocument
+  pk: 23
+  fields: {filename: 11.pdf, title: MSDS - KellySolutions.com, url: 'http://www.homedepot.com/catalog/pdfImages/1b/1b5cb7c4-9c86-4f49-8023-f5d029f4dfcb.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.408818', source_type: 4}
+- model: dashboard.datadocument
+  pk: 24
+  fields: {filename: 12.pdf, title: Material Safety Data Sheet - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/f0/f097f8a6-7edc-4759-9011-11672695f888.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.409413', source_type: 4}
+- model: dashboard.datadocument
+  pk: 25
+  fields: {filename: 13.pdf, title: material safety data sheet - Daycon, url: 'http://www.homedepot.com/catalog/pdfImages/82/824604aa-1727-44ee-ac36-4e5f0c558a0d.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.410150', source_type: 4}
+- model: dashboard.datadocument
+  pk: 26
+  fields: {filename: 14.pdf, title: MATERIAL SAFETY DATA SHEET - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/0e/0ed9e0f6-3d9b-448d-89b5-e19cd9a8f642.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.410782', source_type: 4}
+- model: dashboard.datadocument
+  pk: 27
+  fields: {filename: 15.pdf, title: Material Safety Data Sheet - Spectrum Brands,
+    url: 'http://www.homedepot.com/catalog/pdfImages/e0/e0330813-936a-42ab-a071-141fd57340c9.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.411390', source_type: 4}
+- model: dashboard.datadocument
+  pk: 28
+  fields: {filename: 16.pdf, title: Rust-Oleum GHS 16 Section MSDS, url: 'http://www.homedepot.com/catalog/pdfImages/c1/c1d636b4-fe09-41d3-9c82-766950207994.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.412271', source_type: 4}
+- model: dashboard.datadocument
+  pk: 29
+  fields: {filename: 17.pdf, title: 3795 Heavy-Duty Citrus Cleaner (English (US))
+      MSDS GHS -ZEP ..., url: 'http://www.homedepot.com/catalog/pdfImages/4e/4e2fdc3d-d159-4fca-b77b-2048e6c5b056.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.412904', source_type: 4}
+- model: dashboard.datadocument
+  pk: 30
+  fields: {filename: 18.pdf, title: T300 Terro Ant Killer II Liquid Ant Baits (2.20
+      oz) - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/cc/ccdc9961-bba7-4a4c-a316-97373f5a07b0.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.413675', source_type: 4}
+- model: dashboard.datadocument
+  pk: 31
+  fields: {filename: 19.pdf, title: material safety data sheet - Scotwood Industries,
+    url: 'http://www.homedepot.com/catalog/pdfImages/40/406105ab-f807-4b23-9a73-dac315dc5650.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.414341', source_type: 4}
+- model: dashboard.datadocument
+  pk: 32
+  fields: {filename: 20.pdf, title: material safety data sheet - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/36/365e18e2-d97f-4478-8036-aaba04d5bc80.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.415104', source_type: 4}
+- model: dashboard.datadocument
+  pk: 33
+  fields: {filename: 21.pdf, title: Material Safety Data Sheet - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/9d/9db5161c-5d57-43bc-af0e-98673d6aea56.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.415811', source_type: 4}
+- model: dashboard.datadocument
+  pk: 34
+  fields: {filename: 22.pdf, title: Material Safety Data Sheet - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/c7/c71595da-7cc7-4447-ae7a-6d05c5e9a792.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.416431', source_type: 4}
+- model: dashboard.datadocument
+  pk: 35
+  fields: {filename: 23.pdf, title: 5025 Shower Tub & Tile Cleaner (English (US))
+      MSDS ZEP ..., url: 'http://www.homedepot.com/catalog/pdfImages/f3/f3aad52d-691c-427c-8071-e8478dc55169.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.417049', source_type: 4}
+- model: dashboard.datadocument
+  pk: 36
+  fields: {filename: 24.pdf, title: USG Sheetrock Brand Lightweight All Purpose Joint
+      Compound ..., url: 'http://www.homedepot.com/catalog/pdfImages/7f/7f8cc89d-c33d-4de4-aa09-e5f3fc9a06bd.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.417853', source_type: 4}
+- model: dashboard.datadocument
+  pk: 37
+  fields: {filename: 25.pdf, title: Material Safety Data Sheet - Dimex Corp, url: 'http://www.homedepot.com/catalog/pdfImages/4f/4f25d6bd-c8b7-4a31-8c3c-ef62be371521.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.418518', source_type: 4}
+- model: dashboard.datadocument
+  pk: 38
+  fields: {filename: 26.pdf, title: MATERIAL SAFETY DATA SHEET - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/65/65d8bb47-d300-456f-a980-89684fe434dd.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.419295', source_type: 4}
+- model: dashboard.datadocument
+  pk: 39
+  fields: {filename: 27.pdf, title: Material Safety Data Sheet - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/55/55667fc9-6870-44d8-8f3f-c704c7d27528.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.419994', source_type: 4}
+- model: dashboard.datadocument
+  pk: 40
+  fields: {filename: 28.pdf, title: Monterey Garden Insect Spray MSDS - Arbico Organics,
+    url: 'http://www.homedepot.com/catalog/pdfImages/b3/b300fe01-cabb-4989-a8dd-18ec3d8a5fa2.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.420616', source_type: 4}
+- model: dashboard.datadocument
+  pk: 41
+  fields: {filename: 29.pdf, title: 'Citric Acid, Monohydrate MSDS - ScienceLab',
+    url: 'http://www.homedepot.com/catalog/pdfImages/2a/2a9dd043-f3d2-4af0-a9cd-b379f76189ae.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.421472', source_type: 4}
+- model: dashboard.datadocument
+  pk: 42
+  fields: {filename: 30.pdf, title: material safety data sheet - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/df/df4166ae-8437-41f8-a51b-c0567aabe323.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.422128', source_type: 4}
+- model: dashboard.datadocument
+  pk: 43
+  fields: {filename: 31.pdf, title: Material Safety Data Sheet (MSDS) - WD-40 Company,
+    url: 'http://www.homedepot.com/catalog/pdfImages/96/96d4fc00-3f3d-47b4-ade0-62cb9b4cb8cc.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.422769', source_type: 4}
+- model: dashboard.datadocument
+  pk: 44
+  fields: {filename: 32.pdf, title: Rust-Oleum GHS 16 Section MSDS, url: 'http://www.homedepot.com/catalog/pdfImages/b4/b4379cfa-17e2-47c6-b350-a669da6afb54.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.423361', source_type: 4}
+- model: dashboard.datadocument
+  pk: 45
+  fields: {filename: 33.pdf, title: MSDS, url: 'http://www.homedepot.com/catalog/pdfImages/cf/cfbf07ad-eefa-4cd8-886c-572c4cc8f385.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.424008', source_type: 4}
+- model: dashboard.datadocument
+  pk: 46
+  fields: {filename: 34.pdf, title: msds - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/7a/7a3a0060-4b6e-4375-a366-93c847f82486.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.424637', source_type: 4}
+- model: dashboard.datadocument
+  pk: 47
+  fields: {filename: 35.pdf, title: MATERIAL SAFETY DATA SHEET - 16 Sections SECTION
+      1 ..., url: 'http://www.homedepot.com/catalog/pdfImages/47/47da3594-7cfe-408b-8d38-033043e454b7.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.425258', source_type: 4}
+- model: dashboard.datadocument
+  pk: 48
+  fields: {filename: 36.pdf, title: Original Pine-Sol Multi Surface Cleaner - The
+      Clorox Company, url: 'http://www.homedepot.com/catalog/pdfImages/ea/ea3f5524-8134-4abc-b29d-a8cb851cf264.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.425894', source_type: 4}
+- model: dashboard.datadocument
+  pk: 49
+  fields: {filename: 37.pdf, title: Material Safety Data Sheet - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/76/76a7c258-0b6a-4c9c-a4ce-bcae1d9443ce.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.426609', source_type: 4}
+- model: dashboard.datadocument
+  pk: 50
+  fields: {filename: 38.pdf, title: Fuel Cells - Paslode, url: 'http://www.homedepot.com/catalog/pdfImages/d8/d896bb0b-316b-4e5e-8274-e62f29ce7c09.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.427237', source_type: 4}
+- model: dashboard.datadocument
+  pk: 51
+  fields: {filename: 39.pdf, title: MATERIAL SAFETY DATA SHEET - Glidden.com, url: 'http://www.homedepot.com/catalog/pdfImages/b1/b17ff4f9-df91-4c0c-aaaa-2667de60425f.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.427975', source_type: 4}
+- model: dashboard.datadocument
+  pk: 52
+  fields: {filename: 40.pdf, title: Mold Armor Instant Mold and Mildew Stain Remover
+      MATERIAL ..., url: 'http://www.homedepot.com/catalog/pdfImages/e2/e2fcdfeb-59fe-409a-a979-0f441f9f375a.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.428703', source_type: 4}
+- model: dashboard.datadocument
+  pk: 53
+  fields: {filename: 41.pdf, title: Material Safety Data Sheet - Menards, url: 'http://www.homedepot.com/catalog/pdfImages/b3/b30c0a92-eb85-4f1a-ad18-0c8448070cb7.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.429346', source_type: 4}
+- model: dashboard.datadocument
+  pk: 54
+  fields: {filename: 42.pdf, title: MSDS - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/34/34185649-1857-4622-a06a-eca836ff4352.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.430102', source_type: 4}
+- model: dashboard.datadocument
+  pk: 55
+  fields: {filename: 43.pdf, title: 1478 10-Minute Hair Clog Remover (English (US))
+      MSDS ZEP ..., url: 'http://www.homedepot.com/catalog/pdfImages/34/348305bc-18bb-4449-b9ba-5dd84de5981a.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.430696', source_type: 4}
+- model: dashboard.datadocument
+  pk: 56
+  fields: {filename: 44.pdf, title: Material Safety Data Sheet Hazard Rating Health  ...
+      - Office Depot, url: 'http://www.homedepot.com/catalog/pdfImages/71/71af3db5-e1da-432c-9510-fa484c1a2188.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.431489', source_type: 4}
+- model: dashboard.datadocument
+  pk: 57
+  fields: {filename: 45.pdf, title: Jasco Premium Paint Remover MATERIAL SAFETY DATA
+      SHEET X ..., url: 'http://www.homedepot.com/catalog/pdfImages/31/3174c255-aff8-4c91-8284-12ca182f2893.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.432509', source_type: 4}
+- model: dashboard.datadocument
+  pk: 58
+  fields: {filename: 46.pdf, title: MSDS - Menards, url: 'http://www.homedepot.com/catalog/pdfImages/f0/f0fa5763-80ce-4163-8691-409977bf05fe.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.433327', source_type: 4}
+- model: dashboard.datadocument
+  pk: 59
+  fields: {filename: 47.pdf, title: SDS, url: 'http://www.homedepot.com/catalog/pdfImages/7b/7bd066f3-4468-41f4-be02-ec48cbe36a21.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.433974', source_type: 4}
+- model: dashboard.datadocument
+  pk: 60
+  fields: {filename: 48.pdf, title: material safety data sheet - Menards, url: 'http://www.homedepot.com/catalog/pdfImages/43/434db444-7ef2-4c35-8972-30636ed29e6a.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.434736', source_type: 4}
+- model: dashboard.datadocument
+  pk: 61
+  fields: {filename: 49.pdf, title: MATERIAL SAFETY DATA SHEET - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/7b/7b9c699f-ea2f-44e2-b0c3-f5270c8e6227.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.435423', source_type: 4}
+- model: dashboard.datadocument
+  pk: 62
+  fields: {filename: 50.pdf, title: MATERIAL SAFETY DATA SHEET - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/7f/7fa4815c-91d4-486f-92a6-8a3ce5c284b5.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.436126', source_type: 4}
+- model: dashboard.datadocument
+  pk: 63
+  fields: {filename: 51.pdf, title: MATERIAL SAFETY DATA SHEET Fiberon FENCING - Home
+      Depot, url: 'http://www.homedepot.com/catalog/pdfImages/3c/3c8c3fe1-ab7e-4d15-be6e-48837587ded2.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.436754', source_type: 4}
+- model: dashboard.datadocument
+  pk: 64
+  fields: {filename: 52.pdf, title: DAP US/GHS MSDS - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/15/157dc10c-6367-4be4-9092-cc2dd463c8b1.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.437416', source_type: 4}
+- model: dashboard.datadocument
+  pk: 65
+  fields: {filename: 53.pdf, title: material safety data sheet - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/40/4071c074-86d6-4f2b-853e-c86fb5903769.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.438171', source_type: 4}
+- model: dashboard.datadocument
+  pk: 66
+  fields: {filename: 54.pdf, title: material safety data sheet - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/fc/fc6f57cf-ac22-40a1-afe7-005c368fbf72.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.438797', source_type: 4}
+- model: dashboard.datadocument
+  pk: 67
+  fields: {filename: 55.pdf, title: Material Safety Data Sheet - Menards, url: 'http://www.homedepot.com/catalog/pdfImages/88/88707ddb-8821-400e-b15d-fd83feec650f.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.439555', source_type: 4}
+- model: dashboard.datadocument
+  pk: 68
+  fields: {filename: 56.pdf, title: Klean-Strip Acetone MATERIAL SAFETY DATA SHEET
+      1. Product ..., url: 'http://www.homedepot.com/catalog/pdfImages/ba/bac15ad0-7abd-4159-bada-ba48519c1e36.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.440386', source_type: 4}
+- model: dashboard.datadocument
+  pk: 69
+  fields: {filename: 57.pdf, title: Bayer Environmental Science - Menards, url: 'http://www.homedepot.com/catalog/pdfImages/06/06763702-4cbe-453d-a026-a55a90f15179.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.441131', source_type: 4}
+- model: dashboard.datadocument
+  pk: 70
+  fields: {filename: 58.pdf, title: 'TechPac, LLC. - Do My Own Pest Control', url: 'http://www.homedepot.com/catalog/pdfImages/84/8446dbc9-0ed1-4c24-9a00-d7c1a9a95d7c.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.441871', source_type: 4}
+- model: dashboard.datadocument
+  pk: 71
+  fields: {filename: 59.pdf, title: MATERIAL SAFETY DATA SHEET - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/02/02611cd7-0a71-4134-904b-317c3ed54d2c.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.442474', source_type: 4}
+- model: dashboard.datadocument
+  pk: 72
+  fields: {filename: 60.pdf, title: MSDS Document - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/09/09f1e2d0-c528-4375-8a80-0ef12f3e21d4.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.443107', source_type: 4}
+- model: dashboard.datadocument
+  pk: 73
+  fields: {filename: 61.pdf, title: MATERIAL SAFETY DATA SHEET - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/1b/1b849ce4-1f49-4d94-82e0-8eb9e7ed43df.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.443860', source_type: 4}
+- model: dashboard.datadocument
+  pk: 74
+  fields: {filename: 62.pdf, title: Material Safety Data Sheet - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/f5/f53b597c-841a-4c7f-93bc-9db1c599ca7b.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.444620', source_type: 4}
+- model: dashboard.datadocument
+  pk: 75
+  fields: {filename: 63.pdf, title: 'Material Safety Data Sheet # 301 - Home Depot',
+    url: 'http://www.homedepot.com/catalog/pdfImages/55/55308f10-5547-4e68-b5a9-655eac3f0311.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.445338', source_type: 4}
+- model: dashboard.datadocument
+  pk: 76
+  fields: {filename: 64.pdf, title: English - Rust-Oleum, url: 'http://www.homedepot.com/catalog/pdfImages/c8/c85a4084-1a2b-4f56-be6b-f7b605cdbda6.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.446090', source_type: 4}
+- model: dashboard.datadocument
+  pk: 77
+  fields: {filename: 65.pdf, title: material safety data sheet - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/66/66f6d9ad-55e2-42bd-9ed4-8c1a4e8bdecf.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.446815', source_type: 4}
+- model: dashboard.datadocument
+  pk: 78
+  fields: {filename: 66.pdf, title: MSDS - ePestSupply, url: 'http://www.homedepot.com/catalog/pdfImages/0c/0cd3ff21-df1c-46d6-9ed9-f23d0eea8bae.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.447407', source_type: 4}
+- model: dashboard.datadocument
+  pk: 79
+  fields: {filename: 67.pdf, title: Material Safety Data Sheet - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/8a/8a5735b3-d328-4f67-a7c8-40a2fd330698.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.447985', source_type: 4}
+- model: dashboard.datadocument
+  pk: 80
+  fields: {filename: 68.pdf, title: Material Safety Data Sheet U.S. Department of
+      Labor - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/cf/cfdb67cd-8d5c-4663-844f-6bba94f55418.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.448750', source_type: 4}
+- model: dashboard.datadocument
+  pk: 81
+  fields: {filename: 69.pdf, title: MATERIAL SAFETY DATA SHEET - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/07/075ab120-897d-469f-84f2-4b8e7658f25f.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.449468', source_type: 4}
+- model: dashboard.datadocument
+  pk: 82
+  fields: {filename: 70.pdf, title: MSDS - BRK Electronics, url: 'http://www.homedepot.com/catalog/pdfImages/d1/d17292f0-5327-44b3-b07d-5c16e6651602.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.450079', source_type: 4}
+- model: dashboard.datadocument
+  pk: 83
+  fields: {filename: 71.pdf, title: MSDS - Procter & Gamble, url: 'http://www.homedepot.com/catalog/pdfImages/15/157bb628-5729-40c9-94cd-f78819046b98.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.450948', source_type: 4}
+- model: dashboard.datadocument
+  pk: 84
+  fields: {filename: 72.pdf, title: MATERIAL SAFETY DATA SHEET - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/d7/d7ca2fb5-ac68-4a55-bf19-22efdee7c9a7.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.451647', source_type: 4}
+- model: dashboard.datadocument
+  pk: 85
+  fields: {filename: 73.pdf, title: '4473 Calcium, Lime & Rust Stain Remover (English
+      (US)) MSDS ...', url: 'http://www.homedepot.com/catalog/pdfImages/8e/8e912f85-9f3a-43e0-825c-33fb03d8839c.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.452432', source_type: 4}
+- model: dashboard.datadocument
+  pk: 86
+  fields: {filename: 74.pdf, title: Material Safety Data Sheet, url: 'http://www.homedepot.com/catalog/pdfImages/1b/1b781574-d30f-4554-9060-37ebb4368c12.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.453026', source_type: 4}
+- model: dashboard.datadocument
+  pk: 87
+  fields: {filename: 75.pdf, title: SDS - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/f8/f82aaef5-2d09-4054-bff0-da5949970222.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.453738', source_type: 4}
+- model: dashboard.datadocument
+  pk: 88
+  fields: {filename: 76.pdf, title: MSDS for Soda-Club/SodaStream USA/Canada CO2 ...
+      - Office Depot, url: 'http://www.homedepot.com/catalog/pdfImages/09/0901f854-127a-4756-9e8a-4ad631b36522.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.454326', source_type: 4}
+- model: dashboard.datadocument
+  pk: 89
+  fields: {filename: 77.pdf, title: Rust-Oleum GHS 16 Section MSDS, url: 'http://www.homedepot.com/catalog/pdfImages/07/078812c5-4e76-4582-8b12-8991556afcad.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.455145', source_type: 4}
+- model: dashboard.datadocument
+  pk: 90
+  fields: {filename: 78.pdf, title: DAP US/GHS MSDS - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/1c/1cb5131c-815b-42f0-a2ce-91ff36d8a4a0.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.455768', source_type: 4}
+- model: dashboard.datadocument
+  pk: 91
+  fields: {filename: 79.pdf, title: material safety data sheet - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/d8/d82fd80e-532f-4162-a4fe-9ce408d9f1f6.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.456357', source_type: 4}
+- model: dashboard.datadocument
+  pk: 92
+  fields: {filename: 80.pdf, title: USG Sheetrock Brand UltraLightweight All Purpose
+      Joint ..., url: 'http://www.homedepot.com/catalog/pdfImages/51/517ad42b-8ea2-4d9f-b3e3-54ace2b6ac6f.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.456960', source_type: 4}
+- model: dashboard.datadocument
+  pk: 93
+  fields: {filename: 81.pdf, title: 4062 Professional Strength Drain Opener (English
+      (US)) MSDS ..., url: 'http://www.homedepot.com/catalog/pdfImages/71/71876db7-833f-42ae-ad04-a139180cc60a.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.457579', source_type: 4}
+- model: dashboard.datadocument
+  pk: 94
+  fields: {filename: 82.pdf, title: MSDS - Spray & Forget, url: 'http://www.homedepot.com/catalog/pdfImages/dc/dc828ebf-1218-4bd0-a67d-b2cc5bff6a0e.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.458163', source_type: 4}
+- model: dashboard.datadocument
+  pk: 95
+  fields: {filename: 83.pdf, title: 2801 Wet-Look Floor Finish (English (US)) MSDS
+      GHS -ZEP ..., url: 'http://www.homedepot.com/catalog/pdfImages/28/283665ec-6e46-4fd8-a8c9-5daad5bcd581.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.459198', source_type: 4}
+- model: dashboard.datadocument
+  pk: 96
+  fields: {filename: 84.pdf, title: MSDS No. - Hilti, url: 'http://www.homedepot.com/catalog/pdfImages/01/010f13e9-7bc4-4110-a96a-0ae1d985b570.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.459815', source_type: 4}
+- model: dashboard.datadocument
+  pk: 97
+  fields: {filename: 85.pdf, title: MATERIAL SAFETY DATA SHEET - USG, url: 'http://www.homedepot.com/catalog/pdfImages/54/54534c90-0324-4237-9913-9c149b3985e7.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.460548', source_type: 4}
+- model: dashboard.datadocument
+  pk: 98
+  fields: {filename: 86.pdf, title: Material Safety Data Sheet - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/50/50a7bca4-2c2d-4688-913f-7852b25bdeec.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.461129', source_type: 4}
+- model: dashboard.datadocument
+  pk: 99
+  fields: {filename: 87.pdf, title: SDS - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/da/da3fb657-10b0-4b35-ad24-390792305ada.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.461840', source_type: 4}
+- model: dashboard.datadocument
+  pk: 100
+  fields: {filename: 88.pdf, title: material safety data sheet for sealed lead acid
+      batteries, url: 'http://www.homedepot.com/catalog/pdfImages/45/456a268e-a419-46b8-8f37-ac30d0d2b842.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.462661', source_type: 4}
+- model: dashboard.datadocument
+  pk: 101
+  fields: {filename: 89.pdf, title: MATERIAL SAFETY DATA SHEET - Do My Own Pest Control,
+    url: 'http://www.homedepot.com/catalog/pdfImages/3f/3f22ee20-d3c7-4d08-a84c-3782531cc30f.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.463521', source_type: 4}
+- model: dashboard.datadocument
+  pk: 102
+  fields: {filename: 90.pdf, title: material safety data sheet - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/51/5131218e-6a8f-44c9-a3b2-8ef291f01b15.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.464396', source_type: 4}
+- model: dashboard.datadocument
+  pk: 103
+  fields: {filename: 91.pdf, title: SAFETY DATA SHEET, url: 'http://www.homedepot.com/catalog/pdfImages/21/212377de-9ece-44ed-b912-def3035a4f54.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.465028', source_type: 4}
+- model: dashboard.datadocument
+  pk: 104
+  fields: {filename: 92.pdf, title: material safety data sheet - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/da/daafdd0b-69c6-4e04-81bd-0236aa18a940.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.465651', source_type: 4}
+- model: dashboard.datadocument
+  pk: 105
+  fields: {filename: 93.pdf, title: Gorilla Glue - Isites Harvard Edu, url: 'http://www.homedepot.com/catalog/pdfImages/c7/c760e76d-bc34-4130-91c5-86ace9a1c1ef.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.466367', source_type: 4}
+- model: dashboard.datadocument
+  pk: 106
+  fields: {filename: 94.pdf, title: CitriStrip Stripping Gel MATERIAL SAFETY DATA
+      SHEET 1. Product ..., url: 'http://www.homedepot.com/catalog/pdfImages/6e/6ebbd659-94cb-4a17-9e53-03500050859c.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.467081', source_type: 4}
+- model: dashboard.datadocument
+  pk: 107
+  fields: {filename: 95.pdf, title: MATERIAL SAFETY DATA SHEET RM43 43 ... - Rural
+      King, url: 'http://www.homedepot.com/catalog/pdfImages/3a/3a04cc88-e397-4c1e-9745-ce5eff0b0261.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.467855', source_type: 4}
+- model: dashboard.datadocument
+  pk: 108
+  fields: {filename: 96.pdf, title: MSDS - The Fastener Pros, url: 'http://www.homedepot.com/catalog/pdfImages/5e/5e5093b5-ea58-4fc8-840e-bd78870debee.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.468504', source_type: 4}
+- model: dashboard.datadocument
+  pk: 109
+  fields: {filename: 97.pdf, title: Material Safety Data Sheet - HD Supply, url: 'http://www.homedepot.com/catalog/pdfImages/e2/e26850c5-0928-4ac4-8dcd-a92b3f718365.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.469227', source_type: 4}
+- model: dashboard.datadocument
+  pk: 110
+  fields: {filename: 98.pdf, title: 'church & dwight co., inc. - Home Depot', url: 'http://www.homedepot.com/catalog/pdfImages/0d/0d4a899e-5a34-45e0-8e1b-7da14923b6cb.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.469818', source_type: 4}
+- model: dashboard.datadocument
+  pk: 111
+  fields: {filename: 99.pdf, title: InvisaTread Anti-Slip Solution - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/a3/a3c7c6b4-ea51-42be-a995-5db314a1d171.pdf',
+    product_category: '', data_group: 7, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.470402', source_type: 4}
+- model: dashboard.datadocument
+  pk: 156051
+  fields: {filename: Sun_INDS_89.pdf, title: Sun_INDS_89, url: '', product_category: '',
+    data_group: 22, matched: true, extracted: false, uploaded_at: ! '2018-03-21 13:16:47.965719',
+    source_type: 4}

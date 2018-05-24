@@ -1,0 +1,24 @@
+- model: dashboard.productdocument
+  pk: 1
+  fields: {product: 1, document: 8, created_at: !!timestamp '2018-03-09 11:35:45.319568',
+    updated_at: null}
+- model: dashboard.productdocument
+  pk: 2
+  fields: {product: 2, document: 7, created_at: !!timestamp '2018-03-09 11:36:05.145723',
+    updated_at: null}
+- model: dashboard.productdocument
+  pk: 3
+  fields: {product: 3, document: 10, created_at: !!timestamp '2018-03-09 11:36:22.941907',
+    updated_at: null}
+- model: dashboard.productdocument
+  pk: 4
+  fields: {product: 4, document: 12, created_at: !!timestamp '2018-03-09 11:36:41.552485',
+    updated_at: null}
+- model: dashboard.productdocument
+  pk: 5
+  fields: {product: 5, document: 11, created_at: !!timestamp '2018-03-09 11:36:56.559840',
+    updated_at: null}
+- model: dashboard.productdocument
+  pk: 6
+  fields: {product: 3, document: 9, created_at: !!timestamp '2018-03-09 11:37:18.473854',
+    updated_at: null}

@@ -44,11 +44,16 @@ class ModelsTest(TestCase):
                                       prod_fam='Test Product Family',
                                       prod_type='Test Product Type')
 
-        self.ppuc = ProductToPUC.objects.create(product=self.p,
-                                                PUC=self.puc,
-                                                puc_assigned_usr=self.user)
 
     def test_uber_puc(self):
+        # Test that when the product has no assigned PUC, the getter returns
+        # None
+        self.assertTrue(self.p.get_uber_product_to_puc() == None)
+        
+        self.ppuc = ProductToPUC.objects.create(product=self.p,
+                                        PUC=self.puc,
+                                        puc_assigned_usr=self.user)
+
         # Test that the get_uber_product_to_puc method returns expected values
         uber_ppuc = self.p.get_uber_product_to_puc()
         self.assertTrue(uber_ppuc.puc_assigned_usr.username == 'Karyn')

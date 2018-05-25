@@ -118,9 +118,8 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
     p = Product.objects.get(pk=pk)
     if form.is_valid():
         puc = PUC.objects.get(id=form['puc'].value())
-        new_product_to_puc = ProductToPUC.objects.create(PUC=puc, product=p, classification_method='MA',
-                                                         puc_assigned_time=datetime.now(), puc_assigned_usr=request.user)
-        new_product_to_puc.save()
+        ProductToPUC.objects.create(PUC=puc, product=p, classification_method='MA',
+                                    puc_assigned_time=datetime.now(), puc_assigned_usr=request.user)
         return redirect('category_assignment', pk=p.data_source.id)
     return render(request, template_name,{'product': p, 'form': form})
 

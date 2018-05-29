@@ -4,7 +4,7 @@ import os
 from datetime import datetime
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
-from django.forms import ModelForm, Form, BaseInlineFormSet, inlineformset_factory, TextInput, CharField
+from django.forms import ModelForm, Form, BaseInlineFormSet, inlineformset_factory, TextInput, CharField, Textarea
 
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _
@@ -36,8 +36,9 @@ class QANotesForm(ModelForm):
     class Meta:
         model = ExtractedText
         fields = ['qa_notes']
+        qa_notes = CharField(widget=Textarea(attrs={'size': '40'}))
         labels = {
-            'qa_notes': _('Notes about any changes made to extracted chemicals'),
+            'qa_notes': _('Please record any changes made to extracted chemicals'),
         }
 
     def __init__(self, *args, **kwargs):
@@ -213,8 +214,9 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
 
     if request.method == 'POST':
         print('------POST---------')
-        print(request.POST)
+        # print(request.POST)
         chem_formset = ChemFormSet(request.POST, instance=extext, prefix='chemicals')
+        extracted = get_object_or_404(ExtractedText, pk=pk)
         print('------VALIDATING FORMSET------')
         if chem_formset.is_valid():
             print('chem_formset validated')
@@ -222,14 +224,17 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
             if 'save_with_approval' in request.POST :
                 # if the user was approving the extracted text with the edits, follow the
                 # appropriate path
-                extracted = get_object_or_404(ExtractedText, pk=pk)
-                print('\nExtractedText object: %s' % extracted)
                 nextpk = extracted.next_extracted_text_in_qa_group()
                 extracted.qa_checked = True
                 extracted.qa_status = ExtractedText.APPROVED_WITH_ERROR
                 extracted.qa_approved_date = datetime.now()
                 extracted.qa_approved_by = request.user
-                
+                extracted.qa_notes = request.qa_notes
+                # validate the extracted object,
+                # prohibit saving APPROVED_WITH_ERROR unless 
+                # there's something in qa_notes
+                extracted.clean()
+
                 script = extracted.extraction_script
                 # What share of the Script's ExtractedText objects have been approved before the save?
                 pct_before = script.get_pct_checked()

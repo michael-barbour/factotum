@@ -48,6 +48,14 @@ class ExtractedText(CommonInfo):
         return nextid
 
     def clean(self):
+        # don't allow saving as APPROVED_WITH_ERROR if qa_notes is empty 
+        print('running clean() on ExtractionScript object')
+        print(self.qa_status)
+        print(self.qa_notes)
+        if self.qa_status == ExtractedText.APPROVED_WITH_ERROR:
+            if self.qa_notes == None:
+                raise ValidationError("Approving with edits requires adding QA notes")
+        return data
         if self.doc_date:
             if len(self.doc_date) != 10:
                 raise ValidationError("Date format is the wrong length.")

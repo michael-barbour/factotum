@@ -68,8 +68,8 @@
                 <dd class="col-sm-9">{{ extracted_text.qa_approved_by }}</dd>
             </dl>
 
-            <button id="btn_toggle_edit" class="btn btn-secondary" onclick="toggleChemicalEdit()">
-                <span class="oi oi-wrench"></span>Edit Extracted Chemicals
+            <button id="btn-toggle-edit" class="btn btn-secondary" onclick="toggleChemicalEdit()">
+                <span id="btn-toggle-label" class="oi oi-wrench"></span>Edit Extracted Chemicals
             </button>
             <form method="post">
                 {% csrf_token %}            
@@ -112,10 +112,10 @@
 {% block js %}
   <script type="text/javascript">
         window.onload = function() {
-        window.open("/media/{{ doc.data_group.dgurl }}/pdf/{{ doc.filename }}",'pdf',' menubar=0, resizable=0,dependent=0,status=0,width=400,height=7000,left=10,top=10')
         $('.chem-control').attr('readonly', true);
         $('label[for="id_qa_notes"]').toggle();
         $('#id_qa_notes').toggle();
+        window.open("/media/{{ doc.data_group.dgurl }}/pdf/{{ doc.filename }}",'pdf',' menubar=0, resizable=0,dependent=0,status=0,width=400,height=7000,left=10,top=10')
         }
 
         function toggleChemicalEdit() {
@@ -124,8 +124,15 @@
             // show the notes box
             $('label[for="id_qa_notes"]').toggle();
             $('#id_qa_notes').toggle();
-            $('#btn_toggle_edit').addClass('btn-warning')
-            $('#btn-approve').addClass('disabled')
+            if ($('#btn-approve').hasClass('disabled'))  {
+                // exit edit mode
+                $('#btn-approve').removeClass('disabled');
+                $('#btn-toggle-edit').removeClass('btn-warning');
+            } else{
+                // enter edit mode
+                $('#btn-toggle-edit').addClass('btn-warning');
+                $('#btn-approve').addClass('disabled');
+            }
         }
     
   </script>

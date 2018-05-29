@@ -68,7 +68,7 @@
                 <dd class="col-sm-9">{{ extracted_text.qa_approved_by }}</dd>
             </dl>
 
-            <button class="btn btn-secondary" onclick="toggleChemicalEdit()">
+            <button id="btn_toggle_edit" class="btn btn-secondary" onclick="toggleChemicalEdit()">
                 <span class="oi oi-wrench"></span>Edit Extracted Chemicals
             </button>
             <form method="post">
@@ -91,9 +91,9 @@
                         {% include 'core/bs4_formset.html' with formset=chem_formset %}
                 
                     {% if extracted_text.qa_checked %}
-                        <a class="btn btn-success disabled" title="This extracted document has already been approved" href="{% url "extracted_text_approve" extracted_text.pk %}" role="button" aria-disabled="true">Approve</a>
+                        <a id="btn-approve" class="btn btn-success disabled" title="This extracted document has already been approved" href="{% url "extracted_text_approve" extracted_text.pk %}" role="button" aria-disabled="true">Approve</a>
                     {% else %}
-                        <a class="btn btn-success" href="{% url "extracted_text_approve" extracted_text.pk %}" role="button">Approve</a>
+                        <a id="btn-approve" class="btn btn-success" href="{% url "extracted_text_approve" extracted_text.pk %}" role="button">Approve</a>
                     {% endif %}
                   
                     {% if nextid > 0 %}
@@ -124,6 +124,8 @@
             // show the notes box
             $('label[for="id_qa_notes"]').toggle();
             $('#id_qa_notes').toggle();
+            $('#btn_toggle_edit').addClass('btn-warning')
+            $('#btn-approve').addClass('disabled')
         }
     
   </script>

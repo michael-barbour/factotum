@@ -68,29 +68,24 @@
                 <dd class="col-sm-9">{{ extracted_text.qa_approved_by }}</dd>
             </dl>
 
-
+            <button class="btn btn-secondary" onclick="toggleChemicalEdit()">
+                <span class="oi oi-wrench"></span>Edit Extracted Chemicals
+            </button>
             <form method="post">
                 {% csrf_token %}            
-            <a class="btn btn-warning " data-toggle="collapse" id="edit_toggle" href="#extract_form{{extracted_text.qa_notes}}">
-                <span class="oi oi-wrench"></span>Edit Extracted Chemicals
-            </a>
             {% if extracted_text.qa_checked %}
-            <button type = "submit" name="save_no_approval" class="btn btn-secondary disabled" role="button">Save edits without approving</button>
+            <button type = "submit" name="save_no_approval" class="btn btn-primary disabled" role="button">Save edits without approving</button>
             {% else %}
-            <button type = "submit"  name="save_no_approval" class="btn btn-secondary" role="button">Save edits without approving</button>
+            <button type = "submit"  name="save_no_approval" class="btn btn-primary" role="button">Save edits without approving</button>
             {% endif %}
            
             {% if extracted_text.qa_checked %}
-                <button type = "submit"  name="save_with_approval" class="btn btn-primary disabled" role="button">Approve with edits</button>
+                <button type = "submit"  name="save_with_approval" class="btn btn-success disabled" role="button">Approve with edits</button>
             {% else %}
-                <button type = "submit"  name="save_with_approval" class="btn btn-primary" role="button">Approve with edits</button>
+                <button type = "submit"  name="save_with_approval" class="btn btn-success" role="button">Approve with edits</button>
             {% endif %}
 
-            <div id="qa_notes" class="col-md-12 border rounded collapse">
-                    {{ extracted_text.qa_notes }}
-                    <input type="text" id="qa_notes" name="{{qa_notes}}"><br>
-            </div>
-
+            {{ notesform }}
 
                         {{ chem_formset.management_form }}
                         {% include 'core/bs4_formset.html' with formset=chem_formset %}
@@ -118,6 +113,17 @@
   <script type="text/javascript">
         window.onload = function() {
         window.open("/media/{{ doc.data_group.dgurl }}/pdf/{{ doc.filename }}",'pdf',' menubar=0, resizable=0,dependent=0,status=0,width=400,height=7000,left=10,top=10')
+        $('.chem-control').attr('readonly', true);
+        $('label[for="id_qa_notes"]').toggle();
+        $('#id_qa_notes').toggle();
+        }
+
+        function toggleChemicalEdit() {
+            // set the chemical data fields to editable
+            $('.chem-control').attr('readonly', false);
+            // show the notes box
+            $('label[for="id_qa_notes"]').toggle();
+            $('#id_qa_notes').toggle();
         }
     
   </script>

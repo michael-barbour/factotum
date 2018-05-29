@@ -29,9 +29,11 @@ class TestApprovalView(TestCase):
         
 
     def test_approval(self):
-        # Find and follow the first approval link
+        # Open the Script page to create a QA Group
         response = self.client.get('/qa/extractionscript/5', follow=True)
+        # Follow the first approval link
         response = self.client.get('/qa/extractedtext/7', follow=True)
+        print(response.context['extracted_text'])
         
         
 

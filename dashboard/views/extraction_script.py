@@ -31,6 +31,19 @@ class ExtractionScriptForm(ModelForm):
         self.user = kwargs.pop('user', None)
         super(ExtractionScriptForm, self).__init__(*args, **kwargs)
 
+class QANotesForm(ModelForm):
+
+    class Meta:
+        model = ExtractedText
+        fields = ['qa_notes']
+        labels = {
+            'qa_notes': _('Notes about any changes made to extracted chemicals'),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(QANotesForm, self).__init__(*args, **kwargs)
+        self.fields['qa_notes'].widget.attrs.update({'class': 'chem-control'})
 
 class BaseExtractedChemicalFormSet(BaseInlineFormSet):
     """
@@ -43,10 +56,12 @@ class BaseExtractedChemicalFormSet(BaseInlineFormSet):
         fields = ['raw_cas', 'raw_chem_name', 'raw_min_comp',
                   'raw_max_comp', 'unit_type', 'report_funcuse', 'extracted_text']
 
-
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super(BaseExtractedChemicalFormSet, self).__init__(*args, **kwargs)
+        for form in self.forms:
+            for field in form.fields:
+                form.fields[field].widget.attrs.update({'class': 'chem-control'})
 
 
 
@@ -167,7 +182,10 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
     r = ExtractedText.objects.filter(qa_group=extext.qa_group).count() - a
     stats = '%s document(s) approved, %s documents remaining' % (a, r)
 
-    # Create the formset factory
+    # Create the form for editing the extracted text object's QA Notes
+    notesform = QANotesForm(request.POST or None)
+
+    # Create the formset factory for the extracted chemical records
     ChemFormSet = inlineformset_factory(parent_model=ExtractedText, 
                                         model=ExtractedChemical,
                                         formset=BaseExtractedChemicalFormSet,
@@ -236,6 +254,7 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
         'stats': stats, 
         'nextid': nextid,
         'chem_formset': chem_formset,
+        'notesform': notesform,
     }
     #print(context)
     return render(request, template_name, context)

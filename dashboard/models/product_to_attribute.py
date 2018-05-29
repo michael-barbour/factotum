@@ -8,5 +8,4 @@ class ProductToAttribute(CommonInfo):
 	product_attribute = models.ForeignKey(ProductAttribute, on_delete=models.CASCADE)
 
 	def __str__(self):
-		return self.id
-
+		return str(self.id)

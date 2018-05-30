@@ -7,7 +7,7 @@ from .ingredient import Ingredient
 from .product import Product
 from .source_category import SourceCategory
 from .product_document import ProductDocument
-from .product_category import ProductCategory
+from .PUC import PUC
 from .product_to_ingredient import ProductToIngredient
 from .dsstox_substance_to_ingredient import DSSToxSubstanceToIngredient
 from .extracted_text import ExtractedText
@@ -17,5 +17,4 @@ from .dsstox_substance import DSSToxSubstance
 from .qa_group import QAGroup
 from .unit_type import UnitType
 from .weight_fraction_type import WeightFractionType
-
-
+from .product_to_puc import ProductToPUC

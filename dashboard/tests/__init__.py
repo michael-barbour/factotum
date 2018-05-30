@@ -3,3 +3,4 @@
 #from .functional_tests_rollback import *
 
 from .test_product_to_puc import *
+from .test_product_to_attribute import *

@@ -10,13 +10,13 @@ from django.core.urlresolvers import reverse
 class Product(CommonInfo):
     data_source = models.ForeignKey(DataSource, related_name='source',
                                     on_delete=models.CASCADE)
-	documents = models.ManyToManyField(through='dashboard.ProductDocument',
+    documents = models.ManyToManyField(through='dashboard.ProductDocument',
 									   to='dashboard.DataDocument')
-	ingredients = models.ManyToManyField(through='dashboard.ProductToIngredient',
+    ingredients = models.ManyToManyField(through='dashboard.ProductToIngredient',
 										 to='dashboard.Ingredient')
-	attributes = models.ManyToManyField(through='dashboard.ProductToAttribute',
+    attributes = models.ManyToManyField(through='dashboard.ProductToAttribute',
 										to='dashboard.ProductAttribute')
-	source_category = models.ForeignKey(SourceCategory,
+    source_category = models.ForeignKey(SourceCategory,
                                         on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=255)
     manufacturer = models.CharField(db_index=True, max_length=250,
@@ -60,4 +60,4 @@ class Product(CommonInfo):
             return None
 
     class Meta:
-        ordering = ['-created_at']
+          ordering = ['-created_at']

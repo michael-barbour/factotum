@@ -14,7 +14,7 @@ class Script(CommonInfo):
     
     # Specify the share of a script's ExtractedText objects that must be
     # approved in order for the script's QA sat
-    QA_COMPLETE_PERCENTAGE = 0.2 
+    QA_COMPLETE_PERCENTAGE = 0.2
 
 
     title = models.CharField(max_length=50)
@@ -60,4 +60,4 @@ class Script(CommonInfo):
         """
         Compare the derived percent checked against the threshold constant
         """
-        return self.get_pct_checked_numeric() >= self.QA_COMPLETE_PERCENTAGE
+        return self.get_pct_checked_numeric() >= self.QA_COMPLETE_PERCENTAGE * 100

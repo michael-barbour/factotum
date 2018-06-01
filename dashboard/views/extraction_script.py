@@ -41,15 +41,6 @@ class QANotesForm(ModelForm):
             'qa_notes': _('Please record any changes made to extracted chemicals'),
         }
 
-    def clean(self):
-        # don't allow saving as APPROVED_WITH_ERROR if qa_notes is empty 
-        cleaned_data = super().clean()
-        print('qa_status: %s' % cleaned_data.qa_status)
-        print('qa_notes: %s' % cleaned_data.qa_notes)
-        if cleaned_data.qa_status == ExtractedText.APPROVED_WITH_ERROR:
-            if cleaned_data.qa_notes == None:
-                raise ValidationError("Approving with edits requires adding QA notes")
-
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super(QANotesForm, self).__init__(*args, **kwargs)
@@ -167,9 +158,15 @@ def extracted_text_approve(request, pk):
     pct_after = script.get_pct_checked()
     print("Percent checked before approval: %s \nAfter approval: %s" % (pct_before, pct_after))
     print("Script's QA completion status: %s " % script.get_qa_status() )
-    return HttpResponseRedirect(
-        reverse('extracted_text_qa', args=([nextpk]))
-    )
+    if script.get_qa_status():
+        return HttpResponseRedirect(
+            reverse('extraction_script_qa', args=([script.pk]))
+        )
+    else:
+        return HttpResponseRedirect(
+            reverse('extracted_text_qa', args=([nextpk]))
+        )
+
 
 
 @login_required()
@@ -223,17 +220,19 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
 
     if request.method == 'POST':
         print('------POST---------')
-        # print(request.POST)
+        print(request.POST)
         chem_formset = ChemFormSet(request.POST, instance=extext, prefix='chemicals')
         extracted = get_object_or_404(ExtractedText, pk=pk)
         print('------VALIDATING FORMSET------')
         if chem_formset.is_valid():
             print('chem_formset validated')
             chem_formset.save()
-            notesform.clean()
+            #notesform.clean()
             if 'save_with_approval' in request.POST :
                 # if the user was approving the extracted text with the edits, follow the
                 # appropriate path
+                print('------saving changes to chemicals, approving ExtractedText object------')
+                print('ExtractedText object: %s' % extracted)
                 nextpk = extracted.next_extracted_text_in_qa_group()
                 extracted.qa_checked = True
                 extracted.qa_status = ExtractedText.APPROVED_WITH_ERROR
@@ -247,9 +246,14 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
                 pct_after = script.get_pct_checked()
                 print("Percent checked before approval: %s \nAfter approval: %s" % (pct_before, pct_after))
                 print("Script's QA completion status: %s " % script.get_qa_status() )
-                return HttpResponseRedirect(
-                    reverse('extracted_text_qa', args=([nextpk]))
-                )
+                if script.get_qa_status():
+                    return HttpResponseRedirect(
+                        reverse('extraction_script_qa', args=([script.pk]))
+                    )
+                else:
+                    return HttpResponseRedirect(
+                        reverse('extracted_text_qa', args=([nextpk]))
+                    )
         else:
             print(chem_formset.errors)
     else:

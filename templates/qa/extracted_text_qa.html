@@ -69,6 +69,7 @@
                 <dd class="col-sm-9">{{ extracted_text.qa_approved_date }}</dd>
                 <dt class="col-sm-3">QA Approved By</dt>
                 <dd class="col-sm-9">{{ extracted_text.qa_approved_by }}</dd>
+                {{notesform}}
             </dl>
 
             <button id="btn-toggle-edit" class="btn btn-secondary" onclick="toggleChemicalEdit()">
@@ -88,13 +89,7 @@
                                 {% endif %}
                             </div>  
                     </div>
-                    <div class="row">
-                            <div class="col-sm">
 
-                    {{ notesform }}
-                    {{ notesform.errors }}
-                            </div>
-                    </div>
                     <div class="row">
                             {{ chem_formset.management_form }}
                             {% include 'core/bs4_card_formset.html' with formset=chem_formset %}
@@ -125,18 +120,15 @@
   <script type="text/javascript">
         window.onload = function() {
         $('.chem-control').prop('disabled', true);
-        $('label[for="id_qa_notes"]').toggle();
-        $('#id_qa_notes').toggle();
         $('#save_with_approval').addClass('disabled');
         $('#save_no_approval').addClass('disabled');
+        $('#btn-approve').removeClass('disabled');
         window.open("/media/{{ doc.data_group.dgurl }}/pdf/{{ doc.filename }}",'pdf',' menubar=0, resizable=0,dependent=0,status=0,width=400,height=7000,left=10,top=10')
         }
 
         function toggleChemicalEdit() {
             // set the chemical data fields to editable
             // show the notes box
-            $('label[for="id_qa_notes"]').toggle();
-            $('#id_qa_notes').toggle();
             if ($('#btn-approve').hasClass('disabled'))  {
                 // exit edit mode
                 $('#save_with_approval').addClass('disabled');

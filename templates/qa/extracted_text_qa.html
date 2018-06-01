@@ -1,5 +1,6 @@
 {% extends 'core/base.html' %}
-{% load staticfiles %}
+{% load staticfiles %}'
+
 {% load humanize %}
 {% if messages %}
     {% for message in messages %}
@@ -50,7 +51,9 @@
 </div>
 {% endif %}
 
-<div class="card">
+<div class="row">
+    <div class="col">
+    <div class="card">
             <h3 class="card-header">Extracted Text</h3>
         <div class="card-body">
         <dl class="row col-sm-12">
@@ -69,27 +72,34 @@
             </dl>
 
             <button id="btn-toggle-edit" class="btn btn-secondary" onclick="toggleChemicalEdit()">
-                <span id="btn-toggle-label" class="oi oi-wrench"></span>Edit Extracted Chemicals
+                    <span id="btn-toggle-label" class="oi oi-wrench"></span>Edit Extracted Chemicals
             </button>
-            <form method="post">
-                {% csrf_token %}            
-            {% if extracted_text.qa_checked %}
-            <button type = "submit" name="save_no_approval" class="btn btn-primary disabled" role="button">Save edits without approving</button>
-            {% else %}
-            <button type = "submit"  name="save_no_approval" class="btn btn-primary" role="button">Save edits without approving</button>
-            {% endif %}
-           
-            {% if extracted_text.qa_checked %}
-                <button type = "submit"  name="save_with_approval" class="btn btn-success disabled" role="button">Approve with edits</button>
-            {% else %}
-                <button type = "submit"  name="save_with_approval" class="btn btn-success" role="button">Approve with edits</button>
-            {% endif %}
+                <form method="post" >
+                    
+                    <div class="row">
+                            <div class="col-sm">
+                                {% csrf_token %}            
+                                {% if extracted_text.qa_checked %}
+                                <button type = "submit" id="save_no_approval" name="save_no_approval" class="btn btn-primary disabled" role="button">Save edits without approving</button>
+                                <button type = "submit"  id="save_with_approval"  name="save_with_approval" class="btn btn-success disabled" role="button">Approve with edits</button>
+                                {% else %}
+                                <button type = "submit" id="save_no_approval"   name="save_no_approval" class="btn btn-primary" role="button">Save edits without approving</button>
+                                <button type = "submit"  id="save_with_approval"  name="save_with_approval" class="btn btn-success" role="button">Approve with edits</button>
+                                {% endif %}
+                            </div>  
+                    </div>
+                    <div class="row">
+                            <div class="col-sm">
 
-            {{ notesform }}
-
-                        {{ chem_formset.management_form }}
-                        {% include 'core/bs4_formset.html' with formset=chem_formset %}
-                
+                    {{ notesform }}
+                    {{ notesform.errors }}
+                            </div>
+                    </div>
+                    <div class="row">
+                            {{ chem_formset.management_form }}
+                            {% include 'core/bs4_card_formset.html' with formset=chem_formset %}
+                    </div>
+                    
                     {% if extracted_text.qa_checked %}
                         <a id="btn-approve" class="btn btn-success disabled" title="This extracted document has already been approved" href="{% url "extracted_text_approve" extracted_text.pk %}" role="button" aria-disabled="true">Approve</a>
                     {% else %}
@@ -104,34 +114,46 @@
                     <a class="btn btn-primary" href="{% url "extraction_script_qa" script.id %}" role="button">Exit</a>
                   </form>
 
+            </div>
         </div>
         <p class="card-footer"> {{stats}}</p>
+    </div>
     </div>
 
 {% endblock %}
 {% block js %}
   <script type="text/javascript">
         window.onload = function() {
-        $('.chem-control').attr('readonly', true);
+        $('.chem-control').prop('disabled', true);
         $('label[for="id_qa_notes"]').toggle();
         $('#id_qa_notes').toggle();
+        $('#save_with_approval').addClass('disabled');
+        $('#save_no_approval').addClass('disabled');
         window.open("/media/{{ doc.data_group.dgurl }}/pdf/{{ doc.filename }}",'pdf',' menubar=0, resizable=0,dependent=0,status=0,width=400,height=7000,left=10,top=10')
         }
 
         function toggleChemicalEdit() {
             // set the chemical data fields to editable
-            $('.chem-control').attr('readonly', false);
             // show the notes box
             $('label[for="id_qa_notes"]').toggle();
             $('#id_qa_notes').toggle();
             if ($('#btn-approve').hasClass('disabled'))  {
                 // exit edit mode
+                $('#save_with_approval').addClass('disabled');
+                $('#save_no_approval').addClass('disabled');
                 $('#btn-approve').removeClass('disabled');
                 $('#btn-toggle-edit').removeClass('btn-warning');
+                $('.chem-control').removeClass('unlocked');
+                $('.chem-control').prop('disabled', true);
             } else{
                 // enter edit mode
+                $('#save_with_approval').removeClass('disabled');
+                $('#save_no_approval').removeClass('disabled');
                 $('#btn-toggle-edit').addClass('btn-warning');
                 $('#btn-approve').addClass('disabled');
+                $('.chem-control').addClass('unlocked');
+                $('.chem-control').prop('disabled', false);
+
             }
         }
     

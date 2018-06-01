@@ -36,15 +36,24 @@ class QANotesForm(ModelForm):
     class Meta:
         model = ExtractedText
         fields = ['qa_notes']
-        qa_notes = CharField(widget=Textarea(attrs={'size': '40'}))
+        qa_notes = CharField(widget=Textarea(attrs={}))
         labels = {
             'qa_notes': _('Please record any changes made to extracted chemicals'),
         }
 
+    def clean(self):
+        # don't allow saving as APPROVED_WITH_ERROR if qa_notes is empty 
+        cleaned_data = super().clean()
+        print('qa_status: %s' % cleaned_data.qa_status)
+        print('qa_notes: %s' % cleaned_data.qa_notes)
+        if cleaned_data.qa_status == ExtractedText.APPROVED_WITH_ERROR:
+            if cleaned_data.qa_notes == None:
+                raise ValidationError("Approving with edits requires adding QA notes")
+
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super(QANotesForm, self).__init__(*args, **kwargs)
-        self.fields['qa_notes'].widget.attrs.update({'class': 'chem-control'})
+        self.fields['qa_notes'].widget.attrs.update({'class': 'chem-control form-inline', 'size': '80'})
 
 class BaseExtractedChemicalFormSet(BaseInlineFormSet):
     """
@@ -221,6 +230,7 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
         if chem_formset.is_valid():
             print('chem_formset validated')
             chem_formset.save()
+            notesform.clean()
             if 'save_with_approval' in request.POST :
                 # if the user was approving the extracted text with the edits, follow the
                 # appropriate path
@@ -229,12 +239,7 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
                 extracted.qa_status = ExtractedText.APPROVED_WITH_ERROR
                 extracted.qa_approved_date = datetime.now()
                 extracted.qa_approved_by = request.user
-                extracted.qa_notes = request.qa_notes
-                # validate the extracted object,
-                # prohibit saving APPROVED_WITH_ERROR unless 
-                # there's something in qa_notes
                 extracted.clean()
-
                 script = extracted.extraction_script
                 # What share of the Script's ExtractedText objects have been approved before the save?
                 pct_before = script.get_pct_checked()

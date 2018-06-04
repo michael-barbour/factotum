@@ -11,9 +11,11 @@ class Product(CommonInfo):
     data_source = models.ForeignKey(DataSource, related_name='source',
                                     on_delete=models.CASCADE)
     documents = models.ManyToManyField(through='dashboard.ProductDocument',
-                                       to='dashboard.DataDocument')
+									   to='dashboard.DataDocument')
     ingredients = models.ManyToManyField(through='dashboard.ProductToIngredient',
-                                         to='dashboard.Ingredient')
+										 to='dashboard.Ingredient')
+    attributes = models.ManyToManyField(through='dashboard.ProductToAttribute',
+										to='dashboard.ProductAttribute')
     source_category = models.ForeignKey(SourceCategory,
                                         on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=255)
@@ -58,4 +60,4 @@ class Product(CommonInfo):
             return None
 
     class Meta:
-        ordering = ['-created_at']
+          ordering = ['-created_at']

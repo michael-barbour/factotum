@@ -59,5 +59,6 @@ class Script(CommonInfo):
     def get_qa_status(self):
         """
         Compare the derived percent checked against the threshold constant
+        Return true when the percent checked is above the threshold
         """
         return self.get_pct_checked_numeric() >= self.QA_COMPLETE_PERCENTAGE * 100

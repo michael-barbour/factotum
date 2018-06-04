@@ -10,7 +10,7 @@ class PUC(CommonInfo):
     description = models.TextField(null=False, blank=False)
     last_edited_by = models.ForeignKey('auth.User', default = 1, on_delete=models.CASCADE)
     products = models.ManyToManyField(Product, through='ProductToPUC')
-
+    attribute = models.ForeignKey('PUCAttribute', on_delete=models.PROTECT)
 
     class Meta:
         ordering = ['gen_cat', 'prod_fam', 'prod_type']

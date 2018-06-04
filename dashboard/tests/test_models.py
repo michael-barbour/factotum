@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from dashboard.models import DataSource, DataGroup, DataDocument, SourceType, ExtractedText,\
     ExtractedChemical, UnitType, WeightFractionType, DSSToxSubstance, Script, Product, ProductDocument,\
-    Ingredient, ProductToIngredient, DSSToxSubstanceToIngredient
+    Ingredient, ProductToIngredient, DSSToxSubstanceToIngredient, ProductAttribute, ProductToAttribute
 from django.test import TestCase, RequestFactory
 from django.utils import timezone
 import csv
@@ -81,6 +81,10 @@ class ModelsTest(TestCase):
 
         # DSSToxSubstanceToIngredient
         self.dsi = DSSToxSubstanceToIngredient.objects.create(dsstox_substance=self.dsstox, ingredient=self.i)
+
+        # ProductAttribute
+        self.pa = ProductAttribute.objects.create(title="Test Product Attribute")
+        self.pa.save()
 
 
     def tearDown(self):
@@ -182,7 +186,6 @@ class ModelsTest(TestCase):
                                          central_wf_analysis = central_wf_analysis,
                                          upper_wf_analysis = upper_wf_analysis)
 
-
     def test_object_creation(self):
         self.assertTrue(isinstance(self.ds, DataSource))
         self.assertTrue(isinstance(self.dg, DataGroup))
@@ -196,6 +199,7 @@ class ModelsTest(TestCase):
         self.assertTrue(isinstance(self.pi, ProductToIngredient))
         self.assertTrue(isinstance(self.pd, ProductDocument))
         self.assertTrue(isinstance(self.dsi, DSSToxSubstanceToIngredient))
+        self.assertTrue(isinstance(self.pa, ProductAttribute))
 
     def test_object_properties(self):
         # Test properties of objects
@@ -234,3 +238,8 @@ class ModelsTest(TestCase):
 
         # DSSToxSubstance
         self.assertEqual(self.dsstox.__str__(), self.ec.__str__())
+
+    def test_product_attribute(self):
+        p2a = ProductToAttribute.objects.create(product=self.p, product_attribute=self.pa)
+        p2a.save()
+        self.assertEqual(ProductToAttribute.objects.count(), 1)

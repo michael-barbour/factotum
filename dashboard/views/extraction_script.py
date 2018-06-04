@@ -202,25 +202,10 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
                                                 extra=1)
     user = request.user
 
-    # The initial data are the extracted chemicals related to the extracted text
-    text_chems = ExtractedChemical.objects.filter(
-        extracted_text=extext).order_by('ingredient_rank')
-    chem_data = [{'extracted_text':extext,
-                  'raw_cas': chem.raw_cas,
-                  'raw_chem_name': chem.raw_chem_name,
-                  'raw_min_comp': chem.raw_min_comp,
-                  'raw_max_comp': chem.raw_max_comp,
-                  'unit_type': chem.unit_type,
-                  'report_funcuse': chem.report_funcuse,
-                  'weight_fraction_type': chem.weight_fraction_type,
-                  'ingredient_rank': chem.ingredient_rank,
-                  'raw_central_comp': chem.raw_central_comp,
-                  }
-                 for chem in text_chems]
-
     if request.method == 'POST':
         print('------POST---------')
-        print(request.POST)
+        print('Contents of qa_notes: %s' % request.qa_notes)
+        # print(request.POST)
         chem_formset = ChemFormSet(request.POST, instance=extext, prefix='chemicals')
         extracted = get_object_or_404(ExtractedText, pk=pk)
         print('------VALIDATING FORMSET------')

@@ -65,3 +65,20 @@ class ModelsTest(TestCase):
             text.clean()
         except ValidationError:
             self.fail("clean() raised ExceptionType unexpectedly!")
+
+    def test_extracted_text_qa_notes(self):
+        text = ExtractedText(doc_date= '2018-04-13',
+                                            data_document=self.doc,
+                                            extraction_script=self.script)
+        text.qa_status = ExtractedText.APPROVED_WITH_ERROR
+        with self.assertRaises(ValidationError):
+            text.clean()
+        text.qa_notes = "Some notes belong here if qa_status is APPROVED_WITH_ERROR"
+        self.assertRaises(ValidationError, text.clean)
+
+    def test_validation_errors_appear_in_qa_template(self):
+        response = self.client.post('/lists/new', data={'item_text': ''})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'home.html')
+        expected_error = "You can't have an empty list item"
+        self.assertContains(response, expected_error)

@@ -39,7 +39,10 @@ class QANotesForm(ModelForm):
         labels = {
             'qa_notes': _('QA Notes (required after recording any changes to extracted chemicals)'),
         }
-
+    def clean_qa_notes(self):
+        data = self.cleaned_data['qa_notes']
+        if data is None and self.cleaned_data['qa_status'] == ExtractedText.APPROVED_WITH_ERROR :
+            raise forms.ValidationError("The extracted text needs QA notes")
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super(QANotesForm, self).__init__(*args, **kwargs)

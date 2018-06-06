@@ -45,11 +45,11 @@ class QANotesForm(ModelForm):
         }
     def clean_qa_status(self):
         print('cleaning the qa_status field')
-        print(self.cleaned_data)
         print('qa_status: %s ' % self.instance.qa_status)
         data_qa_notes = self.cleaned_data['qa_notes']
         data_qa_status = self.instance.qa_status
         if (data_qa_notes is None or data_qa_notes =='') and data_qa_status == ExtractedText.APPROVED_WITH_ERROR :
+            print('the form should display a validation error')
             raise ValidationError("The extracted text needs QA notes")
 
     def __init__(self, *args, **kwargs):

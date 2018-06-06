@@ -50,7 +50,7 @@ class ExtractedText(CommonInfo):
 
     def clean(self):
         print('cleaning ExtractedText object')
-        if self.qa_status == self.APPROVED_WITH_ERROR and (self.qa_notes is None or self.qa_notes == ''):
+        if self.qa_edited and (self.qa_notes is None or self.qa_notes == ''):
             print('The lack of qa_notes should cause  validation error')
             raise ValidationError("Please add QA notes if the records were edited")
         if self.doc_date:

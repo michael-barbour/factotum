@@ -234,11 +234,8 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
             print('qa_notes in form before save() : %s' % notesform['qa_notes'].value())
             notesform.save()
             chem_formset.save()
-            
-            if notesform.is_valid():
-                print('the notes form for the ExtractedText object is valid')
-                print('Contents of notesform.cleaned_data["qa_notes"]: %s' % notesform.cleaned_data['qa_notes'])
-            print('ExtractedText object qa_notes after save() : %s' % extext.qa_notes)
+            extext.qa_edited = True
+            extext.save()
 
             return HttpResponseRedirect(
                 reverse('extracted_text_qa', args=([extext.pk]))

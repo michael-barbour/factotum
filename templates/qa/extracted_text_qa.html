@@ -81,11 +81,9 @@
                             <div class="col-sm">
                                 {% csrf_token %}            
                                 {% if extracted_text.qa_checked %}
-                                <button type = "submit" id="save_no_approval" name="save_no_approval" class="btn btn-primary disabled" role="button">Save edits without approving</button>
-                                <button type = "submit"  id="save_with_approval"  name="save_with_approval" class="btn btn-success disabled" role="button">Save and approve edits</button>
+                                <button type = "submit" id="save_no_approval" name="save_no_approval" class="btn btn-primary disabled" role="button">Save edits</button>
                                 {% else %}
-                                <button type = "submit" id="save_no_approval"   name="save_no_approval" class="btn btn-primary" role="button">Save edits without approving</button>
-                                <button type = "submit"  id="save_with_approval"  name="save_with_approval" class="btn btn-success" role="button">Approve with edits</button>
+                                <button type = "submit" id="save_no_approval"   name="save_no_approval" class="btn btn-primary" role="button">Save edits</button>
                                 {% endif %}
                             </div>  
                     </div>

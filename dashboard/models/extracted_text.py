@@ -49,8 +49,9 @@ class ExtractedText(CommonInfo):
 
     def clean(self):
         print('cleaning ExtractedText object')
-        if self.qa_status == self.APPROVED_WITH_ERROR and self.qa_notes is None:
-                raise ValidationError("Please add QA notes if there were errors")
+        if self.qa_status == self.APPROVED_WITH_ERROR and (self.qa_notes is None or self.qa_notes == ''):
+            print('The lack of qa_notes should cause  validation error')
+            raise ValidationError("Please add QA notes if there were errors")
         if self.doc_date:
             if len(self.doc_date) != 10:
                 raise ValidationError("Date format is the wrong length.")

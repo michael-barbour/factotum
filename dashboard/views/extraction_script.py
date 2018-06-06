@@ -4,7 +4,7 @@ import os
 from datetime import datetime
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
-from django.forms import ModelForm, Form, BaseInlineFormSet, inlineformset_factory, TextInput, CharField, Textarea
+from django.forms import ModelForm, Form, BaseInlineFormSet, inlineformset_factory, TextInput, CharField, Textarea, HiddenInput, ValidationError
 
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _
@@ -35,18 +35,27 @@ class QANotesForm(ModelForm):
 
     class Meta:
         model = ExtractedText
-        fields = ['qa_notes']
+        fields = ['qa_notes', 'qa_status']
+        widgets = {
+            'qa_status': HiddenInput(),
+            'qa_notes' : Textarea(),
+        }
         labels = {
             'qa_notes': _('QA Notes (required after recording any changes to extracted chemicals)'),
         }
-    def clean_qa_notes(self):
-        data = self.cleaned_data['qa_notes']
-        if data is None and self.cleaned_data['qa_status'] == ExtractedText.APPROVED_WITH_ERROR :
-            raise forms.ValidationError("The extracted text needs QA notes")
+    def clean_qa_status(self):
+        print('cleaning the qa_status field')
+        print(self.cleaned_data)
+        print('qa_status: %s ' % self.instance.qa_status)
+        data_qa_notes = self.cleaned_data['qa_notes']
+        data_qa_status = self.instance.qa_status
+        if (data_qa_notes is None or data_qa_notes =='') and data_qa_status == ExtractedText.APPROVED_WITH_ERROR :
+            raise ValidationError("The extracted text needs QA notes")
+
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super(QANotesForm, self).__init__(*args, **kwargs)
-        self.fields['qa_notes'].widget.attrs.update({'class': 'chem-control form-inline', 'size': '80'})
+        self.fields['qa_notes'].widget.attrs.update({'class': 'chem-control form-inline'})
 
 class BaseExtractedChemicalFormSet(BaseInlineFormSet):
     """
@@ -156,11 +165,13 @@ def extracted_text_approve(request, pk):
     script = extracted.extraction_script
     # What share of the Script's ExtractedText objects have been approved before the save?
     pct_before = script.get_pct_checked()
+    extracted.full_clean()
     extracted.save()
     pct_after = script.get_pct_checked()
-    print("Percent checked before approval: %s \nAfter approval: %s" % (pct_before, pct_after))
+    
     print("Script's QA completion status: %s " % script.get_qa_status() )
     if script.get_qa_status():
+        print('QA is now complete')
         return HttpResponseRedirect(
             reverse('extraction_script_qa', args=([script.pk]))
         )
@@ -174,7 +185,8 @@ def extracted_text_approve(request, pk):
 @login_required()
 def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', nextid=0):
     """
-    Detailed view of an ExtractedText object, where the user can approve, edit, skip, or exit
+    Detailed view of an ExtractedText object, where the user can approve the record
+    as-is, approve it after making edits, save edits without, skip, or exit
     """
     extext = get_object_or_404(ExtractedText, pk=pk)
     # The related DataDocument has the same pk as the ExtractedText object
@@ -182,7 +194,7 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
     exscript = extext.extraction_script
     # get the next unapproved Extracted Text object
     # Its ID will populate the URL for the "Skip" button
-    if extext.qa_checked:
+    if extext.qa_checked:  # if the ExtractedText object's QA process is done, use 0
         nextid = 0
     else:
         nextid = extext.next_extracted_text_in_qa_group()
@@ -201,32 +213,32 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
                                                 extra=1)
     user = request.user
     if request.method == 'POST':
-        print('------POST---------')
-        # print(request.POST)
+        print('--POST')
         # Create the form for editing the extracted text object's QA Notes
         notesform = QANotesForm(request.POST,  instance=extext)
         # Create the form for editing the extracted chemical objects
         chem_formset = ChemFormSet(request.POST, instance=extext, prefix='chemicals')
-        print('------VALIDATING FORM AND FORMSET------')
-
+        print('----VALIDATING FORM AND FORMSET')
         if chem_formset.is_valid():
             print('chem_formset validated')
             script = extext.extraction_script
             if 'save_with_approval' in request.POST :
-                # if the user was approving the extracted text with the edits, follow the
-                # appropriate path
-                print('------saving changes to chemicals, approving ExtractedText object------')
+                # save the edits made to the extracted chemical records
+                chem_formset.save()
+                # the user was approving the extracted text with edits,
+                # so validate the combination 
+                print('------saving changes to chemicals, approving ExtractedText object')
+                extext.qa_checked = True
+                extext.qa_status = ExtractedText.APPROVED_WITH_ERROR
+                extext.qa_approved_date = datetime.now()
+                extext.qa_approved_by = request.user
+                extext.qa_notes = notesform['qa_notes'].value()
                 if notesform.is_valid():
                     print('the notes form for the ExtractedText object is valid')
                     print('Contents of notesform.cleaned_data["qa_notes"]: %s' % notesform.cleaned_data['qa_notes'])
-                    extext.qa_checked = True
-                    extext.qa_status = ExtractedText.APPROVED_WITH_ERROR
-                    extext.qa_approved_date = datetime.now()
-                    extext.qa_approved_by = request.user
-                    extext.qa_notes = notesform['qa_notes'].value()
-                    extext.save()
+
                 print('ExtractedText object: %s' % extext)
-                chem_formset.save()
+
 
                 print("Script's QA completion status: %s " % script.get_qa_status() )
                 print(script.get_pct_checked_numeric())
@@ -255,17 +267,17 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
         # GET request
         notesform =  QANotesForm(instance=extext)
         chem_formset = ChemFormSet(instance=extext, prefix='chemicals')
-
-    context = {
-        'extracted_text': extext,
-        'doc': datadoc, 
-        'script': exscript, 
-        'chem_formset': chem_formset, 
-        'stats': stats, 
-        'nextid': nextid,
-        'chem_formset': chem_formset,
-        'notesform': notesform,
-    }
-    #print(context)
-    return render(request, template_name, context)
+        context = {
+            'extracted_text': extext,
+            'doc': datadoc, 
+            'script': exscript, 
+            'chem_formset': chem_formset, 
+            'stats': stats, 
+            'nextid': nextid,
+            'chem_formset': chem_formset,
+            'notesform': notesform,
+        }
+        #print(context)
+        return render(request, template_name, context)
+    
 

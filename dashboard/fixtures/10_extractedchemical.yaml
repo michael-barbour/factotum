@@ -38,3 +38,7 @@
   pk: 11
   fields: {extracted_text: 9, raw_cas: 120-47-8, raw_chem_name: ethylparaben_P, raw_min_comp: '0.47',
     raw_max_comp: '0.74', unit_type: '1', report_funcuse: sweetener, raw_central_comp: ''}
+- model: dashboard.extractedchemical
+  pk: 12
+  fields: {extracted_text: 10, raw_cas: 120-47-8, raw_chem_name: ethylparaben_P, raw_min_comp: '0.47',
+    raw_max_comp: '0.74', unit_type: '1', report_funcuse: sweetener, raw_central_comp: ''}

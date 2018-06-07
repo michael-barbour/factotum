@@ -23,6 +23,8 @@ class ExtractedText(CommonInfo):
         (APPROVED_WITH_ERROR, "Approved with errors")
     )
     qa_edited = models.BooleanField(default=False)
+    # TODO: move this attribute into a method that derives
+    # qa_status based on the combination of qa_checked and qa_edited
     qa_status = models.CharField(max_length=30,
                                  choices=APPROVAL_CHOICES,
                                  default=None,
@@ -50,7 +52,7 @@ class ExtractedText(CommonInfo):
 
     def clean(self):
         print('cleaning ExtractedText object')
-        if self.qa_edited and (self.qa_notes is None or self.qa_notes == ''):
+        if self.qa_edited and self.qa_checked and (self.qa_notes is None or self.qa_notes == ''):
             print('The lack of qa_notes should cause  validation error')
             raise ValidationError("Please add QA notes if the records were edited")
         if self.doc_date:

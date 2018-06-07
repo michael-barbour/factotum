@@ -1,16 +1,5 @@
 <form method="post" >
         {% csrf_token %}
-        
-        <div class="row">
-            <div class="col-10">
-                    {% if error %}
-                    <div class="form-group has-error">
-                        <span class="help-block">{{ error }}</span>
-                    </div>
-                    {% endif %}
-                {{notesform}}
-            </div>
-        </div>
         <div class="row">
         {% for form in formset.forms %}
         <div class="col-sm-4">

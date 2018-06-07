@@ -46,15 +46,6 @@ class QANotesForm(ModelForm):
             'qa_notes': _('QA Notes (required if approving edited records)'),
         }
 
-    def clean(self):
-        print('~ cleaning the qa_notes field')
-        print('~ qa_notes: %s ' % self.cleaned_data['qa_notes'])
-        print('~ qa_status: %s ' % self.cleaned_data['qa_status'])
-        if (self.cleaned_data['qa_notes'] is None or self.cleaned_data['qa_notes'] =='') and \
-        self.cleaned_data['qa_status'] == ExtractedText.APPROVED_WITH_ERROR :
-            print('the form should display a validation error')
-            raise ValidationError("The extracted text needs QA notes")
-
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super(QANotesForm, self).__init__(*args, **kwargs)
@@ -157,6 +148,7 @@ def extracted_text_approve(request, pk, data_edited=False):
     This view is posted when the user approves an ExtractedText object without changes.
     Check if the approval puts the Script object across the QA Complete line
     """
+    errors = []
     extracted = get_object_or_404(ExtractedText, pk=pk)
     print('\nExtractedText object: %s' % extracted)
     nextpk = extracted.next_extracted_text_in_qa_group()
@@ -167,12 +159,20 @@ def extracted_text_approve(request, pk, data_edited=False):
         extracted.qa_status = ExtractedText.APPROVED_WITHOUT_ERROR
     extracted.qa_approved_date = datetime.now()
     extracted.qa_approved_by = request.user
-    
+
     script = extracted.extraction_script
     # What share of the Script's ExtractedText objects have been approved before the save?
     pct_before = script.get_pct_checked()
-    extracted.full_clean()
+
+    try:
+        extracted.full_clean()
+    except ValidationError as e:
+        errors.append(e)
+        return HttpResponseRedirect(
+            reverse('extracted_text_qa', args=([extracted.pk]))
+        )
     extracted.save()
+
     pct_after = script.get_pct_checked()
     
     print("Script's QA completion status: %s " % script.get_qa_status() )
@@ -191,9 +191,11 @@ def extracted_text_approve(request, pk, data_edited=False):
 @login_required()
 def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', nextid=0):
     """
-    Detailed view of an ExtractedText object, where the user can approve the record
-    as-is, approve it after making edits, save edits without, skip, or exit
+    Detailed view of an ExtractedText object, where the user can approve the record,
+    edit its ExtractedChemical objects, skip to the next ExtractedText in the QA group,
+    or exit to the index page
     """
+    errors = []
     extext = get_object_or_404(ExtractedText, pk=pk)
     # The related DataDocument has the same pk as the ExtractedText object
     datadoc = DataDocument.objects.get(pk=pk)
@@ -209,6 +211,7 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
     r = ExtractedText.objects.filter(qa_group=extext.qa_group).count() - a
     stats = '%s document(s) approved, %s documents remaining' % (a, r)
 
+
     # Create the formset factory for the extracted chemical records
     ChemFormSet = inlineformset_factory(parent_model=ExtractedText, 
                                         model=ExtractedChemical,
@@ -218,8 +221,9 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
                                                 'weight_fraction_type', 'ingredient_rank', 'raw_central_comp'],
                                                 extra=1)
     user = request.user
-    if request.method == 'POST':
+    if request.method == 'POST' and 'save_no_approval' in request.POST:
         print('--POST')
+        print('---saving without approval')
         
         # Create the form for editing the extracted chemical objects
         chem_formset = ChemFormSet(request.POST, instance=extext, prefix='chemicals')
@@ -243,6 +247,35 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
 
         else:
             print(chem_formset.errors)
+    elif request.method == 'POST' and 'approve' in request.POST:
+        print('--POST')
+        print('---approving the ExtractedText object')
+        extracted = get_object_or_404(ExtractedText, pk=pk)
+        print('\nExtractedText object: %s' % extracted)
+        nextpk = extracted.next_extracted_text_in_qa_group()
+        extracted.qa_checked = True
+        if data_edited:
+            extracted.qa_status = ExtractedText.APPROVED_WITH_ERROR
+        else:
+            extracted.qa_status = ExtractedText.APPROVED_WITHOUT_ERROR
+        extracted.qa_approved_date = datetime.now()
+        extracted.qa_approved_by = request.user
+
+        script = extracted.extraction_script
+        # What share of the Script's ExtractedText objects have been approved before the save?
+        pct_before = script.get_pct_checked()
+
+        try:
+            extracted.full_clean()
+        except ValidationError as e:
+            errors.append(e)
+            return HttpResponseRedirect(
+                reverse('extracted_text_qa', args=([extracted.pk]))
+            )
+        extracted.save()
+
+
+
     else:
         # GET request
         notesform =  QANotesForm(instance=extext)

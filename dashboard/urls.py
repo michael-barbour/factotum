@@ -46,8 +46,6 @@ urlpatterns = [
                                             name='extracted_text_qa'),
     url(r'^extractionscript/(?P<pk>\d+)$', views.extraction_script_detail,
                                             name='extraction_script_detail'),
-    url(r'^qa/extractedtext/(?P<pk>\d+)/approve$', views.extracted_text_approve,
-                                            name='extracted_text_approve'),
     url(r'^qa/$', views.qa_index,           name='qa'),
     # url(r'^extractedchemical/edit/(?P<pk>\d+)$', views.extracted_chemical_update,
     #                                         name='extracted_chemical_edit'),

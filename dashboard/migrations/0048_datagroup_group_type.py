@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='datagroup',
             name='group_type',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.SET_NULL, to='dashboard.GroupType',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, to='dashboard.GroupType',
                                     blank=True, null=True),
         ),
     ]

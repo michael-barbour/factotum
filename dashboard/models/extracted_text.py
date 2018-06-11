@@ -41,6 +41,7 @@ class ExtractedText(CommonInfo):
         return str(self.prod_name)
 
     def next_extracted_text_in_qa_group(self):
+        nextid = 0
         extextnext = get_next_or_prev(ExtractedText.objects.filter(
             qa_group=self.qa_group, qa_checked=False), self, 'next')
         if extextnext:
@@ -73,6 +74,19 @@ class ExtractedText(CommonInfo):
                 raise ValidationError('Date is off, month is invalid.')
             if not int(self.doc_date[8:10]) in range(1, 32):
                 raise ValidationError('Date is off, day is invalid.')
+
+    def approve(self, user):
+        """
+        Approve the ExtractedText object's extracted records
+        """
+        self.qa_checked = True
+        if self.qa_edited:
+            self.qa_status = ExtractedText.APPROVED_WITH_ERROR
+        else:
+            self.qa_status = ExtractedText.APPROVED_WITHOUT_ERROR
+        self.qa_approved_date = datetime.now()
+        self.qa_approved_by = user
+        self.full_clean()
 
 
 def get_next_or_prev(models, item, direction):

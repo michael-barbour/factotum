@@ -45,11 +45,17 @@ class QANotesForm(ModelForm):
         labels = {
             'qa_notes': _('QA Notes (required if approving edited records)'),
         }
+
     def clean(self):
-        print('-----inside the QANotesForm class clean() method')
+        print('------inside the QANotesForm class clean() method')
         cleaned_data = super().clean()
         print(cleaned_data)
-
+        qa_notes = cleaned_data.get('qa_notes')
+        qa_status = cleaned_data.get('qa_status')
+        if qa_status == ExtractedText.APPROVED_WITH_ERROR and (qa_notes == '' or qa_notes is None):
+            raise ValidationError(
+                    {'qa_notes': ["There must be qa_notes provided when saving with errors."]}
+                )
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
@@ -187,15 +193,16 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
         
         # Create the form for editing the extracted chemical objects
         chem_formset = ChemFormSet(request.POST, instance=extext, prefix='chemicals')
+        # Create the form for editing the extracted text object's QA Notes
+        notesform = QANotesForm(request.POST,  instance=extext)
+        print('qa_notes in form before is_valid or save() : %s' % notesform['qa_notes'].value())
+
         print('----VALIDATING FORM AND FORMSET')
         if chem_formset.is_valid():
             print('-----chem_formset validated')
             script = extext.extraction_script
 
             #saving the changes without approving the ExtractedText object
-            # Create the form for editing the extracted text object's QA Notes
-            notesform = QANotesForm(request.POST,  instance=extext)
-            print('qa_notes in form before save() : %s' % notesform['qa_notes'].value())
             notesform.save()
             chem_formset.save()
             extext.qa_edited = True
@@ -204,62 +211,46 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
             return HttpResponseRedirect(
                         reverse('extracted_text_qa', args=([extext.pk]))
                     )
-
-
-
         else:
             print(chem_formset.errors)
     # APPROVAL         
     elif request.method == 'POST' and 'approve' in request.POST:
         print('--POST')
         print('---approving the ExtractedText object')
-        notesform = QANotesForm(request.POST,  instance=extext)
 
         extracted = get_object_or_404(ExtractedText, pk=pk)
+       
         print('\nExtractedText object: %s' % extracted)
         nextpk = extracted.next_extracted_text_in_qa_group()
-        extracted.qa_checked = True
-        if extracted.qa_edited:
-            extracted.qa_status = ExtractedText.APPROVED_WITH_ERROR
-        else:
-            extracted.qa_status = ExtractedText.APPROVED_WITHOUT_ERROR
-        extracted.qa_approved_date = datetime.now()
-        extracted.qa_approved_by = request.user
+
+        approved_data = request.POST.copy()
+        print('request.POST %s' % request.POST)
 
         script = extracted.extraction_script
         # What share of the Script's ExtractedText objects have been approved before the save?
         pct_before = script.get_pct_checked()
-
-
-        context = {
-            'pk':extracted.pk,
-            'notesform': notesform,
-        }
-
-        if notesform.is_valid():
-            print('----notesform has validated, proceeding to save it')
-            notesform.save()
-            return HttpResponseRedirect(
-                reverse('extracted_text_qa', args=([nextid]))
-                )
-        else:
-            form = RegistrationForm()
-            context['notesform'] = notesform
-
-        pct_after = script.get_pct_checked()
-
-
+        # Approve the record
+        extracted.approve(request.user)         
+        pct_after = script.get_pct_checked() 
+        print("Script's QA completion status is %s: %s pct of %s " % (script.get_qa_status() , script.get_pct_checked_numeric(), script.get_datadocument_count()))
         
-        print("Script's QA completion status: %s " % script.get_qa_status() )
         if script.get_qa_status():
             print('QA is now complete')
+            context = {
+            'pk': script.pk,
+            }
             return HttpResponseRedirect(
-                reverse('extraction_script_qa', context)
+                reverse('extraction_script_qa', args=[(script.pk)])
             )
         else:
+            context = {
+            'pk': nextpk,
+            }
             return HttpResponseRedirect(
                 reverse('extracted_text_qa', context)
         )
+
+
 
 
     else:
@@ -270,7 +261,6 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
             'extracted_text': extext,
             'doc': datadoc, 
             'script': exscript, 
-            'chem_formset': chem_formset, 
             'stats': stats, 
             'nextid': nextid,
             'chem_formset': chem_formset,

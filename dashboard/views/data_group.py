@@ -18,13 +18,13 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from djqscsv import *
 
-from dashboard.models import (DataGroup, DataDocument, Script, ExtractedText, ExtractedChemical, WeightFractionType, SourceType)
+from dashboard.models import (DataGroup, DataDocument, Script, ExtractedText, ExtractedChemical, WeightFractionType)
 
 
 class DataGroupForm(ModelForm):
     required_css_class = 'required' # adds to label tag
-    source_type = forms.ModelChoiceField(label='Document Default Source Type',
-                                         queryset=SourceType.objects.all())
+    # source_type = forms.ModelChoiceField(label='Document Default Source Type',
+                                         # queryset=SourceType.objects.all())
     class Meta:
         model = DataGroup
         fields = ['name', 'description', 'downloaded_by', 'downloaded_at', 'download_script', 'data_source', 'csv']
@@ -255,7 +255,7 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
         form = DataGroupForm(request.POST, request.FILES,
                              user    = request.user,
                              initial = initial_values)
-        source_type = SourceType.objects.get(pk=form.data['source_type'])
+        # source_type = SourceType.objects.get(pk=form.data['source_type'])
         if form.is_valid():
             datagroup = form.save()
             info = [x.decode('ascii',
@@ -279,7 +279,7 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
                                  title=line['title'],
                                  product_category=line['product'],
                                  url=line['url'],
-                                 source_type=source_type,
+                                 # source_type=source_type,
                                  data_group=datagroup)
                 doc.save()
                 # update line to hold the pk for writeout

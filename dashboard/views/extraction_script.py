@@ -45,6 +45,11 @@ class QANotesForm(ModelForm):
         labels = {
             'qa_notes': _('QA Notes (required if approving edited records)'),
         }
+    def clean(self):
+        print('-----inside the QANotesForm class clean() method')
+        cleaned_data = super().clean()
+        print(cleaned_data)
+
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
@@ -195,10 +200,12 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
             chem_formset.save()
             extext.qa_edited = True
             extext.save()
-
+            
             return HttpResponseRedirect(
-                reverse('extracted_text_qa', args=([extext.pk]))
-            )
+                        reverse('extracted_text_qa', args=([extext.pk]))
+                    )
+
+
 
         else:
             print(chem_formset.errors)
@@ -230,10 +237,11 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
         }
 
         if notesform.is_valid():
+            print('----notesform has validated, proceeding to save it')
             notesform.save()
             return HttpResponseRedirect(
-                reverse('extracted_text_qa', args=(context))
-            )
+                reverse('extracted_text_qa', args=([nextid]))
+                )
         else:
             form = RegistrationForm()
             context['notesform'] = notesform

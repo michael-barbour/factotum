@@ -4,3 +4,4 @@
 
 from .test_product_to_puc import *
 from .test_product_to_attribute import *
+from .test_root_url_no_login import *

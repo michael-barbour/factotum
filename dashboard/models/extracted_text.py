@@ -53,9 +53,9 @@ class ExtractedText(CommonInfo):
 
     def clean(self):
         print('cleaning ExtractedText object')
-        if self.qa_edited and self.qa_checked and (self.qa_notes is None or self.qa_notes == ''):
-            print('The lack of qa_notes should cause  validation error')
-            raise ValidationError("Please add QA notes if the records were edited")
+        #if self.qa_edited and self.qa_checked and (self.qa_notes is None or self.qa_notes == ''):
+        #    print('The lack of qa_notes should raise a validation error')
+        #    raise ValidationError("Please add QA notes if the records were edited")
         if self.doc_date:
             if len(self.doc_date) != 10:
                 raise ValidationError("Date format is the wrong length.")
@@ -79,6 +79,7 @@ class ExtractedText(CommonInfo):
         """
         Approve the ExtractedText object's extracted records
         """
+        print('approving ExtractedText object %s in the model layer' % self.pk )
         self.qa_checked = True
         if self.qa_edited:
             self.qa_status = ExtractedText.APPROVED_WITH_ERROR
@@ -87,6 +88,7 @@ class ExtractedText(CommonInfo):
         self.qa_approved_date = datetime.now()
         self.qa_approved_by = user
         self.full_clean()
+        self.save()
 
 
 def get_next_or_prev(models, item, direction):

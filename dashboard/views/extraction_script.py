@@ -48,14 +48,15 @@ class QANotesForm(ModelForm):
 
     def clean(self):
         print('------inside the QANotesForm class clean() method')
-        cleaned_data = super().clean()
-        print(cleaned_data)
-        qa_notes = cleaned_data.get('qa_notes')
-        qa_status = cleaned_data.get('qa_status')
-        if qa_status == ExtractedText.APPROVED_WITH_ERROR and (qa_notes == '' or qa_notes is None):
-            raise ValidationError(
-                    {'qa_notes': ["There must be qa_notes provided when saving with errors."]}
-                )
+        print(self.cleaned_data)
+        qa_edited = self.cleaned_data.get('qa_edited')
+        qa_status = self.cleaned_data.get('qa_status')
+        
+        if qa_edited:
+            msg = forms.ValidationError("This field is required.")
+            self.add_error('qa_notes', msg)
+
+        return self.cleaned_data
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
@@ -203,7 +204,10 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
             script = extext.extraction_script
 
             #saving the changes without approving the ExtractedText object
-            notesform.save()
+            if notesform.is_valid():
+                print('-------notesform has passed validation')
+                notesform.save()
+            
             chem_formset.save()
             extext.qa_edited = True
             extext.save()
@@ -223,14 +227,16 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
         print('\nExtractedText object: %s' % extracted)
         nextpk = extracted.next_extracted_text_in_qa_group()
 
-        approved_data = request.POST.copy()
-        print('request.POST %s' % request.POST)
-
         script = extracted.extraction_script
         # What share of the Script's ExtractedText objects have been approved before the save?
         pct_before = script.get_pct_checked()
-        # Approve the record
-        extracted.approve(request.user)         
+
+        # Approve the record in the model layer
+        # extracted.approve(request.user)         
+        
+        # Approve the record in the form layer
+
+
         pct_after = script.get_pct_checked() 
         print("Script's QA completion status is %s: %s pct of %s " % (script.get_qa_status() , script.get_pct_checked_numeric(), script.get_datadocument_count()))
         
@@ -247,7 +253,7 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
             'pk': nextpk,
             }
             return HttpResponseRedirect(
-                reverse('extracted_text_qa', context)
+                reverse('extracted_text_qa', args=[(nextpk)])
         )
 
 

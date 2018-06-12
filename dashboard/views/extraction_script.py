@@ -41,6 +41,7 @@ class QANotesForm(ModelForm):
             'qa_notes' : Textarea(),
             'qa_approved_by' : HiddenInput(),
             'qa_approved_date' : HiddenInput(),
+            'qa_edited' : HiddenInput(),
         }
         labels = {
             'qa_notes': _('QA Notes (required if approving edited records)'),
@@ -51,10 +52,10 @@ class QANotesForm(ModelForm):
         print(self.cleaned_data)
         qa_edited = self.cleaned_data.get('qa_edited')
         qa_status = self.cleaned_data.get('qa_status')
+        qa_notes = self.cleaned_data.get('qa_notes')
         
-        if qa_edited:
-            msg = forms.ValidationError("This field is required.")
-            self.add_error('qa_notes', msg)
+        if qa_edited and (qa_notes is None or qa_notes == ''):
+            raise ValidationError('qa_notes needs to be populated if you edited the data')
 
         return self.cleaned_data
 
@@ -221,13 +222,17 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
     elif request.method == 'POST' and 'approve' in request.POST:
         print('--POST')
         print('---approving the ExtractedText object')
+        
+        notesform = QANotesForm(request.POST,  instance=extext, 
+        initial={
+            'qa_checked':True, 
+            'qa_approved_by':request.user,
+            'qa_approved_date':datetime.now()}
+        )
+        print('\nExtractedText object: %s' % extext)
+        nextpk = extext.next_extracted_text_in_qa_group()
 
-        extracted = get_object_or_404(ExtractedText, pk=pk)
-       
-        print('\nExtractedText object: %s' % extracted)
-        nextpk = extracted.next_extracted_text_in_qa_group()
-
-        script = extracted.extraction_script
+        script = extext.extraction_script
         # What share of the Script's ExtractedText objects have been approved before the save?
         pct_before = script.get_pct_checked()
 
@@ -235,26 +240,27 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
         # extracted.approve(request.user)         
         
         # Approve the record in the form layer
-
-
-        pct_after = script.get_pct_checked() 
-        print("Script's QA completion status is %s: %s pct of %s " % (script.get_qa_status() , script.get_pct_checked_numeric(), script.get_datadocument_count()))
-        
-        if script.get_qa_status():
-            print('QA is now complete')
-            context = {
-            'pk': script.pk,
-            }
-            return HttpResponseRedirect(
-                reverse('extraction_script_qa', args=[(script.pk)])
+        if notesform.is_valid():
+            print('the notesform has validated')
+            notesform.save()
+            pct_after = script.get_pct_checked() 
+            print("Script's QA completion status is %s: %s pct of %s " % (script.get_qa_status() , script.get_pct_checked_numeric(), script.get_datadocument_count()))
+            
+            if script.get_qa_status():
+                print('QA is now complete')
+                context = {
+                'pk': script.pk,
+                }
+                return HttpResponseRedirect(
+                    reverse('extraction_script_qa', args=[(script.pk)])
+                )
+            else:
+                context = {
+                'pk': nextpk,
+                }
+                return HttpResponseRedirect(
+                    reverse('extracted_text_qa', args=[(nextpk)])
             )
-        else:
-            context = {
-            'pk': nextpk,
-            }
-            return HttpResponseRedirect(
-                reverse('extracted_text_qa', args=[(nextpk)])
-        )
 
 
 

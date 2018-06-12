@@ -12,6 +12,7 @@ from .product_to_ingredient import ProductToIngredient
 from .dsstox_substance_to_ingredient import DSSToxSubstanceToIngredient
 from .extracted_text import ExtractedText
 from .extracted_chemical import ExtractedChemical
+from .extracted_functionaluse import ExtractedFunctionalUse
 from .script import Script
 from .dsstox_substance import DSSToxSubstance
 from .qa_group import QAGroup

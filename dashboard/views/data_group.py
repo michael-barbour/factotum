@@ -18,7 +18,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from djqscsv import *
 
-from dashboard.models import (DataGroup, DataDocument, Script, ExtractedText, ExtractedChemical, WeightFractionType)
+from dashboard.models import (DataGroup, DataDocument, DocumentType, Script, ExtractedText, ExtractedChemical, WeightFractionType)
 
 
 class DataGroupForm(ModelForm):
@@ -27,7 +27,7 @@ class DataGroupForm(ModelForm):
                                          # queryset=SourceType.objects.all())
     class Meta:
         model = DataGroup
-        fields = ['name', 'description', 'downloaded_by', 'downloaded_at', 'download_script', 'data_source', 'csv']
+        fields = ['name', 'description', 'group_type', 'downloaded_by', 'downloaded_at', 'download_script', 'data_source', 'csv']
         widgets = {
             'downloaded_at': DatePicker(options={
                 "format": "yyyy-mm-dd",
@@ -261,7 +261,7 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
             info = [x.decode('ascii',
                              'ignore') for x in datagroup.csv.readlines()]
             table = csv.DictReader(info)
-            if not table.fieldnames == ['filename','title','product','url']:
+            if not table.fieldnames == ['filename','title','document_type','product','url']:
                 datagroup.delete()
                 return render(request, template_name,
                               {'field_error': table.fieldnames,
@@ -271,16 +271,28 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
             count = 0
             for line in table: # read every csv line, create docs for each
                 count+=1
+                doc_type = DocumentType.objects.get(pk=1)
+                print(doc_type)
                 if line['filename'] == '':
                     errors.append(count)
                 if line['title'] == '': # updates title in line object
                     line['title'] = line['filename'].split('.')[0]
+                if line['document_type'] == '':
+                    errors.append(count)
+                else:
+                    if DocumentType.objects.filter(pk=line['document_type']).exists():
+                        doc_type = DocumentType.objects.get(pk=line['document_type'])
+                    else:
+                        errors.append(count)
+                    print(doc_type)
                 doc=DataDocument(filename=line['filename'],
                                  title=line['title'],
+                                 document_type=doc_type,
                                  product_category=line['product'],
                                  url=line['url'],
                                  # source_type=source_type,
                                  data_group=datagroup)
+                print(doc)
                 doc.save()
                 # update line to hold the pk for writeout
                 text.append(str(doc.pk)+','+ ','.join(line.values())+'\n')

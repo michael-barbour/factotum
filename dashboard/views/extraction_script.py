@@ -42,6 +42,7 @@ class QANotesForm(ModelForm):
             'qa_approved_by' : HiddenInput(),
             'qa_approved_date' : HiddenInput(),
             'qa_edited' : HiddenInput(),
+            'qa_checked' : HiddenInput(),
         }
         labels = {
             'qa_notes': _('QA Notes (required if approving edited records)'),
@@ -59,24 +60,19 @@ class QANotesForm(ModelForm):
         return self.cleaned_data
 
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
-        initial_arguments = kwargs.get('initial', None)
-        print('----kwargs initial before replacing with argument:')
-        print(kwargs.get('initial', None))
-
-        if initial_arguments:
-            print('Initializing QANotesForm with initial values:')
-            print(initial_arguments)
-            updated_initial = {}
-            updated_initial['qa_edited'] = initial_arguments.get('qa_edited')
-            updated_initial['qa_approved_by'] = initial_arguments.get('qa_approved_by')
-            updated_initial['qa_approved_date'] = initial_arguments.get('qa_approved_date')
-            kwargs.update(initial=updated_initial)
-            print('----kwargs initial after replacing with argument:')
-            print(kwargs.get('initial', None))
-        super(QANotesForm, self).__init__(*args, **kwargs, initial=initial_arguments)
-        print('self[qa_approved_by].value() after instantiation: %s' % self['qa_approved_by'].value())
-
+        # These arguments hold the qa_attributes when the form is being approved:
+        if kwargs.get('initial', None) is not None:
+            initial_vals = kwargs.get('initial', None)
+            print('----kwargs initial dict at beginning of __init__:')
+            print('qa_checked: %s'       %  initial_vals['qa_checked'])
+            print('qa_approved_by: %s'   %  initial_vals['qa_approved_by'])
+            print('qa_approved_date: %s' %  initial_vals['qa_approved_date'])
+        # The QA attributes should be passed to the form upon instantiation here:
+        super(QANotesForm, self).__init__(*args, **kwargs)
+        # The kwarg values are not ending up in the form, though
+        if kwargs.get('initial', None) is not None:
+            print('Instantiated form.')
+            print(self)
         self.fields['qa_notes'].widget.attrs.update({'class': 'chem-control form-inline'})
         
 
@@ -242,7 +238,9 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
         initial={
             'qa_checked':True, 
             'qa_approved_by':request.user,
-            'qa_approved_date':datetime.now()}
+            'qa_approved_date':datetime.now(),
+            'qa_edited':extext.qa_edited,
+            }
         )
         print(notesform['qa_approved_by'].value())
 

@@ -50,9 +50,8 @@ class QANotesForm(ModelForm):
     def clean(self):
         print('------inside the QANotesForm class clean() method')
         print(self.cleaned_data)
-        qa_edited = self.cleaned_data.get('qa_edited')
-        qa_status = self.cleaned_data.get('qa_status')
         qa_notes = self.cleaned_data.get('qa_notes')
+        qa_edited = self.cleaned_data.get('qa_edited')
         
         if qa_edited and (qa_notes is None or qa_notes == ''):
             raise ValidationError('qa_notes needs to be populated if you edited the data')
@@ -62,6 +61,9 @@ class QANotesForm(ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         initial_arguments = kwargs.get('initial', None)
+        print('----kwargs initial before replacing with argument:')
+        print(kwargs.get('initial', None))
+
         if initial_arguments:
             print('Initializing QANotesForm with initial values:')
             print(initial_arguments)
@@ -70,9 +72,11 @@ class QANotesForm(ModelForm):
             updated_initial['qa_approved_by'] = initial_arguments.get('qa_approved_by')
             updated_initial['qa_approved_date'] = initial_arguments.get('qa_approved_date')
             kwargs.update(initial=updated_initial)
-            print('kwargs after update:')
-            print(kwargs)
-        super(QANotesForm, self).__init__(*args, **kwargs)
+            print('----kwargs initial after replacing with argument:')
+            print(kwargs.get('initial', None))
+        super(QANotesForm, self).__init__(*args, **kwargs, initial=initial_arguments)
+        print('self[qa_approved_by].value() after instantiation: %s' % self['qa_approved_by'].value())
+
         self.fields['qa_notes'].widget.attrs.update({'class': 'chem-control form-inline'})
         
 
@@ -200,7 +204,6 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
                                                 'raw_max_comp', 'unit_type', 'report_funcuse',
                                                 'weight_fraction_type', 'ingredient_rank', 'raw_central_comp'],
                                                 extra=1)
-    user = request.user
     if request.method == 'POST' and 'save_no_approval' in request.POST:
         print('--POST')
         print('---saving without approval')
@@ -247,8 +250,6 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
         nextpk = extext.next_extracted_text_in_qa_group()
 
         script = extext.extraction_script
-        # What share of the Script's ExtractedText objects have been approved before the save?
-        pct_before = script.get_pct_checked()
 
         # Approve the record in the model layer
         # extracted.approve(request.user)         
@@ -262,7 +263,6 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
         if notesform.is_valid():
             print('the notesform has validated')
             notesform.save()
-            pct_after = script.get_pct_checked() 
             print("Script's QA completion status is %s: %s pct of %s " % (script.get_qa_status() , script.get_pct_checked_numeric(), script.get_datadocument_count()))
             
             if script.get_qa_status():

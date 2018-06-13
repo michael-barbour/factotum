@@ -35,7 +35,7 @@ class QANotesForm(ModelForm):
 
     class Meta:
         model = ExtractedText
-        fields = ['qa_notes', 'qa_status', 'qa_approved_by','qa_approved_date',]
+        fields = ['qa_notes', 'qa_status', 'qa_approved_by','qa_approved_date','qa_edited','qa_checked']
         widgets = {
             'qa_status': HiddenInput(),
             'qa_notes' : Textarea(),
@@ -61,8 +61,20 @@ class QANotesForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
+        initial_arguments = kwargs.get('initial', None)
+        if initial_arguments:
+            print('Initializing QANotesForm with initial values:')
+            print(initial_arguments)
+            updated_initial = {}
+            updated_initial['qa_edited'] = initial_arguments.get('qa_edited')
+            updated_initial['qa_approved_by'] = initial_arguments.get('qa_approved_by')
+            updated_initial['qa_approved_date'] = initial_arguments.get('qa_approved_date')
+            kwargs.update(initial=updated_initial)
+            print('kwargs after update:')
+            print(kwargs)
         super(QANotesForm, self).__init__(*args, **kwargs)
         self.fields['qa_notes'].widget.attrs.update({'class': 'chem-control form-inline'})
+        
 
 class BaseExtractedChemicalFormSet(BaseInlineFormSet):
     """
@@ -229,6 +241,8 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
             'qa_approved_by':request.user,
             'qa_approved_date':datetime.now()}
         )
+        print(notesform['qa_approved_by'].value())
+
         print('\nExtractedText object: %s' % extext)
         nextpk = extext.next_extracted_text_in_qa_group()
 
@@ -240,6 +254,11 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
         # extracted.approve(request.user)         
         
         # Approve the record in the form layer
+        print('--- Before notesform.is_clean()')
+        print('qa_approved_by: %s' % notesform['qa_approved_by'].data)
+        print(notesform['qa_approved_by'].value())
+        #print(notesform.__dict__)
+
         if notesform.is_valid():
             print('the notesform has validated')
             notesform.save()
@@ -261,6 +280,10 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
                 return HttpResponseRedirect(
                     reverse('extracted_text_qa', args=[(nextpk)])
             )
+        
+        return HttpResponseRedirect(
+                    reverse('extraction_script_qa', args=[(script.pk)])
+                )
 
 
 

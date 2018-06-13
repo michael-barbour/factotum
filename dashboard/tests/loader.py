@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 from dashboard.models import (SourceType, DataSource, DataGroup, DataDocument,
                               Script, ExtractedText, ExtractedChemical,
-                              ExtractedFunctionalUse)
+                              ExtractedFunctionalUse, Product, PUC)
 
 class dotdict(dict):
     """dot.notation access to dictionary attributes"""
@@ -32,6 +32,13 @@ def load_model_objects():
                                             data_group=dg,
                                             source_type=st)
 
+    p = Product.objects.create(data_source=ds,
+                                      upc='Test UPC for ProductToPUC')
+
+    puc = PUC.objects.create(gen_cat='Test General Category',
+                                  prod_fam='Test Product Family',
+                                  prod_type='Test Product Type')
+
     extext = ExtractedText.objects.create(
                                     prod_name='Test Extracted Text Record',
                                     data_document=doc,
@@ -44,5 +51,7 @@ def load_model_objects():
             'script':script,
             'dg':dg,
             'doc':doc,
+            'p':p,
+            'puc':puc,
             'extext':extext,
             })

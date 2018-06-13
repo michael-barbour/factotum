@@ -272,7 +272,6 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
             for line in table: # read every csv line, create docs for each
                 count+=1
                 doc_type = DocumentType.objects.get(pk=1)
-                print(doc_type)
                 if line['filename'] == '':
                     errors.append(count)
                 if line['title'] == '': # updates title in line object
@@ -284,7 +283,6 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
                         doc_type = DocumentType.objects.get(pk=line['document_type'])
                     else:
                         errors.append(count)
-                    print(doc_type)
                 doc=DataDocument(filename=line['filename'],
                                  title=line['title'],
                                  document_type=doc_type,
@@ -297,6 +295,7 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
                 # update line to hold the pk for writeout
                 text.append(str(doc.pk)+','+ ','.join(line.values())+'\n')
             if errors:
+                datagroup.csv.close()
                 datagroup.delete()
                 return render(request, template_name, {'line_errors': errors,
                                                        'form': form})

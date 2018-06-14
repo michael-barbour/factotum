@@ -37,12 +37,12 @@ class QANotesForm(ModelForm):
         model = ExtractedText
         fields = ['qa_notes', 'qa_status', 'qa_approved_by','qa_approved_date','qa_edited','qa_checked']
         widgets = {
-            'qa_status': HiddenInput(),
-            'qa_notes' : Textarea(),
-            'qa_approved_by' : HiddenInput(),
-            'qa_approved_date' : HiddenInput(),
-            'qa_edited' : HiddenInput(),
-            'qa_checked' : HiddenInput(),
+            'qa_status': HiddenInput,
+            'qa_notes' : Textarea,
+            'qa_approved_by' : HiddenInput,
+            'qa_approved_date' : HiddenInput,
+            'qa_edited' : HiddenInput,
+            'qa_checked' : HiddenInput,
         }
         labels = {
             'qa_notes': _('QA Notes (required if approving edited records)'),
@@ -60,6 +60,7 @@ class QANotesForm(ModelForm):
         return self.cleaned_data
 
     def __init__(self, *args, **kwargs):
+        initial_vals={}
         # These arguments hold the qa_attributes when the form is being approved:
         if kwargs.get('initial', None) is not None:
             initial_vals = kwargs.get('initial', None)
@@ -67,12 +68,12 @@ class QANotesForm(ModelForm):
             print('qa_checked: %s'       %  initial_vals['qa_checked'])
             print('qa_approved_by: %s'   %  initial_vals['qa_approved_by'])
             print('qa_approved_date: %s' %  initial_vals['qa_approved_date'])
+        print(kwargs)
         # The QA attributes should be passed to the form upon instantiation here:
-        super(QANotesForm, self).__init__(*args, **kwargs)
+        super(QANotesForm, self).__init__(*args, **kwargs )
         # The kwarg values are not ending up in the form, though
         if kwargs.get('initial', None) is not None:
             print('Instantiated form.')
-            print(self)
         self.fields['qa_notes'].widget.attrs.update({'class': 'chem-control form-inline'})
         
 
@@ -176,6 +177,7 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
     or exit to the index page
     """
     context = {}
+    initial = {}
     extext = get_object_or_404(ExtractedText, pk=pk)
     # The related DataDocument has the same pk as the ExtractedText object
     datadoc = DataDocument.objects.get(pk=pk)
@@ -234,29 +236,27 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
         print('--POST')
         print('---approving the ExtractedText object')
         
-        notesform = QANotesForm(request.POST,  instance=extext, 
-        initial={
+        # Setting the QA attributes here on the model layer doesn't work
+        # extext.qa_checked = True
+        # extext.qa_approved_by= request.user
+        # extext.qa_approved_date = datetime.now()
+        # extext.save()
+        initial = {
             'qa_checked':True, 
             'qa_approved_by':request.user,
             'qa_approved_date':datetime.now(),
             'qa_edited':extext.qa_edited,
             }
-        )
-        print(notesform['qa_approved_by'].value())
+        notesform = QANotesForm(instance=extext, initial=initial )
 
-        print('\nExtractedText object: %s' % extext)
         nextpk = extext.next_extracted_text_in_qa_group()
-
         script = extext.extraction_script
-
-        # Approve the record in the model layer
-        # extracted.approve(request.user)         
-        
+         
         # Approve the record in the form layer
         print('--- Before notesform.is_clean()')
         print('qa_approved_by: %s' % notesform['qa_approved_by'].data)
-        print(notesform['qa_approved_by'].value())
-        #print(notesform.__dict__)
+
+        print(notesform)
 
         if notesform.is_valid():
             print('the notesform has validated')
@@ -265,26 +265,22 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
             
             if script.get_qa_status():
                 print('QA is now complete')
-                context = {
-                'pk': script.pk,
-                }
                 return HttpResponseRedirect(
                     reverse('extraction_script_qa', args=[(script.pk)])
                 )
             else:
-                context = {
-                'pk': nextpk,
-                }
                 return HttpResponseRedirect(
                     reverse('extracted_text_qa', args=[(nextpk)])
             )
-        
-        return HttpResponseRedirect(
-                    reverse('extraction_script_qa', args=[(script.pk)])
-                )
-
-
-
+        else:
+            print('Trying to approve, but notesform failed validation')
+            # re-render the invalid extracted text object's page
+            print('Returning the user to the same page for corrections')
+            print(notesform)
+            context = {
+                'notesform':notesform
+                }
+            return render(request, template_name, context)
 
     else:
         # GET request

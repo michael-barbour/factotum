@@ -52,10 +52,10 @@ class ExtractedText(CommonInfo):
         return nextid
 
     def clean(self):
-        print('cleaning ExtractedText object')
-        #if self.qa_edited and self.qa_checked and (self.qa_notes is None or self.qa_notes == ''):
-        #    print('The lack of qa_notes should raise a validation error')
-        #    raise ValidationError("Please add QA notes if the records were edited")
+        print('cleaning ExtractedText object in the model')
+        # if self.qa_edited and self.qa_checked and (self.qa_notes is None or self.qa_notes == ''):
+        #     print('The lack of qa_notes should raise a validation error')
+        #     raise ValidationError("Please add QA notes if the records were edited")
         if self.doc_date:
             if len(self.doc_date) != 10:
                 raise ValidationError("Date format is the wrong length.")

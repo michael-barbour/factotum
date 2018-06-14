@@ -65,6 +65,8 @@
                 <dd class="col-sm-9">{{ extracted_text.prod_name }}</dd>
                 <dt class="col-sm-3">Document Date</dt>
                 <dd class="col-sm-9">{{ extracted_text.doc_date }}</dd>
+                <dt class="col-sm-3">QA Checked</dt>
+                <dd class="col-sm-9">{{ extracted_text.qa_checked }}</dd>
                 <dt class="col-sm-3">QA Status</dt>
                 <dd class="col-sm-9">{{ extracted_text.get_qa_status_display }}</dd>
                 <dt class="col-sm-3">QA Approval Date</dt>
@@ -73,10 +75,18 @@
                 <dd class="col-sm-9">{{ extracted_text.qa_approved_by }}</dd>
 
             </dl>
+            {% if notesform.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+              {% for error in notesform.non_field_errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+            {% endif %}
 
             <button id="btn-toggle-edit" class="btn btn-secondary" onclick="toggleChemicalEdit()">
                     <span id="btn-toggle-label" class="oi oi-wrench"></span>Edit Extracted Chemicals
             </button>
+
             <form method="post" >
                             {% csrf_token %}            
                             <div class="row">
@@ -114,6 +124,8 @@
                                 {% else %}
                                 <button type = "submit" id="save_no_approval"   name="save_no_approval" class="btn btn-primary" role="button">Save edits</button>
                                 {% endif %}
+                                <button type = "submit" id="test_approval"   name="test_approval" class="btn btn-primary" role="button">Test Approval</button>
+
                             </div>  
                     </div>
 

@@ -40,7 +40,7 @@ def datadocument_count_by_date():
                                  .order_by('upload_date'))
     document_stats_by_type = DataDocument.objects.extra(select=select_upload_date) \
         .values('upload_date') \
-        .annotate(source_type = F('data_group__data_source__type__title'), document_count = Count('id')) \
+        .annotate(source_type = F('document_type__title'), document_count = Count('id')) \
         .order_by('upload_date')
     document_stats['product'] = list(document_stats_by_type.filter(source_type = 'product'))
     document_stats['msds_sds'] = list(document_stats_by_type.filter(source_type = 'msds/sds'))

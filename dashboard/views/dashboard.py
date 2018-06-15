@@ -44,7 +44,7 @@ def datadocument_count_by_date():
         .order_by('upload_date')
     document_stats['product'] = list(document_stats_by_type.filter(source_type = 'product'))
     document_stats['msds_sds'] = list(document_stats_by_type.filter(source_type = 'msds/sds'))
-    for type in {'all', 'product', 'msds_sds'}:
+    for type in {'all'}:
         document_count = 0
         for item in document_stats[type]:
             if isinstance(item['upload_date'], datetime.date):

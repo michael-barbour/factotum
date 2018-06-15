@@ -15,14 +15,14 @@ class ExtractedText(CommonInfo):
     rev_num = models.CharField(max_length=50, null=True, blank=True)
     extraction_script = models.ForeignKey(
         Script, on_delete=models.CASCADE, limit_choices_to={'script_type': 'EX'}, )
-    qa_checked = models.BooleanField(default=False)
+    qa_checked = models.BooleanField(default=False, verbose_name="QA approved")
     APPROVED_WITH_ERROR = "APPROVED_WITH_ERROR"
     APPROVED_WITHOUT_ERROR = "APPROVED_WITHOUT_ERROR"
     APPROVAL_CHOICES = (
         (APPROVED_WITHOUT_ERROR, "Approved without errors"),
         (APPROVED_WITH_ERROR, "Approved with errors")
     )
-    qa_edited = models.BooleanField(default=False)
+    qa_edited = models.BooleanField(default=False, verbose_name="QA edited")
     # TODO: move this attribute into a method that derives
     # qa_status based on the combination of qa_checked and qa_edited
     qa_status = models.CharField(max_length=30,
@@ -30,10 +30,10 @@ class ExtractedText(CommonInfo):
                                  default=None,
                                  blank=True,
                                  null=True)
-    qa_approved_date = models.DateTimeField(null=True, blank=True)
+    qa_approved_date = models.DateTimeField(null=True, blank=True, verbose_name="QA approval date")
     qa_approved_by = models.ForeignKey(
-        'auth.User', null=True, blank=True, on_delete=models.SET_NULL)
-    qa_group = models.ForeignKey('QAGroup', null=True, blank=True,
+        'auth.User', null=True, blank=True, on_delete=models.SET_NULL, verbose_name = "QA approved by")
+    qa_group = models.ForeignKey('QAGroup', null=True, blank=True, verbose_name="QA group",
                                  on_delete=models.SET_NULL)
     qa_notes = models.CharField(max_length=255, null=True, blank=True)
 

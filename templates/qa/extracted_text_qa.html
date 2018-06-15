@@ -58,23 +58,7 @@
     <div class="card">
             <h3 class="card-header">Extracted Text</h3>
         <div class="card-body">
-        <dl class="row col-sm-12">
-                <dt class="col-sm-3">Record Type</dt>
-                <dd class="col-sm-9">{{ extracted_text.record_type }}</dd>
-                <dt class="col-sm-3">Product Name</dt>
-                <dd class="col-sm-9">{{ extracted_text.prod_name }}</dd>
-                <dt class="col-sm-3">Document Date</dt>
-                <dd class="col-sm-9">{{ extracted_text.doc_date }}</dd>
-                <dt class="col-sm-3">QA Checked</dt>
-                <dd class="col-sm-9">{{ extracted_text.qa_checked }}</dd>
-                <dt class="col-sm-3">QA Status</dt>
-                <dd class="col-sm-9">{{ extracted_text.get_qa_status_display }}</dd>
-                <dt class="col-sm-3">QA Approval Date</dt>
-                <dd class="col-sm-9">{{ extracted_text.qa_approved_date }}</dd>
-                <dt class="col-sm-3">QA Approved By</dt>
-                <dd class="col-sm-9">{{ extracted_text.qa_approved_by }}</dd>
-
-            </dl>
+       
             {% if notesform.non_field_errors %}
             <div class="alert alert-danger" role="alert">
               {% for error in notesform.non_field_errors %}
@@ -82,10 +66,6 @@
               {% endfor %}
             </div>
             {% endif %}
-
-            <button id="btn-toggle-edit" class="btn btn-secondary" onclick="toggleChemicalEdit()">
-                    <span id="btn-toggle-label" class="oi oi-wrench"></span>Edit Extracted Chemicals
-            </button>
 
             <form method="post" >
                             {% csrf_token %}            
@@ -96,35 +76,30 @@
                                                 <span class="help-block">{{ error }}</span>
                                             </div>
                                             {% endif %}
-                                        {{notesform}}
+                                            {% include 'core/bs4_form_dl.html' with form=notesform %}
                                         {{errors}}
 
                                     </div>
                                 </div>
-                            {% if extracted_text.qa_checked %}
-                            <button type = "submit" id="approve" name="approve" class="btn btn-primary disabled" role="button">Approve</button>
-                            {% else %}
+
                             <button type = "submit" id="approve" name="approve" class="btn btn-primary" role="button">Approve</button>
-                            {% endif %}
                             
                             {% if nextid > 0 %}
-                                <a class="btn btn-warning" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>
+                                <a class="btn btn-primary" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>
                             {% else %}
-                                <button type="button" title="All the other documents in this QA group have been approved" class="btn btn-warning" aria-disabled="true" disabled>Skip</button>
+                                <button type="button" title="All the other documents in this QA group have been approved" class="btn btn-primary" aria-disabled="true" disabled>Skip</button>
                             {% endif %}
                             <a class="btn btn-primary" href="{% url "extraction_script_qa" script.id %}" role="button">Exit</a>
                     
 
 
-                    <div class="row">
+                    <div class="row" style="padding-top:10px;">
                             <div class="col-sm">
-
-                                {% if extracted_text.qa_checked %}
-                                <button type = "submit" id="save_no_approval" name="save_no_approval" class="btn btn-primary disabled" role="button">Save edits</button>
-                                {% else %}
-                                <button type = "submit" id="save_no_approval"   name="save_no_approval" class="btn btn-primary" role="button">Save edits</button>
-                                {% endif %}
-                                <button type = "submit" id="test_approval"   name="test_approval" class="btn btn-primary" role="button">Temporary Approval</button>
+                            <button type="button" id="btn-toggle-edit" data-toggle="button" class="btn btn-secondary" onclick="toggleChemicalEdit(true)">
+                                    <span id="btn-toggle-label" class="oi oi-wrench"></span>Edit Extracted Chemicals
+                            </button>
+                            
+                            <button type = "submit" id="save_no_approval"   name="save_no_approval" class="btn btn-primary" role="button">Save edits</button>
 
                             </div>  
                     </div>
@@ -145,33 +120,35 @@
 {% block js %}
   <script type="text/javascript">
         window.onload = function() {
-        $('.chem-control').prop('disabled', true);
-        $('#save_with_approval').addClass('disabled');
-        $('#save_no_approval').addClass('disabled');
-        $('#btn-approve').removeClass('disabled');
+        $('#id_qa_notes').addClass('extext-control');
+        $('#approve').addClass('extext-control');
         window.open("/media/{{ doc.data_group.dgurl }}/pdf/{{ doc.filename }}",'pdf',' menubar=0, resizable=0,dependent=0,status=0,width=400,height=7000,left=10,top=10')
+        toggleChemicalEdit(false);
         }
 
-        function toggleChemicalEdit() {
+        function toggleChemicalEdit(enable=true) {
             // set the chemical data fields to editable
             // show the notes box
-            if ($('#btn-approve').hasClass('disabled'))  {
-                // exit edit mode
-                $('#save_with_approval').addClass('disabled');
-                $('#save_no_approval').addClass('disabled');
-                $('#btn-approve').removeClass('disabled');
-                $('#btn-toggle-edit').removeClass('btn-warning');
-                $('.chem-control').removeClass('unlocked');
-                $('.chem-control').prop('disabled', true);
-            } else{
+            if (enable)  {
                 // enter edit mode
                 $('#save_with_approval').removeClass('disabled');
                 $('#save_no_approval').removeClass('disabled');
                 $('#btn-toggle-edit').addClass('btn-warning');
-                $('#btn-approve').addClass('disabled');
+                $('#btn-toggle-edit').attr("onclick","toggleChemicalEdit(false)");
                 $('.chem-control').addClass('unlocked');
                 $('.chem-control').prop('disabled', false);
-
+                $('.extext-control').addClass('unlocked');
+                $('.extext-control').prop('disabled', false);
+            } else{
+                // exit edit mode
+                $('#btn-toggle-edit').attr("onclick","toggleChemicalEdit(true)");
+                $('#save_with_approval').addClass('disabled');
+                $('#save_no_approval').addClass('disabled');
+                $('#btn-toggle-edit').removeClass('btn-warning');
+                $('.chem-control').removeClass('unlocked');
+                $('.chem-control').prop('disabled', true);
+                $('.extext-control').removeClass('unlocked');
+                $('.extext-control').prop('disabled', true);
             }
         }
     

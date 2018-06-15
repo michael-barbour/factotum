@@ -35,14 +35,9 @@ class QANotesForm(ModelForm):
 
     class Meta:
         model = ExtractedText
-        fields = ['qa_notes', 'qa_status', 'qa_approved_by','qa_approved_date','qa_edited','qa_checked']
+        fields = ['record_type','prod_name', 'doc_date', 'qa_approved_by','qa_approved_date','qa_edited','qa_checked','qa_notes', ]
         widgets = {
-            'qa_status': HiddenInput,
             'qa_notes' : Textarea,
-            'qa_approved_by' : HiddenInput,
-            'qa_approved_date' : HiddenInput,
-            'qa_edited' : HiddenInput,
-            'qa_checked' : HiddenInput,
         }
         labels = {
             'qa_notes': _('QA Notes (required if approving edited records)'),
@@ -75,7 +70,7 @@ class QANotesForm(ModelForm):
         super(QANotesForm, self).__init__(*args, **kwargs )
         # The kwarg values are not ending up in the form, though
         kwargs.update(initial=initial_vals)
-        self.fields['qa_notes'].widget.attrs.update({'class': 'chem-control form-inline'})
+
         
 
 class BaseExtractedChemicalFormSet(BaseInlineFormSet):
@@ -230,64 +225,47 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
                     )
         else:
             print(chem_formset.errors)
-    # TEST_APPROVAL
-    elif request.method == 'POST' and 'test_approval' in request.POST:
-        print('--POST')
-        print('--- testing approval based on save')
-        print(request.POST)
-        # Create the form for editing the extracted chemical objects
-        chem_formset = ChemFormSet(request.POST, instance=extext, prefix='chemicals')
-        # Create the form for editing the extracted text object's QA Notes
-        initial = {
-            'qa_checked':True, 
-            'qa_approved_by':request.user,
-            'qa_approved_date':datetime.now(),
-            'qa_edited':extext.qa_edited,
-            }
-        notesform = QANotesForm(request.POST,  instance=extext, initial=initial)
-        print('qa_notes in form before is_valid or save() : %s' % notesform['qa_notes'].value())
-
-        print('----VALIDATING FORM AND FORMSET')
-        # approve the object in the model layer for now
-        if (extext.qa_edited and extext.qa_notes is not None and extext.qa_notes != '') or extext.qa_edited == False:
-            # approve with errors
-            extext.approve(user=request.user)
-
-
-        extext.save()
-        return HttpResponseRedirect(
-                    reverse('extracted_text_qa', args=([extext.pk]))
-                )
 
     # APPROVAL
     elif request.method == 'POST' and 'approve' in request.POST:
         print('--POST')
         print('---approving the ExtractedText object')
-        
-        # Setting the QA attributes here on the model layer doesn't work
-        # extext.qa_checked = True
-        # extext.qa_approved_by= request.user
-        # extext.qa_approved_date = datetime.now()
-        # extext.save()
+        nextpk = extext.next_extracted_text_in_qa_group()
+        script = extext.extraction_script
+        chem_formset = ChemFormSet(request.POST, instance=extext, prefix='chemicals')
+
         initial = {
             'qa_checked':True, 
             'qa_approved_by':request.user,
             'qa_approved_date':datetime.now(),
             'qa_edited':extext.qa_edited,
             }
-        notesform = QANotesForm(instance=extext, initial=initial )
 
-        nextpk = extext.next_extracted_text_in_qa_group()
-        script = extext.extraction_script
-         
-        # Approve the record in the form layer
-        print('--- Before notesform.is_clean()')
+        notesform = QANotesForm(request.POST, instance=extext, initial=initial )
+
+            # Something is going wrong in the instantiation.
+            # The kwargs inside the notesform __init__ method contain what they should ,
+            # but by the time the notesform is queried below, it is missing that data
+            #   _____
+            #  /     \
+            # | () () |
+            #  \  ^  /
+            #   |||||
+            #   |||||
+
+        print('--- After initializing notesform, before is_valid()')
+        print('qa_checked: %s' % notesform['qa_checked'].data)
         print('qa_approved_by: %s' % notesform['qa_approved_by'].data)
-
-        print(notesform)
+        print('qa_approved_date: %s' % notesform['qa_approved_date'].data)
+        print('qa_notes: %s' % notesform['qa_notes'].data)
+        #print(notesform)
 
         if notesform.is_valid():
-            print('the notesform has validated')
+            print('---- after notesform.is_valid()')
+            print('qa_checked: %s' % notesform['qa_checked'].data)
+            print('qa_approved_by: %s' % notesform['qa_approved_by'].data)
+            print('qa_approved_date: %s' % notesform['qa_approved_date'].data)
+            print('qa_notes: %s' % notesform['qa_notes'].data)
             notesform.save()
             print("Script's QA completion status is %s: %s pct of %s " % (script.get_qa_status() , script.get_pct_checked_numeric(), script.get_datadocument_count()))
             
@@ -306,17 +284,18 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
             print('Returning the user to the same page for corrections')
             print('----- notesform should be populated with QA attributes:')
             print(notesform)
-            print('----- the POST request:')
-            print(request.POST)
+            # print('----- the POST request:')
+            # print(request.POST)
             context = {
-                'pk': extext.pk,
-                'notesform':notesform
-                }
-
+                'extracted_text': extext,
+                'doc': datadoc, 
+                'script': exscript, 
+                'stats': stats, 
+                'nextid': nextid,
+                'chem_formset': chem_formset,
+                'notesform': notesform,
+            }
             return render(request, template_name,context)
-            # return HttpResponseRedirect(
-            #     reverse('extracted_text_qa', args=[extext.pk])
-            # )
 
     else:
         # GET request

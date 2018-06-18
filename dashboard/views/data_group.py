@@ -90,9 +90,8 @@ def data_group_detail(request, pk,
     docs = DataDocument.objects.filter(data_group_id=pk).order_by('title')
     npage = 50 # TODO: make this dynamic someday in its own ticket
     page = request.GET.get('page')
-    page = 1 if page is None else page
     paginator = Paginator(docs, npage)
-    docs_page = paginator.page(page)
+    docs_page = paginator.page(1 if page is None else page)
     scripts = Script.objects.filter(script_type='EX')
     store = settings.MEDIA_URL + datagroup.name.replace(' ','_')
     extract_fieldnames = ['data_document_pk','data_document_filename',
@@ -104,13 +103,27 @@ def data_group_detail(request, pk,
                                         request.FILES or None )
     err = False
     ext_err = {}
-
+    include_upload = not all([d.matched for d in docs])
+    include_extract = all([d.matched for d in docs]) \
+                      and not all([d.extracted for d in docs])
+    context = {'datagroup'         : datagroup,
+              'documents'         : docs_page,
+              'all_documents'     : docs,
+              'include_upload'    : not all([d.matched for d in docs]),
+              'err'               : False,
+              'include_extract'   : True,
+              'scripts'           : scripts,
+              'extract_fieldnames': extract_fieldnames,
+              'ext_err'           : ext_err,
+              'extract_form'      : extract_form}
     if request.method == 'POST' and 'upload' in request.POST:
+        print(request.FILES)
         files = request.FILES.getlist('multifiles')
         # match filename to pdf name
         proc_files = [f for d in docs for f in files if f.name == d.filename]
         if not proc_files:
-            err = True
+            context['err'] = True    # return render here!
+            return render(request, template_name, context)
         zf = zipfile.ZipFile(datagroup.zip_file, 'a', zipfile.ZIP_DEFLATED)
         while proc_files:
             pdf = proc_files.pop(0)
@@ -126,105 +139,103 @@ def data_group_detail(request, pk,
         zf.close()
     if request.method == 'POST' and 'extract_button' in request.POST:
         extract_form.collapsed = False
-        print(request.FILES)
-        # if extract_form.is_valid():
-        #     csv_file = request.FILES.getlist('extract_file')[0]
-        #     weight_fraction_type = request.POST['weight_fraction_type']
-        #     script = Script.objects.get(pk=request.POST['script_selection'])
-        #     info = [x.decode('ascii','ignore') for x in csv_file.readlines()]
-        #     table = csv.DictReader(info)
-        #     throw = 0
-        #     if not table.fieldnames == extract_fieldnames:
-        #         for i, col in enumerate(table.fieldnames):
-        #             if not col in extract_fieldnames:
-        #                 good = extract_fieldnames[i]
-        #                 ext_err['every'] = {col:['needs to be renamed to "%s"' % good]}
-        #         for col in extract_fieldnames:
-        #             if not col in table.fieldnames:
-        #                 ext_err['every'] = {col:['needs to be a column in the uploaded file']}
-        #         return render(request, template_name,
-        #                       {   'datagroup'         : datagroup,
-        #                           'documents'         : docs_page,
-        #                           'all_documents'     : docs,
-        #                           'include_upload'    : False,
-        #                           'err'               : err,
-        #                           'include_extract'   : True,
-        #                           'scripts'           : scripts,
-        #                           'extract_fieldnames': extract_fieldnames,
-        #                           'ext_err'           : ext_err,
-        #                           'extract_form'      : extract_form})
-        #     record = 1
-        #     for row in csv.DictReader(info):
-        #         doc_pk = (row['data_document_pk'])
-        #         doc = docs.get(pk=doc_pk)
-        #         # load and validate ALL ExtractedText records
-        #         # see if it exists if true continue else validate, don't save
-        #         text = loadExtracted(row, doc, script)
-        #         try:
-        #             text.full_clean()
-        #         except ValidationError as e:
-        #             throw = 1
-        #             ext_err[record] = e.message_dict
-        #             # send back to user if not all text records pass validation
-        #         record += 1
-        #     if throw:
-        #         return render(request, template_name,
-        #                       {   'datagroup'         : datagroup,
-        #                           'documents'         : docs_page,
-        #                           'all_documents'     : docs,
-        #                           'include_upload'    : False,
-        #                           'err'               : err,
-        #                           'include_extract'   : True,
-        #                           'scripts'           : scripts,
-        #                           'extract_fieldnames': extract_fieldnames,
-        #                           'ext_err'           : ext_err,
-        #                           'extract_form'      : extract_form})
-        #     good_chems = []
-        #     record = 1
-        #     for row in csv.DictReader(info):
-        #         doc_pk = (row['data_document_pk'])
-        #         doc = docs.get(pk=doc_pk)
-        #         text = loadExtracted(row, doc, script)
-        #         if not ExtractedText.objects.filter(data_document=doc):
-        #             text.save()
-        #         # see if chem already assigned to text ultimately DD
-        #         qs = ExtractedChemical.objects.filter(  # empty queryset if no
-        #             raw_chem_name=row['raw_chem_name']).values_list(
-        #             'extracted_text_id')
-        #         #check qs if returned
-        #         check = any([t_id[0] == text.pk for t_id in qs])
-        #         if check:
-        #             continue
-        #         if not check:
-        #             chem = ExtractedChemical(extracted_text = text,
-        #                         cas                 = row['raw_cas'],
-        #                         chem_name           = row['raw_chem_name'],
-        #                         raw_min_comp        = row['raw_min_comp'],
-        #                         raw_max_comp        = row['raw_max_comp'],
-        #                         unit_type           = row['unit_type'],
-        #                         report_funcuse      = row['report_funcuse'],
-        #                         weight_fraction_type= weight_fraction_type,
-        #                         ingredient_rank     = row['ingredient_rank'],
-        #                         raw_central_comp    = row['raw_central_comp'],
-        #                                      )
-        #             try:
-        #                 chem.full_clean()
-        #                 good_chems.append([doc,chem])
-        #             except ValidationError as e:
-        #                 ext_err[record] = e.message_dict
-        #         record += 1
-        #
-        #     if not ext_err:  # no saving until all errors are removed
-        #         for doc, chem in good_chems:
-        #             doc.extracted = True
-        #             doc.save()
-        #             chem.save()
-        #         fs = FileSystemStorage(store)
-        #         fs.save(str(datagroup)+'_extracted.csv', csv_file)
+        # print(request.FILES)
+        if extract_form.is_valid():
+            csv_file = request.FILES.getlist('extract_file')[0]
+            weight_fraction_type = request.POST['weight_fraction_type']
+            script = Script.objects.get(pk=request.POST['script_selection'])
+            info = [x.decode('ascii','ignore') for x in csv_file.readlines()]
+            table = csv.DictReader(info)
+            throw = 0
+            if not table.fieldnames == extract_fieldnames:
+                for i, col in enumerate(table.fieldnames):
+                    if not col in extract_fieldnames:
+                        good = extract_fieldnames[i]
+                        ext_err['every'] = {col:['needs to be renamed to "%s"' % good]}
+                for col in extract_fieldnames:
+                    if not col in table.fieldnames:
+                        ext_err['every'] = {col:['needs to be a column in the uploaded file']}
+                return render(request, template_name,
+                              {   'datagroup'         : datagroup,
+                                  'documents'         : docs_page,
+                                  'all_documents'     : docs,
+                                  'include_upload'    : False,
+                                  'err'               : err,
+                                  'include_extract'   : True,
+                                  'scripts'           : scripts,
+                                  'extract_fieldnames': extract_fieldnames,
+                                  'ext_err'           : ext_err,
+                                  'extract_form'      : extract_form})
+            record = 1
+            for row in csv.DictReader(info):
+                doc_pk = (row['data_document_pk'])
+                doc = docs.get(pk=doc_pk)
+                # load and validate ALL ExtractedText records
+                # see if it exists if true continue else validate, don't save
+                text = loadExtracted(row, doc, script)
+                try:
+                    text.full_clean()
+                except ValidationError as e:
+                    throw = 1
+                    ext_err[record] = e.message_dict
+                    # send back to user if not all text records pass validation
+                record += 1
+            if throw:
+                return render(request, template_name,
+                              {   'datagroup'         : datagroup,
+                                  'documents'         : docs_page,
+                                  'all_documents'     : docs,
+                                  'include_upload'    : False,
+                                  'err'               : err,
+                                  'include_extract'   : True,
+                                  'scripts'           : scripts,
+                                  'extract_fieldnames': extract_fieldnames,
+                                  'ext_err'           : ext_err,
+                                  'extract_form'      : extract_form})
+            good_chems = []
+            record = 1
+            for row in csv.DictReader(info):
+                doc_pk = (row['data_document_pk'])
+                doc = docs.get(pk=doc_pk)
+                text = loadExtracted(row, doc, script)
+                if not ExtractedText.objects.filter(data_document=doc):
+                    text.save()
+                # see if chem already assigned to text ultimately DD
+                qs = ExtractedChemical.objects.filter(  # empty queryset if no
+                    raw_chem_name=row['raw_chem_name']).values_list(
+                    'extracted_text_id')
+                #check qs if returned
+                check = any([t_id[0] == text.pk for t_id in qs])
+                if check:
+                    continue
+                if not check:
+                    chem = ExtractedChemical(extracted_text = text,
+                                cas                 = row['raw_cas'],
+                                chem_name           = row['raw_chem_name'],
+                                raw_min_comp        = row['raw_min_comp'],
+                                raw_max_comp        = row['raw_max_comp'],
+                                unit_type           = row['unit_type'],
+                                report_funcuse      = row['report_funcuse'],
+                                weight_fraction_type= weight_fraction_type,
+                                ingredient_rank     = row['ingredient_rank'],
+                                raw_central_comp    = row['raw_central_comp'],
+                                             )
+                    try:
+                        chem.full_clean()
+                        good_chems.append([doc,chem])
+                    except ValidationError as e:
+                        ext_err[record] = e.message_dict
+                record += 1
 
-    include_upload = not all([d.matched for d in docs])
-    include_extract = all([d.matched for d in docs]) \
-                      and not all([d.extracted for d in docs])
+            if not ext_err:  # no saving until all errors are removed
+                for doc, chem in good_chems:
+                    doc.extracted = True
+                    doc.save()
+                    chem.save()
+                fs = FileSystemStorage(store)
+                fs.save(str(datagroup)+'_extracted.csv', csv_file)
+
+
 
     return render(request, template_name,{
         'datagroup'         : datagroup,

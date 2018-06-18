@@ -144,3 +144,4 @@ factotum.iml
 /webpack-stats.json
 /assets/bundles/
 /media/
+.vscode/settings.json

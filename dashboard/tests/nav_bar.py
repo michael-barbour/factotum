@@ -23,8 +23,6 @@ class NavBarTest(TestCase):
         self.assertTrue(html.startswith('<!DOCTYPE html>'))
         self.assertIn('<title>factotum</title>', html)
         self.assertTrue(html.endswith('</html>'))
-        print(f'\n{self.objects.extext}')
-        print(type(self.objects.extext))
 
     def test_index_link(self):
         found = resolve('/')

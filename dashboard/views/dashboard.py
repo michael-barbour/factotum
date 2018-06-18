@@ -10,7 +10,6 @@ current_date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d')
 chart_start_datetime = datetime.datetime(datetime.datetime.now().year - 1, datetime.datetime.now().month + 1, 1)
 
 
-@login_required(login_url='/login')
 def index(request):
     stats = {}
     stats['datagroup_count'] = DataGroup.objects.count()

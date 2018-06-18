@@ -42,7 +42,8 @@ class ModelsTest(TestCase):
 
         self.puc = PUC.objects.create(gen_cat='Test General Category',
                                       prod_fam='Test Product Family',
-                                      prod_type='Test Product Type')
+                                      prod_type='Test Product Type',
+                                      last_edited_by=self.user)
 
 
     def test_uber_puc(self):
@@ -50,7 +51,7 @@ class ModelsTest(TestCase):
         # None
         self.assertTrue(self.p.get_uber_product_to_puc() == None)
         
-        self.ppuc = ProductToPUC.objects.create(product=self.p,
+        self.puc = ProductToPUC.objects.create(product=self.p,
                                         PUC=self.puc,
                                         puc_assigned_usr=self.user)
 

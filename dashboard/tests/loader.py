@@ -33,11 +33,11 @@ def load_model_objects():
                                             source_type=st)
 
     p = Product.objects.create(data_source=ds,
-                                      upc='Test UPC for ProductToPUC')
+                                upc='Test UPC for ProductToPUC')
 
     puc = PUC.objects.create(gen_cat='Test General Category',
-                                  prod_fam='Test Product Family',
-                                  prod_type='Test Product Type')
+                              prod_fam='Test Product Family',
+                              prod_type='Test Product Type')
 
     extext = ExtractedText.objects.create(
                                     prod_name='Test Extracted Text Record',
@@ -46,12 +46,12 @@ def load_model_objects():
                                     )
 
     return dotdict({'user':user,
-            'st':st,
-            'ds':ds,
-            'script':script,
-            'dg':dg,
-            'doc':doc,
-            'p':p,
-            'puc':puc,
-            'extext':extext,
-            })
+                    'st':st,
+                    'ds':ds,
+                    'script':script,
+                    'dg':dg,
+                    'doc':doc,
+                    'p':p,
+                    'puc':puc,
+                    'extext':extext,
+                    })

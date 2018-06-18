@@ -12,6 +12,8 @@ class ExtractedFunctionalUse(CommonInfo):
     raw_cas = models.CharField("Raw CAS", max_length=50, null=True, blank=True)
     raw_chem_name = models.CharField("Raw chemical name", max_length=500,
                                   null=True, blank=True)
+    report_funcuse = models.CharField("Reported functional use",
+                                        max_length=100, null=True, blank=True)
 
     def __str__(self):
         return self.raw_chem_name

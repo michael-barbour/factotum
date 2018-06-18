@@ -1,9 +1,7 @@
 from django.utils import timezone
 from django.contrib.auth.models import User
 
-from dashboard.models import (SourceType, DataSource, DataGroup, DataDocument,
-                              Script, ExtractedText, ExtractedChemical,
-                              ExtractedFunctionalUse, Product, PUC)
+from dashboard.models import *
 
 class dotdict(dict):
     """dot.notation access to dictionary attributes"""
@@ -44,7 +42,23 @@ def load_model_objects():
                                     data_document=doc,
                                     extraction_script=script
                                     )
-
+    ut = UnitType.objects.create(title='percent composition')
+    wft = WeightFractionType.objects.create(title= 'reported', description= 'reported')
+    ec = ExtractedChemical.objects.create(raw_chem_name= 'Test Chem Name',
+                                            extracted_text=extext,
+                                            unit_type=ut,
+                                            weight_fraction_type = wft)
+    dsstox = DSSToxSubstance.objects.create(extracted_chemical=ec,
+                                            true_chemname='Test Chem Name')
+    pa = ProductAttribute.objects.create(title="Test Product Attribute")
+    pd = ProductDocument.objects.create(product=p, document=doc)
+    ing = Ingredient.objects.create(weight_fraction_type = wft,
+                                     lower_wf_analysis = 0.123456789012345,
+                                     central_wf_analysis = 0.2,
+                                     upper_wf_analysis = 1)
+    pi = ProductToIngredient.objects.create(product=p, ingredient=ing)
+    dsi = DSSToxSubstanceToIngredient.objects.create(dsstox_substance=dsstox,
+                                                        ingredient=ing)
     return dotdict({'user':user,
                     'st':st,
                     'ds':ds,
@@ -54,4 +68,13 @@ def load_model_objects():
                     'p':p,
                     'puc':puc,
                     'extext':extext,
+                    'ut':ut,
+                    'wft':wft,
+                    'ec':ec,
+                    'dsstox':dsstox,
+                    'pa':pa,
+                    'pd':pd,
+                    'ing':ing,
+                    'pi':pi,
+                    'dsi':dsi,
                     })

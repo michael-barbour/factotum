@@ -64,7 +64,6 @@ class ExtractionScriptForm(forms.Form):
         self.fields['extract_file'].widget.attrs.update({'accept':'.csv'})
         self.collapsed = True
 
-
 @login_required()
 def data_group_list(request, template_name='data_group/datagroup_list.html'):
     datagroup = DataGroup.objects.all()
@@ -91,6 +90,7 @@ def loadExtracted (row, dd, sc):
 def data_group_detail(request, pk,
                       template_name='data_group/datagroup_detail.html'):
     datagroup = get_object_or_404(DataGroup, pk=pk, )
+    dg_type = 'MSDS'
     docs = DataDocument.objects.filter(data_group_id=pk)
     npage = 50 # TODO: make this dynamic someday in its own ticket
     page = request.GET.get('page')
@@ -99,20 +99,25 @@ def data_group_detail(request, pk,
     store = settings.MEDIA_URL + datagroup.name.replace(' ','_')
     extract_fieldnames = ['data_document_pk','data_document_filename',
                           'record_type','prod_name','doc_date','rev_num',
-                          'raw_cas', 'raw_chem_name','raw_min_comp',
-                          'raw_max_comp', 'unit_type', 'report_funcuse',
-                          'ingredient_rank', 'raw_central_comp']
+                          'raw_cas', 'raw_chem_name', 'report_funcuse',]
+
+
+    if dg_type in ['MSDS']:
+        extract_fieldnames = extract_fieldnames + ['raw_min_comp','raw_max_comp',
+                                'unit_type', 'ingredient_rank', 'raw_central_comp']
     all_matched = all(docs.values_list('matched', flat=True))
     all_extracted = all(docs.values_list('extracted', flat=True))
+    condition = all_matched and not all_extracted
     context = {   'datagroup'         : datagroup,
                   'documents'         : docs_page,
                   'all_documents'     : docs, # this used for template download
-                  'include_upload'    : not all_matched,
                   'extract_fieldnames': extract_fieldnames,
                   'ext_err'           : {},
+                  'upload_form'       : not all_matched,
+                  'extract_form'      : ExtractionScriptForm() if condition else False,
+                  'msg'               : ''
                   }
-    if all_matched and not all_extracted:
-        context['extract_form'] = ExtractionScriptForm()
+
     if request.method == 'POST' and 'upload' in request.POST:
         print(request.FILES)
         # match filename to pdf name
@@ -122,7 +127,6 @@ def data_group_detail(request, pk,
             context['msg'] = 'There are no matching records in the selected directory.'
             return render(request, template_name, context)
         zf = zipfile.ZipFile(datagroup.zip_file, 'a', zipfile.ZIP_DEFLATED)
-        context['msg'] = 'Matching records uploaded successfully.'
         while proc_files:
             pdf = proc_files.pop(0)
             # set the Matched value of each registered record to True
@@ -135,6 +139,8 @@ def data_group_detail(request, pk,
             fs.save(pdf.name, pdf)
             zf.write(store + '/pdf/' + pdf.name, pdf.name)
         zf.close()
+        context['upload_form'] = False
+        context['msg'] = 'Matching records uploaded successfully.'
     if request.method == 'POST' and 'extract_button' in request.POST:
         # extract_form.collapsed = False
         # print(request.FILES)
@@ -146,6 +152,10 @@ def data_group_detail(request, pk,
             script = Script.objects.get(pk=request.POST['script_selection'])
             info = [x.decode('ascii','ignore') for x in csv_file.readlines()]
             table = csv.DictReader(info)
+            missing =  list(set(table.fieldnames)-set(extract_fieldnames))
+            if missing:
+                context['msg'] = f'The following columns are missing from the csv: {missing}'
+                return render(request, template_name, context)
             if not table.fieldnames == extract_fieldnames:
                 for i, col in enumerate(table.fieldnames):
                     if not col in extract_fieldnames:
@@ -154,9 +164,8 @@ def data_group_detail(request, pk,
                 for col in extract_fieldnames:
                     if not col in table.fieldnames:
                         context['ext_err']['every'] = {col:['needs to be a column in the uploaded file']}
-            for i, row in enumerate(csv.DictReader(info)): # make this an enumerate object!
-                doc_pk = (row['data_document_pk'])
-                doc = get_object_or_404(docs, pk=doc_pk)
+            for i, row in enumerate(csv.DictReader(info)):
+                doc = get_object_or_404(docs, pk=row['data_document_pk'])
                 # load and validate ALL ExtractedText records
                 # see if it exists if true continue else validate, don't save
                 text = loadExtracted(row, doc, script)
@@ -169,8 +178,7 @@ def data_group_detail(request, pk,
                 return render(request, template_name, context)
             good_chems = []
             for i, row in enumerate(csv.DictReader(info)):
-                doc_pk = (row['data_document_pk'])
-                doc = docs.get(pk=doc_pk)
+                doc = docs.get(pk=row['data_document_pk'])
                 text = loadExtracted(row, doc, script)
                 if not ExtractedText.objects.filter(data_document=doc):
                     text.save()

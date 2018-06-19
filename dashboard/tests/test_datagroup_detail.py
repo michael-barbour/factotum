@@ -1,7 +1,12 @@
 from django.test import TestCase
 from .loader import load_model_objects
 from dashboard.models import DataGroup
+from dashboard.views.data_group import ExtractionScriptForm, DataGroupForm
 from django.core.files.uploadedfile import SimpleUploadedFile
+
+from django.test import Client
+from importlib import import_module
+
 
 class DataGroupTest(TestCase):
 
@@ -9,47 +14,85 @@ class DataGroupTest(TestCase):
         self.objects = load_model_objects()
         self.client.login(username='Karyn', password='specialP@55word')
 
-    def test_detail_form_loads(self):
+    def test_detail_form_load(self):
         pk = DataGroup.objects.first().pk
         response = self.client.get(f'/datagroup/{pk}')
-        self.assertFalse(self.objects.doc.matched,(
-                    'Document should start w/ matched False'))
-        self.assertFalse(self.objects.doc.extracted,(
-                    'Document should start w/ extracted False'))
-        self.assertTrue(response.context['include_upload'], (
-                    'UploadForm should be included in the page!'))
-        self.assertFalse(response.context['include_extract'], (
-                    'ExtractForm should not be included in the page!'))
+        self.assertFalse(self.objects.doc.matched,
+                    ('Document should start w/ matched False'))
+        self.assertFalse(self.objects.doc.extracted,
+                    ('Document should start w/ extracted False'))
+        self.assertTrue(response.context['upload_form'],
+                    ('UploadForm should be included in the page!'))
+        self.assertFalse(response.context['extract_form'],
+                    ('ExtractForm should not be included in the page!'))
         self.objects.doc.matched = True
         self.objects.doc.save()
         response = self.client.get(f'/datagroup/{pk}')
-        self.assertFalse(response.context['include_upload'], (
+        self.assertFalse(response.context['upload_form'], (
                     'UploadForm should not be included in the page!'))
-        self.assertTrue(response.context['include_extract'], (
-                    'ExtractForm should be included in the page!'))
+        self.assertIsInstance(response.context['extract_form'], ExtractionScriptForm,
+                    ('ExtractForm should be included in the page!'))
         self.objects.doc.extracted = True
         self.objects.doc.save()
         response = self.client.get(f'/datagroup/{pk}')
-        self.assertFalse(response.context['include_upload'], (
-                    'UploadForm should not be included in the page!'))
-        self.assertFalse(response.context['include_extract'], (
-                    'ExtractForm should not be included in the page!'))
+        self.assertFalse(response.context['upload_form'],
+                    ('UploadForm should not be included in the page!'))
+        self.assertFalse(response.context['extract_form'],
+                    ('ExtractForm should not be included in the page!'))
 
-    # def test_detail_errors(self):
+    def test_detail_template_fieldnames(self):
+        pk = DataGroup.objects.first().pk
+        response = self.client.get(f'/datagroup/{pk}')
+        print(response.context['extract_fieldnames'])
+
+    # def test_upload_errors(self):
+    #     # pk = DataGroup.objects.first().pk
+    #     # self.objects.doc.filename = 'test_filename.pdf'
+    #     # content = b'datagroup,name,hair'
+    #     # f = SimpleUploadedFile("file.pdf", content)
+    #     # d = {'script_selection': ['5'],
+    #     # 'weight_fraction_type': ['2'],
+    #     # 'extract_form': [ExtractionScriptForm([f])],
+    #     # 'extract_button': ['Submit']}
+    #     title = 'Testicles'
+    #     initial_values = {'downloaded_by' : self.objects.user,
+    #                       'name'          : 'Testicles',
+    #                       'data_source'   : self.objects.ds}
+    #     form = DataGroupForm(
+    #                          user    = self.objects.user,
+    #                          initial = initial_values)
+    #     # with open('./sample_files/register_records_missing_filename.csv') as fp:
+    #     with open('./sample_files/register_records_matching.csv') as fp:
+    #         response = self.client.post(f'/datagroup/new', { 'session' : {
+    #                                                         'datasource_title': title},
+    #                                                         # 'form': form,
+    #                                                         'attachment': form})
+    #
+    #     print(response.content)
+
+
+    # def test_extract_errors(self):
     #     pk = DataGroup.objects.first().pk
     #     self.objects.doc.filename = 'test_filename.pdf'
-    #     content = b'datagroup,name,hair'
-    #     f = SimpleUploadedFile("file.pdf", content)
-    #     d = {'script_selection': ['5'],
-    #     'weight_fraction_type': ['1'],
-    #     'extract_file': [f],
-    #     'extract_button': ['Submit']}
-    #
-    #     response = self.client.post(f'/datagroup/{pk}', d)
-    #
-    #
-    #     # print(self.objects.doc.filename)
-    #     print(response.context)
+    #     with open('./sample_files/extract_test.csv') as fp:
+    #         response = self.client.post(f'/datagroup/{pk}', {'upload':[],
+    #         'attachment': fp})
+    #         print(response.content)
+        # content = b'datagroup,name,hair'
+        # f = SimpleUploadedFile("file.pdf", content)
+        # d = {'script_selection': ['5'],
+        # 'weight_fraction_type': ['2'],
+        # 'extract_form': [ExtractionScriptForm([f])],
+        # 'extract_button': ['Submit']}
+
+
+
+
+        # d = {'multifiles': [f]}
+
+        # response = self.client.post(f'/datagroup/{pk}', d)
+        # print(self.objects.doc.filename)
+        # print(response.context['all_documents'])
 
 # <!-- request.POST -->
 # <QueryDict: {'csrfmiddlewaretoken': ['hhkUa1TcXA8sOtgcUjPEQRe5MnEIILEh4EVp5P4E3P3YIJiAsPWKaw6qKd41SldU'],

@@ -57,11 +57,14 @@ class ExtractionScriptForm(forms.Form):
     extract_file = forms.FileField(label="Extracted Text CSV File")
 
     def __init__(self, *args, **kwargs):
+        self.dg_type = kwargs.pop('dg_type', 0)
         self.user = kwargs.pop('user', None)
         super(ExtractionScriptForm, self).__init__(*args, **kwargs)
         self.fields['weight_fraction_type'].widget.attrs.update({'style':'height:2.75rem; !important'})
         self.fields['script_selection'].widget.attrs.update({'style':'height:2.75rem; !important'})
         self.fields['extract_file'].widget.attrs.update({'accept':'.csv'})
+        if self.dg_type != 'test':
+            del self.fields['weight_fraction_type']
         self.collapsed = True
 
 @login_required()
@@ -114,7 +117,7 @@ def data_group_detail(request, pk,
                   'extract_fieldnames': extract_fieldnames,
                   'ext_err'           : {},
                   'upload_form'       : not all_matched,
-                  'extract_form'      : ExtractionScriptForm() if condition else False,
+                  'extract_form'      : ExtractionScriptForm(dg_type=dg_type) if condition else False,
                   'msg'               : ''
                   }
 
@@ -148,7 +151,7 @@ def data_group_detail(request, pk,
         if extract_form.is_valid():
             csv_file = request.FILES.getlist('extract_file')[0]
             wft = WeightFractionType.objects.get(
-                                        pk=int(request.POST['weight_fraction_type']))
+                                pk=int(request.POST['weight_fraction_type']))
             script = Script.objects.get(pk=request.POST['script_selection'])
             info = [x.decode('ascii','ignore') for x in csv_file.readlines()]
             table = csv.DictReader(info)
@@ -176,12 +179,13 @@ def data_group_detail(request, pk,
             if context['ext_err']: # if errors, send back with errors above <body>
                 print('HIT!')
                 return render(request, template_name, context)
-            good_chems = []
+            good_records = []
             for i, row in enumerate(csv.DictReader(info)):
                 doc = docs.get(pk=row['data_document_pk'])
                 text = loadExtracted(row, doc, script)
                 if not ExtractedText.objects.filter(data_document=doc):
                     text.save()
+# begin the split here:
                 # see if chem already assigned to text ultimately DD
                 qs = ExtractedChemical.objects.filter(  # empty queryset if no
                     raw_chem_name=row['raw_chem_name']).values_list(
@@ -205,17 +209,18 @@ def data_group_detail(request, pk,
                                 raw_central_comp    = row['raw_central_comp'])
                     try:
                         chem.full_clean()
-                        good_chems.append([doc,chem])
+                        good_records.append((doc,chem))
                     except ValidationError as e:
                         context['ext_err'][i+1] = e.message_dict
             if not context['ext_err']:  # no saving until all errors are removed
-                for doc, chem in good_chems:
-                    doc.extracted = True
-                    doc.save()
-                    chem.save()
+                for data_doc, record in good_records:
+                    data_doc.extracted = True
+                    data_doc.save()
+                    record.save()
                 fs = FileSystemStorage(store)
                 fs.save(str(datagroup)+'_extracted.csv', csv_file)
-                context['msg'] = 'Extracted records uploaded successfully.'
+                context['msg'] = (f'{len(good_records)} extracted records '
+                                                    'uploaded successfully.')
     return render(request, template_name, context)
 
 

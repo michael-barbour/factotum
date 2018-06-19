@@ -131,6 +131,8 @@ class ModelsTest(TestCase):
 
     def create_data_documents(self, data_group, document_type):
         dds = []
+        gt = self.create_group_type()
+        dt = self.create_document_type(group_type=gt)
         with open(data_group.csv.path) as dg_csv:
             table = csv.DictReader(dg_csv)
             text = ['DataDocument_id,' + ','.join(table.fieldnames)+'\n']
@@ -144,11 +146,12 @@ class ModelsTest(TestCase):
                     line['title'] = line['filename'].split('.')[0]
                 dd = DataDocument.objects.create(filename=line['filename'],
                     title=line['title'],
+                    document_type=DocumentType.objects.get(pk=line['document_type']),
                     product_category=line['product'],
                     url=line['url'],
                     matched = line['filename'] in self.pdfs,
                     data_group=data_group,
-                    document_type=document_type)
+                    )
                 dd.save()
                 dds.append(dd)
             return dds

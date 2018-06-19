@@ -3,9 +3,9 @@
 {% load humanize %}
 
 {% block errors %}
-  {% if err %}
+  {% if msg %}
     <div class="bg-warning text-white">
-      There were no matching records in the selected directory.
+      {{ msg }}
     </div>
   {% endif %}
 
@@ -69,7 +69,7 @@
           <span class="oi oi-data-transfer-download"></span> Download All PDF Documents
         </button>
 
-        {% if include_extract %}
+        {% if extract_form %}
             <br><br>
             <a class="btn btn-secondary" data-toggle="collapse" id="btn_extract_text_form" href="#extract_form">
               <span class="oi oi-data-transfer-upload"></span>&nbsp;Upload Extracted Text

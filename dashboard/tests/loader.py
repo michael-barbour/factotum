@@ -12,24 +12,25 @@ class dotdict(dict):
 def load_model_objects():
     user = User.objects.create_user(username='Karyn',
                                         password='specialP@55word')
-    st = SourceType.objects.create(title='msds/sds')
     ds = DataSource.objects.create(title='Data Source for Test',
                                         estimated_records=2, state='AT',
-                                        priority='HI', type=st)
+                                        priority='HI')
     script = Script.objects.create(title='Test Title',
                                         url='http://www.epa.gov/',
                                         qa_begun=False, script_type='DL')
+    gt = GroupType.objects.create(title='Composition')
     dg = DataGroup.objects.create(name='Data Group for Test',
                                         description='Testing...',
                                         data_source = ds,
                                         download_script=script,
                                         downloaded_by=user,
                                         downloaded_at=timezone.now(),
+                                        group_type=gt,
                                         csv='register_records_matching.csv')
+    dt = DocumentType.objects.create(title='msds/sds', group_type=gt)
     doc = DataDocument.objects.create(title='test document',
                                             data_group=dg,
-                                            source_type=st)
-
+                                            document_type=dt)
     p = Product.objects.create(data_source=ds,
                                 upc='Test UPC for ProductToPUC')
 
@@ -60,7 +61,6 @@ def load_model_objects():
     dsi = DSSToxSubstanceToIngredient.objects.create(dsstox_substance=dsstox,
                                                         ingredient=ing)
     return dotdict({'user':user,
-                    'st':st,
                     'ds':ds,
                     'script':script,
                     'dg':dg,
@@ -77,4 +77,6 @@ def load_model_objects():
                     'ing':ing,
                     'pi':pi,
                     'dsi':dsi,
+                    'dt':dt,
+                    'gt':gt
                     })

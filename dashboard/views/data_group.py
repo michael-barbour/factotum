@@ -20,17 +20,17 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from djqscsv import *
 
 from dashboard.models import (DataGroup, DataDocument, Script, ExtractedText,
-                                ExtractedChemical, WeightFractionType, SourceType,
-                                UnitType, ExtractedFunctionalUse)
+                            ExtractedChemical, WeightFractionType,
+                            UnitType, ExtractedFunctionalUse)
 
 
 class DataGroupForm(forms.ModelForm):
     required_css_class = 'required' # adds to label tag
-    source_type = forms.ModelChoiceField(label='Document Default Source Type',
-                                         queryset=SourceType.objects.all())
+    # source_type = forms.ModelChoiceField(label='Document Default Source Type',
+                                         # queryset=SourceType.objects.all())
     class Meta:
         model = DataGroup
-        fields = ['name', 'description', 'downloaded_by', 'downloaded_at', 'download_script', 'data_source', 'csv']
+        fields = ['name', 'description', 'group_type', 'downloaded_by', 'downloaded_at', 'download_script', 'data_source', 'csv']
         widgets = {
             'downloaded_at': DatePicker(options={
                 "format": "yyyy-mm-dd",
@@ -65,7 +65,7 @@ class ExtractionScriptForm(forms.Form):
         self.fields['weight_fraction_type'].widget.attrs.update({'style':'height:2.75rem; !important'})
         self.fields['script_selection'].widget.attrs.update({'style':'height:2.75rem; !important'})
         self.fields['extract_file'].widget.attrs.update({'accept':'.csv'})
-        if self.dg_type in ['test','FunctionalUse']:
+        if self.dg_type in ['functional use']:
             del self.fields['weight_fraction_type']
         self.collapsed = True
 
@@ -81,7 +81,9 @@ def data_group_list(request, template_name='data_group/datagroup_list.html'):
 def data_group_detail(request, pk,
                       template_name='data_group/datagroup_detail.html'):
     datagroup = get_object_or_404(DataGroup, pk=pk, )
-    dg_type = 'MSDS' #FunctionalUse
+    dg_type = str(datagroup.group_type) # 'MSDS' #FunctionalUse
+    print(dg_type)
+    print(type(dg_type))
     docs = DataDocument.objects.filter(data_group_id=pk)
     npage = 50 # TODO: make this dynamic someday in its own ticket
     page = request.GET.get('page')
@@ -93,7 +95,7 @@ def data_group_detail(request, pk,
                           'raw_cas', 'raw_chem_name', 'report_funcuse',]
 
 
-    if dg_type in ['MSDS']:
+    if dg_type in ['composition']:
         extract_fields = extract_fields + ['raw_min_comp','raw_max_comp',
                             'unit_type', 'ingredient_rank', 'raw_central_comp']
     all_matched = all(docs.values_list('matched', flat=True))
@@ -143,7 +145,7 @@ def data_group_detail(request, pk,
         wft_id = request.POST.get('weight_fraction_type',None)
         if extract_form.is_valid():
             csv_file = request.FILES.get('extract_file')
-            # context['ext_err'][4] = {'47':'oops!'}
+            context['ext_err'][4] = {'47':'oops!'}
             script = Script.objects.get(pk=request.POST['script_selection'])
             info = [x.decode('ascii','ignore') for x in csv_file.readlines()]
             table = csv.DictReader(info)
@@ -168,9 +170,9 @@ def data_group_detail(request, pk,
                     text_data['extraction_script_id'] = script.id
                     text = ExtractedText(**text_data)
                 rec_data['extracted_text'] = text
-                if dg_type in ['FunctionalUse']:
+                if dg_type in ['functional use']:
                     record = ExtractedFunctionalUse(**rec_data)
-                if dg_type not in ['FunctionalUse']:
+                if dg_type in ['composition']:
                     rec_data['unit_type'] = UnitType.objects.get(
                                                     pk=int(row['unit_type']))
                     rec_data['weight_fraction_type_id'] = int(wft_id)
@@ -217,13 +219,13 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
         form = DataGroupForm(request.POST, request.FILES,
                              user    = request.user,
                              initial = initial_values)
-        source_type = SourceType.objects.get(pk=form.data['source_type'])
+        # source_type = SourceType.objects.get(pk=form.data['source_type'])
         if form.is_valid():
             datagroup = form.save()
             info = [x.decode('ascii',
                              'ignore') for x in datagroup.csv.readlines()]
             table = csv.DictReader(info)
-            if not table.fieldnames == ['filename','title','product','url']:
+            if not table.fieldnames == ['filename','title','document_type','product','url']:
                 datagroup.delete()
                 return render(request, template_name,
                               {'field_error': table.fieldnames,
@@ -233,20 +235,31 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
             count = 0
             for line in table: # read every csv line, create docs for each
                 count+=1
+                doc_type = DocumentType.objects.get(pk=1)
                 if line['filename'] == '':
                     errors.append(count)
                 if line['title'] == '': # updates title in line object
                     line['title'] = line['filename'].split('.')[0]
+                if line['document_type'] == '':
+                    errors.append(count)
+                else:
+                    if DocumentType.objects.filter(pk=line['document_type']).exists():
+                        doc_type = DocumentType.objects.get(pk=line['document_type'])
+                    else:
+                        errors.append(count)
                 doc=DataDocument(filename=line['filename'],
                                  title=line['title'],
+                                 document_type=doc_type,
                                  product_category=line['product'],
                                  url=line['url'],
-                                 source_type=source_type,
+                                 # source_type=source_type,
                                  data_group=datagroup)
+                print(doc)
                 doc.save()
                 # update line to hold the pk for writeout
                 text.append(str(doc.pk)+','+ ','.join(line.values())+'\n')
             if errors:
+                datagroup.csv.close()
                 datagroup.delete()
                 return render(request, template_name, {'line_errors': errors,
                                                        'form': form})

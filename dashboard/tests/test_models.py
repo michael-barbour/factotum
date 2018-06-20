@@ -18,8 +18,7 @@ def create_data_documents(data_group, source_type, pdfs):
                                             product_category=line['product'],
                                             url=line['url'],
                                             matched = line['filename'] in pdfs,
-                                            data_group=data_group,
-                                            source_type=source_type)
+                                            data_group=data_group)
             dd.save()
             dds.append(dd)
         return dds

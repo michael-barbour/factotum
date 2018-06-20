@@ -77,20 +77,6 @@ def data_group_list(request, template_name='data_group/datagroup_list.html'):
     return render(request, template_name, data)
 
 
-def loadExtracted (row, dd, sc):
-    if ExtractedText.objects.filter(data_document=dd):
-        t = ExtractedText.objects.get(data_document=dd)
-        return t
-    else:
-        t = ExtractedText(	data_document     = dd,
-                              record_type       = row['record_type'],
-                              prod_name         = row['prod_name'],
-                              doc_date          = row['doc_date'],
-                              rev_num           = row['rev_num'],
-                              extraction_script = sc)
-    return t
-
-
 @login_required()
 def data_group_detail(request, pk,
                       template_name='data_group/datagroup_detail.html'):

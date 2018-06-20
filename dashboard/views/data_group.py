@@ -21,7 +21,7 @@ from djqscsv import *
 
 from dashboard.models import (DataGroup, DataDocument, Script, ExtractedText,
                                 ExtractedChemical, WeightFractionType, SourceType,
-                                UnitType)
+                                UnitType, ExtractedFunctionalUse)
 
 
 class DataGroupForm(forms.ModelForm):
@@ -95,14 +95,14 @@ def loadExtracted (row, dd, sc):
 def data_group_detail(request, pk,
                       template_name='data_group/datagroup_detail.html'):
     datagroup = get_object_or_404(DataGroup, pk=pk, )
-    dg_type = 'FunctionalUse' #FunctionalUse
+    dg_type = 'MSDS' #FunctionalUse
     docs = DataDocument.objects.filter(data_group_id=pk)
     npage = 50 # TODO: make this dynamic someday in its own ticket
     page = request.GET.get('page')
     paginator = Paginator(docs, npage)
     docs_page = paginator.page(1 if page is None else page)
     store = settings.MEDIA_URL + datagroup.name.replace(' ','_')
-    extract_fields = ['data_document_pk','data_document_filename',
+    extract_fields = ['data_document_id','data_document_filename',
                           'record_type','prod_name','doc_date','rev_num',
                           'raw_cas', 'raw_chem_name', 'report_funcuse',]
 
@@ -117,7 +117,7 @@ def data_group_detail(request, pk,
     context = {   'datagroup'         : datagroup,
                   'documents'         : docs_page,
                   'all_documents'     : docs, # this used for template download
-                  'extract_fields': extract_fields,
+                  'extract_fields'    : extract_fields,
                   'ext_err'           : {},
                   'upload_form'       : not all_matched,
                   'extract_form'      : form,
@@ -128,15 +128,17 @@ def data_group_detail(request, pk,
         print(request.FILES)
         # match filename to pdf name
         proc_files = [f for d in docs for f
-                        in request.FILES.getlist('multifiles') if f.name == d.filename]
+                in request.FILES.getlist('multifiles') if f.name == d.filename]
         if not proc_files:  # return render here!
-            context['msg'] = 'There are no matching records in the selected directory.'
+            context['msg'] = ('There are no matching records in the '
+                                                        'selected directory.')
             return render(request, template_name, context)
         zf = zipfile.ZipFile(datagroup.zip_file, 'a', zipfile.ZIP_DEFLATED)
         while proc_files:
             pdf = proc_files.pop(0)
             # set the Matched value of each registered record to True
-            doc = DataDocument.objects.get(filename=pdf.name, data_group=datagroup.pk)
+            doc = DataDocument.objects.get(filename=pdf.name,
+                                            data_group=datagroup.pk)
             if doc.matched:  # continue if already matched
                 continue
             doc.matched = True
@@ -150,86 +152,64 @@ def data_group_detail(request, pk,
     if request.method == 'POST' and 'extract_button' in request.POST:
         # extract_form.collapsed = False
         # print(request.FILES)
-        extract_form = ExtractionScriptForm(request.POST, request.FILES,dg_type=dg_type)
+        extract_form = ExtractionScriptForm(request.POST,
+                                                request.FILES,dg_type=dg_type)
+        wft_id = request.POST.get('weight_fraction_type',None)
         if extract_form.is_valid():
             csv_file = request.FILES.get('extract_file')
-            context['ext_err'][4] = {'47':'oops!'}
+            # context['ext_err'][4] = {'47':'oops!'}
             script = Script.objects.get(pk=request.POST['script_selection'])
             info = [x.decode('ascii','ignore') for x in csv_file.readlines()]
             table = csv.DictReader(info)
             missing =  list(set(table.fieldnames)-set(extract_fields))
-            if missing:
-                context['msg'] = ('The following columns are missing from '
+            if missing: #column names are NOT a match, send back to user
+                context['msg'] = ('The following columns need to be renamed in '
                                                         f'the csv: {missing}')
-                return render(request, template_name, context)
-            if not table.fieldnames == extract_fields:
-                for i, col in enumerate(table.fieldnames):
-                    if not col in extract_fields:
-                        good = extract_fields[i]
-                        context['ext_err']['every'] = {col:['needs to be renamed to "%s"' % good]}
-                for col in extract_fields:
-                    if not col in table.fieldnames:
-                        context['ext_err']['every'] = {col:['needs to be a column in the uploaded file']}
-            for i, row in enumerate(csv.DictReader(info)):
-                print(OrderedDict(islice(row.items(),5)))
-                print('%'*14)
-                print(OrderedDict(islice(row.items(),5,len(extract_fields))))
-                doc = get_object_or_404(docs, pk=row['data_document_pk'])
-                # load and validate ALL ExtractedText records
-                # see if it exists if true continue else validate, don't save
-                text = loadExtracted(row, doc, script)
-                try:
-                    text.full_clean()
-                except ValidationError as e:
-                    context['ext_error'][i+1] = e.message_dict
-            if context['ext_err']: # if errors, send back with errors above <body>
-                print('HIT!')
                 return render(request, template_name, context)
             good_records = []
             for i, row in enumerate(csv.DictReader(info)):
-                doc = docs.get(pk=row['data_document_pk'])
-                text = loadExtracted(row, doc, script)
-                if not ExtractedText.objects.filter(data_document=doc):
+                text_data = OrderedDict(islice(row.items(),6))
+                text_data.pop('data_document_filename') # not needed in dict
+                rec_data = OrderedDict(islice(row.items(),6,
+                                                        len(extract_fields)))
+                dd = row['data_document_id']
+                doc = get_object_or_404(docs, pk=dd)
+                # load and validate ALL ExtractedText records
+                # see if it exists if true continue else validate, don't save
+                if ExtractedText.objects.filter(pk=dd).exists():
+                    text = ExtractedText.objects.get(pk=dd)
+                else:
+                    text_data['extraction_script_id'] = script.id
+                    text = ExtractedText(**text_data)
+                rec_data['extracted_text'] = text
+                if dg_type in ['FunctionalUse']:
+                    record = ExtractedFunctionalUse(**rec_data)
+                if dg_type not in ['FunctionalUse']:
+                    rec_data['unit_type'] = UnitType.objects.get(
+                                                    pk=int(row['unit_type']))
+                    rec_data['weight_fraction_type_id'] = int(wft_id)
+                    record = ExtractedChemical(**rec_data)
+                try:
+                    text.full_clean()
                     text.save()
-# begin the split here:
-                wft = WeightFractionType.objects.get(
-                                pk=int(request.POST['weight_fraction_type']))
-                # see if chem already assigned to text ultimately DD
-                qs = ExtractedChemical.objects.filter(  # empty queryset if no
-                    raw_chem_name=row['raw_chem_name']).values_list(
-                    'extracted_text_id')
-                #check qs if returned
-                check = any([text.pk in chem_id for chem_id in qs])
-                if check:
-                    continue
-                if not check:
-                    ut = UnitType.objects.get(pk=int(row['unit_type']))
-                    chem = ExtractedChemical(
-                                extracted_text      = text,
-                                raw_cas             = row['raw_cas'],
-                                raw_chem_name       = row['raw_chem_name'],
-                                raw_min_comp        = row['raw_min_comp'],
-                                raw_max_comp        = row['raw_max_comp'],
-                                unit_type           = ut,
-                                report_funcuse      = row['report_funcuse'],
-                                weight_fraction_type= wft,
-                                ingredient_rank     = int(row['ingredient_rank']),
-                                raw_central_comp    = row['raw_central_comp'])
-                    try:
-                        chem.full_clean()
-                        good_records.append((doc,chem))
-                    except ValidationError as e:
-                        context['ext_err'][i+1] = e.message_dict
+                    record.full_clean()
+                except ValidationError as e:
+                    context['ext_err'][i+1] = e.message_dict
+                good_records.append((doc,text,record))
+            if context['ext_err']: # if errors, send back with errors above <body>
+                print('HIT!')
+                return render(request, template_name, context)
             if not context['ext_err']:  # no saving until all errors are removed
-                for data_doc, record in good_records:
-                    data_doc.extracted = True
-                    data_doc.save()
+                for doc,text,record in good_records:
+                    doc.extracted = True
+                    doc.save()
+                    text.save()
                     record.save()
                 fs = FileSystemStorage(store)
                 fs.save(str(datagroup)+'_extracted.csv', csv_file)
                 context['msg'] = (f'{len(good_records)} extracted records '
                                                     'uploaded successfully.')
-    print (context['ext_err'])
+    # print (context['ext_err'])
     return render(request, template_name, context)
 
 

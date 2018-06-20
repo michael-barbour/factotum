@@ -21,7 +21,7 @@ from djqscsv import *
 
 from dashboard.models import (DataGroup, DataDocument, Script, ExtractedText,
                             ExtractedChemical, WeightFractionType,
-                            UnitType, ExtractedFunctionalUse)
+                            UnitType, ExtractedFunctionalUse, DocumentType)
 
 
 class DataGroupForm(forms.ModelForm):
@@ -135,7 +135,11 @@ def data_group_detail(request, pk,
             fs.save(pdf.name, pdf)
             zf.write(store + '/pdf/' + pdf.name, pdf.name)
         zf.close()
-        context['upload_form'] = False
+        all_matched = all(docs.values_list('matched', flat=True))
+        condition = all_matched and not all_extracted # load form or not
+        form = ExtractionScriptForm(dg_type=dg_type) if condition else False
+        context['upload_form'] = not all_matched
+        context['extract_form'] = form
         context['msg'] = 'Matching records uploaded successfully.'
     if request.method == 'POST' and 'extract_button' in request.POST:
         # extract_form.collapsed = False
@@ -243,7 +247,7 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
                 if line['document_type'] == '':
                     errors.append(count)
                 else:
-                    if DocumentType.objects.filter(pk=line['document_type']).exists():
+                    if DocumentType.objects.filter(pk=int(line['document_type'])).exists():
                         doc_type = DocumentType.objects.get(pk=int(line['document_type']))
                     else:
                         errors.append(count)

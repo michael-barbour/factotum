@@ -24,7 +24,8 @@ class ProductIndex(indexes.SearchIndex, indexes.Indexable):
        
 
     def prepare_pucs(self, obj):
-        return [int(puc.pk) for puc in obj.puc_set.all()]
+        return [puc.pk for puc in obj.puc_set.all()]
+        #return obj.puc_set.all().values_list('pk', flat=True)
 
 
 # The document type can't be properly indexed until it's added here:

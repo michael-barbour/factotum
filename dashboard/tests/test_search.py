@@ -147,6 +147,8 @@ class SearchTests(RollbackStaticLiveServerTestCase):
         # search results on product title, with the two facets visible on the left side of the page.
 
         # TODO: fix to use new Product-to-PUC foreign key relationship
+        # example results:
+        # http://127.0.0.1:9200/_search?q=lubricity&brand_name=British%20Petroleum
 
         p1 = Product.objects.get(pk=22)
         pc252 = ProductCategory.objects.get(pk=252)

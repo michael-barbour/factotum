@@ -149,7 +149,7 @@ def data_group_detail(request, pk,
         wft_id = request.POST.get('weight_fraction_type',None)
         if extract_form.is_valid():
             csv_file = request.FILES.get('extract_file')
-            context['ext_err'][4] = {'47':'oops!'}
+            # context['ext_err'][4] = {'47':'oops!'}
             script = Script.objects.get(pk=request.POST['script_selection'])
             info = [x.decode('ascii','ignore') for x in csv_file.readlines()]
             table = csv.DictReader(info)
@@ -180,6 +180,8 @@ def data_group_detail(request, pk,
                     rec_data['unit_type'] = UnitType.objects.get(
                                                     pk=int(row['unit_type']))
                     rec_data['weight_fraction_type_id'] = int(wft_id)
+                    rank = rec_data['ingredient_rank']
+                    rec_data['ingredient_rank'] = rank if rank != '' else 1
                     record = ExtractedChemical(**rec_data)
                 try:
                     text.full_clean()

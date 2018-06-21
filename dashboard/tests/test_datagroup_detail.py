@@ -42,9 +42,25 @@ class DataGroupTest(TestCase):
 
     def test_detail_template_fieldnames(self):
         pk = DataGroup.objects.first().pk
+        self.assertEqual(str(self.objects.dg.group_type),'composition',
+        'Type of DataGroup needs to be "composition" for this test.')
         response = self.client.get(f'/datagroup/{pk}')
-        print(response.context['extract_fieldnames'])
-
+        self.assertEqual(response.context['extract_fields'],
+                ['data_document_id','data_document_filename', 'record_type',
+                'prod_name','doc_date','rev_num', 'raw_cas', 'raw_chem_name',
+                'report_funcuse','raw_min_comp','raw_max_comp', 'unit_type',
+                'ingredient_rank', 'raw_central_comp'],
+                "Fieldnames passed are incorrect!")
+        self.objects.gt.title = 'functional_use'
+        self.objects.gt.save()
+        self.assertEqual(str(self.objects.dg.group_type),'functional_use',
+        'Type of DataGroup needs to be "functional_use" for this test.')
+        response = self.client.get(f'/datagroup/{pk}')
+        self.assertEqual(response.context['extract_fields'],
+                ['data_document_id','data_document_filename', 'record_type',
+                'prod_name','doc_date','rev_num', 'raw_cas', 'raw_chem_name',
+                'report_funcuse'],
+                "Fieldnames passed are incorrect!")
     # def test_upload_errors(self):
     #     # pk = DataGroup.objects.first().pk
     #     # self.objects.doc.filename = 'test_filename.pdf'

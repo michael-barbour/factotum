@@ -82,8 +82,6 @@ def data_group_detail(request, pk,
                       template_name='data_group/datagroup_detail.html'):
     datagroup = get_object_or_404(DataGroup, pk=pk, )
     dg_type = str(datagroup.group_type) # 'MSDS' #FunctionalUse
-    print(dg_type)
-    print(type(dg_type))
     docs = DataDocument.objects.filter(data_group_id=pk)
     npage = 50 # TODO: make this dynamic someday in its own ticket
     page = request.GET.get('page')
@@ -181,7 +179,7 @@ def data_group_detail(request, pk,
                                                     pk=int(row['unit_type']))
                     rec_data['weight_fraction_type_id'] = int(wft_id)
                     rank = rec_data['ingredient_rank']
-                    rec_data['ingredient_rank'] = rank if rank != '' else 1
+                    rec_data['ingredient_rank'] = None if rank == '' else rank
                     record = ExtractedChemical(**rec_data)
                 try:
                     text.full_clean()

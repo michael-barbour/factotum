@@ -18,7 +18,7 @@ def load_model_objects():
     script = Script.objects.create(title='Test Title',
                                         url='http://www.epa.gov/',
                                         qa_begun=False, script_type='DL')
-    gt = GroupType.objects.create(title='Composition')
+    gt = GroupType.objects.create(title='composition')
     dg = DataGroup.objects.create(name='Data Group for Test',
                                         description='Testing...',
                                         data_source = ds,

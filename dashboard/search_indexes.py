@@ -1,6 +1,6 @@
 import datetime
 from haystack import indexes
-from dashboard.models import Product, DataDocument, ProductCategory
+from dashboard.models import Product, DataDocument, PUC, ProductToPUC
 
 
 class ProductIndex(indexes.SearchIndex, indexes.Indexable):
@@ -17,10 +17,15 @@ class ProductIndex(indexes.SearchIndex, indexes.Indexable):
         faceted=True,
         null=True)
 
-    prod_cat = indexes.CharField(
-        model_attr='prod_cat',
+    pucs = indexes.MultiValueField(
+        stored=True,
         faceted=True,
         null=True)
+       
+
+    def prepare_pucs(self, obj):
+        return [int(puc.pk) for puc in obj.puc_set.all()]
+
 
 # The document type can't be properly indexed until it's added here:
 # https://github.com/HumanExposure/factotum/issues/125   

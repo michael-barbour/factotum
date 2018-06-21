@@ -6,7 +6,7 @@ from dashboard.models import Product, DataDocument
 from django.http import JsonResponse
 from haystack.generic_views import FacetedSearchView as BaseFacetedSearchView
 from haystack.query import SearchQuerySet
-from factotum.forms import FacetedProductSearchForm
+from .  import FacetedProductSearchForm
 from haystack import indexes
 
 

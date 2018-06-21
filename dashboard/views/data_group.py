@@ -91,25 +91,20 @@ def data_group_detail(request, pk,
     extract_fields = ['data_document_id','data_document_filename',
                           'record_type','prod_name','doc_date','rev_num',
                           'raw_cas', 'raw_chem_name', 'report_funcuse',]
-
-
     if dg_type in ['composition']:
         extract_fields = extract_fields + ['raw_min_comp','raw_max_comp',
                             'unit_type', 'ingredient_rank', 'raw_central_comp']
-    all_matched = all(docs.values_list('matched', flat=True))
-    all_extracted = all(docs.values_list('extracted', flat=True))
-    condition = all_matched and not all_extracted # load form or not
+    condition = datagroup.all_matched() and not datagroup.all_extracted()  # load form or not
     form = ExtractionScriptForm(dg_type=dg_type) if condition else False
     context = {   'datagroup'         : datagroup,
                   'documents'         : docs_page,
                   'all_documents'     : docs, # this used for template download
                   'extract_fields'    : extract_fields,
                   'ext_err'           : {},
-                  'upload_form'       : not all_matched,
+                  'upload_form'       : not datagroup.all_matched(),
                   'extract_form'      : form,
                   'msg'               : ''
                   }
-
     if request.method == 'POST' and 'upload' in request.POST:
         print(request.FILES)
         # match filename to pdf name
@@ -133,15 +128,13 @@ def data_group_detail(request, pk,
             fs.save(pdf.name, pdf)
             zf.write(store + '/pdf/' + pdf.name, pdf.name)
         zf.close()
-        all_matched = all(docs.values_list('matched', flat=True))
-        condition = all_matched and not all_extracted # load form or not
+        condition = datagroup.all_matched() and not datagroup.all_extracted() # load form or not
         form = ExtractionScriptForm(dg_type=dg_type) if condition else False
-        context['upload_form'] = not all_matched
+        context['upload_form'] = not datagroup.all_matched()
         context['extract_form'] = form
         context['msg'] = 'Matching records uploaded successfully.'
     if request.method == 'POST' and 'extract_button' in request.POST:
         # extract_form.collapsed = False
-        # print(request.FILES)
         extract_form = ExtractionScriptForm(request.POST,
                                                 request.FILES,dg_type=dg_type)
         wft_id = request.POST.get('weight_fraction_type',None)
@@ -164,8 +157,6 @@ def data_group_detail(request, pk,
                                                         len(extract_fields)))
                 dd = row['data_document_id']
                 doc = get_object_or_404(docs, pk=dd)
-                # load and validate ALL ExtractedText records
-                # see if it exists if true continue else validate, don't save
                 if ExtractedText.objects.filter(pk=dd).exists():
                     text = ExtractedText.objects.get(pk=dd)
                 else:
@@ -201,7 +192,6 @@ def data_group_detail(request, pk,
                 fs.save(str(datagroup)+'_extracted.csv', csv_file)
                 context['msg'] = (f'{len(good_records)} extracted records '
                                                     'uploaded successfully.')
-    # print (context['ext_err'])
     return render(request, template_name, context)
 
 

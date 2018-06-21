@@ -49,10 +49,10 @@ class ModelsTest(TestCase):
     def test_object_properties(self):
         # Test properties of objects
         # DataSource
-        self.assertEqual(self.objects.ds.__str__(), self.objects.ds.title)
+        self.assertEqual(str(self.objects.ds), self.objects.ds.title)
 
         # DataGroup
-        self.assertEqual(self.objects.dg.__str__(), self.objects.dg.name)
+        self.assertEqual(str(self.objects.dg), self.objects.dg.name)
         self.assertEqual(self.objects.dg.dgurl(),
                             self.objects.dg.name.replace(' ', '_'))
         # DataDocuments
@@ -71,18 +71,35 @@ class ModelsTest(TestCase):
         self.assertIn(u, dg_response.content, (
                                     'link to PDF should be in HTML!'))
         # ExtractionScript
-        self.assertEqual(self.objects.script.__str__(), 'Test Title')
+        self.assertEqual(str(self.objects.script), 'Test Title')
         # ExtractedText
-        self.assertEqual(self.objects.extext.__str__(),
+        self.assertEqual(str(self.objects.extext),
                                     'Test Extracted Text Record')
         # ExtractedChemical
-        self.assertEqual(self.objects.ec.__str__(), 'Test Chem Name')
+        self.assertEqual(str(self.objects.ec), 'Test Chem Name')
         # DSSToxSubstance
-        self.assertEqual(self.objects.dsstox.__str__(),
-                                    self.objects.ec.__str__())
+        self.assertEqual(str(self.objects.dsstox),
+                                    str(self.objects.ec))
 
     def test_product_attribute(self):
         self.assertEqual(ProductToAttribute.objects.count(), 0)
         p2a = ProductToAttribute.objects.create(product=self.objects.p,
                                             product_attribute=self.objects.pa)
         self.assertEqual(ProductToAttribute.objects.count(), 1)
+
+    def test_data_group(self):
+        doc = DataDocument.objects.create(data_group=self.objects.dg)
+        self.assertFalse(self.objects.dg.all_matched())
+        self.assertFalse(self.objects.dg.all_extracted())
+        doc.matched = True
+        doc.save()
+        self.assertFalse(self.objects.dg.all_matched())
+        self.objects.doc.matched = True
+        self.objects.doc.save()
+        self.assertTrue(self.objects.dg.all_matched())
+        doc.extracted = True
+        doc.save()
+        self.assertFalse(self.objects.dg.all_extracted())
+        self.objects.doc.extracted = True
+        self.objects.doc.save()
+        self.assertTrue(self.objects.dg.all_extracted())

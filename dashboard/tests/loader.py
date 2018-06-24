@@ -36,7 +36,9 @@ def load_model_objects():
 
     puc = PUC.objects.create(gen_cat='Test General Category',
                               prod_fam='Test Product Family',
-                              prod_type='Test Product Type')
+                              prod_type='Test Product Type',
+                             description='Test Product Description',
+                             last_edited_by = user)
 
     extext = ExtractedText.objects.create(
                                     prod_name='Test Extracted Text Record',

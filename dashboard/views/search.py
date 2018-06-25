@@ -6,7 +6,7 @@ from dashboard.models import Product, DataDocument
 from django.http import JsonResponse
 from haystack.generic_views import FacetedSearchView as BaseFacetedSearchView
 from haystack.query import SearchQuerySet
-from factotum.forms import FacetedProductSearchForm
+from .  import FacetedProductSearchForm
 from haystack import indexes
 
 
@@ -29,5 +29,5 @@ class FacetedSearchView(BaseFacetedSearchView):
     form_class = FacetedProductSearchForm
     facet_fields = ['prod_cat', 'brand_name', 'facet_model_name']
     template_name = 'search/facet_search.html'
-    paginate_by = 10
+    paginate_by = 50
     context_object_name = 'object_list'

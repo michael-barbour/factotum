@@ -6,3 +6,5 @@ from .qa import *
 from .extraction_script import *
 from .product_autocomplete import *
 from .ajax import *
+from .search_forms import *
+from .search import *

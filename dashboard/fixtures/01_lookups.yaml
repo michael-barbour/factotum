@@ -59,10 +59,10 @@
 - model: dashboard.grouptype
   pk: 2
   fields: {created_at: !!timestamp '2018-06-20 17:14:37.904690', updated_at: !!timestamp '2018-06-20
-      17:16:09.688181', title: functional use, description: this type will load ExtractedFunctionalUse
+      17:16:09.688181', title: Functional use, description: this type will load ExtractedFunctionalUse
       records linked to the ExtractedText model}
 - model: dashboard.grouptype
   pk: 3
   fields: {created_at: !!timestamp '2018-06-20 17:15:50.625428', updated_at: !!timestamp '2018-06-20
-      17:16:47.450824', title: composition, description: this type will load ExtractedChemical
+      17:16:47.450824', title: Composition, description: this type will load ExtractedChemical
       records to the ExtractedText model in the data_group_detail view.}

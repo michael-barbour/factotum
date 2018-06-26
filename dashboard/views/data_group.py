@@ -65,7 +65,7 @@ class ExtractionScriptForm(forms.Form):
         self.fields['weight_fraction_type'].widget.attrs.update({'style':'height:2.75rem; !important'})
         self.fields['script_selection'].widget.attrs.update({'style':'height:2.75rem; !important'})
         self.fields['extract_file'].widget.attrs.update({'accept':'.csv'})
-        if self.dg_type in ['functional use']:
+        if self.dg_type in ['Functional use']:
             del self.fields['weight_fraction_type']
         self.collapsed = True
 
@@ -76,6 +76,16 @@ def data_group_list(request, template_name='data_group/datagroup_list.html'):
     data['object_list'] = datagroup
     return render(request, template_name, data)
 
+def include_extract_form(dg, dtype):
+    '''Returns the ExtractionScriptForm based on conditions of DataGroup
+    type as well as whether all records are matched, but not extracted
+    '''
+    if not dtype in ['Functional use','Composition']:
+        return False
+    if dg.all_matched() and not dg.all_extracted():
+        return ExtractionScriptForm(dg_type=dtype)
+    else:
+        return False
 
 @login_required()
 def data_group_detail(request, pk,
@@ -91,18 +101,16 @@ def data_group_detail(request, pk,
     extract_fields = ['data_document_id','data_document_filename',
                           'record_type','prod_name','doc_date','rev_num',
                           'raw_cas', 'raw_chem_name', 'report_funcuse',]
-    if dg_type in ['composition']:
+    if dg_type in ['Composition']:
         extract_fields = extract_fields + ['raw_min_comp','raw_max_comp',
                             'unit_type', 'ingredient_rank', 'raw_central_comp']
-    condition = datagroup.all_matched() and not datagroup.all_extracted()  # load form or not
-    form = ExtractionScriptForm(dg_type=dg_type) if condition else False
     context = {   'datagroup'         : datagroup,
                   'documents'         : docs_page,
                   'all_documents'     : docs, # this used for template download
                   'extract_fields'    : extract_fields,
                   'ext_err'           : {},
                   'upload_form'       : not datagroup.all_matched(),
-                  'extract_form'      : form,
+                  'extract_form'      : include_extract_form(datagroup, dg_type),
                   'msg'               : ''
                   }
     if request.method == 'POST' and 'upload' in request.POST:
@@ -128,8 +136,7 @@ def data_group_detail(request, pk,
             fs.save(pdf.name, pdf)
             zf.write(store + '/pdf/' + pdf.name, pdf.name)
         zf.close()
-        condition = datagroup.all_matched() and not datagroup.all_extracted() # load form or not
-        form = ExtractionScriptForm(dg_type=dg_type) if condition else False
+        form = include_extract_form(datagroup, dg_type)
         context['upload_form'] = not datagroup.all_matched()
         context['extract_form'] = form
         context['msg'] = 'Matching records uploaded successfully.'
@@ -163,9 +170,9 @@ def data_group_detail(request, pk,
                     text_data['extraction_script_id'] = script.id
                     text = ExtractedText(**text_data)
                 rec_data['extracted_text'] = text
-                if dg_type in ['functional use']:
+                if dg_type in ['Functional use']:
                     record = ExtractedFunctionalUse(**rec_data)
-                if dg_type in ['composition']:
+                if dg_type in ['Composition']:
                     rec_data['unit_type'] = UnitType.objects.get(
                                                     pk=int(row['unit_type']))
                     rec_data['weight_fraction_type_id'] = int(wft_id)
@@ -192,6 +199,8 @@ def data_group_detail(request, pk,
                 fs.save(str(datagroup)+'_extracted.csv', csv_file)
                 context['msg'] = (f'{len(good_records)} extracted records '
                                                     'uploaded successfully.')
+                context['extract_form'] = include_extract_form(datagroup,
+                                                                        dg_type)
     return render(request, template_name, context)
 
 

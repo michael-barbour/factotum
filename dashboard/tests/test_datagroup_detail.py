@@ -15,7 +15,7 @@ class DataGroupTest(TestCase):
         self.client.login(username='Karyn', password='specialP@55word')
 
     def test_detail_form_load(self):
-        pk = DataGroup.objects.first().pk
+        pk = self.objects.dg.pk
         response = self.client.get(f'/datagroup/{pk}')
         self.assertFalse(self.objects.doc.matched,
                     ('Document should start w/ matched False'))
@@ -30,7 +30,8 @@ class DataGroupTest(TestCase):
         response = self.client.get(f'/datagroup/{pk}')
         self.assertFalse(response.context['upload_form'], (
                     'UploadForm should not be included in the page!'))
-        self.assertIsInstance(response.context['extract_form'], ExtractionScriptForm,
+        self.assertIsInstance(response.context['extract_form'],
+                                            ExtractionScriptForm,
                     ('ExtractForm should be included in the page!'))
         self.objects.doc.extracted = True
         self.objects.doc.save()
@@ -41,8 +42,8 @@ class DataGroupTest(TestCase):
                     ('ExtractForm should not be included in the page!'))
 
     def test_detail_template_fieldnames(self):
-        pk = DataGroup.objects.first().pk
-        self.assertEqual(str(self.objects.dg.group_type),'composition',
+        pk = self.objects.dg.pk
+        self.assertEqual(str(self.objects.dg.group_type),'Composition',
         'Type of DataGroup needs to be "composition" for this test.')
         response = self.client.get(f'/datagroup/{pk}')
         self.assertEqual(response.context['extract_fields'],
@@ -51,10 +52,10 @@ class DataGroupTest(TestCase):
                 'report_funcuse','raw_min_comp','raw_max_comp', 'unit_type',
                 'ingredient_rank', 'raw_central_comp'],
                 "Fieldnames passed are incorrect!")
-        self.objects.gt.title = 'functional_use'
+        self.objects.gt.title = 'Functional_use'
         self.objects.gt.save()
-        self.assertEqual(str(self.objects.dg.group_type),'functional_use',
-        'Type of DataGroup needs to be "functional_use" for this test.')
+        self.assertEqual(str(self.objects.dg.group_type),'Functional_use',
+            'Type of DataGroup needs to be "Functional_use" for this test.')
         response = self.client.get(f'/datagroup/{pk}')
         self.assertEqual(response.context['extract_fields'],
                 ['data_document_id','data_document_filename', 'record_type',
@@ -62,7 +63,19 @@ class DataGroupTest(TestCase):
                 'report_funcuse'],
                 "Fieldnames passed are incorrect!")
 
-
+    def test_unidentifed_group_type(self):
+        pk = self.objects.dg.pk
+        self.objects.doc.matched = True
+        self.objects.doc.save()
+        response = self.client.get(f'/datagroup/{pk}')
+        self.assertIsInstance(response.context['extract_form'],
+                                            ExtractionScriptForm,
+                    ('ExtractForm should be included in the page!'))
+        self.objects.gt.title = 'Unidentified'
+        self.objects.gt.save()
+        response = self.client.get(f'/datagroup/{pk}')
+        self.assertFalse(response.context['extract_form'],
+                    ('ExtractForm should not be included in the page!'))
 # <!-- request.POST -->
 # <QueryDict: {'csrfmiddlewaretoken': ['hhkUa1TcXA8sOtgcUjPEQRe5MnEIILEh4EVp5P4E3P3YIJiAsPWKaw6qKd41SldU'],
 # 'script_selection': ['5'],

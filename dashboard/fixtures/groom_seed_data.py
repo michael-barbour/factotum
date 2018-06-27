@@ -42,4 +42,6 @@ python manage.py dumpdata dashboard.qagroup --format=yaml > ./dashboard/fixtures
 python manage.py dumpdata dashboard.script --format=yaml > ./dashboard/fixtures/07_script.yaml
 python manage.py dumpdata dashboard.extractedtext --format=yaml > ./dashboard/fixtures/08_extractedtext.yaml
 python manage.py dumpdata dashboard.productdocument --format=yaml > ./dashboard/fixtures/09_productdocument.yaml
+python manage.py dumpdata dashboard.extractedchemical --format=yaml > ./dashboard/fixtures/10_extractedchemical.yaml
+python manage.py dumpdata dashboard.dsstoxsubstance --format=yaml > ./dashboard/fixtures/11_dsstoxsubstance.yaml
 """

@@ -1,23 +1,23 @@
-- model: dashboard.sourcetype
-  pk: 1
-  fields: {title: msds, description: '', created_at: !!timestamp '2018-03-08 14:15:13',
-    updated_at: null}
-- model: dashboard.sourcetype
-  pk: 2
-  fields: {title: products, description: '', created_at: !!timestamp '2018-03-08 14:15:42',
-    updated_at: null}
-- model: dashboard.sourcetype
-  pk: 3
-  fields: {title: sds, description: '', created_at: !!timestamp '2018-03-08 14:25:47',
-    updated_at: null}
-- model: dashboard.sourcetype
-  pk: 4
-  fields: {title: ingredient list, description: '', created_at: !!timestamp '2018-03-08
-      14:25:52', updated_at: null}
-- model: dashboard.sourcetype
-  pk: 5
-  fields: {title: ingredient disclosure, description: '', created_at: !!timestamp '2018-03-12
-      14:19:43', updated_at: null}
+# - model: dashboard.sourcetype
+#   pk: 1
+#   fields: {title: msds, description: '', created_at: !!timestamp '2018-03-08 14:15:13',
+#     updated_at: null}
+# - model: dashboard.sourcetype
+#   pk: 2
+#   fields: {title: products, description: '', created_at: !!timestamp '2018-03-08 14:15:42',
+#     updated_at: null}
+# - model: dashboard.sourcetype
+#   pk: 3
+#   fields: {title: sds, description: '', created_at: !!timestamp '2018-03-08 14:25:47',
+#     updated_at: null}
+# - model: dashboard.sourcetype
+#   pk: 4
+#   fields: {title: ingredient list, description: '', created_at: !!timestamp '2018-03-08
+#       14:25:52', updated_at: null}
+# - model: dashboard.sourcetype
+#   pk: 5
+#   fields: {title: ingredient disclosure, description: '', created_at: !!timestamp '2018-03-12
+#       14:19:43', updated_at: null}
 
 
 - model: dashboard.unittype
@@ -41,3 +41,28 @@
   pk: 3
   fields: {title: 'measured', description: 'measured', created_at: !!timestamp '2018-03-08 14:15:42',
     updated_at: null}
+
+- model: dashboard.pucattribute
+  pk: 1
+  fields: {name: article}
+- model: dashboard.pucattribute
+  pk: 2
+  fields: {name: formulation}
+- model: dashboard.pucattribute
+  pk: 3
+  fields: {name: food contact}
+
+- model: dashboard.grouptype
+  pk: 1
+  fields: {created_at: !!timestamp '2018-06-20 12:22:34.396798', updated_at: !!timestamp '2018-06-20
+      12:22:34.396823', title: Unidentified, description: Unidentified Group Type}
+- model: dashboard.grouptype
+  pk: 2
+  fields: {created_at: !!timestamp '2018-06-20 17:14:37.904690', updated_at: !!timestamp '2018-06-20
+      17:16:09.688181', title: Functional use, description: this type will load ExtractedFunctionalUse
+      records linked to the ExtractedText model}
+- model: dashboard.grouptype
+  pk: 3
+  fields: {created_at: !!timestamp '2018-06-20 17:15:50.625428', updated_at: !!timestamp '2018-06-20
+      17:16:47.450824', title: Composition, description: this type will load ExtractedChemical
+      records to the ExtractedText model in the data_group_detail view.}

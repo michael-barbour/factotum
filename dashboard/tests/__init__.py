@@ -8,3 +8,5 @@ from .test_extracted_text import *
 from .test_models import *
 from .test_root_url_no_login import *
 from .test_datagroup_detail import *
+from .test_dashboard import *
+from .test_qa import *

@@ -222,7 +222,6 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
         form = DataGroupForm(request.POST, request.FILES,
                              user    = request.user,
                              initial = initial_values)
-        # source_type = SourceType.objects.get(pk=form.data['source_type'])
         if form.is_valid():
             datagroup = form.save()
             info = [x.decode('ascii',
@@ -255,7 +254,6 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
                                  document_type=doc_type,
                                  product_category=line['product'],
                                  url=line['url'],
-                                 # source_type=source_type,
                                  data_group=datagroup)
                 print(doc)
                 doc.save()

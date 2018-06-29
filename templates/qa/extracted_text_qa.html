@@ -51,6 +51,7 @@
         <td>
           <a href="/media/{{ doc.data_group.dgurl }}/pdf/{{ doc.filename }}"
               title="Link to {{ doc.filename }}" target="_blank">{{ doc.filename }}</a>
+          <small><i>click to open PDF in new window</i></small>
         </td>
       </tr>
       {% endif %}
@@ -60,68 +61,89 @@
 <div class="row">
     <div class="col">
     <div class="card">
-            <h3 class="card-header">Extracted Text</h3>
-        <div class="card-body">
-
-            {% if notesform.non_field_errors %}
-            <div class="alert alert-danger" role="alert">
-              {% for error in notesform.non_field_errors %}
-                {{ error }}
-              {% endfor %}
+      <div class="card-header form-inline">
+        <h3 class="text-center col-9">Extracted Text</h3>
+      <button type="button" id="btn-toggle-edit" data-toggle="button" class="btn btn-secondary" onclick="toggleChemicalEdit(true)">
+              <span id="btn-toggle-label" class="oi oi-wrench"></span>Edit Extracted Chemicals
+      </button>
+      </div>
+    <div class="card-body">
+      <!-- {% if notesform.non_field_errors %}
+      <div class="alert alert-danger" role="alert">
+        {% for error in notesform.non_field_errors %}
+          {{ error }}
+        {% endfor %}
+      </div>
+      {% endif %} -->
+    <form method="post" >
+      {% csrf_token %}
+      <div class="row">
+        <div class=" col-sm-3 card">
+          <div class="card-header">
+            <h4>Extracted Text Data</h4>
+          </div>
+          <div class="card-body">
+            {% if error %}
+            <div class="form-group has-error">
+                <span class="help-block">{{ error }}</span>
             </div>
             {% endif %}
+            {% include 'core/bs4_form_dl.html' with form=notesform %}
+            {{errors}}
+          </div>
+        </div>
+        {{ chem_formset.management_form }}
+        {% for form in chem_formset.forms %}
+        <div class="col-sm-3">
+            <div class="card" >
+                <div class="card-body">
 
-            <form method="post" >
-                            {% csrf_token %}
-                            <div class="row">
-                                    <div class="col-10">
-                                            {% if error %}
-                                            <div class="form-group has-error">
-                                                <span class="help-block">{{ error }}</span>
-                                            </div>
-                                            {% endif %}
-                                            {% include 'core/bs4_form_dl.html' with form=notesform %}
-                                        {{errors}}
+                    {% for hidden_field in form.hidden_fields %}
+                    {{ hidden_field }}
+                    {% endfor %}
 
-                                    </div>
-                                </div>
-
-                    <div class="row" style="padding-top:10px;">
-                      <div class="col-sm">
-                      <button type="button" id="btn-toggle-edit" data-toggle="button" class="btn btn-secondary" onclick="toggleChemicalEdit(true)">
-                              <span id="btn-toggle-label" class="oi oi-wrench"></span>Edit Extracted Chemicals
-                      </button>
-
-                      <button type = "submit" id="save_no_approval"   name="save_no_approval" class="btn btn-primary" role="button">Save edits</button>
-
-                      </div>
+                    {% for field in form.visible_fields %}
+                    <div class="form-group ">
+                        {{ field.label_tag }}<br>
+                        {{ field }}
+                        {{ field.errors }}
+                        {% if field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
                     </div>
+                    {% endfor %}
 
-                    <div class="row">
-                            {{ chem_formset.management_form }}
-                            {% include 'qa/qa_extracted_chemicals.html' with formset=chem_formset %}
-                    </div>
-                    <button type = "submit" id="approve" name="approve" class="btn btn-primary" role="button">Approve</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+      </div>
+
+                    <button type = "submit" id="save_no_approval" name="save_no_approval" class="btn btn-primary" role="button">Save edits</button>
+                    <button type = "submit" id="approve" name="approve" class="btn btn-success" role="button">Approve</button>
 
                     {% if nextid > 0 %}
-                        <a class="btn btn-primary" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>
+                        <a class="btn btn-warning" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>
                     {% else %}
-                        <button type="button" title="All the other documents in this QA group have been approved" class="btn btn-primary" aria-disabled="true" disabled>Skip</button>
+                        <button type="button" title="All the other documents in this QA group have been approved" class="btn btn-secondary" aria-disabled="true" disabled>Skip</button>
                     {% endif %}
-                    <a class="btn btn-primary" href="{% url "extraction_script_qa" script.id %}" role="button">Exit</a>
+                    <a class="btn btn-secondary" href="{% url "extraction_script_qa" script.id %}" role="button">Exit</a>
                   </form>
 
             </div>
         </div>
-        <p class="card-footer"> {{stats}}</p>
-    </div>
+
     </div>
 
+    </div>
+    <p class="card-footer"> {{stats}}</p>
+    
 {% endblock %}
 {% block js %}
   <script type="text/javascript">
         window.onload = function() {
-        window.open("/media/{{ doc.data_group.dgurl }}/pdf/{{ doc.filename }}",'pdf',' menubar=0, resizable=0,dependent=0,status=0,width=400,height=7000,left=10,top=10')
+        // window.open("/media/{{ doc.data_group.dgurl }}/pdf/{{ doc.filename }}",'pdf',' menubar=0, resizable=0,dependent=0,status=0,width=400,height=7000,left=10,top=10')
         toggleChemicalEdit(false);
         }
 

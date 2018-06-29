@@ -35,7 +35,8 @@ class QANotesForm(ModelForm):
 
     class Meta:
         model = ExtractedText
-        fields = ['record_type','prod_name', 'doc_date', 'qa_approved_by','qa_approved_date','qa_edited','qa_checked','qa_notes', ]
+        fields = ['record_type','prod_name', 'doc_date', 'rev_num',
+                    'qa_notes', ]
         widgets = {
             'qa_notes' : Textarea,
         }
@@ -48,7 +49,7 @@ class QANotesForm(ModelForm):
         print(self.cleaned_data)
         qa_notes = self.cleaned_data.get('qa_notes')
         qa_edited = self.cleaned_data.get('qa_edited')
-        
+
         if qa_edited and (qa_notes is None or qa_notes == ''):
             raise ValidationError('qa_notes needs to be populated if you edited the data')
 
@@ -65,13 +66,13 @@ class QANotesForm(ModelForm):
             print('qa_checked: %s'       %  initial_vals['qa_checked'])
             print('qa_approved_by: %s'   %  initial_vals['qa_approved_by'])
             print('qa_approved_date: %s' %  initial_vals['qa_approved_date'])
-        
+
         # The QA attributes should be passed to the form upon instantiation here:
         super(QANotesForm, self).__init__(*args, **kwargs )
         # The kwarg values are not ending up in the form, though
         kwargs.update(initial=initial_vals)
 
-        
+
 
 class BaseExtractedChemicalFormSet(BaseInlineFormSet):
     """
@@ -81,8 +82,8 @@ class BaseExtractedChemicalFormSet(BaseInlineFormSet):
 
     class Meta:
         model = ExtractedChemical
-        fields = ['raw_cas', 'raw_chem_name', 'raw_min_comp',
-                  'raw_max_comp', 'unit_type', 'report_funcuse', 'extracted_text']
+        # fields = ['raw_cas', 'raw_chem_name', 'raw_min_comp',
+        #           'raw_max_comp', 'unit_type', 'report_funcuse', 'extracted_text']
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
@@ -191,18 +192,18 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
 
 
     # Create the formset factory for the extracted chemical records
-    ChemFormSet = inlineformset_factory(parent_model=ExtractedText, 
+    ChemFormSet = inlineformset_factory(parent_model=ExtractedText,
                                         model=ExtractedChemical,
                                         formset=BaseExtractedChemicalFormSet,
                                         fields=['extracted_text','raw_cas', 'raw_chem_name', 'raw_min_comp',
                                                 'raw_max_comp', 'unit_type', 'report_funcuse',
-                                                'weight_fraction_type', 'ingredient_rank', 'raw_central_comp'],
+                                                 'ingredient_rank', 'raw_central_comp'],
                                                 extra=1)
 
     if request.method == 'POST' and 'save_no_approval' in request.POST:
         print('--POST')
         print('---saving without approval')
-        
+
         # Create the form for editing the extracted chemical objects
         chem_formset = ChemFormSet(request.POST, instance=extext, prefix='chemicals')
         # Create the form for editing the extracted text object's QA Notes
@@ -216,7 +217,7 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
             if notesform.is_valid():
                 print('-------notesform has passed validation')
                 notesform.save()
-            
+
             chem_formset.save()
             extext.qa_edited = True
             extext.save()
@@ -235,7 +236,7 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
         chem_formset = ChemFormSet(request.POST, instance=extext, prefix='chemicals')
 
         initial = {
-            'qa_checked':True, 
+            'qa_checked':True,
             'qa_approved_by':request.user,
             'qa_approved_date':datetime.now(),
             'qa_edited':extext.qa_edited,
@@ -268,7 +269,7 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
             print('qa_notes: %s' % notesform['qa_notes'].data)
             notesform.save()
             print("Script's QA completion status is %s: %s pct of %s " % (script.get_qa_status() , script.get_pct_checked_numeric(), script.get_datadocument_count()))
-            
+
             if script.get_qa_status():
                 print('QA is now complete')
                 return HttpResponseRedirect(
@@ -288,9 +289,9 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
             # print(request.POST)
             context = {
                 'extracted_text': extext,
-                'doc': datadoc, 
-                'script': exscript, 
-                'stats': stats, 
+                'doc': datadoc,
+                'script': exscript,
+                'stats': stats,
                 'nextid': nextid,
                 'chem_formset': chem_formset,
                 'notesform': notesform,
@@ -304,14 +305,12 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
         chem_formset = ChemFormSet(instance=extext, prefix='chemicals')
         context = {
             'extracted_text': extext,
-            'doc': datadoc, 
-            'script': exscript, 
-            'stats': stats, 
+            'doc': datadoc,
+            'script': exscript,
+            'stats': stats,
             'nextid': nextid,
             'chem_formset': chem_formset,
             'notesform': notesform,
         }
         #print(context)
         return render(request, template_name, context)
-    
-

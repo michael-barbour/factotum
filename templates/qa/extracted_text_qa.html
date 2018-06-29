@@ -21,12 +21,12 @@
     </ol>
   </nav>
 
-{% if True %} 
+{% if True %}
 
   <div class="card">
-                    <h3 class="card-header">{{ doc.title }}</h3>
-                  
-    <div class="card-body">  
+                    <p class="card-header">{{ doc.title }}</p>
+
+    <div class="card-body">
         <dl class="row col-sm-12">
             <dt class="col-sm-3">File Name</dt>
             <dd class="col-sm-9">{{ doc.filename }}</dd>
@@ -58,7 +58,7 @@
     <div class="card">
             <h3 class="card-header">Extracted Text</h3>
         <div class="card-body">
-       
+
             {% if notesform.non_field_errors %}
             <div class="alert alert-danger" role="alert">
               {% for error in notesform.non_field_errors %}
@@ -68,7 +68,7 @@
             {% endif %}
 
             <form method="post" >
-                            {% csrf_token %}            
+                            {% csrf_token %}
                             <div class="row">
                                     <div class="col-10">
                                             {% if error %}
@@ -83,25 +83,25 @@
                                 </div>
 
                             <button type = "submit" id="approve" name="approve" class="btn btn-primary" role="button">Approve</button>
-                            
+
                             {% if nextid > 0 %}
                                 <a class="btn btn-primary" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>
                             {% else %}
                                 <button type="button" title="All the other documents in this QA group have been approved" class="btn btn-primary" aria-disabled="true" disabled>Skip</button>
                             {% endif %}
                             <a class="btn btn-primary" href="{% url "extraction_script_qa" script.id %}" role="button">Exit</a>
-                    
+
 
 
                     <div class="row" style="padding-top:10px;">
-                            <div class="col-sm">
-                            <button type="button" id="btn-toggle-edit" data-toggle="button" class="btn btn-secondary" onclick="toggleChemicalEdit(true)">
-                                    <span id="btn-toggle-label" class="oi oi-wrench"></span>Edit Extracted Chemicals
-                            </button>
-                            
-                            <button type = "submit" id="save_no_approval"   name="save_no_approval" class="btn btn-primary" role="button">Save edits</button>
+                      <div class="col-sm">
+                      <button type="button" id="btn-toggle-edit" data-toggle="button" class="btn btn-secondary" onclick="toggleChemicalEdit(true)">
+                              <span id="btn-toggle-label" class="oi oi-wrench"></span>Edit Extracted Chemicals
+                      </button>
 
-                            </div>  
+                      <button type = "submit" id="save_no_approval"   name="save_no_approval" class="btn btn-primary" role="button">Save edits</button>
+
+                      </div>
                     </div>
 
                     <div class="row">
@@ -151,6 +151,6 @@
                 $('.extext-control').prop('disabled', true);
             }
         }
-    
+
   </script>
 {% endblock %}

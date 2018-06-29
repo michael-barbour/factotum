@@ -21,37 +21,41 @@
     </ol>
   </nav>
 
-{% if True %}
-
   <div class="card">
-                    <p class="card-header">{{ doc.title }}</p>
+    <h3 class="card-header text-center">DataDocument: {{ doc.title }}</h3>
+    <table class="table table-bordered">
 
-    <div class="card-body">
-        <dl class="row col-sm-12">
-            <dt class="col-sm-3">File Name</dt>
-            <dd class="col-sm-9">{{ doc.filename }}</dd>
-            <dt class="col-sm-3">URL</dt>
-            <dd class="col-sm-9">{{ doc.url }}</dd>
-            {% if doc.matched %}
-            <dt class="col-sm-3">PDF</dt>
-                <dd class="col-sm-9">
-                    <a href="/media/{{ doc.data_group.dgurl }}/pdf/{{ doc.filename }}"
-                        title="Link to {{ doc.filename }}" target="_blank">{{ doc.title }}</a>
-                </dd>
-            {% endif %}
-            <dt class="col-sm-3">Product Category</dt>
-            <dd class="col-sm-9">{{ doc.product_category }}</dd>
-            <dt class="col-sm-3">Data Group</dt>
-            <dd class="col-sm-9">
-                <a title="Data Group"
-                    href="{% url 'data_group_detail' doc.data_group.id %}"> {{ doc.data_group }}
-                </a>
-            </dd>
-
-        </dl>
-        </div>
+      <tr>
+        <th>Data Group</th>
+        <td>
+          <a title="Data Group"
+              href="{% url 'data_group_detail' doc.data_group.id %}"> {{ doc.data_group }}
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <th>Product Category</th>
+        <td>
+          {{ doc.product_category }}
+        </td>
+      </tr>
+      <tr>
+        <th>URL</th>
+        <td>
+          {{ doc.url }}
+        </td>
+      </tr>
+      {% if doc.matched %}
+      <tr>
+        <th>PDF</th>
+        <td>
+          <a href="/media/{{ doc.data_group.dgurl }}/pdf/{{ doc.filename }}"
+              title="Link to {{ doc.filename }}" target="_blank">{{ doc.filename }}</a>
+        </td>
+      </tr>
+      {% endif %}
+    </table>
 </div>
-{% endif %}
 
 <div class="row">
     <div class="col">

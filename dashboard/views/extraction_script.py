@@ -63,25 +63,6 @@ class QANotesForm(ModelForm):
 
         return self.cleaned_data
 
-    def __init__(self, *args, **kwargs):
-        print(kwargs)
-        inst = kwargs.get('instance', None)
-        print(inst.qa_edited)
-        initial_vals = kwargs.get('initial', None)
-        # print('kwargs:')
-        # print(kwargs)
-        # These arguments hold the qa_attributes when the form is being approved:
-        # if kwargs.get('initial', None) is not None:
-        #     initial_vals = kwargs.get('initial', None)
-        #     print('----kwargs initial dict at beginning of __init__:')
-        #     print('qa_checked: %s'       %  initial_vals['qa_checked'])
-        #     print('qa_approved_by: %s'   %  initial_vals['qa_approved_by'])
-        #     print('qa_approved_date: %s' %  initial_vals['qa_approved_date'])
-
-        # The QA attributes should be passed to the form upon instantiation here:
-        super(QANotesForm, self).__init__(*args, **kwargs )
-        # The kwarg values are not ending up in the form, though
-        kwargs.update(initial=initial_vals)
 
 
 

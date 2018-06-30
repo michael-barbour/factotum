@@ -105,6 +105,7 @@
               </div>
               {% else %}
               {% endif %}
+              {{ form.id.as_hidden }}
               <div class="text-center">
                 <small><b>{{ form.raw_cas.label_tag }}</b></small><br>
                   {{ form.raw_cas}}
@@ -157,17 +158,13 @@
         </div>
         {% endfor %}
       </div>
-          <button type = "submit" id="save_no_approval" name="save_no_approval" class="btn btn-primary chem-control" role="button">Save edits</button>
+          <button type = "submit" id="save" name="save" class="btn btn-primary chem-control" role="button">Save edits</button>
         </form>
       </div>
     </div>
-
-
-
     <form method="post" >
       {% csrf_token %}
       <div class="row">
-
         <div class="col-sm-6">
           <button type = "submit" id="approve" name="approve" class="btn btn-success btn-lg btn-block" role="button">Approve</button>
           <br>
@@ -185,7 +182,6 @@
             {{ notesform.qa_notes }}
         </div>
       </div>
-
     </form>
   </div>
 </div>
@@ -205,7 +201,7 @@
             // show the notes box
             if (enable)  {
                 // enter edit mode
-                $('#save_no_approval').removeClass('disabled');
+                $('#save').removeClass('disabled');
                 $('#btn-toggle-edit').addClass('btn-warning');
                 $('#btn-toggle-edit').attr("onclick","toggleChemicalEdit(false)");
                 $('.chem-control').addClass('unlocked');
@@ -215,7 +211,7 @@
             } else{
                 // exit edit mode
                 $('#btn-toggle-edit').attr("onclick","toggleChemicalEdit(true)");
-                $('#save_with_approval').addClass('disabled');
+                $('#save').addClass('disabled');
                 $('#btn-toggle-edit').removeClass('btn-warning');
                 $('.chem-control').removeClass('unlocked');
                 $('.chem-control').prop('disabled', true);

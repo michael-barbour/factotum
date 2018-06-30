@@ -68,8 +68,8 @@ class QANotesForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         initial_vals={}
-        print('kwargs:')
-        print(kwargs)
+        # print('kwargs:')
+        # print(kwargs)
         # These arguments hold the qa_attributes when the form is being approved:
         if kwargs.get('initial', None) is not None:
             initial_vals = kwargs.get('initial', None)
@@ -185,59 +185,83 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
     edit its ExtractedChemical objects, skip to the next ExtractedText in the QA group,
     or exit to the index page
     """
-    context = {}
-    initial = {}
     extext = get_object_or_404(ExtractedText, pk=pk)
     # The related DataDocument has the same pk as the ExtractedText object
     datadoc = DataDocument.objects.get(pk=pk)
     exscript = extext.extraction_script
     # get the next unapproved Extracted Text object
     # Its ID will populate the URL for the "Skip" button
-    if extext.qa_checked:  # if the ExtractedText object's QA process is done, use 0
+    if extext.qa_checked:  # if ExtractedText object's QA process done, use 0
         nextid = 0
     else:
         nextid = extext.next_extracted_text_in_qa_group()
-    # derive the number of approved records and remaining unapproved ones in the QA Group
+    # derive number of approved records and remaining unapproved in QA Group
     a = extext.qa_group.get_approved_doc_count()
     r = ExtractedText.objects.filter(qa_group=extext.qa_group).count() - a
     stats = '%s document(s) approved, %s documents remaining' % (a, r)
-
-
     # Create the formset factory for the extracted chemical records
     ChemFormSet = inlineformset_factory(parent_model=ExtractedText,
                                         model=ExtractedChemical,
                                         formset=BaseExtractedChemicalFormSet,
-                                        fields=['extracted_text','raw_cas', 'raw_chem_name', 'raw_min_comp',
-                                                'raw_max_comp', 'unit_type', 'report_funcuse',
-                                                 'ingredient_rank', 'raw_central_comp'],
+                                        fields=['extracted_text','raw_cas',
+                                                'raw_chem_name', 'raw_min_comp',
+                                                'raw_max_comp', 'unit_type',
+                                                'report_funcuse',
+                                                'ingredient_rank',
+                                                'raw_central_comp'],
                                                 extra=1)
+    ext_form =  ExtractedTextForm(instance=extext)
+    notesform =  QANotesForm(instance=extext)
+    chem_formset = ChemFormSet(instance=extext, prefix='chemicals')
+    context = {
+        'extracted_text': extext,
+        'doc': datadoc,
+        'script': exscript,
+        'stats': stats,
+        'nextid': nextid,
+        'chem_formset': chem_formset,
+        'notesform': notesform,
+        'ext_form': ext_form
+        }
 
-    if request.method == 'POST' and 'save_no_approval' in request.POST:
-        print('--POST')
-        print('---saving without approval')
-
-        # Create the form for editing the extracted chemical objects
-        chem_formset = ChemFormSet(request.POST, instance=extext, prefix='chemicals')
-        # Create the form for editing the extracted text object's QA Notes
-        notesform = ExtractedTextForm(request.POST,  instance=extext)
-        print('qa_notes in form before is_valid or save() : %s' % notesform['qa_notes'].value())
-
-        print('----VALIDATING FORM AND FORMSET')
-        if chem_formset.is_valid():
-            print('-----chem_formset validated')
-            #saving the changes without approving the ExtractedText object
-            if notesform.is_valid():
-                print('-------notesform has passed validation')
-                notesform.save()
-
-            chem_formset.save()
-            extext.qa_edited = True
-            extext.save()
-            return HttpResponseRedirect(
-                        reverse('extracted_text_qa', args=([extext.pk]))
-                    )
-        else:
-            print(chem_formset.errors)
+    if request.method == 'POST' and 'save' in request.POST:
+        print('---saving')
+        chem_formset = ChemFormSet(request.POST, instance=extext,
+                                                        prefix='chemicals')
+        ext_form =  ExtractedTextForm(request.POST, instance=extext)
+        if chem_formset.has_changed() or ext_form.has_changed():
+            print(str(extext.qa_edited))
+            if chem_formset.is_valid() and ext_form.is_valid():
+                print('yup')
+                chem_formset.save()
+                ext_form.save()
+                extext.qa_edited = True
+                extext.save()
+                context['chem_formset'] = chem_formset
+                context['ext_form'] = ext_form
+                # context[''] =
+        # # Create the form for editing the extracted chemical objects
+        # chem_formset = ChemFormSet(request.POST, instance=extext, prefix='chemicals')
+        # # Create the form for editing the extracted text object's QA Notes
+        # notesform = ExtractedTextForm(request.POST,  instance=extext)
+        # print('qa_notes in form before is_valid or save() : %s' % notesform['qa_notes'].value())
+        #
+        # print('----VALIDATING FORM AND FORMSET')
+        # if chem_formset.is_valid():
+        #     print('-----chem_formset validated')
+        #     #saving the changes without approving the ExtractedText object
+        #     if notesform.is_valid():
+        #         print('-------notesform has passed validation')
+        #         notesform.save()
+        #
+        #     chem_formset.save()
+        #     extext.qa_edited = True
+        #     extext.save()
+        #     return HttpResponseRedirect(
+        #                 reverse('extracted_text_qa', args=([extext.pk]))
+        #             )
+        # else:
+        #     print(chem_formset.errors)
 
     # APPROVAL
     elif request.method == 'POST' and 'approve' in request.POST:
@@ -309,22 +333,5 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
                 'notesform': notesform,
             }
             return render(request, template_name,context)
-
-    else:
-        # GET request
-        print('GET request')
-        ext_form =  ExtractedTextForm(instance=extext)
-        notesform =  QANotesForm(instance=extext)
-        chem_formset = ChemFormSet(instance=extext, prefix='chemicals')
-        context = {
-            'extracted_text': extext,
-            'doc': datadoc,
-            'script': exscript,
-            'stats': stats,
-            'nextid': nextid,
-            'chem_formset': chem_formset,
-            'notesform': notesform,
-            'ext_form': ext_form,
-        }
-        print(notesform)
-        return render(request, template_name, context)
+    # print(notesform)
+    return render(request, template_name, context)

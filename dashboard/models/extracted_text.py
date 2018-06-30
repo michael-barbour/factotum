@@ -53,6 +53,9 @@ class ExtractedText(CommonInfo):
 
     def clean(self):
         print('cleaning ExtractedText object in the model')
+        # if self.qa_edited and self.qa_notes is None:
+        #     print('zzz')
+        #     raise ValidationError('qa_notes needs to be populated if you edited the data')
         if self.doc_date:
             if len(self.doc_date) != 10:
                 raise ValidationError("Date format is the wrong length.")

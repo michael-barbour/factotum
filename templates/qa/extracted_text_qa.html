@@ -1,4 +1,5 @@
 {% extends 'core/base.html' %}
+{% load widget_tweaks %}
 {% load staticfiles %}'
 
 {% load humanize %}
@@ -179,7 +180,33 @@
         <div class="col-sm-6 text-center">
           <b>{{ notesform.qa_notes.label_tag }}</b>
             <br>
-            {{ notesform.qa_notes }}
+
+
+
+
+            {% if notesform.is_bound %}
+              {% if notesform.errors %}
+              {{ notesform.qa_notes.errors }}
+               {% render_field notesform.qa_notes class="form-control is-invalid" %}
+                {% for k, error in notesform.errors.items %}
+                  <div class="invalid-feedback">
+                    {{ error }}
+                  </div>
+                {% endfor %}
+              {% else %}
+                {% render_field notesform.qa_notes class="form-control is-valid" %}
+              {% endif %}
+            {% else %}
+              {% render_field notesform.qa_notes class="form-control" %}
+            {% endif %}
+              {{ notesform.qa_edited.as_hidden }}
+
+
+
+
+
+
+
         </div>
       </div>
     </form>

@@ -166,24 +166,27 @@
 
     <form method="post" >
       {% csrf_token %}
-    <div class="text-center">
-      <b>{{ notesform.qa_notes.label_tag }}</b>
-        <br>
-        {{ notesform.qa_notes }}
-    </div>
-    </form>
+      <div class="row">
 
-
-        <div>
-          <button type = "submit" id="approve" name="approve" class="btn btn-success" role="button">Approve</button>
-
+        <div class="col-sm-6">
+          <button type = "submit" id="approve" name="approve" class="btn btn-success btn-lg btn-block" role="button">Approve</button>
+          <br>
           {% if nextid > 0 %}
-              <a class="btn btn-warning" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>
+              <a class="btn btn-warning btn-lg btn-block" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>
           {% else %}
-              <button type="button" title="All the other documents in this QA group have been approved" class="btn btn-secondary" aria-disabled="true" disabled>Skip</button>
+              <button type="button" title="All the other documents in this QA group have been approved" class="btn btn-secondary btn-lg btn-block" aria-disabled="true" disabled>Skip</button>
           {% endif %}
-          <a class="btn btn-secondary" href="{% url "extraction_script_qa" script.id %}" role="button">Exit</a>
+          <br>
+          <a class="btn btn-secondary btn-lg btn-block" href="{% url "extraction_script_qa" script.id %}" role="button">Exit</a>
         </div>
+        <div class="col-sm-6 text-center">
+          <b>{{ notesform.qa_notes.label_tag }}</b>
+            <br>
+            {{ notesform.qa_notes }}
+        </div>
+      </div>
+
+    </form>
   </div>
 </div>
 

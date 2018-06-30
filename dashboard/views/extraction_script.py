@@ -31,6 +31,18 @@ class ExtractionScriptForm(ModelForm):
         self.user = kwargs.pop('user', None)
         super(ExtractionScriptForm, self).__init__(*args, **kwargs)
 
+class ExtractedTextForm(ModelForm):
+
+    class Meta:
+        model = ExtractedText
+        fields = ['record_type','prod_name', 'doc_date', 'rev_num']
+
+    def __init__(self, *args, **kwargs):
+        initial_vals = kwargs.get('initial', None)
+        super(ExtractedTextForm, self).__init__(*args, **kwargs )
+        # The kwarg values are not ending up in the form, though
+        kwargs.update(initial=initial_vals)
+
 class QANotesForm(ModelForm):
 
     class Meta:
@@ -207,7 +219,7 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
         # Create the form for editing the extracted chemical objects
         chem_formset = ChemFormSet(request.POST, instance=extext, prefix='chemicals')
         # Create the form for editing the extracted text object's QA Notes
-        notesform = QANotesForm(request.POST,  instance=extext)
+        notesform = ExtractedTextForm(request.POST,  instance=extext)
         print('qa_notes in form before is_valid or save() : %s' % notesform['qa_notes'].value())
 
         print('----VALIDATING FORM AND FORMSET')
@@ -242,7 +254,7 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
             'qa_edited':extext.qa_edited,
             }
 
-        notesform = QANotesForm(request.POST, instance=extext, initial=initial )
+        notesform = ExtractedTextForm(request.POST, instance=extext, initial=initial )
 
             # Something is going wrong in the instantiation.
             # The kwargs inside the notesform __init__ method contain what they should ,
@@ -301,7 +313,7 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
     else:
         # GET request
         print('GET request')
-        notesform =  QANotesForm(instance=extext)
+        notesform =  ExtractedTextForm(instance=extext)
         chem_formset = ChemFormSet(instance=extext, prefix='chemicals')
         context = {
             'extracted_text': extext,

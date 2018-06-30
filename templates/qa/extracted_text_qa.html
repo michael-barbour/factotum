@@ -103,13 +103,10 @@
                     {% endfor %}
 
                     {% for field in form.visible_fields %}
-                    <div class="form-group ">
+                    <div class="form-group">
                         {{ field.label_tag }}<br>
                         {{ field }}
                         {{ field.errors }}
-                        {% if field.help_text %}
-                        <small class="form-text text-muted">{{ field.help_text }}</small>
-                        {% endif %}
                     </div>
                     {% endfor %}
 
@@ -120,16 +117,8 @@
 
       </div>
 
-                    <button type = "submit" id="save_no_approval" name="save_no_approval" class="btn btn-primary" role="button">Save edits</button>
-                    <button type = "submit" id="approve" name="approve" class="btn btn-success" role="button">Approve</button>
-
-                    {% if nextid > 0 %}
-                        <a class="btn btn-warning" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>
-                    {% else %}
-                        <button type="button" title="All the other documents in this QA group have been approved" class="btn btn-secondary" aria-disabled="true" disabled>Skip</button>
-                    {% endif %}
-                    <a class="btn btn-secondary" href="{% url "extraction_script_qa" script.id %}" role="button">Exit</a>
-                  </form>
+          <button type = "submit" id="save_no_approval" name="save_no_approval" class="btn btn-primary chem-control" role="button">Save edits</button>
+        </form>
 
             </div>
         </div>
@@ -137,8 +126,18 @@
     </div>
 
     </div>
+    <div class="row">
+      <button type = "submit" id="approve" name="approve" class="btn btn-success" role="button">Approve</button>
+
+      {% if nextid > 0 %}
+          <a class="btn btn-warning" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>
+      {% else %}
+          <button type="button" title="All the other documents in this QA group have been approved" class="btn btn-secondary" aria-disabled="true" disabled>Skip</button>
+      {% endif %}
+      <a class="btn btn-secondary" href="{% url "extraction_script_qa" script.id %}" role="button">Exit</a>
+    </div>
     <p class="card-footer"> {{stats}}</p>
-    
+
 {% endblock %}
 {% block js %}
   <script type="text/javascript">
@@ -152,7 +151,6 @@
             // show the notes box
             if (enable)  {
                 // enter edit mode
-                $('#save_with_approval').removeClass('disabled');
                 $('#save_no_approval').removeClass('disabled');
                 $('#btn-toggle-edit').addClass('btn-warning');
                 $('#btn-toggle-edit').attr("onclick","toggleChemicalEdit(false)");
@@ -164,7 +162,6 @@
                 // exit edit mode
                 $('#btn-toggle-edit').attr("onclick","toggleChemicalEdit(true)");
                 $('#save_with_approval').addClass('disabled');
-                $('#save_no_approval').addClass('disabled');
                 $('#btn-toggle-edit').removeClass('btn-warning');
                 $('.chem-control').removeClass('unlocked');
                 $('.chem-control').prop('disabled', true);

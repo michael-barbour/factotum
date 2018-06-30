@@ -102,7 +102,8 @@ class BaseExtractedChemicalFormSet(BaseInlineFormSet):
         super(BaseExtractedChemicalFormSet, self).__init__(*args, **kwargs)
         for form in self.forms:
             for field in form.fields:
-                form.fields[field].widget.attrs.update({'class': 'chem-control'})
+                form.fields[field].widget.attrs.update(
+                                        {'class': 'chem-control form-control'})
 
 
 

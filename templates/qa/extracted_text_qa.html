@@ -103,8 +103,8 @@
                     {% endfor %}
 
                     {% for field in form.visible_fields %}
-                    <div class="form-group">
-                        {{ field.label_tag }}<br>
+                    <div class="text-center">
+                        <b>{{ field.label_tag }}</b><br>
                         {{ field }}
                         {{ field.errors }}
                     </div>

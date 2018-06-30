@@ -78,25 +78,22 @@
     <form method="post" >
       {% csrf_token %}
     <div class="row">
-      <div class=" col-sm-3 card">
-        <div class="card-header">
+      <div class=" col-sm-3 card-body form-group text-center bg-dark text-white">
+        <!-- <div class="card-header">
           <h4>Extracted Text Data</h4>
-        </div>
-        <div class="card-body">
+        </div> -->
           {% if error %}
           <div class="form-group has-error">
               <span class="help-block">{{ error }}</span>
           </div>
           {% endif %}
           {% include 'core/bs4_form_dl.html' with form=notesform %}
-          {{errors}}
-        </div>
       </div>
       {{ chem_formset.management_form }}
       {% for form in chem_formset.forms %}
       <div class="col-sm-3">
           <div class="card" >
-              <div class="card-body">
+              <div class="card-body bg-secondary">
                 <!-- {% for hidden_field in form.hidden_fields %}
                 {{ hidden_field }}
                 {% endfor %} -->

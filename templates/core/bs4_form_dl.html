@@ -12,12 +12,12 @@
     {% endfor %}
   </div>
 {% endif %}
-<label for=""><b>* required</b></label>
 <dl>
+<dt> <small><b><u>DOCUMENT INFO</u></b></small> </dt>
 {% for field in form.visible_fields %}
-  <div class="form-group">
-   <dt class="col-sm-3"> {{ field.label_tag }} </dt>
-    <dd class="col-sm-9"> 
+  <div>
+   <dt> <small><b>{{ field.label_tag }}</b></small> </dt>
+    <dd>
     {% if form.is_bound %}
       {% if field.errors %}
        {% render_field field class="form-control is-invalid" %}

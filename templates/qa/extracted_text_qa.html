@@ -59,7 +59,7 @@
 </div>
 
 <div class="row">
-    <div class="col">
+  <div class="col">
     <div class="card">
       <div class="card-header form-inline">
         <h3 class="text-center col-9">Extracted Text</h3>
@@ -67,115 +67,126 @@
               <span id="btn-toggle-label" class="oi oi-wrench"></span>Edit Extracted Chemicals
       </button>
       </div>
-    <div class="card-body">
-      <!-- {% if notesform.non_field_errors %}
-      <div class="alert alert-danger" role="alert">
-        {% for error in notesform.non_field_errors %}
-          {{ error }}
-        {% endfor %}
-      </div>
-      {% endif %} -->
-    <form method="post" >
-      {% csrf_token %}
-    <div class="row">
-      <div class=" col-sm-3 card-body form-group text-center bg-dark text-white">
-        <!-- <div class="card-header">
-          <h4>Extracted Text Data</h4>
-        </div> -->
-          {% if error %}
-          <div class="form-group has-error">
-              <span class="help-block">{{ error }}</span>
+      <div class="card-body">
+        <!-- {% if notesform.non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+          {% for error in notesform.non_field_errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+        {% endif %} -->
+      <form method="post" >
+        {% csrf_token %}
+      <div class="row">
+        <div class="col-sm-3">
+          <div class=" card-body form-group text-center bg-dark text-white">
+            <!-- <div class="card-header">
+              <h4>Extracted Text Data</h4>
+            </div> -->
+              {% if error %}
+              <div class="form-group has-error">
+                  <span class="help-block">{{ error }}</span>
+              </div>
+              {% endif %}
+              {% include 'core/bs4_form_dl.html' with form=ext_form %}
           </div>
-          {% endif %}
-          {% include 'core/bs4_form_dl.html' with form=notesform %}
-      </div>
-      {{ chem_formset.management_form }}
-      {% for form in chem_formset.forms %}
-      <div class="col-sm-3">
+        </div>
+        {{ chem_formset.management_form }}
+        {% for form in chem_formset.forms %}
+        <div class="col-sm-3">
           <div class="card" >
-              <div class="card-body bg-secondary">
-                <!-- {% for hidden_field in form.hidden_fields %}
-                {{ hidden_field }}
-                {% endfor %} -->
-                {% if not form.instance.pk %}
-                <div class="text-center">
-                  <small><b>Add New Chemical</b></small><br>
-                </div>
+            <div class="card-body bg-secondary">
+              <!-- {% for hidden_field in form.hidden_fields %}
+              {{ hidden_field }}
+              {% endfor %} -->
+              {% if not form.instance.pk %}
+              <div class="text-center">
+                <small><b>Add New Chemical</b></small><br>
+              </div>
+              {% else %}
+              {% endif %}
+              <div class="text-center">
+                <small><b>{{ form.raw_cas.label_tag }}</b></small><br>
+                  {{ form.raw_cas}}
+                  {{ form.raw_cas.field.errors }}
+              </div>
+              <div class="text-center">
+                <small><b>{{ form.raw_chem_name.label_tag }}</b></small><br>
+                  {{ form.raw_chem_name}}
+                  {{ form.raw_chem_name.field.errors }}
+              </div>
+              <div class="text-center">
+                <small><b>{{ form.raw_min_comp.label_tag }}</b></small><br>
+                  {{ form.raw_min_comp}}
+                  {{ form.raw_min_comp.field.errors }}
+              </div>
+              <div class="text-center">
+                <small><b>{{ form.raw_max_comp.label_tag }}</b></small><br>
+                  {{ form.raw_max_comp}}
+                  {{ form.raw_max_comp.field.errors }}
+              </div>
+              <div class="text-center">
+                <small><b>{{ form.unit_type.label_tag }}</b></small><br>
+                  {{ form.unit_type}}
+                  {{ form.unit_type.field.errors }}
+              </div>
+              <div class="text-center">
+                <small><b>{{ form.report_funcuse.label_tag }}</b></small><br>
+                  {{ form.report_funcuse}}
+                  {{ form.report_funcuse.field.errors }}
+              </div>
+              <div class="text-center">
+                <small><b>{{ form.ingredient_rank.label_tag }}</b></small><br>
+                  {{ form.ingredient_rank}}
+                  {{ form.ingredient_rank.field.errors }}
+              </div>
+              <div class="text-center">
+                <small><b>{{ form.raw_central_comp.label_tag }}</b></small><br>
+                  {{ form.raw_central_comp}}
+                  {{ form.raw_central_comp.field.errors }}
+              </div>
+              <div class="text-center">
+                {% if form.instance.pk %}
+                <small><b>{{ form.DELETE.label_tag }}</b></small><br>
+                  {{ form.DELETE}}
                 {% else %}
                 {% endif %}
-                <div class="text-center">
-                  <small><b>{{ form.raw_cas.label_tag }}</b></small><br>
-                    {{ form.raw_cas}}
-                    {{ form.raw_cas.field.errors }}
-                </div>
-                <div class="text-center">
-                  <small><b>{{ form.raw_chem_name.label_tag }}</b></small><br>
-                    {{ form.raw_chem_name}}
-                    {{ form.raw_chem_name.field.errors }}
-                </div>
-                <div class="text-center">
-                  <small><b>{{ form.raw_min_comp.label_tag }}</b></small><br>
-                    {{ form.raw_min_comp}}
-                    {{ form.raw_min_comp.field.errors }}
-                </div>
-                <div class="text-center">
-                  <small><b>{{ form.raw_max_comp.label_tag }}</b></small><br>
-                    {{ form.raw_max_comp}}
-                    {{ form.raw_max_comp.field.errors }}
-                </div>
-                <div class="text-center">
-                  <small><b>{{ form.unit_type.label_tag }}</b></small><br>
-                    {{ form.unit_type}}
-                    {{ form.unit_type.field.errors }}
-                </div>
-                <div class="text-center">
-                  <small><b>{{ form.report_funcuse.label_tag }}</b></small><br>
-                    {{ form.report_funcuse}}
-                    {{ form.report_funcuse.field.errors }}
-                </div>
-                <div class="text-center">
-                  <small><b>{{ form.ingredient_rank.label_tag }}</b></small><br>
-                    {{ form.ingredient_rank}}
-                    {{ form.ingredient_rank.field.errors }}
-                </div>
-                <div class="text-center">
-                  <small><b>{{ form.raw_central_comp.label_tag }}</b></small><br>
-                    {{ form.raw_central_comp}}
-                    {{ form.raw_central_comp.field.errors }}
-                </div>
-                <div class="text-center">
-                  {% if form.instance.pk %}
-                  <small><b>{{ form.DELETE.label_tag }}</b></small><br>
-                    {{ form.DELETE}}
-                  {% else %}
-                  {% endif %}
-                </div>
               </div>
+            </div>
           </div>
+        </div>
+        {% endfor %}
       </div>
-      {% endfor %}
-
-    </div>
-
           <button type = "submit" id="save_no_approval" name="save_no_approval" class="btn btn-primary chem-control" role="button">Save edits</button>
         </form>
+      </div>
+    </div>
 
-            </div>
+
+
+    <form method="post" >
+      {% csrf_token %}
+    <div class="text-center">
+      <b>{{ notesform.qa_notes.label_tag }}</b>
+        <br>
+        {{ notesform.qa_notes }}
+    </div>
+    </form>
+
+
+        <div>
+          <button type = "submit" id="approve" name="approve" class="btn btn-success" role="button">Approve</button>
+
+          {% if nextid > 0 %}
+              <a class="btn btn-warning" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>
+          {% else %}
+              <button type="button" title="All the other documents in this QA group have been approved" class="btn btn-secondary" aria-disabled="true" disabled>Skip</button>
+          {% endif %}
+          <a class="btn btn-secondary" href="{% url "extraction_script_qa" script.id %}" role="button">Exit</a>
         </div>
+  </div>
+</div>
 
-    </div>
-
-    </div>
-    <div class="row">
-      <button type = "submit" id="approve" name="approve" class="btn btn-success" role="button">Approve</button>
-
-      {% if nextid > 0 %}
-          <a class="btn btn-warning" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>
-      {% else %}
-          <button type="button" title="All the other documents in this QA group have been approved" class="btn btn-secondary" aria-disabled="true" disabled>Skip</button>
-      {% endif %}
-      <a class="btn btn-secondary" href="{% url "extraction_script_qa" script.id %}" role="button">Exit</a>
-    </div>
     <p class="card-footer"> {{stats}}</p>
 
 {% endblock %}

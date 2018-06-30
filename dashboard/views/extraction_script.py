@@ -47,8 +47,7 @@ class QANotesForm(ModelForm):
 
     class Meta:
         model = ExtractedText
-        fields = ['record_type','prod_name', 'doc_date', 'rev_num',
-                    'qa_notes', ]
+        fields = ['qa_notes']
         widgets = {
             'qa_notes' : Textarea,
         }
@@ -314,7 +313,8 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
     else:
         # GET request
         print('GET request')
-        notesform =  ExtractedTextForm(instance=extext)
+        ext_form =  ExtractedTextForm(instance=extext)
+        notesform =  QANotesForm(instance=extext)
         chem_formset = ChemFormSet(instance=extext, prefix='chemicals')
         context = {
             'extracted_text': extext,
@@ -324,6 +324,7 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
             'nextid': nextid,
             'chem_formset': chem_formset,
             'notesform': notesform,
+            'ext_form': ext_form,
         }
-        print(chem_formset)
+        print(notesform)
         return render(request, template_name, context)

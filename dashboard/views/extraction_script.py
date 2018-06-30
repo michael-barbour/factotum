@@ -325,5 +325,5 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
             'chem_formset': chem_formset,
             'notesform': notesform,
         }
-        #print(context)
+        print(chem_formset)
         return render(request, template_name, context)

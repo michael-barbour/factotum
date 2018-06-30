@@ -77,45 +77,88 @@
       {% endif %} -->
     <form method="post" >
       {% csrf_token %}
-      <div class="row">
-        <div class=" col-sm-3 card">
-          <div class="card-header">
-            <h4>Extracted Text Data</h4>
-          </div>
-          <div class="card-body">
-            {% if error %}
-            <div class="form-group has-error">
-                <span class="help-block">{{ error }}</span>
-            </div>
-            {% endif %}
-            {% include 'core/bs4_form_dl.html' with form=notesform %}
-            {{errors}}
-          </div>
+    <div class="row">
+      <div class=" col-sm-3 card">
+        <div class="card-header">
+          <h4>Extracted Text Data</h4>
         </div>
-        {{ chem_formset.management_form }}
-        {% for form in chem_formset.forms %}
-        <div class="col-sm-3">
-            <div class="card" >
-                <div class="card-body">
-
-                    {% for hidden_field in form.hidden_fields %}
-                    {{ hidden_field }}
-                    {% endfor %}
-
-                    {% for field in form.visible_fields %}
-                    <div class="text-center">
-                        <b>{{ field.label_tag }}</b><br>
-                        {{ field }}
-                        {{ field.errors }}
-                    </div>
-                    {% endfor %}
-
-                </div>
-            </div>
+        <div class="card-body">
+          {% if error %}
+          <div class="form-group has-error">
+              <span class="help-block">{{ error }}</span>
+          </div>
+          {% endif %}
+          {% include 'core/bs4_form_dl.html' with form=notesform %}
+          {{errors}}
         </div>
-        {% endfor %}
-
       </div>
+      {{ chem_formset.management_form }}
+      {% for form in chem_formset.forms %}
+      <div class="col-sm-3">
+          <div class="card" >
+              <div class="card-body">
+                <!-- {% for hidden_field in form.hidden_fields %}
+                {{ hidden_field }}
+                {% endfor %} -->
+                {% if not form.instance.pk %}
+                <div class="text-center">
+                  <small><b>Add New Chemical</b></small><br>
+                </div>
+                {% else %}
+                {% endif %}
+                <div class="text-center">
+                  <small><b>{{ form.raw_cas.label_tag }}</b></small><br>
+                    {{ form.raw_cas}}
+                    {{ form.raw_cas.field.errors }}
+                </div>
+                <div class="text-center">
+                  <small><b>{{ form.raw_chem_name.label_tag }}</b></small><br>
+                    {{ form.raw_chem_name}}
+                    {{ form.raw_chem_name.field.errors }}
+                </div>
+                <div class="text-center">
+                  <small><b>{{ form.raw_min_comp.label_tag }}</b></small><br>
+                    {{ form.raw_min_comp}}
+                    {{ form.raw_min_comp.field.errors }}
+                </div>
+                <div class="text-center">
+                  <small><b>{{ form.raw_max_comp.label_tag }}</b></small><br>
+                    {{ form.raw_max_comp}}
+                    {{ form.raw_max_comp.field.errors }}
+                </div>
+                <div class="text-center">
+                  <small><b>{{ form.unit_type.label_tag }}</b></small><br>
+                    {{ form.unit_type}}
+                    {{ form.unit_type.field.errors }}
+                </div>
+                <div class="text-center">
+                  <small><b>{{ form.report_funcuse.label_tag }}</b></small><br>
+                    {{ form.report_funcuse}}
+                    {{ form.report_funcuse.field.errors }}
+                </div>
+                <div class="text-center">
+                  <small><b>{{ form.ingredient_rank.label_tag }}</b></small><br>
+                    {{ form.ingredient_rank}}
+                    {{ form.ingredient_rank.field.errors }}
+                </div>
+                <div class="text-center">
+                  <small><b>{{ form.raw_central_comp.label_tag }}</b></small><br>
+                    {{ form.raw_central_comp}}
+                    {{ form.raw_central_comp.field.errors }}
+                </div>
+                <div class="text-center">
+                  {% if form.instance.pk %}
+                  <small><b>{{ form.DELETE.label_tag }}</b></small><br>
+                    {{ form.DELETE}}
+                  {% else %}
+                  {% endif %}
+                </div>
+              </div>
+          </div>
+      </div>
+      {% endfor %}
+
+    </div>
 
           <button type = "submit" id="save_no_approval" name="save_no_approval" class="btn btn-primary chem-control" role="button">Save edits</button>
         </form>

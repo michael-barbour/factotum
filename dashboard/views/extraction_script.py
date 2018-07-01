@@ -210,6 +210,7 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
         chem_formset = ChemFormSet(request.POST, instance=extext,
                                                         prefix='chemicals')
         ext_form =  ExtractedTextForm(request.POST, instance=extext)
+        notesform = QANotesForm(request.POST, instance=extext)
         if chem_formset.has_changed() or ext_form.has_changed():
             print(str(extext.qa_edited))
             if chem_formset.is_valid() and ext_form.is_valid():
@@ -218,17 +219,22 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
                 ext_form.save()
                 extext.qa_edited = True
                 extext.save()
-                context['chem_formset'] = chem_formset
-                context['ext_form'] = ext_form
+        context['chem_formset'] = chem_formset
+        context['ext_form'] = ext_form
+        context['notesform'] = notesform
 
     # APPROVAL
     elif request.method == 'POST' and 'approve' in request.POST:
         print('--approve')
-
         notesform =  QANotesForm(request.POST, instance=extext)
         context['notesform'] = notesform
+        nextpk = extext.next_extracted_text_in_qa_group()
         if notesform.is_valid():
             print('yay')
+
+
+            return HttpResponseRedirect(
+                        reverse('extracted_text_qa', args=[(nextpk)]))
         # print('---approving the ExtractedText object')
         # nextpk = extext.next_extracted_text_in_qa_group()
         # script = extext.extraction_script

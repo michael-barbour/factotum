@@ -69,6 +69,7 @@ class ExtractedText(CommonInfo):
             except ValueError:
                 raise ValidationError("Date is off.")
             if not int(self.doc_date[:4]) <= datetime.now().year:
+                print('d-bomb')
                 raise ValidationError('Date is off, year is invalid.')
             if not int(self.doc_date[5:7]) in range(1, 13):
                 raise ValidationError('Date is off, month is invalid.')

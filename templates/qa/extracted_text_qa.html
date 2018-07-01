@@ -68,6 +68,7 @@
               <span id="btn-toggle-label" class="oi oi-wrench"></span>Edit Extracted Chemicals
       </button>
       </div>
+      <div class="card-body">
       <form method="post" >
         {% csrf_token %}
         <div class="row">
@@ -103,17 +104,6 @@
                 {{ notesform.qa_edited.as_hidden }}
           </div>
         </div>
-      </form>
-      <div class="card-body">
-        <!-- {% if notesform.non_field_errors %}
-        <div class="alert alert-danger" role="alert">
-          {% for error in notesform.non_field_errors %}
-            {{ error }}
-          {% endfor %}
-        </div>
-        {% endif %} -->
-      <form method="post" >
-        {% csrf_token %}
       <div class="row">
         <div class="col-sm-3">
           <div class=" card-body form-group text-center bg-dark text-white">
@@ -146,42 +136,40 @@
               <div class="text-center">
                 <small><b>{{ form.raw_cas.label_tag }}</b></small><br>
                   {{ form.raw_cas}}
-                  {{ form.raw_cas.field.errors }}
               </div>
               <div class="text-center">
                 <small><b>{{ form.raw_chem_name.label_tag }}</b></small><br>
                   {{ form.raw_chem_name}}
-                  {{ form.raw_chem_name.field.errors }}
               </div>
               <div class="text-center">
                 <small><b>{{ form.raw_min_comp.label_tag }}</b></small><br>
                   {{ form.raw_min_comp}}
-                  {{ form.raw_min_comp.field.errors }}
               </div>
               <div class="text-center">
                 <small><b>{{ form.raw_max_comp.label_tag }}</b></small><br>
                   {{ form.raw_max_comp}}
-                  {{ form.raw_max_comp.field.errors }}
               </div>
               <div class="text-center">
                 <small><b>{{ form.unit_type.label_tag }}</b></small><br>
-                  {{ form.unit_type}}
-                  {{ form.unit_type.field.errors }}
+                {% if form.unit_type.errors %}
+                  {% render_field form.unit_type class="chem-control form-control is-invalid" %}
+                  {{ form.unit_type.errors }}
+                {% else %}
+                  {{ form.unit_type }}
+                {% endif %}
+
               </div>
               <div class="text-center">
                 <small><b>{{ form.report_funcuse.label_tag }}</b></small><br>
                   {{ form.report_funcuse}}
-                  {{ form.report_funcuse.field.errors }}
               </div>
               <div class="text-center">
                 <small><b>{{ form.ingredient_rank.label_tag }}</b></small><br>
                   {{ form.ingredient_rank}}
-                  {{ form.ingredient_rank.field.errors }}
               </div>
               <div class="text-center">
                 <small><b>{{ form.raw_central_comp.label_tag }}</b></small><br>
                   {{ form.raw_central_comp}}
-                  {{ form.raw_central_comp.field.errors }}
               </div>
               <div class="text-center">
                 {% if form.instance.pk %}

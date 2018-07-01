@@ -34,3 +34,6 @@ class ExtractedChemical(CommonInfo):
 
     def __str__(self):
         return self.raw_chem_name
+
+    def clean(self):
+        print('cleaning ExtractedChemical object in the model')

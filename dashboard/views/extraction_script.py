@@ -15,7 +15,7 @@ from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
-from dashboard.models import (DataGroup, DataDocument, DataSource,
+from dashboard.models import (DataGroup, DataDocument, DataSource, QANotes,
                               ExtractedText, Script, QAGroup, ExtractedChemical)
 
 
@@ -42,26 +42,14 @@ class ExtractedTextForm(ModelForm):
 class QANotesForm(ModelForm):
 
     class Meta:
-        model = ExtractedText
-        fields = ['qa_notes', 'qa_edited']
+        model = QANotes
+        fields = ['qa_notes']
         widgets = {
             'qa_notes' : Textarea,
         }
         labels = {
             'qa_notes': _('QA Notes (required if approving edited records)'),
         }
-
-    def clean(self):
-        print('------inside the QANotesForm class clean() method')
-        print(self.cleaned_data)
-        qa_notes = self.cleaned_data.get('qa_notes')
-        qa_edited = self.cleaned_data.get('qa_edited')
-
-        if qa_edited and qa_notes is None:
-            print(ValidationError('qa_notes needs to be populated if you edited the data'))
-            raise ValidationError(_('qa_notes needs to be populated if you edited the data'))
-
-        return self.cleaned_data
 
 
 
@@ -192,7 +180,8 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
                                                 'raw_central_comp'],
                                                 extra=1)
     ext_form =  ExtractedTextForm(instance=extext)
-    notesform =  QANotesForm(instance=extext)
+    note, created = QANotes.objects.get_or_create(extracted_text=extext)
+    notesform =  QANotesForm(instance=note)
     chem_formset = ChemFormSet(instance=extext, prefix='chemicals')
     context = {
         'extracted_text': extext,
@@ -210,7 +199,8 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
         chem_formset = ChemFormSet(request.POST, instance=extext,
                                                         prefix='chemicals')
         ext_form =  ExtractedTextForm(request.POST, instance=extext)
-        notesform = QANotesForm(request.POST, instance=extext)
+        notesform = QANotesForm(request.POST, instance=note)
+        context.update({'notesform' : notesform})
         if chem_formset.has_changed() or ext_form.has_changed():
             print(str(extext.qa_edited))
             if chem_formset.is_valid() and ext_form.is_valid():
@@ -221,7 +211,6 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
                 extext.save()
         context['chem_formset'] = chem_formset
         context['ext_form'] = ext_form
-        context['notesform'] = notesform
 
     # APPROVAL
     elif request.method == 'POST' and 'approve' in request.POST:
@@ -235,72 +224,5 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
 
             return HttpResponseRedirect(
                         reverse('extracted_text_qa', args=[(nextpk)]))
-        # print('---approving the ExtractedText object')
-        # nextpk = extext.next_extracted_text_in_qa_group()
-        # script = extext.extraction_script
-        # chem_formset = ChemFormSet(request.POST, instance=extext, prefix='chemicals')
-        #
-        # initial = {
-        #     'qa_checked':True,
-        #     'qa_approved_by':request.user,
-        #     'qa_approved_date':datetime.now(),
-        #     'qa_edited':extext.qa_edited,
-        #     }
-        #
-        # notesform = ExtractedTextForm(request.POST, instance=extext, initial=initial )
-        #
-        #     # Something is going wrong in the instantiation.
-        #     # The kwargs inside the notesform __init__ method contain what they should ,
-        #     # but by the time the notesform is queried below, it is missing that data
-        #     #   _____
-        #     #  /     \
-        #     # | () () |
-        #     #  \  ^  /
-        #     #   |||||
-        #     #   |||||
-        #
-        # print('--- After initializing notesform, before is_valid()')
-        # print('qa_checked: %s' % notesform['qa_checked'].data)
-        # print('qa_approved_by: %s' % notesform['qa_approved_by'].data)
-        # print('qa_approved_date: %s' % notesform['qa_approved_date'].data)
-        # print('qa_notes: %s' % notesform['qa_notes'].data)
-        # #print(notesform)
-        #
-        # if notesform.is_valid():
-        #     print('---- after notesform.is_valid()')
-        #     print('qa_checked: %s' % notesform['qa_checked'].data)
-        #     print('qa_approved_by: %s' % notesform['qa_approved_by'].data)
-        #     print('qa_approved_date: %s' % notesform['qa_approved_date'].data)
-        #     print('qa_notes: %s' % notesform['qa_notes'].data)
-        #     notesform.save()
-        #     print("Script's QA completion status is %s: %s pct of %s " % (script.get_qa_status() , script.get_pct_checked_numeric(), script.get_datadocument_count()))
-        #
-        #     if script.get_qa_status():
-        #         print('QA is now complete')
-        #         return HttpResponseRedirect(
-        #             reverse('extraction_script_qa', args=[(script.pk)])
-        #         )
-        #     else:
-        #         return HttpResponseRedirect(
-        #             reverse('extracted_text_qa', args=[(nextpk)])
-        #     )
-        # else:
-        #     print('Trying to approve, but notesform failed validation')
-        #     # re-render the invalid extracted text object's page
-        #     print('Returning the user to the same page for corrections')
-        #     print('----- notesform should be populated with QA attributes:')
-        #     print(notesform)
-        #     # print('----- the POST request:')
-        #     # print(request.POST)
-        #     context = {
-        #         'extracted_text': extext,
-        #         'doc': datadoc,
-        #         'script': exscript,
-        #         'stats': stats,
-        #         'nextid': nextid,
-        #         'chem_formset': chem_formset,
-        #         'notesform': notesform,
-        #     }
-        #     return render(request, template_name,context)
-    # print(notesform)
+
     return render(request, template_name, context)

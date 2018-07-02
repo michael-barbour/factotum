@@ -23,3 +23,4 @@ from .product_attribute import ProductAttribute
 from .product_to_attribute import ProductToAttribute
 from .product_to_puc import ProductToPUC
 from .PUC_attribute import PUCAttribute
+from .qa_notes import QANotes

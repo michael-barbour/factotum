@@ -35,7 +35,6 @@ class ExtractedText(CommonInfo):
         'auth.User', null=True, blank=True, on_delete=models.SET_NULL, verbose_name = "QA approved by")
     qa_group = models.ForeignKey('QAGroup', null=True, blank=True, verbose_name="QA group",
                                  on_delete=models.SET_NULL)
-    qa_notes = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
         return str(self.prod_name)
@@ -53,9 +52,6 @@ class ExtractedText(CommonInfo):
 
     def clean(self):
         print('cleaning ExtractedText object in the model')
-        # if self.qa_edited and self.qa_notes is None:
-        #     print('zzz')
-        #     raise ValidationError('qa_notes needs to be populated if you edited the data')
         if self.doc_date:
             if len(self.doc_date) != 10:
                 raise ValidationError("Date format is the wrong length.")
@@ -69,12 +65,12 @@ class ExtractedText(CommonInfo):
             except ValueError:
                 raise ValidationError("Date is off.")
             if not int(self.doc_date[:4]) <= datetime.now().year:
-                print('d-bomb')
                 raise ValidationError('Date is off, year is invalid.')
             if not int(self.doc_date[5:7]) in range(1, 13):
                 raise ValidationError('Date is off, month is invalid.')
             if not int(self.doc_date[8:10]) in range(1, 32):
                 raise ValidationError('Date is off, day is invalid.')
+
 
 def get_next_or_prev(models, item, direction):
     '''

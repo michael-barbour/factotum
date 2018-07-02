@@ -11,7 +11,6 @@ def validate_ingredient_rank(value):
             ('Quantity {} is not allowed'.format(value)),params={'value': value}
         )
 
-
 class ExtractedChemical(CommonInfo):
     extracted_text = models.ForeignKey(ExtractedText, on_delete=models.CASCADE,
                                         related_name='chemicals')

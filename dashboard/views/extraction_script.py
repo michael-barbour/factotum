@@ -1,19 +1,19 @@
+import os
 import math
 from random import shuffle
-import os
-from datetime import datetime
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import (ModelForm, Form, BaseInlineFormSet,
                             inlineformset_factory, TextInput, CharField,
                             Textarea, HiddenInput, ValidationError)
 
-from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext_lazy as _
-from django.core.files import File
-from django.core.files.storage import FileSystemStorage
-from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.utils import timezone
+from django.core.files import File
+from django.http import HttpResponseRedirect
+from django.utils.translation import ugettext_lazy as _
+from django.core.files.storage import FileSystemStorage
+from django.contrib.auth.decorators import login_required
 
 from dashboard.models import (DataGroup, DataDocument, DataSource, QANotes,
                               ExtractedText, Script, QAGroup, ExtractedChemical)
@@ -215,12 +215,15 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
     # APPROVAL
     elif request.method == 'POST' and 'approve' in request.POST:
         print('--approve')
-        notesform =  QANotesForm(request.POST, instance=extext)
+        notesform =  QANotesForm(request.POST, instance=note)
         context['notesform'] = notesform
         nextpk = extext.next_extracted_text_in_qa_group()
         if notesform.is_valid():
             print('yay')
-
+            extext.qa_approved_date = timezone.now()
+            extext.qa_approved_by =  request.user
+            extext.qa_checked =  True
+            extext.save()
 
             return HttpResponseRedirect(
                         reverse('extracted_text_qa', args=[(nextpk)]))

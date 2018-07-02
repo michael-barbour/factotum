@@ -1,6 +1,27 @@
 import datetime
 from haystack import indexes
-from dashboard.models import Product, DataDocument, PUC, ProductToPUC
+from dashboard.models import Product, DataDocument, PUC, ProductToPUC, ExtractedChemical
+
+
+class ExtractedChemicalIndex(indexes.SearchIndex, indexes.Indexable):
+    text = indexes.EdgeNgramField(
+        document=True, use_template=True,
+        template_name = 'search/indexes/dashboard/extractedchemical_text.txt')
+    title=indexes.EdgeNgramField(model_attr='raw_chem_name')
+    facet_model_name = indexes.CharField(faceted=True)
+    result_css_class = indexes.CharField()
+
+    raw_chem_name = indexes.EdgeNgramField(model_attr='raw_chem_name', null=True)
+
+    raw_cas = indexes.EdgeNgramField(model_attr='raw_cas', null=True)
+
+
+    def get_model(self):
+        return ExtractedChemical
+
+    def index_queryset(self, using=None):
+        """Used when the entire index for model is updated."""
+        return self.get_model().objects.all()
 
 
 class ProductIndex(indexes.SearchIndex, indexes.Indexable):

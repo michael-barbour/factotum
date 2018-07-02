@@ -1,6 +1,6 @@
 import datetime
 from haystack import indexes
-from dashboard.models import Product, DataDocument, PUC, ProductToPUC, ExtractedChemical
+from dashboard.models import Product, DataDocument, PUC, ProductToPUC, ExtractedChemical, DSSToxSubstance
 
 
 class ExtractedChemicalIndex(indexes.SearchIndex, indexes.Indexable):
@@ -15,6 +15,10 @@ class ExtractedChemicalIndex(indexes.SearchIndex, indexes.Indexable):
 
     raw_cas = indexes.EdgeNgramField(model_attr='raw_cas', null=True)
 
+    extracted_text_id = indexes.EdgeNgramField(model_attr='extracted_text_id', null=False)
+
+    data_document_id = indexes.EdgeNgramField(model_attr='extracted_text__data_document_id', null=False)
+
 
     def get_model(self):
         return ExtractedChemical
@@ -24,6 +28,37 @@ class ExtractedChemicalIndex(indexes.SearchIndex, indexes.Indexable):
 
     def prepare_result_css_class(self, obj):
         return "exchem-result"
+
+    def index_queryset(self, using=None):
+        """Used when the entire index for model is updated."""
+        return self.get_model().objects.all()
+
+
+class DSSToxSubstanceIndex(indexes.SearchIndex, indexes.Indexable):
+    text = indexes.EdgeNgramField(
+        document=True, use_template=True,
+        template_name = 'search/indexes/dashboard/dsstox_substance_text.txt')
+    title=indexes.EdgeNgramField(model_attr='true_chemname')
+    facet_model_name = indexes.CharField(faceted=True)
+    result_css_class = indexes.CharField()
+
+    true_chemname = indexes.EdgeNgramField(model_attr='true_chemname', null=True)
+
+    true_cas = indexes.EdgeNgramField(model_attr='true_cas', null=True)
+
+    extracted_text_id = indexes.EdgeNgramField(model_attr='extracted_chemical__extracted_text_id', null=False)
+
+    data_document_id = indexes.EdgeNgramField(model_attr='extracted_chemical__extracted_text__data_document_id', null=False)
+
+
+    def get_model(self):
+        return DSSToxSubstance
+
+    def prepare_facet_model_name(self, obj):
+        return "DSSTox Substance"
+
+    def prepare_result_css_class(self, obj):
+        return "dsstox-result"
 
     def index_queryset(self, using=None):
         """Used when the entire index for model is updated."""

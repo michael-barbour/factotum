@@ -37,12 +37,15 @@ def chem_search(request):
 
     # Get a list of the Data Document IDs for the results
     for exchem in sqs_exchem:
-        exchem_doc_ids.append(exchem.data_document_id)
+        exchem_doc_ids.append(exchem.object.extracted_text.data_document.id)
         print(exchem.id)
         print(exchem.raw_chem_name)
         print(exchem.raw_cas)
-        print(exchem.extracted_text_id)
-        print(exchem.data_document_id)
+        print('extracted text parent object:')
+        print(exchem.object.extracted_text)
+        print('grandparent data document object:')
+        print(exchem.object.extracted_text.data_document)
+        print(exchem.extracted_text__data_document_id)
 
     print("Exchem Doc Ids %s " % exchem_doc_ids)
 

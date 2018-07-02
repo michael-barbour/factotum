@@ -103,3 +103,17 @@ class ModelsTest(TestCase):
         self.objects.doc.extracted = True
         self.objects.doc.save()
         self.assertTrue(self.objects.dg.all_extracted())
+
+    def test_extracted_habits_and_practices(self):
+        puc2 = PUC.objects.create(gen_cat='Test General Category',
+                                 prod_fam='Test Product Family',
+                                 prod_type='Test Product Type',
+                                 description='Test Product Description',
+                                 last_edited_by = self.objects.user)
+        self.assertEqual(ExtractedHabitsAndPractices.objects.count(), 1)
+        self.assertEqual(ExtractedHabitsAndPracticesToPUC.objects.count(), 0)
+        e2p = ExtractedHabitsAndPracticesToPUC.objects.create(extracted_habits_and_practices=self.objects.ehp,
+                                                              PUC=self.objects.puc)
+        e2p = ExtractedHabitsAndPracticesToPUC.objects.create(extracted_habits_and_practices=self.objects.ehp,
+                                                              PUC=puc2)
+        self.assertEqual(ExtractedHabitsAndPracticesToPUC.objects.count(), 2)

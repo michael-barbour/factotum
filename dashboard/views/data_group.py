@@ -222,13 +222,12 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
         form = DataGroupForm(request.POST, request.FILES,
                              user    = request.user,
                              initial = initial_values)
-        # source_type = SourceType.objects.get(pk=form.data['source_type'])
         if form.is_valid():
             datagroup = form.save()
             info = [x.decode('ascii',
                              'ignore') for x in datagroup.csv.readlines()]
             table = csv.DictReader(info)
-            if not table.fieldnames == ['filename','title','document_type','product','url']:
+            if not table.fieldnames == ['filename','title','document_type','product','url','organization']:
                 datagroup.delete()
                 return render(request, template_name,
                               {'field_error': table.fieldnames,
@@ -255,9 +254,8 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
                                  document_type=doc_type,
                                  product_category=line['product'],
                                  url=line['url'],
-                                 # source_type=source_type,
+                                 organization=line['organization'],
                                  data_group=datagroup)
-                print(doc)
                 doc.save()
                 # update line to hold the pk for writeout
                 text.append(str(doc.pk)+','+ ','.join(line.values())+'\n')
@@ -283,6 +281,9 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
 
 @login_required()
 def data_group_update(request, pk):
+    # TODO: Resolve whether this form save ought to also update Datadocuments
+    #       in the case the "Register Records CSV file" is updated.
+    # TODO: Shouldn't this return the user to the update form?
     datagroup = get_object_or_404(DataGroup, pk=pk)
     form = DataGroupForm(request.POST or None, instance=datagroup)
     if form.is_valid():

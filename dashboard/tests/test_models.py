@@ -70,8 +70,8 @@ class ModelsTest(TestCase):
         u = b'Data_Group_for_Test/pdf/0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf'
         self.assertIn(u, dg_response.content, (
                                     'link to PDF should be in HTML!'))
-        # ExtractionScript
-        self.assertEqual(str(self.objects.script), 'Test Title')
+        # DownloadScript
+        self.assertEqual(str(self.objects.script), 'Test Download Script')
         # ExtractedText
         self.assertEqual(str(self.objects.extext),
                                     'Test Extracted Text Record')
@@ -103,3 +103,23 @@ class ModelsTest(TestCase):
         self.objects.doc.extracted = True
         self.objects.doc.save()
         self.assertTrue(self.objects.dg.all_extracted())
+
+    def test_extracted_habits_and_practices(self):
+        puc2 = PUC.objects.create(gen_cat='Test General Category',
+                                 prod_fam='Test Product Family',
+                                 prod_type='Test Product Type',
+                                 description='Test Product Description',
+                                 last_edited_by = self.objects.user)
+        self.assertEqual(ExtractedHabitsAndPractices.objects.count(), 1)
+        self.assertEqual(ExtractedHabitsAndPracticesToPUC.objects.count(), 0)
+        e2p = ExtractedHabitsAndPracticesToPUC.objects.create(extracted_habits_and_practices=self.objects.ehp,
+                                                              PUC=self.objects.puc)
+        e2p = ExtractedHabitsAndPracticesToPUC.objects.create(extracted_habits_and_practices=self.objects.ehp,
+                                                              PUC=puc2)
+        self.assertEqual(ExtractedHabitsAndPracticesToPUC.objects.count(), 2)
+
+    def test_data_document_organization(self):
+        self.assertEquals(self.objects.doc.organization, '')
+        self.objects.doc.organization = 'Test Organization'
+        self.objects.doc.save()
+        self.assertEqual(DataDocument.objects.filter(organization='Test Organization').count(), 1)

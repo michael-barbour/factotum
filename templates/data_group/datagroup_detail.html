@@ -215,6 +215,7 @@
       <th>product</th>
       <th>document_type</th>
       <th>url</th>
+      <th>organization</th>
     </thead>
     <tbody>
     {% for doc in all_documents %}
@@ -225,6 +226,7 @@
         <td>{{ doc.product_category }}</td>
         <td>{{ doc.document_type.pk }}</td>
         <td>{{ doc.url }}</td>
+        <td>{{ doc.organization }}</td>
       </tr>
     {% endfor %}
     </tbody>

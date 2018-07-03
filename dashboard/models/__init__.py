@@ -13,7 +13,8 @@ from .product_to_ingredient import ProductToIngredient
 from .dsstox_substance_to_ingredient import DSSToxSubstanceToIngredient
 from .extracted_text import ExtractedText
 from .extracted_chemical import ExtractedChemical
-from .extracted_functionaluse import ExtractedFunctionalUse
+from .extracted_functional_use import ExtractedFunctionalUse
+from .extracted_habits_and_practices import ExtractedHabitsAndPractices
 from .script import Script
 from .dsstox_substance import DSSToxSubstance
 from .qa_group import QAGroup
@@ -23,4 +24,5 @@ from .product_attribute import ProductAttribute
 from .product_to_attribute import ProductToAttribute
 from .product_to_puc import ProductToPUC
 from .PUC_attribute import PUCAttribute
+from .extracted_habits_and_practices_to_puc import ExtractedHabitsAndPracticesToPUC
 from .qa_notes import QANotes

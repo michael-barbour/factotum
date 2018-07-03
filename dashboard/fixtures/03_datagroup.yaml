@@ -11,6 +11,12 @@
       09:09:58', download_script: null, data_source: 8, csv: Home_Depot_-_ICF_1/Home_Depot_-_ICF_1_HD_register_records.csv,
     zip_file: media/Home_Depot_-_ICF_1/Home_Depot_-_ICF_1.zip, group_type: 2}
 - model: dashboard.datagroup
+  pk: 8
+  fields: {created_at: null, updated_at: !!timestamp '2018-06-20 17:56:57.253192',
+    name: Home Depot - Habits and Practices, description: '', downloaded_by: 1, downloaded_at: !!timestamp '2018-03-12
+      09:09:58', download_script: null, data_source: 8, csv: Home_Depot_-_ICF_1/Home_Depot_-_ICF_1_HD_register_records.csv,
+    zip_file: media/Home_Depot_-_ICF_1/Home_Depot_-_ICF_1.zip, group_type: 4}
+- model: dashboard.datagroup
   pk: 17
   fields: {created_at: null, updated_at: !!timestamp '2018-03-20 14:48:51', name: Walmart
       MSDS 1, description: '', downloaded_by: 1, downloaded_at: !!timestamp '2017-08-20

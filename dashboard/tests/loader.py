@@ -15,9 +15,12 @@ def load_model_objects():
     ds = DataSource.objects.create(title='Data Source for Test',
                                         estimated_records=2, state='AT',
                                         priority='HI')
-    script = Script.objects.create(title='Test Title',
+    script = Script.objects.create(title='Test Download Script',
                                         url='http://www.epa.gov/',
                                         qa_begun=False, script_type='DL')
+    exscript = Script.objects.create(title='Test Extraction Script',
+                                   url='http://www.epa.gov/',
+                                   qa_begun=False, script_type='EX')
     gt = GroupType.objects.create(title='Composition')
     dg = DataGroup.objects.create(name='Data Group for Test',
                                         description='Testing...',
@@ -43,7 +46,7 @@ def load_model_objects():
     extext = ExtractedText.objects.create(
                                     prod_name='Test Extracted Text Record',
                                     data_document=doc,
-                                    extraction_script=script
+                                    extraction_script=exscript
                                     )
     ut = UnitType.objects.create(title='percent composition')
     wft = WeightFractionType.objects.create(title= 'reported', description= 'reported')
@@ -62,9 +65,15 @@ def load_model_objects():
     pi = ProductToIngredient.objects.create(product=p, ingredient=ing)
     dsi = DSSToxSubstanceToIngredient.objects.create(dsstox_substance=dsstox,
                                                         ingredient=ing)
+    ehp = ExtractedHabitsAndPractices.objects.create(extracted_text=extext,
+                                                     product_surveyed='Test Product Surveyed',
+                                                     prevalence='Continuous')
+
+
     return dotdict({'user':user,
                     'ds':ds,
                     'script':script,
+                    'exscript':exscript,
                     'dg':dg,
                     'doc':doc,
                     'p':p,
@@ -80,5 +89,6 @@ def load_model_objects():
                     'pi':pi,
                     'dsi':dsi,
                     'dt':dt,
-                    'gt':gt
+                    'gt':gt,
+                    'ehp':ehp
                     })

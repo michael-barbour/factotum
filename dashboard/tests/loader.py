@@ -62,6 +62,11 @@ def load_model_objects():
     pi = ProductToIngredient.objects.create(product=p, ingredient=ing)
     dsi = DSSToxSubstanceToIngredient.objects.create(dsstox_substance=dsstox,
                                                         ingredient=ing)
+    ehp = ExtractedHabitsAndPractices.objects.create(extracted_text=extext,
+                                                     product_surveyed='Test Product Surveyed',
+                                                     prevalence='Continuous')
+
+
     return dotdict({'user':user,
                     'ds':ds,
                     'script':script,
@@ -80,5 +85,6 @@ def load_model_objects():
                     'pi':pi,
                     'dsi':dsi,
                     'dt':dt,
-                    'gt':gt
+                    'gt':gt,
+                    'ehp':ehp
                     })

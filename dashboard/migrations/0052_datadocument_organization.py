@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='datadocument',
             name='organization',
-            field=models.CharField(blank=True, max_length=255, null=True),
+            field=models.CharField(blank=True, max_length=255, null=False),
         ),
     ]

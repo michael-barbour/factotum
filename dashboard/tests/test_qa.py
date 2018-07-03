@@ -27,7 +27,7 @@ class QATest(TestCase):
         displayed_doc_count = response_html.xpath(
             '//*[@id="extraction_script_table"]/tbody/tr[' + str(row_count) + ']/td[2]')[0].text
         model_doc_count = DataDocument.objects.filter(
-            extractedtext__extraction_script=2).count()
+            extractedtext__extraction_script=self.objects.exscript.pk).count()
 
         self.assertEqual(displayed_doc_count, str(model_doc_count),
                          ('The displayed number of datadocuments should match '

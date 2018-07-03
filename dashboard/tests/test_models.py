@@ -70,8 +70,8 @@ class ModelsTest(TestCase):
         u = b'Data_Group_for_Test/pdf/0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf'
         self.assertIn(u, dg_response.content, (
                                     'link to PDF should be in HTML!'))
-        # ExtractionScript
-        self.assertEqual(str(self.objects.script), 'Test Title')
+        # DownloadScript
+        self.assertEqual(str(self.objects.script), 'Test Download Script')
         # ExtractedText
         self.assertEqual(str(self.objects.extext),
                                     'Test Extracted Text Record')

@@ -226,7 +226,11 @@ def extracted_text_qa(request, pk,
             extext.qa_checked =  True
             extext.save()
             notesform.save()
-            return HttpResponseRedirect(
-                        reverse('extracted_text_qa', args=[(nextpk)]))
+            if not nextpk == 0:
+                return HttpResponseRedirect(
+                            reverse('extracted_text_qa', args=[(nextpk)]))
+            if nextpk == 0:
+                return HttpResponseRedirect(
+                            reverse('qa'))
 
     return render(request, template_name, context)

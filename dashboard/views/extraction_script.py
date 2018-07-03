@@ -148,11 +148,12 @@ class ExtractedTextQAForm(ModelForm):
 
 
 @login_required()
-def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', nextid=0):
+def extracted_text_qa(request, pk,
+                            template_name='qa/extracted_text_qa.html', nextid=0):
     """
-    Detailed view of an ExtractedText object, where the user can approve the record,
-    edit its ExtractedChemical objects, skip to the next ExtractedText in the QA group,
-    or exit to the index page
+    Detailed view of an ExtractedText object, where the user can approve the
+    record, edit its ExtractedChemical objects, skip to the next ExtractedText
+    in the QA group, or exit to the index page
     """
     extext = get_object_or_404(ExtractedText, pk=pk)
     # The related DataDocument has the same pk as the ExtractedText object
@@ -200,7 +201,6 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
                                                         prefix='chemicals')
         ext_form =  ExtractedTextForm(request.POST, instance=extext)
         notesform = QANotesForm(request.POST, instance=note)
-        context.update({'notesform' : notesform})
         if chem_formset.has_changed() or ext_form.has_changed():
             print(str(extext.qa_edited))
             if chem_formset.is_valid() and ext_form.is_valid():
@@ -211,6 +211,8 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
                 extext.save()
         context['chem_formset'] = chem_formset
         context['ext_form'] = ext_form
+        # context['notesform'] = notesform
+        context.update({'notesform' : notesform}) # calls the clean method? y?
 
     # APPROVAL
     elif request.method == 'POST' and 'approve' in request.POST:
@@ -219,12 +221,11 @@ def extracted_text_qa(request, pk, template_name='qa/extracted_text_qa.html', ne
         context['notesform'] = notesform
         nextpk = extext.next_extracted_text_in_qa_group()
         if notesform.is_valid():
-            print('yay')
             extext.qa_approved_date = timezone.now()
             extext.qa_approved_by =  request.user
             extext.qa_checked =  True
             extext.save()
-
+            notesform.save()
             return HttpResponseRedirect(
                         reverse('extracted_text_qa', args=[(nextpk)]))
 

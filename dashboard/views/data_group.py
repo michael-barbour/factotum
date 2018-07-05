@@ -21,7 +21,8 @@ from djqscsv import *
 
 from dashboard.models import (DataGroup, DataDocument, Script, ExtractedText,
                             ExtractedChemical, WeightFractionType,
-                            UnitType, ExtractedFunctionalUse, DocumentType)
+                            UnitType, ExtractedFunctionalUse, DocumentType,
+                            ProductDocument)
 
 
 class DataGroupForm(forms.ModelForm):
@@ -92,7 +93,8 @@ def data_group_detail(request, pk,
                       template_name='data_group/datagroup_detail.html'):
     datagroup = get_object_or_404(DataGroup, pk=pk, )
     dg_type = str(datagroup.group_type) # 'MSDS' #FunctionalUse
-    docs = DataDocument.objects.filter(data_group_id=pk)
+    docs = datagroup.datadocument_set.get_queryset()
+    prod_link = ProductDocument.objects.filter(document__in=docs)
     npage = 50 # TODO: make this dynamic someday in its own ticket
     page = request.GET.get('page')
     paginator = Paginator(docs, npage)
@@ -111,6 +113,7 @@ def data_group_detail(request, pk,
                   'ext_err'           : {},
                   'upload_form'       : not datagroup.all_matched(),
                   'extract_form'      : include_extract_form(datagroup, dg_type),
+                  'bulk_form'         : len(docs) != len(prod_link),
                   'msg'               : ''
                   }
     if request.method == 'POST' and 'upload' in request.POST:
@@ -201,6 +204,8 @@ def data_group_detail(request, pk,
                                                     'uploaded successfully.')
                 context['extract_form'] = include_extract_form(datagroup,
                                                                         dg_type)
+    if request.method == 'POST' and 'bulk' in request.POST:
+        print('yay')
     return render(request, template_name, context)
 
 

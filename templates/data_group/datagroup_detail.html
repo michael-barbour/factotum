@@ -120,10 +120,10 @@
                 </form>
             </div>
         {% endif %}
-        {% if not upload_form and not extract_form and bulk_form %}
+        {% if not upload_form and not extract_form and bulk %}
         <form class="" method="post">
           {% csrf_token %}
-          <input type="submit" class="btn btn-primary" name="bulk" value="Bulk Create Products">
+          <input type="submit" class="btn btn-primary" name="bulk" value="Bulk Create {{ bulk }} Products">
         </form>
 
         {% endif %}

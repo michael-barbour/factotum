@@ -22,7 +22,7 @@ from djqscsv import *
 from dashboard.models import (DataGroup, DataDocument, Script, ExtractedText,
                             ExtractedChemical, WeightFractionType,
                             UnitType, ExtractedFunctionalUse, DocumentType,
-                            ProductDocument)
+                            Product, ProductDocument)
 
 
 class DataGroupForm(forms.ModelForm):
@@ -113,7 +113,7 @@ def data_group_detail(request, pk,
                   'ext_err'           : {},
                   'upload_form'       : not datagroup.all_matched(),
                   'extract_form'      : include_extract_form(datagroup, dg_type),
-                  'bulk_form'         : len(docs) != len(prod_link),
+                  'bulk'              : len(docs) - len(prod_link),
                   'msg'               : ''
                   }
     if request.method == 'POST' and 'upload' in request.POST:
@@ -205,7 +205,18 @@ def data_group_detail(request, pk,
                 context['extract_form'] = include_extract_form(datagroup,
                                                                         dg_type)
     if request.method == 'POST' and 'bulk' in request.POST:
-        print('yay')
+        a = set(docs.values_list('pk',flat=True))
+        b = set(prod_link.values_list('document_id',flat=True))
+        # DataDocs to make products for...
+        docs_needing_products = DataDocument.objects.filter(pk__in=list(a-b))
+        stub = Product.objects.all().count() + 1
+        for doc in docs_needing_products:
+            product = Product.objects.create(title='unknown',
+                                             upc=f'stub_{stub}',
+                                             data_source_id=doc.data_group.data_source_id)
+            ProductDocument.objects.create(product=product, document=doc)
+            stub += 1
+        context['bulk'] = 0
     return render(request, template_name, context)
 
 

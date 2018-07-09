@@ -63,6 +63,7 @@ urlpatterns = [
 											name='haystack_search'),
     url(r'^p_json/', views.product_ajax, 	name='p_ajax_url'),
 	url(r'^chem_search/', views.chem_search, name='chem_search'),
+	url(r'^dl_pucs/', views.download_PUCs, name='download_PUCs'),
     #url(r'^search/', FacetedSearchView(form_class=FacetedSearchForm, facet_fields=['brand_name','prod_cat']), name='haystack_search'),
     # test with: /puc-autocomplete/?q=Art
 ]

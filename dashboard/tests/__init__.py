@@ -11,3 +11,5 @@ from .test_datagroup_detail import * #5
 from .test_dashboard import * #4
 from .test_qa import * #1
 from .nav_bar import * #5
+from .test_extracted_functionaluse import * #1
+from .test_chem_search import * #1

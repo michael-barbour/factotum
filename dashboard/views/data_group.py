@@ -13,7 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from bootstrap_datepicker.widgets import DatePicker
+from bootstrap_datepicker_plus import DatePickerInput
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -26,17 +26,20 @@ from dashboard.models import (DataGroup, DataDocument, Script, ExtractedText,
 
 class DataGroupForm(forms.ModelForm):
     required_css_class = 'required' # adds to label tag
-    # source_type = forms.ModelChoiceField(label='Document Default Source Type',
-                                         # queryset=SourceType.objects.all())
+
     class Meta:
         model = DataGroup
         fields = ['name', 'description', 'group_type', 'downloaded_by', 'downloaded_at', 'download_script', 'data_source', 'csv']
         widgets = {
-            'downloaded_at': DatePicker(options={
-                "format": "yyyy-mm-dd",
-                "autoclose": True
-            })
-        }
+            'downloaded_at': DatePickerInput(
+                options={
+                    "format": "MM/DD/YYYY", # moment date-time format
+                    "showClose": True,
+                    "showClear": True,
+                    "showTodayButton": True,
+                    "keepOpen": False,
+                })
+        },
         labels = {'csv': _('Register Records CSV File'), }
 
     def __init__(self, *args, **kwargs):
@@ -206,6 +209,9 @@ def data_group_detail(request, pk,
 
 @login_required()
 def data_group_create(request, template_name='data_group/datagroup_form.html'):
+    #if coming directly to this URL somehow, redirect
+    if not(request.session.get('datasource_title') and request.session.get('datasource_pk')):
+        return redirect('data_source_list')
     # get the data source from which the create button was clicked
     datasource_title = request.session['datasource_title']
     datasource_pk = request.session['datasource_pk']

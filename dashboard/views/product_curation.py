@@ -96,7 +96,7 @@ def link_product_form(request, pk, template_name=('product_curation/'
             brand_name = form['brand_name'].value()
             manufacturer = form['manufacturer'].value()
             upc_stub = form['upc'].value()
-            try:
+            try: # could use the get_or_create method here
                 product = Product.objects.get(title=title)
             except Product.DoesNotExist:
                 now = timezone.now()

@@ -2,7 +2,7 @@ from django.test import TestCase
 from .loader import load_model_objects
 from dashboard.models import ProductToPUC
 
-class ModelsTest(TestCase):
+class UberPUCTest(TestCase):
 
     def setUp(self):
         self.objects = load_model_objects()

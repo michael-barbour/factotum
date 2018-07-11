@@ -15,8 +15,8 @@ class QANotes(CommonInfo):
 
     def clean(self):
 
-        print('------inside the QANotes model clean')
-        print(self.extracted_text.qa_edited)
+        # print('------inside the QANotes model clean')
+        # print(self.extracted_text.qa_edited)
 
         if self.extracted_text.qa_edited and self.qa_notes is None:
             raise ValidationError(_('qa_notes needs to be populated if you edited the data'))

@@ -38,7 +38,7 @@ class ExtractedText(CommonInfo):
         return nextid
 
     def clean(self):
-        print('cleaning ExtractedText object in the model')
+        # print('cleaning ExtractedText object in the model')
         if self.doc_date:
             if len(self.doc_date) != 10:
                 raise ValidationError("Date format is the wrong length.")

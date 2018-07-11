@@ -30,16 +30,7 @@ class DataGroupForm(forms.ModelForm):
     class Meta:
         model = DataGroup
         fields = ['name', 'description', 'group_type', 'downloaded_by', 'downloaded_at', 'download_script', 'data_source', 'csv']
-        widgets = {
-            'downloaded_at': DatePickerInput(
-                options={
-                    "format": "MM/DD/YYYY", # moment date-time format
-                    "showClose": True,
-                    "showClear": True,
-                    "showTodayButton": True,
-                    "keepOpen": False,
-                })
-        },
+        widgets = {'downloaded_at': DatePickerInput()}
         labels = {'csv': _('Register Records CSV File'), }
 
     def __init__(self, *args, **kwargs):

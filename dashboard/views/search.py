@@ -25,7 +25,6 @@ def bulk_indexing():
 
 
 class FacetedSearchView(BaseFacetedSearchView):
-
     form_class = FacetedProductSearchForm
     facet_fields = ['prod_cat', 'brand_name', 'facet_model_name']
     template_name = 'search/facet_search.html'

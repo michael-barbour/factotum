@@ -21,7 +21,8 @@ from djqscsv import *
 
 from dashboard.models import (DataGroup, DataDocument, Script, ExtractedText,
                             ExtractedChemical, WeightFractionType,
-                            UnitType, ExtractedFunctionalUse, DocumentType)
+                            UnitType, ExtractedFunctionalUse, DocumentType,
+                            Product, ProductDocument)
 
 
 class DataGroupForm(forms.ModelForm):
@@ -30,16 +31,7 @@ class DataGroupForm(forms.ModelForm):
     class Meta:
         model = DataGroup
         fields = ['name', 'description', 'group_type', 'downloaded_by', 'downloaded_at', 'download_script', 'data_source', 'csv']
-        widgets = {
-            'downloaded_at': DatePickerInput(
-                options={
-                    "format": "MM/DD/YYYY", # moment date-time format
-                    "showClose": True,
-                    "showClear": True,
-                    "showTodayButton": True,
-                    "keepOpen": False,
-                })
-        },
+        widgets = {'downloaded_at': DatePickerInput()}
         labels = {'csv': _('Register Records CSV File'), }
 
     def __init__(self, *args, **kwargs):
@@ -95,7 +87,8 @@ def data_group_detail(request, pk,
                       template_name='data_group/datagroup_detail.html'):
     datagroup = get_object_or_404(DataGroup, pk=pk, )
     dg_type = str(datagroup.group_type) # 'MSDS' #FunctionalUse
-    docs = DataDocument.objects.filter(data_group_id=pk)
+    docs = datagroup.datadocument_set.get_queryset()
+    prod_link = ProductDocument.objects.filter(document__in=docs)
     npage = 50 # TODO: make this dynamic someday in its own ticket
     page = request.GET.get('page')
     paginator = Paginator(docs, npage)
@@ -114,6 +107,7 @@ def data_group_detail(request, pk,
                   'ext_err'           : {},
                   'upload_form'       : not datagroup.all_matched(),
                   'extract_form'      : include_extract_form(datagroup, dg_type),
+                  'bulk'              : len(docs) - len(prod_link),
                   'msg'               : ''
                   }
     if request.method == 'POST' and 'upload' in request.POST:
@@ -204,6 +198,19 @@ def data_group_detail(request, pk,
                                                     'uploaded successfully.')
                 context['extract_form'] = include_extract_form(datagroup,
                                                                         dg_type)
+    if request.method == 'POST' and 'bulk' in request.POST:
+        a = set(docs.values_list('pk',flat=True))
+        b = set(prod_link.values_list('document_id',flat=True))
+        # DataDocs to make products for...
+        docs_needing_products = DataDocument.objects.filter(pk__in=list(a-b))
+        stub = Product.objects.all().count() + 1
+        for doc in docs_needing_products:
+            product = Product.objects.create(title='unknown',
+                                             upc=f'stub_{stub}',
+                                             data_source_id=doc.data_group.data_source_id)
+            ProductDocument.objects.create(product=product, document=doc)
+            stub += 1
+        context['bulk'] = 0
     return render(request, template_name, context)
 
 

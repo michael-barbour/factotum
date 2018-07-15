@@ -241,6 +241,7 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
                              'ignore') for x in datagroup.csv.readlines()]
             table = csv.DictReader(info)
             if not table.fieldnames == ['filename','title','document_type','product','url','organization']:
+                datagroup.csv.close()
                 datagroup.delete()
                 return render(request, template_name,
                               {'field_error': table.fieldnames,

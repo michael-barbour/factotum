@@ -44,10 +44,9 @@ window.getQueryParams = function getQueryParams(){
     return vars;
   }
   
-  
+
   $( document ).ready(function() {
       var all_params = getQueryParams();
-      console.log();
       $.each( all_params, function( key, value ) {
           key = decodeURIComponent(key).replace(/\s/g,'');
           $('#'+key).attr('checked', 'checked');

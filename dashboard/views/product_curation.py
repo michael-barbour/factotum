@@ -99,8 +99,6 @@ def link_product_form(request, pk, template_name=('product_curation/'
                 product.manufacturer = form['manufacturer'].value()
                 product.brand_name = form['brand_name'].value()
                 product.upc = form['upc'].value()
-                print(form['size'].value())
-                print(form['color'].value())
                 product.size = form['size'].value()
                 product.color = form['color'].value()
                 product.save()

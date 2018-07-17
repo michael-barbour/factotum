@@ -5,7 +5,7 @@ from .common_info import CommonInfo
 class TaxonomySource(CommonInfo):
     title = models.CharField(max_length=100, blank=False, null=False)
     description = models.TextField(null=True, blank=True)
-    last_edited_by = models.ForeignKey('auth.User', default=1, on_delete=models.CASCADE)
+    last_edited_by = models.ForeignKey('auth.User', default=1, on_delete=models.SET_DEFAULT)
 
     class Meta:
         verbose_name_plural = 'Taxonomy Sources'

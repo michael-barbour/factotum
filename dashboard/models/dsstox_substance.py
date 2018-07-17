@@ -20,4 +20,5 @@ class DSSToxSubstance(CommonInfo):
         return self.true_chemname
 
     def get_absolute_url(self):
-        return reverse('dsstox_substance', kwargs={'pk': self.pk})
+        return 'dsstox_substance_has_no_url'
+        # return reverse('dsstox_substance', kwargs={'pk': self.pk})

@@ -1,0 +1,121 @@
+{% extends 'core/base.html' %}
+{% load staticfiles %}
+{% load humanize %}
+{% load proper_paginate %}
+
+{% block title %}
+    "{{ query }}" | {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <h1>Chemical Search Results</h1>
+
+    <nav class="navbar navbar-expand-md navbar-custom py-1">
+        <ul class="nav navbar-nav navbar-right ml-auto">
+            <li class="nav-item {% if 'findchemical' in request.resolver_match.url_name %}active{% endif %}">
+                <!-- TODO: the input form should contain the search query string -->
+                <form class="search-form-container" action="/findchemical/" method="get" >
+                    <div class="icon-addon addon-lg">
+                        <input type="text" placeholder="Chemical Search" class="form-control" name="q" id="q" autocomplete="off" value="{{query}}">
+                        <div id="selction-ajax"></div>
+                    </div>
+                </form>
+            </li>
+        </ul>
+    </nav>
+
+    <br>
+
+    <div class="container">
+    <div class="row">
+
+	<div class="col-md-9">
+            <div class="row">
+                <div class="col-md-5 col-xs-5">
+                      Search result for: <label> {{query}} </label>
+               </div>
+               <div class="col-md-6 col-xs-6 align-right">
+               
+                   Showing {{ page_obj.start_index }} - {{ page_obj.end_index }} of total 
+                    {{ page_obj.paginator.count }}
+                    results on page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+               </div>
+            </div>    
+            <div>
+	    {% if  page_obj.object_list %}
+                <ol class="row top20">
+                    {% for result in page_obj.object_list %}
+                        <div class="showcase col-sm-6 col-md-4">
+           <h5>{{result.facet_model_name}}</h5>
+		   <a href="{{ result.object.get_absolute_url }}">
+          <h4 class="{{ result.result_css_class }}">{{result.object.chem_name}}</h4>
+       </a>
+       <dl>
+       {% if  result.raw_chem_name %}
+           <dd>Raw Chem Name:</dd>
+           <dt>{{result.raw_chem_name}}</dt>
+       {% endif %}
+       {% if  result.raw_cas %}
+        <dd>Raw CAS:</dd>
+        <dt>{{result.raw_cas}}</dt>
+       {% endif %}
+       {% if  result.true_chemname %}
+           <dd>True Chem Name:</dd>
+           <dt>{{result.true_chemname}}</dt>
+       {% endif %}
+       {% if  result.true_cas %}
+           <dd>True CAS:</dd>
+           <dt>{{result.true_cas}}</dt>
+       {% endif %}
+      </dl>
+		    </div>
+                    {% endfor %}
+                </ol>
+            </div>
+
+            {% if is_paginated %}
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.number == 1 %}
+                        <li class="disabled page-item"><span class="page-link">⇤</span></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href={{ request.get_full_path|link_name:1 }}>⇤</a></li>
+                    {% endif %}
+                    {% if page_obj.has_previous %}
+                        <li class="page-item"><a class="page-link" href={{ request.get_full_path|link_name:page_obj.previous_page_number }}>&laquo;</a></li>
+                    {% else %}
+                        <li class="disabled page-item"><span class="page-link">&laquo;</span></li>
+                    {% endif %}
+                    {% for i in paginator|proper_paginate:page_obj.number %}
+                        {% if page_obj.number == i %}
+                            <li class="active page-item"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href={{ request.get_full_path|link_name:i }}>{{ i }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li class="page-item"><a class="page-link" href={{ request.get_full_path|link_name:page_obj.next_page_number }}>&raquo;</a></li>
+                    {% else %}
+                        <li class="disabled page-item"><span class="page-link">&raquo;</span></li>
+                    {% endif %}
+                    {% if page_obj.number == paginator.num_pages %}
+                        <li class="disabled page-item"><span class="page-link">⇥</span></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href={{ request.get_full_path|link_name:paginator.num_pages }}>⇥</a></li>
+                    {% endif %}
+                </ul>
+            {% endif %}
+
+        {% else %}
+	    <p> Sorry, no result found for the search term  <strong>{{query}} </strong></p>
+	{% endif %}
+	</div>
+</div>
+</div>
+
+{% endblock %}
+
+
+
+
+
+

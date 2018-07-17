@@ -1,5 +1,5 @@
 certifi
-Django>=2.0
+Django>=2.0.7,<2.1.0
 pytz==2017.2
 PyYAML==3.12
 wincertstore==0.2

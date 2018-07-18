@@ -14,3 +14,5 @@ from .nav_bar import * #5
 from .test_extracted_functionaluse import * #1
 from .test_chem_search import * #1
 from .test_faceted_search import *
+from .test_get_data import *
+

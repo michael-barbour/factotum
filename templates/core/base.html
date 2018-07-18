@@ -27,13 +27,18 @@
 <!-- Fixed navbar -->
 <nav class="navbar navbar-expand-md navbar-custom fixed-top py-0">
     <a class="navbar-brand" href="{% url 'login' %}" title="an employee who does all kinds of work">factotum</a>
-    {% if user.is_authenticated %}
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
-                aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+    aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav justify-content-lg-between">
+        <li class="nav-item {% if 'get_data' in request.resolver_match.url_name %}active{% endif %}">
+            <a class="nav-link" href="{% url 'get_data' %}" title="Get Data">Get Data</a>
+        </li>
+    {% if user.is_authenticated %}
+
             <li class="nav-item {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
                 <a class="nav-link" href="{% url 'index' %}">Dashboard</a>
             </li>
@@ -71,8 +76,9 @@
                     </div>
                 </form>
             </li>
-        </ul>
     {% endif %}
+</ul>
+
     </div>
 
 </nav>

@@ -11,8 +11,8 @@ class FacetedProductSearchForm(FacetedSearchForm):
 
   def search(self):
     sqs = super(FacetedProductSearchForm, self).search()
-    # The SearchQuerySet should only return Products and Data
-    sqs = sqs.exclude(facet_model_name='DSSTox Substance').exclude(facet_model_name='Extracted Chemical')
+    # The SearchQuerySet should only return Products and Data Documents
+    sqs = sqs.filter(facet_model_name__in=['Data Document' ,'Product'])
     if self.pucs:
         query = None
     for puc in self.pucs:

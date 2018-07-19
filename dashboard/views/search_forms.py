@@ -51,6 +51,8 @@ class FacetedChemicalSearchForm(FacetedSearchForm):
 
     def search(self):
       sqs = super(FacetedChemicalSearchForm, self).search()
+      # The SearchQuerySet should only return Extracted Chemicals and DSSTox Substances
+      sqs = sqs.filter(facet_model_name__in=['Extracted Chemical' ,'DSSTox Substance'])
       if self.raw_chem_names:
           query = None
           for raw_chem_name in self.raw_chem_names:

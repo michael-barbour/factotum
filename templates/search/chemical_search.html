@@ -47,8 +47,8 @@
                     {% for result in page_obj.object_list %}
                         <div class="showcase col-sm-6 col-md-4">
            <h5>{{result.facet_model_name}}</h5>
-		   <a href="{{ result.object.get_absolute_url }}">
-          <h4 class="{{ result.result_css_class }}">{{result.object.chem_name}}</h4>
+		   <a href="{{ result.object.get_datadocument_url }}">
+          <h4 class="{{ result.result_css_class }}">{{result.title}}</h4>
        </a>
        <dl>
        {% if  result.raw_chem_name %}

@@ -26,6 +26,9 @@ class ExtractedChemical(CommonInfo):
     def __str__(self):
         return self.raw_chem_name
 
+    def get_datadocument_url(self):
+        return self.extracted_text.data_document.get_absolute_url()
+
     def indexing(self):
         obj = ExtractedChemicalIndex(
             meta={'id': self.id},

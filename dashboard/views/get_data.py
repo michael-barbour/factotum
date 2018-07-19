@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 import csv
 from dashboard.models import DSSToxSubstance, DataDocument, PUC, Product, ExtractedChemical
-from django.db.models import Count
+from django.db.models import Count, Q
 
 
 def get_data(request, template_name='get_data/get_data.html'):
@@ -33,6 +33,15 @@ def stats_by_dtxsids(dtxs):
     dds_n = DSSToxSubstance.objects.filter(sid__in=dtxs).distinct().\
         annotate(dds_n=Count('ingredient__product__datadocument')).values('sid','true_chemname', 'dds_n')
     stats.append(dds_n)
+
+    dds_wf_n = DSSToxSubstance.objects.filter(sid__in=dtxs).distinct().\
+        filter(Q(extracted_chemical__raw_central_comp__isnull=False) | Q(extracted_chemical__raw_min_comp__isnull=False) | Q(extracted_chemical__raw_central_comp__isnull=False)).annotate(dds_wf_n=Count('ingredient__product__datadocument')).values('sid','true_chemname', 'dds_wf_n')
+    stats.append(dds_wf_n)
+
+    products_n = DSSToxSubstance.objects.filter(sid__in=dtxs).distinct().\
+        annotate(products_n=Count('ingredient__product')).values('sid','true_chemname', 'products_n')
+    stats.append(products_n)
+
     return stats
 
 

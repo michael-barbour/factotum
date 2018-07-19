@@ -10,3 +10,4 @@ from .search_forms import *
 from .search import *
 from .chem_search import *
 from .dsstox_substance import *
+from .get_data import *

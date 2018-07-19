@@ -1,6 +1,8 @@
 from django.conf.urls import url, include
 from django.conf import settings
 from django.conf.urls.static import static
+from haystack.forms import FacetedSearchForm
+from haystack.views import FacetedSearchView
 from . import views
 
 urlpatterns = [
@@ -64,6 +66,10 @@ urlpatterns = [
     url(r'^p_json/', views.product_ajax, 	name='p_ajax_url'),
 	url(r'^chem_search/', views.chem_search, name='chem_search'),
 	url(r'^dl_pucs/', views.download_PUCs, name='download_PUCs'),
+    url(r'^dsstox_substance/(?P<pk>\d+)$', views.dsstox_substance_detail,
+                                        name='dsstox_substance'),
+    #url(r'^search/', FacetedSearchView(form_class=FacetedSearchForm, facet_fields=['brand_name','prod_cat']), name='haystack_search'),
+    # test with: /puc-autocomplete/?q=Art
 ]
 
 if settings.DEBUG is True:

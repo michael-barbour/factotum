@@ -16,3 +16,9 @@ class FacetedSearchTest(TestCase):
         self.assertContains(response, 'Data Document')
         self.assertNotContains(response, 'Extracted Chemical')
         self.assertNotContains(response, 'DSSTox Substance')
+
+    def test_chemical_search_excludes_documents(self):
+        response = self.c.get('/findchemical/?q=ethyl')
+        self.assertNotContains(response, 'Data Document')
+        self.assertContains(response, 'Extracted Chemical')
+        self.assertContains(response, 'DSSTox Substance')

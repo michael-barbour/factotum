@@ -6,6 +6,7 @@ from dashboard import views
 
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from dashboard.views.get_data import * 
 
 class TestGetData(TestCase):
     fixtures = ['00_superuser.yaml', '01_lookups.yaml',
@@ -22,6 +23,12 @@ class TestGetData(TestCase):
         self.assertContains(response, 'Get Data')
         response = self.client.get('/get_data/')
         self.assertContains(response, 'Summary metrics by chemical')
+
+    def test_dtxsid_stats(self):
+        ids =["DTXSID9022528", "DTXSID7020182","DTXSID6026296","DTXSID2021781"]
+        stats = stats_by_dtxsids(ids)
+        print(stats)
+
 
 
 

@@ -1,6 +1,7 @@
 
 from django.shortcuts import render
 from django.http import HttpResponse
+import datetime
 import csv
 from dashboard.models import DSSToxSubstance, DataDocument, PUC, Product, ExtractedChemical
 from django.db.models import Count, Q
@@ -46,15 +47,11 @@ def stats_by_dtxsids(dtxs):
 
 
 
-def download_chem_stats(request):
+def download_chem_stats():
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="s.csv"'
+    response['Content-Disposition'] = 'attachment; filename="chem_summary_metrics_%s.csv"' % (datetime.datetime.now().strftime("%Y%m%d"))
 
     writer = csv.writer(response)
-    writer.writerow(['gen_cat', 'prod_fam', 'prod_type', 'description', 'PUC_type'])
-    for puc in PUC.objects.all():
-        attr = puc.attribute if puc.attribute != None else ''
-        writer.writerow([puc.gen_cat, puc.prod_fam, puc.prod_type,
-                                                        puc.description, attr])
+    writer.writerow(['DTXSID', 'true_chemname', 'pucs_n', 'dds_n', 'dds_wf_n', 'products_n'])
 
     return response

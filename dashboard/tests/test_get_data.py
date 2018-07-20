@@ -25,9 +25,10 @@ class TestGetData(TestCase):
         self.assertContains(response, 'Summary metrics by chemical')
 
     def test_dtxsid_stats(self):
-        ids =["DTXSID9022528", "DTXSID7020182","DTXSID6026296","DTXSID2021781"]
+        ids =["DTXSID9022528", "DTXSID1020273","DTXSID6026296"]
         stats = stats_by_dtxsids(ids)
         print(stats)
+        csv_out = download_chem_stats()
 
 
 

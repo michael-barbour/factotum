@@ -66,6 +66,8 @@ urlpatterns = [
 	url(r'^dl_pucs/', views.download_PUCs, name='download_PUCs'),
     url(r'^dsstox_substance/(?P<pk>\d+)$', views.dsstox_substance_detail,
                                         name='dsstox_substance'),
+    url(r'^habitsandpractices/(?P<pk>\d+)$', views.habitsandpractices, 
+                                                name='habitsandpractices'),
     #url(r'^search/', FacetedSearchView(form_class=FacetedSearchForm, facet_fields=['brand_name','prod_cat']), name='haystack_search'),
     # test with: /puc-autocomplete/?q=Art
 ]

@@ -17,12 +17,9 @@ from bootstrap_datepicker_plus import DatePickerInput
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from djqscsv import *
+from djqscsv import * # whatever this is used for, it shouldn't be a star import
 
-from dashboard.models import (DataGroup, DataDocument, Script, ExtractedText,
-                            ExtractedChemical, WeightFractionType,
-                            UnitType, ExtractedFunctionalUse, DocumentType,
-                            Product, ProductDocument)
+from dashboard.models import *
 
 
 class DataGroupForm(forms.ModelForm):
@@ -328,3 +325,21 @@ def dg_dd_csv_view(request, pk, template_name='data_group/docs_in_data_group.csv
     qs = DataDocument.objects.filter(data_group_id=pk)
     filename = DataGroup.objects.get(pk=pk).name
     return render_to_csv_response(qs, filename=filename, append_datestamp=True)
+
+@login_required()
+def habitsandpractices(request, pk,
+                      template_name='data_group/habitsandpractices.html'):
+    doc = get_object_or_404(DataDocument, pk=pk, )
+
+    context = {   'doc'         : doc,
+    #               'documents'         : docs_page,
+    #               'all_documents'     : docs, # this used for template download
+    #               'extract_fields'    : extract_fields,
+    #               'ext_err'           : {},
+    #               'upload_form'       : not datagroup.all_matched(),
+    #               'extract_form'      : include_extract_form(datagroup, dg_type),
+    #               'bulk'              : len(docs) - len(prod_link),
+    #               'msg'               : '',
+    #               'hnp'               : dg_type == 'Habits and p ractices'
+                  }
+    return render(request, template_name, context)

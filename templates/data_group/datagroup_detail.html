@@ -173,7 +173,7 @@
             <span class="oi oi-circle-check" style="color:green;"></span>
           {% elif hnp %}
             <a class="btn btn-info btn-sm" role="button" title="Edit/Inspect Habits and practices"
-             href='#'>Edit / Inspect Habits and practices</a>
+             href='{% url 'habitsandpractices' doc.id %}'>Edit / Inspect Habits and practices</a>
           {% else %}
             <span class="oi oi-circle-x" style="color:red;"></span>
           {% endif %}

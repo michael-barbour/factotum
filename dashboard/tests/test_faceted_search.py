@@ -1,5 +1,7 @@
 from django.test import TestCase
 from django.test.client import Client
+from lxml import html
+
 from django.urls import resolve
 from django.contrib.auth.models import User
 
@@ -17,8 +19,10 @@ class FacetedSearchTest(TestCase):
         self.assertNotContains(response, 'Extracted Chemical')
         self.assertNotContains(response, 'DSSTox Substance')
 
-    def test_chemical_search_excludes_documents(self):
-        response = self.c.get('/findchemical/?q=ethyl')
-        self.assertNotContains(response, 'Data Document')
-        self.assertContains(response, 'Extracted Chemical')
-        self.assertContains(response, 'DSSTox Substance')
+    def test_chemical_search_ui_results(self):
+        response = self.client.get('/findchemical/?q=ethyl').content.decode('utf8')
+        response_html = html.fromstring(response)
+        self.assertIn('Sun_INDS_89',
+                      response_html.xpath('string(/html/body/div[1]/div/div[2]/ol/li[1]/a[@href="/datadocument/156051"])'),
+                      'The link to Sun_INDS_89 must be returned by a chemical search for "ethyl"')
+

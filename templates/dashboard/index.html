@@ -12,7 +12,7 @@
 
     <nav class="navbar navbar-expand-md navbar-custom py-1">
         <ul class="nav navbar-nav navbar-right ml-auto">
-            <li class="nav-item {% if 'findchemical' in request.resolver_match.url_name %}active{% endif %}">
+            <li class="nav-item">
                 <form class="search-form-container" action="/findchemical/" method="get" >
                     <div class="icon-addon addon-lg">
                         <input type="text" placeholder="Chemical Search" class="form-control" name="q" id="chemical_search" autocomplete="off">

@@ -8,5 +8,5 @@ from .product_autocomplete import *
 from .ajax import *
 from .search_forms import *
 from .search import *
-from .chem_search import *
+from .chemical_search import *
 from .dsstox_substance import *

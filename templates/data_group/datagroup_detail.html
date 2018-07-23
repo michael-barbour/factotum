@@ -120,7 +120,7 @@
                 </form>
             </div>
         {% endif %}
-        {% if not upload_form and not extract_form and bulk %}
+        {% if not upload_form and not extract_form and bulk and not hnp %}
         <form class="" method="post">
           {% csrf_token %}
           <input type="submit" class="btn btn-primary" name="bulk" value="Bulk Create {{ bulk }} Products">
@@ -143,7 +143,12 @@
         <thead class="table-primary">
         <th>Title</th>
         <th>Matched</th>
+        {% if hnp %}
+        <th>Edit</th>
+        {% else %}
         <th>Extracted</th>
+        {% endif %}
+
         </thead>
         <tbody>
         {% for doc in documents %}
@@ -166,6 +171,9 @@
             <td align="center">
           {% if doc.extracted %}
             <span class="oi oi-circle-check" style="color:green;"></span>
+          {% elif hnp %}
+            <a class="btn btn-info btn-sm" role="button" title="Edit/Inspect Habits and practices"
+             href='#'>Edit / Inspect Habits and practices</a>
           {% else %}
             <span class="oi oi-circle-x" style="color:red;"></span>
           {% endif %}

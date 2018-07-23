@@ -108,7 +108,8 @@ def data_group_detail(request, pk,
                   'upload_form'       : not datagroup.all_matched(),
                   'extract_form'      : include_extract_form(datagroup, dg_type),
                   'bulk'              : len(docs) - len(prod_link),
-                  'msg'               : ''
+                  'msg'               : '',
+                  'hnp'               : dg_type == 'Habits and practices'
                   }
     if request.method == 'POST' and 'upload' in request.POST:
         print(request.FILES)

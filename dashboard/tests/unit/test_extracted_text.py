@@ -10,9 +10,7 @@ from dashboard.models import ExtractedText, QANotes
 class ExtractedTest(TestCase):
 
     def setUp(self):
-
         self.objects = load_model_objects()
-        self.client.login(username='Karyn', password='specialP@55word')
 
     def test_extracted_doc_date_validation(self):
         # check validation for proper length string

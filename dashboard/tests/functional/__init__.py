@@ -5,3 +5,4 @@ from .test_datagroup_detail import *
 from .test_root_url_no_login import *
 from .test_qa import *
 from .test_chem_search import *
+from .test_faceted_search import *

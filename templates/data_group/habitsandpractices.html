@@ -1,0 +1,44 @@
+{% extends 'core/base.html' %}
+{% load widget_tweaks %}
+{% load staticfiles %}'
+{% load humanize %}
+
+{% block content %}
+
+<div class="card">
+  <h3 class="card-header text-center">DataDocument: {{ doc.title }}</h3>
+  <table class="table table-bordered">
+
+    <tr>
+      <th>Data Group</th>
+      <td>
+        <a title="Data Group"
+            href="{% url 'data_group_detail' doc.data_group.id %}"> {{ doc.data_group }}
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <th>Product Category</th>
+      <td>
+        {{ doc.product_category }}
+      </td>
+    </tr>
+    <tr>
+      <th>URL</th>
+      <td>
+        {{ doc.url }}
+      </td>
+    </tr>
+    {% if doc.matched %}
+    <tr>
+      <th>PDF</th>
+      <td>
+        <a href="/media/{{ doc.data_group.dgurl }}/pdf/{{ doc.filename }}"
+            title="Link to {{ doc.filename }}" target="_blank">{{ doc.filename }}</a>
+        <small><i>click to open PDF in new window</i></small>
+      </td>
+    </tr>
+    {% endif %}
+  </table>
+</div>
+{% endblock %}

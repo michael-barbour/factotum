@@ -21,3 +21,12 @@ class DSSToxSubstance(CommonInfo):
 
     def get_absolute_url(self):
         return reverse('dsstox_substance', kwargs={'pk': self.pk})
+
+    def indexing(self):
+        obj = DSSToxSubstanceIndex(
+            meta={'id': self.id},
+            title=self.true_chemname,
+            facet_model_name='DSSTox Substance',
+        )
+        obj.save()
+        return obj.to_dict(include_meta=True)

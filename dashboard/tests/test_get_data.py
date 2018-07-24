@@ -16,13 +16,6 @@ class TestGetData(TestCase):
 
     def setUp(self):
         self.client = Client()
-    
-    def test_no_auth(self):
-        # the Get Data menu item should be available to a user who isn't logged in
-        response = self.client.get('/')
-        self.assertContains(response, 'Get Data')
-        response = self.client.get('/get_data/')
-        self.assertContains(response, 'Summary metrics by chemical')
 
     def test_dtxsid_stats(self):
         ids =["DTXSID9022528", "DTXSID1020273","DTXSID6026296"]

@@ -1,4 +1,15 @@
 - model: dashboard.extractedtext
+  pk: 7
+  fields: {created_at: null, updated_at: !!timestamp '2018-07-02 22:58:59.310189',
+    record_type: msds, prod_name: AV Gas, doc_date: '2018-04-13', rev_num: '666',
+    extraction_script: 5, qa_checked: false, qa_edited: false, qa_approved_date: null, qa_approved_by: null, qa_group: null}
+- model: dashboard.extractedtext
+  pk: 8
+  fields: {created_at: null, updated_at: !!timestamp '2018-07-02 22:57:45.760331',
+    record_type: sds, prod_name: AVCAT Gas, doc_date: '2018-04-13', rev_num: '666',
+    extraction_script: 5, qa_checked: false, qa_edited: false, qa_approved_date: null,
+    qa_approved_by: null, qa_group: null}
+- model: dashboard.extractedtext
   pk: 254777
   fields: {created_at: !!timestamp '2018-06-06 08:35:33', updated_at: !!timestamp '2018-06-06
       08:35:33', record_type: null, prod_name: null, doc_date: null, rev_num: null,

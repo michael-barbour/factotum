@@ -3,8 +3,9 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
-from .loader import load_model_objects
+from dashboard.tests.loader import load_model_objects
 from dashboard.models import ExtractedText, QANotes
+
 
 class ExtractedTest(TestCase):
 

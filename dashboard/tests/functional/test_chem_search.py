@@ -3,6 +3,7 @@ from django.test.client import Client
 from django.urls import resolve
 from django.contrib.auth.models import User
 
+
 class ChemSearchTest(TestCase):
     fixtures = ['00_superuser.yaml', '01_lookups.yaml',
                 '02_datasource.yaml', '03_datagroup.yaml', '04_PUC.yaml',

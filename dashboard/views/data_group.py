@@ -61,6 +61,12 @@ class ExtractionScriptForm(forms.Form):
             del self.fields['weight_fraction_type']
         self.collapsed = True
 
+class ExtractedTextForm(forms.ModelForm):
+
+    class Meta:
+        model = ExtractedText
+        fields = ['doc_date', 'data_document', 'extraction_script']
+
 @login_required()
 def data_group_list(request, template_name='data_group/datagroup_list.html'):
     datagroup = DataGroup.objects.all()
@@ -330,9 +336,15 @@ def dg_dd_csv_view(request, pk, template_name='data_group/docs_in_data_group.csv
 def habitsandpractices(request, pk,
                       template_name='data_group/habitsandpractices.html'):
     doc = get_object_or_404(DataDocument, pk=pk, )
-
+    ext_form = None
+    print(doc.extracted)
+    if not doc.extracted:
+        print('yay')
+        script = Script.objects.last()
+        ext_form = ExtractedTextForm(initial={'data_document': doc,
+                                            'extraction_script':script})
     context = {   'doc'         : doc,
-    #               'documents'         : docs_page,
+                  'ext_form'    : ext_form,
     #               'all_documents'     : docs, # this used for template download
     #               'extract_fields'    : extract_fields,
     #               'ext_err'           : {},
@@ -342,4 +354,10 @@ def habitsandpractices(request, pk,
     #               'msg'               : '',
     #               'hnp'               : dg_type == 'Habits and p ractices'
                   }
+    if request.method == 'POST' and 'add_text' in request.POST:
+        if form.is_valid():
+            form.save()
+        doc.extracted = True
+        docs.save()
+        return redirect('habitsandpractices', pk=doc.id)
     return render(request, template_name, context)

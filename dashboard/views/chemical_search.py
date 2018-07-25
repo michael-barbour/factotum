@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from django.shortcuts import render
 from dashboard.models import DataDocument, ExtractedChemical, DSSToxSubstance
 from django.db.models import Q
 from haystack.query import SearchQuerySet
@@ -6,10 +7,23 @@ from haystack.inputs import Exact
 from haystack import connections
 from django.conf import settings
 
-def chem_search(request):
+from django.forms.models import model_to_dict
 
+def chem_search(request, template_name='search/chemical_search.html'):
     chemical = request.GET['chemical']
+    return render(request,
+                  template_name,
+                  {'results': chem_search_results(request.GET['q'])})
 
+def chem_search_json_view(request):
+    results = chem_search_results(request.GET['chemical'])
+    results['matchedRecords'] = list(
+        results['matchedRecords'].values('title', 'id', 'data_group_id', 'document_type_id'))
+    results['probableRecords'] = list(
+        results['probableRecords'].values('title', 'id', 'data_group_id', 'document_type_id'))
+    return JsonResponse(results)
+
+def chem_search_results(chemical):
     # Get matching DSSTOX records
     print("Current Haystack connection: %s" % settings.HAYSTACK_CONN)
     print(connections.connections_info.keys())
@@ -56,37 +70,16 @@ def chem_search(request):
     dd_match = DataDocument.objects.filter(id__in=dsstox_doc_ids)
     dd_probable = DataDocument.objects.filter(Q(id__in=exchem_doc_ids) & ~Q(id__in=dsstox_doc_ids))
 
-    # These lines below use Django object filtering instead of elastic.
-    #dd_match = DataDocument.objects.filter(Q(extractedtext__extractedchemical__dsstoxsubstance__true_chemname__icontains=chemical) |
-    #                                      Q(extractedtext__extractedchemical__dsstoxsubstance__true_cas__icontains=chemical))
-
-    # dd_probable = dd_all.difference(dd_match) # Not supported by MySQL!!!
-
-    #dd_probable = DataDocument.objects.filter(Q(extractedtext__extractedchemical__raw_chem_name__icontains=chemical) |
-    #                                         Q(extractedtext__extractedchemical__raw_cas__icontains=chemical)
-    #                                         ).exclude(id__in=dd_match)
-
     # Counts of each result set
     count_dd_probable = dd_probable.count()
     count_dd_match = dd_match.count()
 
-    # Now we serialize the results so we can spit out the JSON
-    columns = ['title', 'id', 'data_group_id', 'document_type_id']
-    matched_objects = []
-    for i in dd_match.values():
-        ret = [i[j] for j in columns]
-        matched_objects.append(ret)
-
-    probable_objects = []
-    for i in dd_probable.values():
-        ret = [i[j] for j in columns]
-        probable_objects.append(ret)
+    return {
+            "queryString": chemical,
+            "matchedDataDocuments": count_dd_match,
+            "probableDataDocumentMatches": count_dd_probable,
+            "matchedRecords": dd_match,
+            "probableRecords": dd_probable,
+        }
 
 
-    # Return the JSON
-    return JsonResponse({
-        "Matched Data Documents": count_dd_match,
-        "Probable Data Document matches": count_dd_probable,
-        "Matched Records": matched_objects,
-        "Probable Records": probable_objects,
-    })

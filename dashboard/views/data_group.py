@@ -336,15 +336,24 @@ def dg_dd_csv_view(request, pk, template_name='data_group/docs_in_data_group.csv
 def habitsandpractices(request, pk,
                       template_name='data_group/habitsandpractices.html'):
     doc = get_object_or_404(DataDocument, pk=pk, )
-    ext_form = None
-    print(doc.extracted)
-    if not doc.extracted:
-        print('yay')
-        script = Script.objects.last()
-        ext_form = ExtractedTextForm(initial={'data_document': doc,
-                                            'extraction_script':script})
+    script = Script.objects.last()
+    extext, _ = ExtractedText.objects.get_or_create(data_document=doc,
+                                                    extraction_script=script)
+    HPFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
+                                        model=ExtractedHabitsAndPractices,
+                                        fields=['product_surveyed','mass',
+                                                'mass_unit', 'frequency',
+                                                'frequency_unit',
+                                                'duration', 'duration_unit',
+                                                'prevalence', 'notes'],
+                                                extra=1)
+
+    ext_form = ExtractedTextForm(initial={'data_document': doc,
+                                        'extraction_script':script})
+    hp_formset = HPFormSet(instance=extext, prefix='habits')
     context = {   'doc'         : doc,
                   'ext_form'    : ext_form,
+                  'hp_formset'  : hp_formset,
     #               'all_documents'     : docs, # this used for template download
     #               'extract_fields'    : extract_fields,
     #               'ext_err'           : {},

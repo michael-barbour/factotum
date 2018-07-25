@@ -66,6 +66,10 @@ class ExtractedTextForm(forms.ModelForm):
     class Meta:
         model = ExtractedText
         fields = ['doc_date', 'data_document', 'extraction_script']
+        widgets = {
+            'data_document': forms.HiddenInput(),
+            'extraction_script': forms.HiddenInput(),
+        }
 
 @login_required()
 def data_group_list(request, template_name='data_group/datagroup_list.html'):
@@ -336,7 +340,7 @@ def dg_dd_csv_view(request, pk, template_name='data_group/docs_in_data_group.csv
 def habitsandpractices(request, pk,
                       template_name='data_group/habitsandpractices.html'):
     doc = get_object_or_404(DataDocument, pk=pk, )
-    script = Script.objects.last()
+    script = Script.objects.last() # this needs to be changed bewfore checking in!
     extext, _ = ExtractedText.objects.get_or_create(data_document=doc,
                                                     extraction_script=script)
     HPFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
@@ -348,8 +352,7 @@ def habitsandpractices(request, pk,
                                                 'prevalence', 'notes'],
                                                 extra=1)
 
-    ext_form = ExtractedTextForm(initial={'data_document': doc,
-                                        'extraction_script':script})
+    ext_form = ExtractedTextForm(instance=extext)
     hp_formset = HPFormSet(instance=extext, prefix='habits')
     context = {   'doc'         : doc,
                   'ext_form'    : ext_form,

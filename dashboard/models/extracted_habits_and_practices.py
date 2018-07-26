@@ -1,6 +1,7 @@
 from django.db import models
 from .common_info import CommonInfo
-from django.core.exceptions import ValidationError
+# from django.core.exceptions import ValidationError
+from django import forms
 from .extracted_text import ExtractedText
 
 class ExtractedHabitsAndPractices(CommonInfo):
@@ -21,8 +22,8 @@ class ExtractedHabitsAndPractices(CommonInfo):
 
     def clean(self):
         if self.mass and self.mass_unit == "":
-            raise ValidationError('Mass unit must be supplied if mass is specified.')
+            raise forms.ValidationError('Mass unit must be supplied if mass is specified.')
         if self.frequency and self.frequency_unit == "":
-            raise ValidationError('Frequency unit must be supplied if frequency is specified.')
+            raise forms.ValidationError('Frequency unit must be supplied if frequency is specified.')
         if self.duration and self.duration_unit == "":
-            raise ValidationError('Duration unit must be supplied if duration is specified.')
+            raise forms.ValidationError('Duration unit must be supplied if duration is specified.')

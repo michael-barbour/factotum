@@ -204,7 +204,6 @@ def extracted_text_qa(request, pk,
         if chem_formset.has_changed() or ext_form.has_changed():
             print(str(extext.qa_edited))
             if chem_formset.is_valid() and ext_form.is_valid():
-                print('yup')
                 chem_formset.save()
                 ext_form.save()
                 extext.qa_edited = True

@@ -341,8 +341,10 @@ def habitsandpractices(request, pk,
                       template_name='data_group/habitsandpractices.html'):
     doc = get_object_or_404(DataDocument, pk=pk, )
     script = Script.objects.last() # this needs to be changed bewfore checking in!
-    extext, _ = ExtractedText.objects.get_or_create(data_document=doc,
+    extext, created = ExtractedText.objects.get_or_create(data_document=doc,
                                                     extraction_script=script)
+    if created:
+        extext.doc_date = 'please add...'
     HPFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
                                         model=ExtractedHabitsAndPractices,
                                         fields=['product_surveyed','mass',
@@ -360,15 +362,21 @@ def habitsandpractices(request, pk,
                   }
     if request.method == 'POST' and 'save' in request.POST:
         # HPFormSet()
-        print(ext_form.is_valid())
-        print(ext_form.cleaned_data['data_document'])
-        print(ext_form.cleaned_data['extraction_script'])
-        print(ext_form.cleaned_data['doc_date'])
+        print(hp_formset.is_valid())
+        # print(ext_form.cleaned_data['data_document'])
+        # print(ext_form.cleaned_data['extraction_script'])
+        # print(ext_form.cleaned_data['doc_date'])
+        # print(ext_form.non_field_errors())
         if hp_formset.is_valid():
             hp_formset.save()
         if ext_form.is_valid():
             ext_form.save()
         doc.extracted = True
         doc.save()
-        return redirect('habitsandpractices', pk=doc.id)
+        context = {   'doc'         : doc,
+                      'ext_form'    : ext_form,
+                      'hp_formset'  : hp_formset,
+                      }
+        # render(request, template_name, context)
+        # return redirect('habitsandpractices', pk=doc.id)
     return render(request, template_name, context)

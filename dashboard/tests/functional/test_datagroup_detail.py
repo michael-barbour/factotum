@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .loader import load_model_objects
+from dashboard.tests.loader import load_model_objects
 from dashboard.models import *
 from dashboard.views.data_group import ExtractionScriptForm, DataGroupForm
 from django.core.files.uploadedfile import SimpleUploadedFile

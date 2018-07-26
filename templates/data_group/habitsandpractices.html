@@ -1,4 +1,5 @@
 {% extends 'core/base.html' %}
+{% load add_css %}
 {% load widget_tweaks %}
 {% load staticfiles %}'
 {% load humanize %}
@@ -121,7 +122,7 @@
               </div>
               <div class="text-center">
                 <small><b>{{ form.notes.label_tag }}</b></small><br>
-                  {{ form.notes}}
+                  {{ form.notes|addcss:"form-control" }}
               </div>
               <div class="text-center">
                 {% if form.instance.pk %}

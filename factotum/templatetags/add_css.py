@@ -1,4 +1,4 @@
-# This code adapted from https://medium.com/@sumitlni/paginate-properly-please-93e7ca776432
+# http://vanderwijk.info/blog/adding-css-classes-formfields-in-django-templates/
 
 from django import template
 

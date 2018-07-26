@@ -351,25 +351,24 @@ def habitsandpractices(request, pk,
                                                 'duration', 'duration_unit',
                                                 'prevalence', 'notes'],
                                                 extra=1)
-
-    ext_form = ExtractedTextForm(instance=extext)
-    hp_formset = HPFormSet(instance=extext, prefix='habits')
+    # print(extext.pk)
+    ext_form = ExtractedTextForm(request.POST or None, instance=extext)
+    hp_formset = HPFormSet(request.POST or None, instance=extext, prefix='habits')
     context = {   'doc'         : doc,
                   'ext_form'    : ext_form,
                   'hp_formset'  : hp_formset,
-    #               'all_documents'     : docs, # this used for template download
-    #               'extract_fields'    : extract_fields,
-    #               'ext_err'           : {},
-    #               'upload_form'       : not datagroup.all_matched(),
-    #               'extract_form'      : include_extract_form(datagroup, dg_type),
-    #               'bulk'              : len(docs) - len(prod_link),
-    #               'msg'               : '',
-    #               'hnp'               : dg_type == 'Habits and p ractices'
                   }
-    if request.method == 'POST' and 'add_text' in request.POST:
-        if form.is_valid():
-            form.save()
+    if request.method == 'POST' and 'save' in request.POST:
+        # HPFormSet()
+        print(ext_form.is_valid())
+        print(ext_form.cleaned_data['data_document'])
+        print(ext_form.cleaned_data['extraction_script'])
+        print(ext_form.cleaned_data['doc_date'])
+        if hp_formset.is_valid():
+            hp_formset.save()
+        if ext_form.is_valid():
+            ext_form.save()
         doc.extracted = True
-        docs.save()
+        doc.save()
         return redirect('habitsandpractices', pk=doc.id)
     return render(request, template_name, context)

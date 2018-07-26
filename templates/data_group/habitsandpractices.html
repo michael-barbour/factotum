@@ -84,19 +84,19 @@
               {{ form.id.as_hidden }}
               <div class="text-center">
                 <small><b>{{ form.product_surveyed.label_tag }}</b></small><br>
-                  {{ form.product_surveyed}}
+                  {{ form.product_surveyed|addcss:"form-control" }}
               </div>
               <div class="text-center">
                 <small><b>{{ form.mass.label_tag }}</b></small><br>
-                  {{ form.mass}}
+                  {{ form.mass|addcss:"form-control" }}
               </div>
               <div class="text-center">
                 <small><b>{{ form.mass_unit.label_tag }}</b></small><br>
-                  {{ form.mass_unit}}
+                  {{ form.mass_unit|addcss:"form-control" }}
               </div>
               <div class="text-center">
                 <small><b>{{ form.frequency.label_tag }}</b></small><br>
-                  {{ form.frequency}}
+                  {{ form.frequency|addcss:"form-control" }}
               </div>
               <div class="text-center">
                 <small><b>{{ form.frequency_unit.label_tag }}</b></small><br>
@@ -104,21 +104,21 @@
                   {% render_field form.frequency_unit class="chem-control form-control is-invalid" %}
                   {{ form.frequency_unit.errors }}
                 {% else %}
-                  {{ form.frequency_unit }}
+                  {{ form.frequency_unit|addcss:"form-control" }}
                 {% endif %}
 
               </div>
               <div class="text-center">
                 <small><b>{{ form.duration.label_tag }}</b></small><br>
-                  {{ form.duration}}
+                  {{ form.duration|addcss:"form-control" }}
               </div>
               <div class="text-center">
                 <small><b>{{ form.duration_unit.label_tag }}</b></small><br>
-                  {{ form.duration_unit}}
+                  {{ form.duration_unit|addcss:"form-control" }}
               </div>
               <div class="text-center">
                 <small><b>{{ form.prevalence.label_tag }}</b></small><br>
-                  {{ form.prevalence}}
+                  {{ form.prevalence|addcss:"form-control" }}
               </div>
               <div class="text-center">
                 <small><b>{{ form.notes.label_tag }}</b></small><br>

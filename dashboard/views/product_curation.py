@@ -4,16 +4,22 @@ from django.shortcuts import redirect
 from django.db.models import Count, Q
 
 from django.utils import timezone
+from django import forms
 from django.forms import ModelForm, ModelChoiceField
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
-from dashboard.models import DataSource, DataGroup, DataDocument, Product, ProductDocument, PUC, ProductToPUC
+from dashboard.models import DataSource, DataGroup, DataDocument, DocumentType, Product, ProductDocument, PUC, ProductToPUC
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 class ProductForm(ModelForm):
     required_css_class = 'required' # adds to label tag
+    document_type = forms.ModelChoiceField(
+        queryset=DocumentType.objects.all(),
+        label="Data Document Type",
+        required=True)
+
     class Meta:
         model = Product
         fields = ['title', 'manufacturer', 'brand_name', 'upc', 'size', 'color']
@@ -88,7 +94,7 @@ def link_product_form(request, pk, template_name=('product_curation/'
     doc = DataDocument.objects.get(pk=pk)
     ds_id = doc.data_group.data_source_id
     upc_stub = ('stub_' + str(Product.objects.all().count() + 1))
-    form = ProductForm(initial={'upc': upc_stub})
+    form = ProductForm(initial={'upc': upc_stub, 'document_type': doc.document_type})
     if request.method == 'POST':
         form = ProductForm(request.POST or None)
         if form.is_valid():
@@ -104,6 +110,11 @@ def link_product_form(request, pk, template_name=('product_curation/'
                 product.save()
             p = ProductDocument(product=product, document=doc)
             p.save()
+            document_type = form['document_type'].value()
+            if document_type != doc.document_type:
+                doc.document_type = DocumentType.objects.get(pk=document_type)
+                print(doc.document_type)
+                doc.save()
             return redirect('link_product_list', pk=doc.data_group.pk)
     return render(request, template_name,{'document': doc, 'form': form})
 

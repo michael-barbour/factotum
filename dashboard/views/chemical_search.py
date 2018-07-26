@@ -3,7 +3,6 @@ from django.shortcuts import render
 from dashboard.models import DataDocument, ExtractedChemical, DSSToxSubstance
 from django.db.models import Q
 from haystack.query import SearchQuerySet
-from django.forms.models import model_to_dict
 
 def chem_search(request, template_name='search/chemical_search.html'):
     return render(request,
@@ -19,47 +18,23 @@ def chem_search_json_view(request):
     return JsonResponse(results)
 
 def chem_search_results(chemical):
-    # Get matching DSSTOX records
-    print("Calling Search for %s " % chemical)
+    # Get matching DSSToxSubstance records
     sqs_dsstox = SearchQuerySet().filter(content=chemical).models(DSSToxSubstance)
-    print("Search called, dsstox result count:")
-    print(sqs_dsstox.count())
-
     dsstox_doc_ids = list()
 
     # Get a list of the Data Document IDs for the results
     for dsstox in sqs_dsstox:
         dsstox_doc_ids.append(dsstox.data_document_id)
-        print(dsstox.id)
-        print(dsstox.true_chemname)
-        print(dsstox.true_cas)
-        print(dsstox.data_document_id)
-
-    print("DSSTox Doc Ids %s " % dsstox_doc_ids)
 
     # Get matching Extracted Chemical records
-    print("Calling Search for %s " % chemical)
     sqs_exchem = SearchQuerySet().filter(content=chemical).models(ExtractedChemical)
-    print("Search called, exchem result count:")
-    print(sqs_exchem.count())
-
     exchem_doc_ids = list()
 
     # Get a list of the Data Document IDs for the results
     for exchem in sqs_exchem:
         exchem_doc_ids.append(exchem.object.extracted_text.data_document.id)
-        print(exchem.id)
-        print(exchem.raw_chem_name)
-        print(exchem.raw_cas)
-        print('extracted text parent object:')
-        print(exchem.object.extracted_text)
-        print('grandparent data document object:')
-        print(exchem.object.extracted_text.data_document)
-        print(exchem.extracted_text__data_document_id)
 
-    print("Exchem Doc Ids %s " % exchem_doc_ids)
-
-    # Now retrieve the DataDocuments that match theses two sets themselves, so we have access to their other attributes
+    # Retrieve DataDocuments that match theses two sets themselves, so we have access to their other attributes
     dd_match = DataDocument.objects.filter(id__in=dsstox_doc_ids)
     dd_probable = DataDocument.objects.filter(Q(id__in=exchem_doc_ids) & ~Q(id__in=dsstox_doc_ids))
 
@@ -68,11 +43,9 @@ def chem_search_results(chemical):
     count_dd_match = dd_match.count()
 
     return {
-            "queryString": chemical,
-            "matchedDataDocuments": count_dd_match,
-            "probableDataDocumentMatches": count_dd_probable,
-            "matchedRecords": dd_match,
-            "probableRecords": dd_probable,
-        }
-
-
+        "queryString": chemical,
+        "matchedDataDocuments": count_dd_match,
+        "probableDataDocumentMatches": count_dd_probable,
+        "matchedRecords": dd_match,
+        "probableRecords": dd_probable,
+    }

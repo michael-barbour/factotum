@@ -1,19 +1,15 @@
 from django.test import TestCase
 
 from dashboard.models import ProductAttribute, ProductToAttribute
-from .loader import load_model_objects
+from dashboard.tests.loader import load_model_objects
 
-##############################################################################
 
 class ProductAttributeTest(TestCase):
 
     def setUp(self):
         self.objects = load_model_objects()
-        self.client.login(username='Karyn', password='specialP@55word')
 
     def test_product_attribute_exists(self):
-
-
         a = ProductAttribute.objects.create(title='tang', type='ms')
         self.assertFalse(self.objects.p.productattribute_set.exists())
         self.assertEqual(len(ProductToAttribute.objects.all()), 0,

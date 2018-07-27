@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.test import TestCase
 
 from dashboard.models import *
-from .loader import load_model_objects
+from dashboard.tests.loader import load_model_objects
 
 def create_data_documents(data_group, source_type, pdfs):
     '''Used to imitate the creation of new DataDocuments from CSV'''

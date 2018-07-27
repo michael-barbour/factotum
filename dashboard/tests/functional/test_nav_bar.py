@@ -2,7 +2,7 @@ from django.urls import resolve
 from django.test import TestCase
 from django.test.client import Client
 from django.http import HttpRequest
-from .loader import load_model_objects
+from dashboard.tests.loader import load_model_objects
 from dashboard import views
 
 

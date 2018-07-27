@@ -9,7 +9,6 @@ from django.conf import settings
 from dashboard.models import DSSToxSubstance
 
 
-
 @override_settings(HAYSTACK_CONN='test_index')
 class ChemSearchTest(TestCase):
     fixtures = ['00_superuser.yaml', '01_lookups.yaml',

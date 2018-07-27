@@ -4,7 +4,9 @@ from django.http import HttpResponse
 import datetime
 import csv
 from dashboard.models import DSSToxSubstance, DataDocument, PUC, Product, ExtractedChemical
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Value, IntegerField
+from django.forms.models import model_to_dict
+
 
 
 def get_data(request, template_name='get_data/get_data.html'):
@@ -25,27 +27,50 @@ def stats_by_dtxsids(dtxs):
     products.n
     "The number of products the chemical appears in, where a product is defined as a product entry in Factotum." 
     """
+    print('List of DTXSIDs provided:')
     print(dtxs)
-    stats = []
+
+    # pucs_n = DSSToxSubstance.objects.filter(sid__in=dtxs).distinct().\
+    #     annotate(pucs_n=Count('ingredient__product__puc')).values('sid','pucs_n')
+    # pucs_n = list(pucs_n)
     pucs_n = DSSToxSubstance.objects.filter(sid__in=dtxs).distinct().\
-        annotate(pucs_n=Count('ingredient__product__puc')).values('sid','true_chemname', 'pucs_n')
-    stats.append(pucs_n)
+        annotate(pucs_n=Count('ingredient__product__puc')).values('sid','pucs_n')
+    pucs_n_list = list(pucs_n.values_list('pucs_n', flat=True))
 
     dds_n = DSSToxSubstance.objects.filter(sid__in=dtxs).distinct().\
-        annotate(dds_n=Count('ingredient__product__datadocument')).values('sid','true_chemname', 'dds_n')
-    stats.append(dds_n)
+        annotate(dds_n=Count('ingredient__product__datadocument')).values('sid','dds_n')
+    dds_n_list = list(dds_n.values_list('dds_n', flat=True))
 
     dds_wf_n = DSSToxSubstance.objects.filter(sid__in=dtxs).distinct().\
-        filter(Q(extracted_chemical__raw_central_comp__isnull=False) | Q(extracted_chemical__raw_min_comp__isnull=False) | Q(extracted_chemical__raw_central_comp__isnull=False)).annotate(dds_wf_n=Count('ingredient__product__datadocument')).values('sid','true_chemname', 'dds_wf_n')
-    stats.append(dds_wf_n)
+        filter(Q(extracted_chemical__raw_central_comp__isnull=False) | \
+        Q(extracted_chemical__raw_min_comp__isnull=False) | \
+        Q(extracted_chemical__raw_central_comp__isnull=False)).\
+        annotate(dds_wf_n=Count('ingredient__product__datadocument')).values('sid', 'dds_wf_n')
+    print('dds_wf_n row count')
+    print(dds_wf_n.count())
+    dds_wf_n_list = list(dds_wf_n.values_list('dds_wf_n', flat=True))
 
     products_n = DSSToxSubstance.objects.filter(sid__in=dtxs).distinct().\
-        annotate(products_n=Count('ingredient__product')).values('sid','true_chemname', 'products_n')
-    stats.append(products_n)
+        annotate(products_n=Count('ingredient__product')).values('sid', 'products_n')
+
+    stats = pucs_n.annotate(
+        dds_n=Value(-1, output_field=IntegerField()) ,
+        dds_wf_n=Value(-1, output_field=IntegerField()) ,
+        products_n=Value(-1, output_field=IntegerField())
+        )
+    print('stats object:')
+    print(stats)
+    
+    for row in stats:
+        print(row)
+        row['dds_n'] = dds_n.get(sid=row['sid'])['dds_n']
+        #row['dds_wf_n'] = dds_wf_n.get(sid=row['sid'])['dds_wf_n']
+        #row['products_n'] = products_n.get(sid=row['sid'])['products_n']
+    print('stats after adding values')
+    print(stats)
+
 
     return stats
-
-
 
 def download_chem_stats():
     response = HttpResponse(content_type='text/csv')
@@ -55,3 +80,8 @@ def download_chem_stats():
     writer.writerow(['DTXSID', 'true_chemname', 'pucs_n', 'dds_n', 'dds_wf_n', 'products_n'])
 
     return response
+
+def chem_stats_csv_view(request, pk, template_name='get_data/chem_summary_metrics.csv'):
+    qs = DataDocument.objects.filter(data_group_id=pk)
+    filename = DataGroup.objects.get(pk=pk).name
+    return render_to_csv_response(qs, filename=filename, append_datestamp=True)

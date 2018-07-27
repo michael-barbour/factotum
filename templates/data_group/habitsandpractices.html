@@ -1,5 +1,4 @@
 {% extends 'core/base.html' %}
-{% load add_css %}
 {% load widget_tweaks %}
 {% load staticfiles %}'
 {% load humanize %}
@@ -55,7 +54,7 @@
         {% csrf_token %}
       <div class="row">
         <div class="col-sm-3">
-          <div class=" card-body form-group text-center bg-dark text-white">
+          <div class=" card-body form-group text-center bg-info text-white">
             <!-- <div class="card-header">
               <h4>Extracted Text Data</h4>
             </div> -->
@@ -87,50 +86,69 @@
                 <small><b>Add New Habit and Practice</b></small><br>
               </div>
               {% else %}
+              <a class="btn btn-info btn-sm" role="button" title="Link PUCs to Habits 'n Practices'"
+               href='{% url 'habitsandpractices' doc.id %}'>Link PUCs</a><br>
               {% endif %}
               {{ form.id.as_hidden }}
-              <div class="text-center">
-                <small><b>{{ form.product_surveyed.label_tag }}</b></small><br>
-                  {{ form.product_surveyed|addcss:"form-control" }}
-              </div>
-              <div class="text-center">
-                <small><b>{{ form.mass.label_tag }}</b></small><br>
-                  {{ form.mass|addcss:"form-control" }}
-              </div>
-              <div class="text-center">
-                <small><b>{{ form.mass_unit.label_tag }}</b></small><br>
-                  {{ form.mass_unit|addcss:"form-control" }}
-              </div>
-              <div class="text-center">
-                <small><b>{{ form.frequency.label_tag }}</b></small><br>
-                  {{ form.frequency|addcss:"form-control" }}
-              </div>
-              <div class="text-center">
+
+                <small>
+                  <b>{{ form.product_surveyed.label_tag }}</b>
+                </small><br>
+                  {% render_field form.product_surveyed class="form-control" %}
+
+                <small>
+                  <b>{{ form.mass.label_tag }}</b>
+                </small><br>
+                  {% render_field form.mass class="form-control" %}
+
+                <small>
+                  <b>{{ form.mass_unit.label_tag }}</b>
+                </small><br>
+                {% if form.mass_unit.errors %}
+                 {% render_field form.mass_unit class="form-control is-invalid" %}
+                  {% for error in form.mass_unit.errors %}
+                    <div class="invalid-feedback">
+                      {{ error }}
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  {% render_field form.mass_unit class="form-control" %}
+                {% endif %}
+
+                <small>
+                  <b>{{ form.frequency.label_tag }}</b>
+                </small><br>
+                  {% render_field form.frequency class="form-control" %}
+
                 <small><b>{{ form.frequency_unit.label_tag }}</b></small><br>
                 {% if form.frequency_unit.errors %}
                   {% render_field form.frequency_unit class="chem-control form-control is-invalid" %}
                   {{ form.frequency_unit.errors }}
                 {% else %}
-                  {{ form.frequency_unit|addcss:"form-control" }}
+                  {% render_field form.frequency_unit class="form-control" %}
                 {% endif %}
 
-              </div>
-              <div class="text-center">
-                <small><b>{{ form.duration.label_tag }}</b></small><br>
-                  {{ form.duration|addcss:"form-control" }}
-              </div>
-              <div class="text-center">
+                <small>
+                  <b>{{ form.duration.label_tag }}</b>
+                </small><br>
+                  {% render_field form.duration class="form-control" %}
+
                 <small><b>{{ form.duration_unit.label_tag }}</b></small><br>
-                  {{ form.duration_unit|addcss:"form-control" }}
-              </div>
-              <div class="text-center">
-                <small><b>{{ form.prevalence.label_tag }}</b></small><br>
-                  {{ form.prevalence|addcss:"form-control" }}
-              </div>
-              <div class="text-center">
+                {% if form.duration_unit.errors %}
+                  {% render_field form.duration_unit class="chem-control form-control is-invalid" %}
+                  {{ form.duration_unit.errors }}
+                {% else %}
+                  {% render_field form.duration_unit class="form-control" %}
+                {% endif %}
+
+                <small>
+                  <b>{{ form.prevalence.label_tag }}</b>
+                </small><br>
+                  {% render_field form.prevalence class="form-control" %}
+
                 <small><b>{{ form.notes.label_tag }}</b></small><br>
-                  {{ form.notes|addcss:"form-control" }}
-              </div>
+                  {% render_field form.notes class="form-control" %}
+
               <div class="text-center">
                 {% if form.instance.pk %}
                 <small><b>{{ form.DELETE.label_tag }}</b></small><br>
@@ -143,7 +161,7 @@
         </div>
         {% endfor %}
       </div>
-      <button type = "submit" id="save" name="save" class="btn btn-primary chem-control" role="button">Save edits</button>
+      <button type = "submit" id="save" name="save" class="btn btn-primary chem-control" role="button">Save</button>
 
         </form>
       </div>

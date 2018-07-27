@@ -1,8 +1,7 @@
 from django.db import models
 from .common_info import CommonInfo
 from datetime import datetime
-# from django.core.exceptions import ValidationError
-from django import forms
+from django.core.exceptions import ValidationError
 from .data_document import DataDocument
 from .script import Script
 
@@ -42,7 +41,8 @@ class ExtractedText(CommonInfo):
         # print('cleaning ExtractedText object in the model')
         if self.doc_date:
             if len(self.doc_date) != 10:
-                raise forms.ValidationError("Date format is the wrong length.")
+                # raise forms.ValidationError("Date format is the wrong length.")
+                raise ValidationError({'doc_date': "Date format is the wrong length."})
             if self.doc_date[4] != '-' or self.doc_date[7] != '-':
                 raise forms.ValidationError(('Date format is off, '
                                       'should be  YYYY-MM-DD.'))

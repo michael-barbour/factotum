@@ -10,3 +10,5 @@ from .search_forms import *
 from .search import *
 from .chem_search import *
 from .dsstox_substance import *
+from .habits_n_practices import *
+from .habit_autocomplete import *

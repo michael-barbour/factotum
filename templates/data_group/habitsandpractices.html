@@ -87,7 +87,7 @@
               </div>
               {% else %}
               <a class="btn btn-info btn-sm" role="button" title="Link PUCs to Habits 'n Practices'"
-               href='{% url 'habitsandpractices' doc.id %}'>Link PUCs</a><br>
+               href='{% url 'link_habitsandpractices' form.instance.pk %}'>Link PUCs</a><br>
               {% endif %}
               {{ form.id.as_hidden }}
 

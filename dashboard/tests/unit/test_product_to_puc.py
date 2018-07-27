@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .loader import load_model_objects
+from dashboard.tests.loader import load_model_objects
 from dashboard.models import ProductToPUC, Product
 from dashboard.views.product_curation import ProductForm
 
@@ -44,6 +44,10 @@ class Product_Form_Test(TestCase):
 
     def test_ProductForm_valid(self):
         self.objects.p.title = 'Title Necessary'
+        self.objects.p.upc = 'Upc Necessary'
+        self.objects.p.document_type = self.objects.dt.id
+        # print(self.objects.p)
         self.objects.p.save()
         form = ProductForm(self.objects.p.__dict__, instance=self.objects.p)
+        print(form.errors)
         self.assertTrue(form.is_valid())

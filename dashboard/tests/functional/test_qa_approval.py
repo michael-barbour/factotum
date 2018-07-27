@@ -6,10 +6,10 @@ from dashboard.models import DataDocument, Script, ExtractedText, ExtractedChemi
 class TestApprovalView(TestCase):
     fixtures = ['00_superuser.yaml','01_lookups.yaml',
     '02_datasource.yaml','03_datagroup.yaml',
-    '04_productcategory.yaml','05_product_lite.yaml',
-    '06_datadocument_lite.yaml','07_script.yaml',
-    '08_extractedtext_lite.yaml','09_productdocument_lite.yaml',
-    '10_extractedchemical.yaml']
+    '04_PUC.yaml','05_product.yaml',
+    '06_datadocument.yaml','07_script.yaml',
+    '08_extractedtext.yaml','09_productdocument.yaml',
+    '10_extractedchemical.yaml', '11_dsstoxsubstance.yaml']
     def setUp(self):
         print('setUp running')
         self.factory = RequestFactory()

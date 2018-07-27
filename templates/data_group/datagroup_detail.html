@@ -169,7 +169,7 @@
           {% endif %}
             </td>
             <td align="center">
-          {% if doc.extracted %}
+          {% if doc.extracted and not hnp %}
             <span class="oi oi-circle-check" style="color:green;"></span>
           {% elif hnp %}
             <a class="btn btn-info btn-sm" role="button" title="Edit/Inspect Habits and practices"

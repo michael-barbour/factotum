@@ -113,7 +113,6 @@ def link_product_form(request, pk, template_name=('product_curation/'
             document_type = form['document_type'].value()
             if document_type != doc.document_type:
                 doc.document_type = DocumentType.objects.get(pk=document_type)
-                print(doc.document_type)
                 doc.save()
             return redirect('link_product_list', pk=doc.data_group.pk)
     return render(request, template_name,{'document': doc, 'form': form})

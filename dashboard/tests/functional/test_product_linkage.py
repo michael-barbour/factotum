@@ -11,18 +11,18 @@ class TestProductLinkage(TestCase):
         self.client.login(username='Karyn', password='specialP@55word')
 
     def test_datatype_update(self):
+        self.assertTrue(ProductForm().fields['document_type'],
+                            'ProductForm must include a document_type select input')
         dd = DataDocument.objects.get(pk=155324)
+        dd.document_type_id = 1
+        dd.save()
         self.assertEqual(dd.document_type_id, 1,
-                         'DataDocument 155324 should have a document_type_id of 1 for test to function')
-        form = ProductForm()
-        print(form)
-        # self.assertContains('document_type',
-        #                  'ProductForm must include document_type')
-        self.client.post(f'/link_product_form/155324',
+                         'DataDocument 155324 must have a document_type_id of 1 for test to function')
+        response = self.client.post(f'/link_product_form/155324',
                                     {'title': 'x',
                                      'manufacturer': '',
                                      'brand_name': '',
-                                     'upc': '',
+                                     'upc': 'none',
                                      'size': '',
                                      'color': '',
                                      'document_type': 2})

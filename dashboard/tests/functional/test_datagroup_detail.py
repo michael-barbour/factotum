@@ -1,6 +1,7 @@
 from django.test import TestCase
 from dashboard.tests.loader import load_model_objects
 from dashboard.models import *
+from lxml import html
 from dashboard.views.data_group import ExtractionScriptForm, DataGroupForm
 from django.core.files.uploadedfile import SimpleUploadedFile
 
@@ -107,12 +108,7 @@ class DataGroupTest(TestCase):
         self.assertEqual(product.upc, 'stub_2',
                                     'UPC should be created for second Product')
 
-
-# <!-- request.POST -->
-# <QueryDict: {'csrfmiddlewaretoken': ['hhkUa1TcXA8sOtgcUjPEQRe5MnEIILEh4EVp5P4E3P3YIJiAsPWKaw6qKd41SldU'],
-# 'script_selection': ['5'],
-# 'weight_fraction_type': ['1'],
-# 'extract_button': ['Submit']}>
-#
-# <!-- request.FILES -->
-# <MultiValueDict: {'extract_file': [<InMemoryUploadedFile: extracted_text_invalid_choices.csv (text/csv)>]}>
+    def test_upload_note(self):
+        response = self.client.get(f'/datagroup/{DataGroup.objects.first().id}').content.decode('utf8')
+        self.assertIn('Please limit upload to <600 documents at one time', response,
+                      'Note to limit upload to <600 should be on the page')

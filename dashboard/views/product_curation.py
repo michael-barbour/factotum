@@ -1,36 +1,12 @@
-from dal import autocomplete
-from datetime import datetime
+from django.utils import timezone
 from django.shortcuts import redirect
 from django.db.models import Count, Q
-
-from django.utils import timezone
-from django.forms import ModelForm, ModelChoiceField
 from django.shortcuts import render, get_object_or_404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 
-from dashboard.models import DataSource, DataGroup, DataDocument, Product, ProductDocument, PUC, ProductToPUC
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
-
-class ProductForm(ModelForm):
-    required_css_class = 'required' # adds to label tag
-    class Meta:
-        model = Product
-        fields = ['title', 'manufacturer', 'brand_name', 'upc', 'size', 'color']
-
-
-class ProductPUCForm(ModelForm):
-    puc = ModelChoiceField(
-        queryset=PUC.objects.all(),
-        label='Category',
-        widget=autocomplete.ModelSelect2(
-            url='puc-autocomplete',
-            attrs={'data-minimum-input-length': 3,  })
-    )
-
-    class Meta:
-        model = ProductToPUC
-        fields = ['puc']
+from dashboard.forms import ProductForm, ProductPUCForm
+from dashboard.models import *
 
 
 @login_required()
@@ -116,7 +92,7 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
     if form.is_valid():
         puc = PUC.objects.get(id=form['puc'].value())
         ProductToPUC.objects.create(PUC=puc, product=p, classification_method='MA',
-                                    puc_assigned_time=datetime.now(), puc_assigned_usr=request.user)
+                                    puc_assigned_time=timezone.now(), puc_assigned_usr=request.user)
         return redirect('category_assignment', pk=p.data_source.id)
     return render(request, template_name,{'product': p, 'form': form})
 

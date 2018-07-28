@@ -1,36 +1,12 @@
 from dal import autocomplete
 
-from django import forms
-from django.utils.translation import ugettext_lazy as _
-
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.decorators import login_required
 
 from dashboard.models import *
+from dashboard.forms import ExtractedTextForm, HabitsPUCForm, HnPFormSet
 
-
-class ExtractedTextForm(forms.ModelForm):
-
-    class Meta:
-        model = ExtractedText
-        fields = ['doc_date', 'data_document', 'extraction_script']
-        widgets = {
-            'data_document': forms.HiddenInput(),
-            'extraction_script': forms.HiddenInput(),
-        }
-
-class HabitsPUCForm(forms.ModelForm):
-    puc = forms.ModelChoiceField(
-        queryset=PUC.objects.all(),
-        label='PUC',
-        widget=autocomplete.ModelSelect2(
-            url='habit-autocomplete',
-            attrs={'data-minimum-input-length': 3,  })
-    )
-
-    class Meta:
-        model = ExtractedHabitsAndPracticesToPUC
-        fields = ['puc']
 
 @login_required()
 def habitsandpractices(request, pk,
@@ -41,17 +17,9 @@ def habitsandpractices(request, pk,
                                                     extraction_script=script)
     if created:
         extext.doc_date = 'please add...'
-    HPFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
-                                        model=ExtractedHabitsAndPractices,
-                                        fields=['product_surveyed','mass',
-                                                'mass_unit', 'frequency',
-                                                'frequency_unit',
-                                                'duration', 'duration_unit',
-                                                'prevalence', 'notes'],
-                                                extra=1)
     # print(extext.pk)
     ext_form = ExtractedTextForm(request.POST or None, instance=extext)
-    hp_formset = HPFormSet(request.POST or None, instance=extext, prefix='habits')
+    hp_formset = HnPFormSet(request.POST or None, instance=extext, prefix='habits')
     context = {   'doc'         : doc,
                   'ext_form'    : ext_form,
                   'hp_formset'  : hp_formset,

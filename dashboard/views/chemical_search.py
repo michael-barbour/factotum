@@ -20,44 +20,44 @@ def chem_search_json_view(request):
 
 def chem_search_results(chemical):
     # Get matching DSSTOX records
-    print("Calling Search for %s " % chemical)
+    # print("Calling Search for %s " % chemical)
     sqs_dsstox = SearchQuerySet().filter(content=chemical).models(DSSToxSubstance)
-    print("Search called, dsstox result count:")
-    print(sqs_dsstox.count())
+    # print("Search called, dsstox result count:")
+    # print(sqs_dsstox.count())
 
     dsstox_doc_ids = list()
 
     # Get a list of the Data Document IDs for the results
     for dsstox in sqs_dsstox:
         dsstox_doc_ids.append(dsstox.data_document_id)
-        print(dsstox.id)
-        print(dsstox.true_chemname)
-        print(dsstox.true_cas)
-        print(dsstox.data_document_id)
+        # print(dsstox.id)
+        # print(dsstox.true_chemname)
+        # print(dsstox.true_cas)
+        # print(dsstox.data_document_id)
 
-    print("DSSTox Doc Ids %s " % dsstox_doc_ids)
+    # print("DSSTox Doc Ids %s " % dsstox_doc_ids)
 
     # Get matching Extracted Chemical records
-    print("Calling Search for %s " % chemical)
+    # print("Calling Search for %s " % chemical)
     sqs_exchem = SearchQuerySet().filter(content=chemical).models(ExtractedChemical)
-    print("Search called, exchem result count:")
-    print(sqs_exchem.count())
+    # print("Search called, exchem result count:")
+    # print(sqs_exchem.count())
 
     exchem_doc_ids = list()
 
     # Get a list of the Data Document IDs for the results
     for exchem in sqs_exchem:
         exchem_doc_ids.append(exchem.object.extracted_text.data_document.id)
-        print(exchem.id)
-        print(exchem.raw_chem_name)
-        print(exchem.raw_cas)
-        print('extracted text parent object:')
-        print(exchem.object.extracted_text)
-        print('grandparent data document object:')
-        print(exchem.object.extracted_text.data_document)
-        print(exchem.extracted_text__data_document_id)
+        # print(exchem.id)
+        # print(exchem.raw_chem_name)
+        # print(exchem.raw_cas)
+        # print('extracted text parent object:')
+        # print(exchem.object.extracted_text)
+        # print('grandparent data document object:')
+        # print(exchem.object.extracted_text.data_document)
+        # print(exchem.extracted_text__data_document_id)
 
-    print("Exchem Doc Ids %s " % exchem_doc_ids)
+    # print("Exchem Doc Ids %s " % exchem_doc_ids)
 
     # Now retrieve the DataDocuments that match theses two sets themselves, so we have access to their other attributes
     dd_match = DataDocument.objects.filter(id__in=dsstox_doc_ids)
@@ -74,5 +74,3 @@ def chem_search_results(chemical):
             "matchedRecords": dd_match,
             "probableRecords": dd_probable,
         }
-
-

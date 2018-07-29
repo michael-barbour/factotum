@@ -1,6 +1,7 @@
 from dal import autocomplete
 
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import (render, redirect, get_object_or_404,
+                                                HttpResponseRedirect)
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
 
@@ -25,24 +26,17 @@ def habitsandpractices(request, pk,
                   'hp_formset'  : hp_formset,
                   }
     if request.method == 'POST' and 'save' in request.POST:
-        # HPFormSet()
-        print(hp_formset.is_valid())
-        # print(ext_form.cleaned_data['data_document'])
-        # print(ext_form.cleaned_data['extraction_script'])
-        # print(ext_form.cleaned_data['doc_date'])
-        # print(ext_form.non_field_errors())
-        if hp_formset.is_valid():
+        if hp_formset.is_valid() and ext_form.is_valid():
+            if not doc.extracted:
+                doc.extracted = True
+                doc.save()
             hp_formset.save()
-        if ext_form.is_valid():
             ext_form.save()
-        doc.extracted = True
-        doc.save()
+            return HttpResponseRedirect(f'/habitsandpractices/{doc.pk}')
         context = {   'doc'         : doc,
                       'ext_form'    : ext_form,
                       'hp_formset'  : hp_formset,
                       }
-        # render(request, template_name, context)
-        # return redirect('habitsandpractices', pk=doc.id)
     return render(request, template_name, context)
 
 
@@ -66,8 +60,7 @@ def link_habitsandpractices(request, pk,
                 )
                 form = HabitsPUCForm()
     linked = ExtractedHabitsAndPracticesToPUC.objects.filter(
-                    extracted_habits_and_practices=hnp
-    ).values('PUC')
+                    extracted_habits_and_practices=hnp).values('PUC')
     hnp_puc = PUC.objects.filter(pk__in=linked)
     print(hnp_puc)
     context = {'hnp': hnp,

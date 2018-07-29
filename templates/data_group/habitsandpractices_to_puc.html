@@ -18,6 +18,20 @@
 
 </form>
 </div>
+<br>
+<table class="table table-sm table-bordered table-striped">
+    <thead class="table-primary">
+    <th>PUCs Linked</th>
+    </thead>
+    <tbody>
+    {% for linked_puc in hnp_puc %}
+        <tr>
+            <td>{{ linked_puc }}</td>
+
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
 
 <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
 {{ form.media }}

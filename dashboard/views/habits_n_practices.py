@@ -48,10 +48,30 @@ def habitsandpractices(request, pk,
 
 @login_required()
 def link_habitsandpractices(request, pk,
-                      template_name='data_group/habitsandpractices_to_puc.html'):
+                        template_name='data_group/habitsandpractices_to_puc.html'):
     hnp = get_object_or_404(ExtractedHabitsAndPractices, pk=pk, )
-    form = HabitsPUCForm(request.POST or None)
+    form = HabitsPUCForm()
+    if request.method == 'POST':
+        form = HabitsPUCForm(request.POST)
+        if form.is_valid():
+            print(form['puc'].value())
+            puc = PUC.objects.get(id=form['puc'].value())
+            # make sure the PUC link doesn't already exist
+            if not ExtractedHabitsAndPracticesToPUC.objects.filter(
+                    PUC=puc,
+                    extracted_habits_and_practices=hnp).exists():
+                ExtractedHabitsAndPracticesToPUC.objects.create(
+                        PUC=puc,
+                        extracted_habits_and_practices=hnp
+                )
+                form = HabitsPUCForm()
+    linked = ExtractedHabitsAndPracticesToPUC.objects.filter(
+                    extracted_habits_and_practices=hnp
+    ).values('PUC')
+    hnp_puc = PUC.objects.filter(pk__in=linked)
+    print(hnp_puc)
     context = {'hnp': hnp,
                 'form': form,
+                'hnp_puc': hnp_puc,
     }
     return render(request, template_name, context)

@@ -3,6 +3,7 @@ from django.test.client import Client
 from django.urls import resolve
 from django.contrib.auth.models import User
 
+
 class ChemSearchTest(TestCase):
     fixtures = ['00_superuser.yaml', '01_lookups.yaml',
                 '02_datasource.yaml', '03_datagroup.yaml', '04_PUC.yaml',
@@ -14,12 +15,11 @@ class ChemSearchTest(TestCase):
 
     def test_chem_search(self):
         response = self.c.get('/chem_search/?chemical=dibutyl')
-        self.assertContains(response, '"Matched Data Documents": 1')
-        self.assertContains(response, '"Probable Data Document matches": 0')
+        self.assertContains(response, '"matchedDataDocuments": 1')
+        self.assertContains(response, '"probableDataDocumentMatches": 2')
         self.assertNotContains(response, 'Sun_INDS_89')
 
         response = self.c.get('/chem_search/?chemical=ethylparaben')
         self.assertContains(response, 'Sun_INDS_89')
         self.assertContains(response, 'Avgas 100LL (<0.1% Benzene)')
         self.assertContains(response, 'Jet A')
-        self.assertNotContains(response, 'Jet A-1')

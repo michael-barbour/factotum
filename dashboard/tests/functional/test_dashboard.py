@@ -5,7 +5,7 @@ from lxml import html
 from django.urls import resolve
 from django.test import TestCase
 
-from .loader import load_model_objects
+from dashboard.tests.loader import load_model_objects
 from dashboard import views
 from dashboard.models import *
 
@@ -67,3 +67,10 @@ class DashboardTest(TestCase):
         self.assertEqual(csv_lines[0],'gen_cat,prod_fam,prod_type,description,PUC_type')
         # check the PUC from loader
         self.assertEqual(csv_lines[1],puc_line)
+
+    def test_chem_search_input(self):
+        self.client.logout()
+        response = self.client.get('/').content.decode('utf8')
+        response_html = html.fromstring(response)
+        self.assertTrue(response_html.xpath('//*[@id="chemical_search"]'),
+                      'The chemical search input should appear on the dashboard')

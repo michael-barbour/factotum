@@ -62,7 +62,8 @@ urlpatterns = [
     url(r'^find/', views.search.FacetedSearchView.as_view(),
 											name='haystack_search'),
     url(r'^p_json/', views.product_ajax, 	name='p_ajax_url'),
-	url(r'^chem_search/', views.chem_search, name='chem_search'),
+	url(r'^chem_search/', views.chemical_search.chem_search_json_view, name='chem_search_json_view'),
+    url(r'^findchemical/', views.chemical_search.chem_search, name='chem_search'),
 	url(r'^dl_pucs/', views.download_PUCs, name='download_PUCs'),
     url(r'^dsstox_substance/(?P<pk>\d+)$', views.dsstox_substance_detail,
                                         name='dsstox_substance'),
@@ -71,6 +72,8 @@ urlpatterns = [
     url(r'^link_habitandpractice_to_puc/(?P<pk>\d+)$',
                                                 views.link_habitsandpractices,
                                                 name='link_habitsandpractices'),
+    url(r'^get_data/', views.get_data,
+                                        name='get_data'),
     #url(r'^search/', FacetedSearchView(form_class=FacetedSearchForm, facet_fields=['brand_name','prod_cat']), name='haystack_search'),
     # test with: /puc-autocomplete/?q=Art
 ]

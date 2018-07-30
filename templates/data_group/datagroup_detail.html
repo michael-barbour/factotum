@@ -163,9 +163,10 @@
               <p style="display:none;">{{doc.matched}}</p>
             </span>
           {% else %}
-            <span class="oi oi-circle-x" style="color:red;">
+          <a class="btn btn-danger btn-sm" role="button" title="delete"
+             href="{% url "data_document_delete" doc.id %}">
+              <span class="oi oi-trash"></span> </a>
               <p style="display:none;">{{doc.matched}}</p>
-            </span>
           {% endif %}
             </td>
             <td align="center">
@@ -175,7 +176,7 @@
             </span>
           {% else %}
             <span class="oi oi-circle-x" style="color:red;">
-              <p style="display:none;">{{doc.extracted}}</p>              
+              <p style="display:none;">{{doc.extracted}}</p>
             </span>
           {% endif %}
             </td>

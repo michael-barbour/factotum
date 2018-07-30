@@ -29,6 +29,8 @@ urlpatterns = [
                                             name='data_group_edit'),
     url(r'^datagroup/delete/(?P<pk>\d+)$', views.data_group_delete,
                                             name='data_group_delete'),
+    url(r'^datadocument/delete/(?P<pk>\d+)$', views.data_document_delete,
+                                            name='data_document_delete'),
     url(r'^product_curation/$', views.product_curation_index,
                                             name='product_curation'),
     url(r'^product_curation/$', views.product_curation_index,

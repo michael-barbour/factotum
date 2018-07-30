@@ -159,9 +159,8 @@
           {% endif %}
             <td align="center">
           {% if doc.matched %}
-            <span class="oi oi-circle-check" style="color:green;">
-              <p style="display:none;">{{doc.matched}}</p>
-            </span>
+            <span class="oi oi-circle-check" style="color:green;"></span>
+            <p style="display:none;">{{doc.matched}}</p>
           {% else %}
           <a class="btn btn-danger btn-sm" role="button" title="delete"
              href="{% url "data_document_delete" doc.id %}">

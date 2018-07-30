@@ -61,7 +61,7 @@ def stats_by_dtxsids(dtxs):
             )
             .values('extracted_text_id')
             .distinct()
-            .annotate(dds_wf_n=Count('extracted_text_id'))
+            .annotate(dds_wf_n=Count('extracted_text_id') )
             .values('dds_wf_n')
         )
     )
@@ -79,22 +79,21 @@ def stats_by_dtxsids(dtxs):
     .annotate(products_n=Value(-1, output_field=IntegerField()))
 
     for row in stats:
-        row['dds_n'] = dds_n.get(sid=row['sid'])['dds_n']
-        row['dds_wf_n'] = dds_wf_n.get(sid=row['sid'])['dds_wf_n']
-        row['products_n'] = products_n.get(sid=row['sid'])['products_n']
+        row['dds_n'] = int(dds_n.get(sid=row['sid'])['dds_n'] or 0)
+        row['dds_wf_n'] = int(dds_wf_n.get(sid=row['sid'])['dds_wf_n'] or 0)
+        row['products_n'] = int(products_n.get(sid=row['sid'])['products_n'] or 0)
 
     return stats
 
 def download_chem_stats(stats):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="chem_summary_metrics_%s.csv"' % (datetime.datetime.now().strftime("%Y%m%d"))
-
+ 
     writer = csv.writer(response)
-    writer.writerow(['DTXSID', 'true_chemname', 'pucs_n', 'dds_n', 'dds_wf_n', 'products_n'])
+    writer.writerow(['DTXSID',  'pucs_n', 'dds_n', 'dds_wf_n', 'products_n'])
+    for stat in stats:
+        print(stat['sid'])
+        writer.writerow([stat['sid'], stat['pucs_n'], stat['dds_n'], stat['dds_wf_n'], stat['products_n']])
 
     return response
 
-def chem_stats_csv_view(request, pk, template_name='get_data/chem_summary_metrics.csv'):
-    qs = DataDocument.objects.filter(data_group_id=pk)
-    filename = DataGroup.objects.get(pk=pk).name
-    return render_to_csv_response(qs, filename=filename, append_datestamp=True)

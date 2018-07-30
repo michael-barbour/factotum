@@ -37,7 +37,7 @@ class ExtractedTextForm(ModelForm):
 
     class Meta:
         model = ExtractedText
-        fields = ['record_type','prod_name', 'doc_date', 'rev_num']
+        fields = ['prod_name', 'doc_date', 'rev_num']
 
 class QANotesForm(ModelForm):
 
@@ -143,7 +143,7 @@ class ExtractedTextQAForm(ModelForm):
 
     class Meta:
         model = ExtractedText
-        fields = ['record_type', 'prod_name', 'data_document', 'qa_checked']
+        fields = ['prod_name', 'data_document', 'qa_checked']
 
 
 

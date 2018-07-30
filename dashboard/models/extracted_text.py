@@ -10,7 +10,6 @@ from .script import Script
 class ExtractedText(CommonInfo):
     data_document = models.OneToOneField(DataDocument,on_delete=models.CASCADE,
                                                             primary_key=True)
-    record_type = models.CharField(max_length=50, null=True, blank=True)
     prod_name = models.CharField(max_length=500, null=True, blank=True)
     doc_date = models.CharField(max_length=25, null=True, blank=True)
     rev_num = models.CharField(max_length=50, null=True, blank=True)

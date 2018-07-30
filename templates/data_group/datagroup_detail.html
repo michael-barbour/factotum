@@ -159,16 +159,24 @@
           {% endif %}
             <td align="center">
           {% if doc.matched %}
-            <span class="oi oi-circle-check" style="color:green;"></span>
+            <span class="oi oi-circle-check" style="color:green;">
+              <p style="display:none;">{{doc.matched}}</p>
+            </span>
           {% else %}
-            <span class="oi oi-circle-x" style="color:red;"></span>
+            <span class="oi oi-circle-x" style="color:red;">
+              <p style="display:none;">{{doc.matched}}</p>
+            </span>
           {% endif %}
             </td>
             <td align="center">
           {% if doc.extracted %}
-            <span class="oi oi-circle-check" style="color:green;"></span>
+            <span class="oi oi-circle-check" style="color:green;">
+              <p style="display:none;">{{doc.extracted}}</p>
+            </span>
           {% else %}
-            <span class="oi oi-circle-x" style="color:red;"></span>
+            <span class="oi oi-circle-x" style="color:red;">
+              <p style="display:none;">{{doc.extracted}}</p>              
+            </span>
           {% endif %}
             </td>
           </tr>

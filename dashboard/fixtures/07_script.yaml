@@ -58,3 +58,7 @@
   fields: {created_at: !!timestamp '2018-06-05 14:56:29.918859', updated_at: !!timestamp '2018-06-05
       14:56:29.918885', title: Walmart MSDS (Extract), url: 'https://github.com/HumanExposure/data_mgmt_scripts/blob/master/pdf_extraction/extract_pdfs.py',
     qa_begun: false, script_type: EX}
+- model: dashboard.script
+  pk: 13
+  fields: {created_at: !!timestamp '2018-07-31 11:28:13.705077', updated_at: !!timestamp '2018-07-31
+      11:28:13.705115', title: Manual (dummy), url: null, qa_begun: false, script_type: EX}

@@ -1,5 +1,5 @@
 from dal import autocomplete
-from dashboard.models import Product, PUC
+from dashboard.models import PUC
 from django.db.models import Q
 
 
@@ -10,6 +10,6 @@ class PUCAutocomplete(autocomplete.Select2QuerySetView):
             return PUC.objects.none()
         qs = PUC.objects.all()
         if self.q:
-            qs = qs.filter(Q(gen_cat__icontains=self.q) | Q(prod_fam__icontains=self.q) | Q(prod_type__icontains=self.q)) 
+            qs = qs.filter(Q(gen_cat__icontains=self.q) | Q(prod_fam__icontains=self.q) | Q(prod_type__icontains=self.q))
 
         return qs

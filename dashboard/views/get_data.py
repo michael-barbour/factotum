@@ -69,7 +69,6 @@ def stats_by_dtxsids(dtxs):
                 Q(raw_central_comp__isnull=False)
             )
             .values('extracted_text_id')
-            .distinct()
             .annotate(dds_wf_n=Count('extracted_text_id') )
             .values('dds_wf_n')
         )

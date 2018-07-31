@@ -1,6 +1,6 @@
 from django.test import TestCase, override_settings
 from dashboard.tests.loader import *
-from dashboard.views.product_curation import ProductForm
+from dashboard.views.product_curation import ProductLinkForm
 
 
 @override_settings(ALLOWED_HOSTS=['testserver'])
@@ -11,8 +11,8 @@ class TestProductLinkage(TestCase):
         self.client.login(username='Karyn', password='specialP@55word')
 
     def test_datatype_update(self):
-        self.assertTrue(ProductForm().fields['document_type'],
-                            'ProductForm must include a document_type select input')
+        self.assertTrue(ProductLinkForm().fields['document_type'],
+                            'ProductLinkForm must include a document_type select input')
         dd = DataDocument.objects.get(pk=155324)
         dd.document_type_id = 1
         dd.save()

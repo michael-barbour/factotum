@@ -55,6 +55,8 @@ urlpatterns = [
                                             name='puc-autocomplete'),
     url(r'^product/(?P<pk>\d+)$', views.product_detail,
                                             name='product_detail'),
+    url(r'^product/edit/(?P<pk>\d+)$', views.product_update,
+        name='product_edit'),
     url(r'^products/$', views.product_list, name='product_list'),
     url(r'^datadocument/(?P<pk>\d+)$', views.data_document_detail,
                                             name='data_document'),

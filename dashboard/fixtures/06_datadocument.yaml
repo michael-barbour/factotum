@@ -1,4 +1,24 @@
 - model: dashboard.datadocument
+  pk: 156051
+  fields: {created_at: null, updated_at: null, filename: Sun_INDS_89.pdf, title: Sun_INDS_89,
+    url: '', product_category: '', data_group: 22, matched: true, extracted: false,
+    uploaded_at: !!timestamp '2018-03-21 13:16:47.965719', document_type: null, organization: ''}
+- model: dashboard.datadocument
+  pk: 155324
+  fields: {filename: gp_98.pdf, title: gp_98, url: '', product_category: '', data_group: 20,
+    matched: true, extracted: false, uploaded_at: ! '2018-03-21 12:38:24.895814',
+    }
+- model: dashboard.datadocument
+  pk: 53
+  fields: {filename: 41.pdf, title: Material Safety Data Sheet - Menards, url: 'http://www.homedepot.com/catalog/pdfImages/b3/b30c0a92-eb85-4f1a-ad18-0c8448070cb7.pdf',
+    product_category: '', data_group: 8, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.429346', }
+- model: dashboard.datadocument
+  pk: 54
+  fields: {filename: 42.pdf, title: MSDS - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/34/34185649-1857-4622-a06a-eca836ff4352.pdf',
+    product_category: '', data_group: 8, matched: true, extracted: false, uploaded_at: ! '2018-03-12
+      09:10:17.430102', }
+- model: dashboard.datadocument
   pk: 7
   fields: {created_at: null, updated_at: null, filename: 11165872.pdf, title: Avgas
       100LL (<0.1% Benzene), url: 'https://airbpmsds.bp.com/ussds/amersdsf.nsf/AllFiles_AIR_BP_FUELS/89C50579C812749A8025806F0057F0C0/$File/11165872.pdf',

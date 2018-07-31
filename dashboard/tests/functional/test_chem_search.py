@@ -7,6 +7,8 @@ from haystack import connections
 import time
 from django.conf import settings
 from dashboard.models import DSSToxSubstance
+from lxml import html
+
 
 
 @override_settings(HAYSTACK_CONN='test_index')
@@ -30,20 +32,28 @@ class ChemSearchTest(TestCase):
     def test_chem_search(self):
         response = self.c.get('/chem_search/?chemical=dibutyl')
         #print(response.content)
-        self.assertContains(response, '"Matched Data Documents": 1')
-        self.assertContains(response, '"Probable Data Document matches": 55')
+        self.assertContains(response, '"matchedDataDocuments": 1')
+        self.assertContains(response, '"probableDataDocumentMatches": 55')
         self.assertNotContains(response, 'Sun_INDS_89')
 
         response = self.c.get('/chem_search/?chemical=ethylparaben')
         self.assertContains(response, 'SPICEBOMB3PCSGS')
         self.assertContains(response, 'The Healing Garden')
+    
+    def test_chemical_search_ui_results(self):
+        response = self.client.get('/findchemical/?q=ethyl').content.decode('utf8')
+        response_html = html.fromstring(response)
+        print(response_html.xpath('string(/html/body/div[1]/div/div[2]/ol)'))
+        self.assertIn('Sun_INDS_89',
+                      response_html.xpath('string(/html/body/div[1]/div/div[2]/ol)'),
+                      'The link to Sun_INDS_89 must be returned by a chemical search for "ethyl"')
 
     def test_search_isolation(self):
         response = self.c.get('/chem_search/?chemical=dibutyl')
-        self.assertContains(response, '"Matched Data Documents": 1')
+        self.assertContains(response, '"matchedDataDocuments": 1')
         # remove the search term from the DSSToxSubstance records and re-index
         DSSToxSubstance.objects.filter(true_chemname='dibutyl phthalate').update(true_chemname='changed_name')
         update_index.Command().handle( using=['test_index'], interactive=False)
         
         response = self.c.get('/chem_search/?chemical=dibutyl')
-        self.assertContains(response, '"Matched Data Documents": 0')
+        self.assertContains(response, '"matchedDataDocuments": 0')

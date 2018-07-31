@@ -1,4 +1,15 @@
 - model: dashboard.dsstoxsubstance
+  pk: 6
+  fields: {created_at: !!timestamp '2018-04-12 15:40:22.035041', updated_at: !!timestamp '2018-04-12
+      15:40:22.035071', extracted_chemical: 1, true_cas: 120-47-8, true_chemname: ethylparaben,
+    rid: DTXRID9994488, sid: DTXSID9022528}
+- model: dashboard.dsstoxsubstance
+  pk: 7
+  fields: {created_at: !!timestamp '2018-04-12 15:41:12.439122', updated_at: !!timestamp '2018-04-14
+      09:41:42.087304', extracted_chemical: 3, true_cas: 80-05-7, true_chemname: bisphenol
+      a, rid: DTXRID7485239, sid: DTXSID7020182}
+
+- model: dashboard.dsstoxsubstance
   pk: 1
   fields: {created_at: !!timestamp '2018-04-12 15:41:12.439122', updated_at: !!timestamp '2018-04-14
       09:41:42.087304', extracted_chemical: 27216, true_cas: 80-05-7, true_chemname: ethylparaben,

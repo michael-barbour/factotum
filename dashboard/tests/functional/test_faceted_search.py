@@ -19,10 +19,5 @@ class FacetedSearchTest(TestCase):
         self.assertNotContains(response, 'Extracted Chemical')
         self.assertNotContains(response, 'DSSTox Substance')
 
-    def test_chemical_search_ui_results(self):
-        response = self.client.get('/findchemical/?q=ethyl').content.decode('utf8')
-        response_html = html.fromstring(response)
-        self.assertIn('Sun_INDS_89',
-                      response_html.xpath('string(/html/body/div[1]/div/div[2]/ol/li[1]/a[@href="/datadocument/156051"])'),
-                      'The link to Sun_INDS_89 must be returned by a chemical search for "ethyl"')
+
 

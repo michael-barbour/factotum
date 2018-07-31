@@ -10,7 +10,6 @@ from django.conf import settings
 from django.forms.models import model_to_dict
 
 def chem_search(request, template_name='search/chemical_search.html'):
-    chemical = request.GET['chemical']
     return render(request,
                   template_name,
                   {'results': chem_search_results(request.GET['q'])})

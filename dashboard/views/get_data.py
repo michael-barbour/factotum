@@ -57,7 +57,7 @@ def stats_by_dtxsids(dtxs):
     print(dds_n)
 
     dds_wf_n = DSSToxSubstance.objects\
-    .filter(sid__in=dtxs).values('sid')\
+    .filter(sid__in=dtxs).distinct().values('sid')\
     .annotate(
         dds_wf_n = Subquery(
             ExtractedChemical

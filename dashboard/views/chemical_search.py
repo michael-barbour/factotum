@@ -23,7 +23,6 @@ def chem_search_json_view(request):
     return JsonResponse(results)
 
 def chem_search_results(chemical):
-<<<<<<< HEAD
     # Get matching DSSTOX records
     print("Current Haystack connection: %s" % settings.HAYSTACK_CONN)
     print(connections.connections_info.keys())
@@ -32,9 +31,7 @@ def chem_search_results(chemical):
     print("Search called, dsstox result count:")
     print(sqs_dsstox.count())
 
-=======
     sqs_dsstox = SearchQuerySet().filter(content=chemical).models(DSSToxSubstance)
->>>>>>> dev
     dsstox_doc_ids = list()
 
     # Get a list of the Data Document IDs for the results

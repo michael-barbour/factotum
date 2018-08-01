@@ -40,18 +40,6 @@ class ProductViewForm(ProductForm):
         for f in self.fields:
             self.fields[f].disabled = True
 
-class ProductPUCForm(ModelForm):
-    puc = ModelChoiceField(
-        queryset=PUC.objects.all(),
-        label='Category',
-        widget=autocomplete.ModelSelect2(
-            url='puc-autocomplete',
-            attrs={'data-minimum-input-length': 3,  })
-    )
-
-    class Meta:
-        model = ProductToPUC
-        fields = ['puc']
 
 
 @login_required()
@@ -141,7 +129,7 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
     if form.is_valid():
         puc = PUC.objects.get(id=form['puc'].value())
         ProductToPUC.objects.create(PUC=puc, product=p, classification_method='MA',
-                                    puc_assigned_time=datetime.now(), puc_assigned_usr=request.user)
+                                    puc_assigned_time=timezone.now(), puc_assigned_usr=request.user)
         return redirect('category_assignment', pk=p.data_source.id)
     return render(request, template_name,{'product': p, 'form': form})
 

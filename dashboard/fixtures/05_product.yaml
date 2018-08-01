@@ -457,7 +457,7 @@
 - model: dashboard.product
   pk: 60
   fields: {created_at: !!timestamp '2018-03-13 11:27:21.499807', updated_at: !!timestamp '2018-03-13
-      11:27:21.499809', data_source: 8, source_category: null, title: "Sikaflex Self\u2010\
+      11:27:21.499809', data_source: 8, source_category: null, title: "Sikaflex Self-\
       Leveling Sealant", manufacturer: '', upc: stub_60, url: null, brand_name: Sika,
     size: null, model_number: null, color: null, item_id: null, parent_item_id: null,
     short_description: null, long_description: null, thumb_image: null, medium_image: null,
@@ -8509,7 +8509,7 @@
   pk: 1079
   fields: {created_at: !!timestamp '2018-04-25 10:59:47.591856', updated_at: !!timestamp '2018-04-25
       10:59:47.591858', data_source: 8, source_category: null, title: "Botanical Disinfecting\
-      \ Multi\u2010Surface Cleaner", manufacturer: 'Seventh Generation, Inc.', upc: stub_1079,
+      \ Multi-Surface Cleaner", manufacturer: 'Seventh Generation, Inc.', upc: stub_1079,
     url: null, brand_name: Seventh Generation, size: null, model_number: null, color: null,
     item_id: null, parent_item_id: null, short_description: null, long_description: null,
     thumb_image: null, medium_image: null, large_image: null}

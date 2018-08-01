@@ -325,6 +325,14 @@ def data_document_detail(request, pk,
     doc = get_object_or_404(DataDocument, pk=pk, )
     return render(request, template_name, {'doc'  : doc,})
 
+@login_required()
+def data_document_delete(request, pk, template_name='data_source/datasource_confirm_delete.html'):
+    doc = get_object_or_404(DataDocument, pk=pk)
+    datagroup_id = doc.data_group_id
+    if request.method == 'POST':
+        doc.delete()
+        return redirect('data_group_detail', pk=datagroup_id)
+    return render(request, template_name, {'object': doc})
 
 @login_required
 def dg_dd_csv_view(request, pk, template_name='data_group/docs_in_data_group.csv'):

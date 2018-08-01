@@ -48,12 +48,3 @@ class ChemSearchTest(TestCase):
                       response_html.xpath('string(/html/body/div[1]/div/div[2]/ol)'),
                       'The link to Sun_INDS_89 must be returned by a chemical search for "ethyl"')
 
-    def test_search_isolation(self):
-        response = self.c.get('/chem_search/?chemical=dibutyl')
-        self.assertContains(response, '"matchedDataDocuments": 1')
-        # remove the search term from the DSSToxSubstance records and re-index
-        DSSToxSubstance.objects.filter(true_chemname='dibutyl phthalate').update(true_chemname='changed_name')
-        update_index.Command().handle( using=['test_index'], interactive=False)
-        
-        response = self.c.get('/chem_search/?chemical=dibutyl')
-        self.assertContains(response, '"matchedDataDocuments": 0')

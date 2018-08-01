@@ -11,6 +11,8 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 import logging
 from django.contrib import messages
+from django.db import connection
+
 
 
 
@@ -73,13 +75,25 @@ def stats_by_dtxsids(dtxs):
             .values('dds_wf_n')
         )
     )
+
+    dds_wf_n = {}
+    strsql = "SELECT dss.sid , IFNULL(SUM(  (SELECT Count(DISTINCT ec2.extracted_text_id) as dd_wf_id FROM dashboard_extractedchemical ec2 WHERE ec2.id = dss.extracted_chemical_id GROUP BY ec2.extracted_text_id HAVING SUM( ( (ec2.raw_max_comp IS NULL) +  (ec2.raw_min_comp IS NULL) +  (ec2.raw_central_comp IS NULL) ) = 0) > 0 )),0) as dds_wf_n FROM dashboard_dsstoxsubstance dss LEFT JOIN dashboard_extractedchemical ec on ec.id = dss.extracted_chemical_id GROUP BY dss.sid "
+    cursor_dds_wf_n = connection.cursor()
+    cursor_dds_wf_n.execute(strsql)
+    col_names = [desc[0] for desc in cursor_dds_wf_n.description]
+
     print('dds_wf_n:')
-    print(dds_wf_n)
+    for row in cursor_dds_wf_n:
+        #print('sid: %s      dds_wf_n: %i' % (row[0], row[1]))
+        if row[0] in dtxs:
+            #print('adding to dds_wf_n')
+            dds_wf_n[row[0]] = row[1]
+
 
     products_n = DSSToxSubstance.objects.filter(sid__in=dtxs).distinct().\
         annotate(products_n=Count('ingredient__product')).values('sid', 'products_n')
-    print('products_n:')
-    print(products_n)
+    #print('products_n:')
+    #print(products_n)
 
     stats = pucs_n\
     .annotate(dds_n=Value(-1, output_field=IntegerField())) \
@@ -88,7 +102,7 @@ def stats_by_dtxsids(dtxs):
 
     for row in stats:
         row['dds_n'] = int(dds_n.get(sid=row['sid'])['dds_n'] or 0)
-        row['dds_wf_n'] = int(dds_wf_n.get(sid=row['sid'])['dds_wf_n'] or 0)
+        row['dds_wf_n'] = dds_wf_n[row['sid']]
         row['products_n'] = int(products_n.get(sid=row['sid'])['products_n'] or 0)
 
     return stats

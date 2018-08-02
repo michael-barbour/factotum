@@ -135,6 +135,15 @@ def download_chem_stats(stats):
 
     return response
 
+def get_data_dsstox_csv_template(request):
+    print('In get_data_dsstox_csv_template, downloading csv file in response')
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="dsstox_substance_template.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['DTXSID'])
+    return response
+ 
+
 def upload_dtxsid_csv(request):
     data = {}
     if "GET" == request.method:
@@ -168,3 +177,4 @@ def upload_dtxsid_csv(request):
     resp = download_chem_stats(stats)
     print(resp)
     return resp
+

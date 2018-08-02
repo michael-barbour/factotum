@@ -78,6 +78,8 @@ urlpatterns = [
                                         name='get_data'),
     url(r'^dl_chem_summary/', views.download_chem_stats, name='download_chem_stats'),
     url(r'^upload/dtxsid_csv/$', views.upload_dtxsid_csv, name='upload_dtxsid_csv'),
+    url(r'^get_data/get_dsstox_csv_template', views.get_data_dsstox_csv_template,
+                                         name='get_data_dsstox_csv_template'),
     #url(r'^search/', FacetedSearchView(form_class=FacetedSearchForm, facet_fields=['brand_name','prod_cat']), name='haystack_search'),
     # test with: /puc-autocomplete/?q=Art
 ]

@@ -77,7 +77,24 @@ def stats_by_dtxsids(dtxs):
     )
 
     dds_wf_n = {}
-    strsql = "SELECT dss.sid , IFNULL(SUM(  (SELECT Count(DISTINCT ec2.extracted_text_id) as dd_wf_id FROM dashboard_extractedchemical ec2 WHERE ec2.id = dss.extracted_chemical_id GROUP BY ec2.extracted_text_id HAVING SUM( ( (ec2.raw_max_comp IS NULL) +  (ec2.raw_min_comp IS NULL) +  (ec2.raw_central_comp IS NULL) ) = 0) > 0 )),0) as dds_wf_n FROM dashboard_dsstoxsubstance dss LEFT JOIN dashboard_extractedchemical ec on ec.id = dss.extracted_chemical_id GROUP BY dss.sid "
+    strsql = ("SELECT dss.sid , "
+                "IFNULL("
+                    "SUM( "
+                        "(SELECT Count(DISTINCT ec2.extracted_text_id) as dd_wf_id "
+                        "FROM dashboard_extractedchemical ec2 "
+                        "WHERE ec2.id = dss.extracted_chemical_id "
+                        "GROUP BY ec2.extracted_text_id "
+                        "HAVING SUM( ( "
+                            "(ec2.raw_max_comp IS NULL) +  "
+                            "(ec2.raw_min_comp IS NULL) +  "
+                            "(ec2.raw_central_comp IS NULL) "
+                            ") = 0) > 0 )) "
+                            ",0 "
+                            ") as dds_wf_n "
+                            "FROM dashboard_dsstoxsubstance dss "
+                            "LEFT JOIN dashboard_extractedchemical ec "
+                            "on ec.id = dss.extracted_chemical_id "
+                            "GROUP BY dss.sid ")
     cursor_dds_wf_n = connection.cursor()
     cursor_dds_wf_n.execute(strsql)
     col_names = [desc[0] for desc in cursor_dds_wf_n.description]

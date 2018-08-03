@@ -38,9 +38,6 @@ class DataGroupForm(forms.ModelForm):
         self.fields['csv'].widget.attrs.update({'accept':'.csv'})
         self.fields['download_script'].queryset = qs
 
-class UploadForm(forms.Form):
-    PDF_directory = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
-
 class ExtractionScriptForm(forms.Form):
     required_css_class = 'required' # adds to label tag
     script_selection = forms.ModelChoiceField(queryset=Script.objects.filter(script_type='EX')

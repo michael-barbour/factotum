@@ -74,7 +74,7 @@ urlpatterns = [
     url(r'^link_habitandpractice_to_puc/(?P<pk>\d+)$',
                                                 views.link_habitsandpractices,
                                                 name='link_habitsandpractices'),
-    url(r'^get_data/', views.get_data,
+    url(r'^get_data/$', views.get_data,
                                         name='get_data'),
     url(r'^dl_chem_summary/', views.download_chem_stats, name='download_chem_stats'),
     url(r'^upload/dtxsid_csv/$', views.upload_dtxsid_csv, name='upload_dtxsid_csv'),

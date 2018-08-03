@@ -136,7 +136,6 @@ def download_chem_stats(stats):
     return response
 
 def get_data_dsstox_csv_template(request):
-    print('In get_data_dsstox_csv_template, downloading csv file in response')
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="dsstox_substance_template.csv"'
     writer = csv.writer(response)

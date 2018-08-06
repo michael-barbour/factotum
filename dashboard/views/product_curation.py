@@ -113,8 +113,10 @@ def link_product_form(request, pk, template_name=('product_curation/'
                 product.size = form['size'].value()
                 product.color = form['color'].value()
                 product.save()
-            p = ProductDocument(product=product, document=doc)
-            p.save()
+            if not ProductDocument.objects.filter(product=product,
+                                                    document=doc).exists():
+                p = ProductDocument(product=product, document=doc)
+                p.save()
             document_type = form['document_type'].value()
             if document_type != doc.document_type:
                 doc.document_type = DocumentType.objects.get(pk=document_type)

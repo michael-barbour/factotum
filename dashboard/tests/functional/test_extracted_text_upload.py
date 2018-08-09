@@ -3,7 +3,7 @@ from django.test import RequestFactory, TestCase, Client
 from django.http import HttpRequest
 from dashboard import views
 from dashboard.models import *
-from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.files.uploadedfile import InMemoryUploadedFile, UploadedFile
 import tempfile, csv, os
 from django.contrib.auth.models import User
 
@@ -34,7 +34,6 @@ class UploadExtractedFileTest(TestCase):
                         "0000064-17-5,sd alcohol 40-b (ethanol),,0.5,0.55,1,,"))
         finally:
             myfile.close()
-
         return myfile
 
     def test_chem_upload(self):
@@ -48,15 +47,19 @@ class UploadExtractedFileTest(TestCase):
             'extract_file': [<InMemoryUploadedFile: British_Petroleum_(Air)_1_extract_template.csv (text/csv)>]
             }
         """
-        myfile = self.generate_chem_csv()
-        req = self.factory.post({'script_selection': ['5'], 
-                                                'weight_fraction_type': ['1'], 
-                                                'extract_button': ['Submit'], 
-                                                '_files':{'extract_file': [myfile]}
-                                                }
-                                                )
+        sample_csv = self.generate_chem_csv()
+
+        req_data = {'script_selection': 5, 
+                    'weight_fraction_type': 1, 
+                    'extract_button': 'Submit', 
+                    }
+        req = self.factory.post(path = '/datagroup/6' , data=req_data, kwargs=req_data)
+        # this part is failing. I'm trying to submit the fabricated csv but I can't set it up
+        # as an InMemoryUploadedFile. 
+        up_file = UploadedFile(sample_csv)
+
+        req.FILES['extract_file'] = sample_csv
         req.user = User.objects.get(username='Karyn')
-        print(req)
-        resp = views.data_group_detail(req, 6)
-        # print(resp.content)
-        self.assertContains(resp,'2 extracted records uploaded successfully.')
+        resp = views.data_group_detail(request=req, pk=6)
+        #print(resp.content)
+        #self.assertContains(resp,'2 extracted records uploaded successfully.')

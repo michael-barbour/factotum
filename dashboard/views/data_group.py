@@ -48,6 +48,11 @@ class ExtractionScriptForm(forms.Form):
     extract_file = forms.FileField(label="Extracted Text CSV File")
 
     def __init__(self, *args, **kwargs):
+        # print('Inside ExtractionScriptForm, kwargs:')
+        # print(kwargs)
+        # print('Inside ExtractionScriptForm, args:')
+        # print(args)
+        # print('-------------')
         self.dg_type = kwargs.pop('dg_type', 0)
         self.user = kwargs.pop('user', None)
         super(ExtractionScriptForm, self).__init__(*args, **kwargs)
@@ -116,7 +121,6 @@ def data_group_detail(request, pk,
                   'composition'       : dg_type == 'Composition',
                   }
     if request.method == 'POST' and 'upload' in request.POST:
-        print(request.FILES)
         # match filename to pdf name
         proc_files = [f for d in docs for f
                 in request.FILES.getlist('multifiles') if f.name == d.filename]
@@ -144,13 +148,18 @@ def data_group_detail(request, pk,
         context['msg'] = 'Matching records uploaded successfully.'
     if request.method == 'POST' and 'extract_button' in request.POST:
         # print('------')
-        # print(request.__dict__)
+        # print('Request POST and FILE objects before being passed to ExtractionScriptForm:')
+        # print(request.POST)
+        # print(request.FILES)
+        # print('just the extract_file object:')
+        # print(request.FILES.get('extract_file'))
         # print('------')
         # extract_form.collapsed = False
         extract_form = ExtractionScriptForm(request.POST,
                                                 request.FILES,dg_type=dg_type)
         wft_id = request.POST.get('weight_fraction_type',None)
         if extract_form.is_valid():
+            #print('form is valid, about to handle csv file')
             csv_file = request.FILES.get('extract_file')
             # context['ext_err'][4] = {'47':'oops!'}
             script = Script.objects.get(pk=request.POST['script_selection'])

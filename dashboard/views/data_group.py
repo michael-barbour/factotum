@@ -143,6 +143,9 @@ def data_group_detail(request, pk,
         context['extract_form'] = form
         context['msg'] = 'Matching records uploaded successfully.'
     if request.method == 'POST' and 'extract_button' in request.POST:
+        # print('------')
+        # print(request.__dict__)
+        # print('------')
         # extract_form.collapsed = False
         extract_form = ExtractionScriptForm(request.POST,
                                                 request.FILES,dg_type=dg_type)
@@ -160,9 +163,9 @@ def data_group_detail(request, pk,
                 return render(request, template_name, context)
             good_records = []
             for i, row in enumerate(csv.DictReader(info)):
-                text_data = OrderedDict(islice(row.items(),6))
+                text_data = OrderedDict(islice(row.items(),5))
                 text_data.pop('data_document_filename') # not needed in dict
-                rec_data = OrderedDict(islice(row.items(),6,
+                rec_data = OrderedDict(islice(row.items(),5,
                                                         len(extract_fields)))
                 dd = row['data_document_id']
                 doc = get_object_or_404(docs, pk=dd)

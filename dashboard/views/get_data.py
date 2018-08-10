@@ -49,14 +49,18 @@ def stats_by_dtxsids(dtxs):
     #     annotate(pucs_n=Count('ingredient__product__puc')).values('sid','pucs_n')
     # pucs_n = list(pucs_n)
     # TODO: Correct this to use the new model traversal after issue #340
+    #pucs_n = DSSToxSubstance.objects.filter(sid__in=dtxs).distinct().\
+    #    annotate(pucs_n=Count('ingredient__product__puc')).values('sid','pucs_n')
     pucs_n = DSSToxSubstance.objects.filter(sid__in=dtxs).distinct().\
-        annotate(pucs_n=Count('ingredient__product__puc')).values('sid','pucs_n')
+        annotate(pucs_n=Count('extracted_chemical__extracted_text__data_document__product__puc')).values('sid','pucs_n')
     print('pucs_n:')
     print(pucs_n)
 
     # TODO: Correct this to use the new model traversal after issue #340
+    #dds_n = DSSToxSubstance.objects.filter(sid__in=dtxs).distinct().\
+    #    annotate(dds_n=Count('ingredient__product__datadocument')).values('sid','dds_n')
     dds_n = DSSToxSubstance.objects.filter(sid__in=dtxs).distinct().\
-        annotate(dds_n=Count('ingredient__product__datadocument')).values('sid','dds_n')
+        annotate(dds_n=Count('extracted_chemical__extracted_text__data_document')).values('sid','dds_n')
     print('dds_n:')
     print(dds_n)
 
@@ -110,8 +114,10 @@ def stats_by_dtxsids(dtxs):
 
 
     # TODO: Correct this to use the new model traversal after issue #340
+    #products_n = DSSToxSubstance.objects.filter(sid__in=dtxs).distinct().\
+    #   annotate(products_n=Count('ingredient__product')).values('sid', 'products_n')
     products_n = DSSToxSubstance.objects.filter(sid__in=dtxs).distinct().\
-       annotate(products_n=Count('ingredient__product')).values('sid', 'products_n')
+       annotate(products_n=Count('extracted_chemical__extracted_text__data_document')).values('sid', 'products_n')
     #print('products_n:')
     #print(products_n)
 
@@ -176,8 +182,8 @@ def upload_dtxsid_csv(request):
         messages.error(request,"Unable to upload file. "+repr(e))
 
     #TODO: Correct the stats calculations to use the new model structure created in #340
-    #stats = stats_by_dtxsids(dtxsids)
-    stats  = {'pucs_n': 0, 'dds_n': 0, 'dds_wf_n': 0, 'products_n': 0}
+    stats = stats_by_dtxsids(dtxsids)
+    #stats  = {'pucs_n': 0, 'dds_n': 0, 'dds_wf_n': 0, 'products_n': 0}
     resp = download_chem_stats(stats)
     print(resp)
     return resp

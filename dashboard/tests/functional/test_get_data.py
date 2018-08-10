@@ -6,7 +6,7 @@ from dashboard import views
 
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from dashboard.views.get_data import * 
+from dashboard.views.get_data import *
 
 class TestGetData(TestCase):
     fixtures = ['00_superuser.yaml', '01_lookups.yaml',
@@ -24,6 +24,6 @@ class TestGetData(TestCase):
         csv_out = download_chem_stats(stats)
         print(csv_out.content)
 
-
-
-
+    def test_habits_and_practices(self):
+        response = self.client.get('/get_data/').content.decode('utf8')
+        self.assertIn('Category', response)

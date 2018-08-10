@@ -2,17 +2,6 @@
 {% load staticfiles %}
 {% load humanize %}
 {% block title %}Get Data{% endblock %}
-{% block css %}
-#exTab1 .tab-content {
-  color : white;
-  background-color: #428bca;
-  padding : 5px 15px;
-}
-
-#exTab1 .nav-pills > li > a {
-  border-radius: 0;
-}
-{% endblock %}
 {% block content %}
 
 <h1>Get Data: A resource for accessing exposure related data stored in Factotum</h1>
@@ -39,7 +28,7 @@
 </div>
 
 <div class="card">
-  <div class="card-header row">
+  <div class="card-header">
     <h3 class='mr-5'>Habits and Practices by PUC</h3>
     <form class='ml-5' action='' method="post" >
       {% csrf_token %}
@@ -48,27 +37,42 @@
     </form>
   </div>
   {% if hnp %}
-     <div class="card-header">
-       <ul class="nav nav-tabs card-header-tabs pull-right"  id="myTab" role="tablist">
-         <li class="nav-item">
-          <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs pull-right"  id="myTab" role="tablist">
+      {% for habit in hnp %}
+
+          {% if habit.pk == first %}
+          <li class="nav-item">
+          <a class="nav-link active" data-toggle="tab" href="#{{ habit.pk }}" role="tab" aria-controls="home" aria-selected="true">{{ habit.product_surveyed }}</a>
+          {% else %}
+          <li class="nav-item">
+          <a class="nav-link" data-toggle="tab" href="#{{ habit.pk }}" role="tab" aria-controls="home" aria-selected="false"><b>{{ habit.product_surveyed }}</b></a>
+          {% endif %}
          </li>
-         <li class="nav-item">
-           <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
-         </li>
-         <li class="nav-item">
-           <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
-         </li>
+      {% endfor %}
        </ul>
      </div>
      <div class="card-body">
-      <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active" id="home" role="tabpanel">this is cool</div>
-        <div class="tab-pane fade" id="profile" role="tabpanel">wonderful</div>
-        <div class="tab-pane fade" id="contact" role="tabpanel">abbracadabra</div>
-      </div>
-     </div>
+      <div class="tab-content">
+        {% for habit in hnp %}
 
+        {% if habit.pk == first %}
+        <div class="tab-pane fade show active text-center" id="{{ habit.pk }}" role="tabpanel">
+        {% else %}
+        <div class="tab-pane fade show text-center" id="{{ habit.pk }}" role="tabpanel">
+        {% endif %}
+        <label for=""><b>Data Document:</b></label> <a href="/media/{{ habit.extracted_text.data_document.data_group.dgurl }}/pdf/{{ habit.extracted_text.data_document.filename }}" target="_blank" title="Link to {{ habit.extracted_text.data_document.filename }}"><b>{{ habit.extracted_text.data_document }}</b></a> <br>
+        <label for=""><b>Product Surveyed:</b></label> {{ habit.product_surveyed }} <br>
+        <label for=""><b>Mass:</b></label> {{ habit.mass }} {{ habit.mass_unit }} <br>
+        <label for=""><b>Frequency:</b></label> {{ habit.frequency }} {{ habit.frequency_unit }} <br>
+        <label for=""><b>Duration:</b></label> {{ habit.duration }} {{ habit.duration_unit }} <br>
+        <label for=""><b>Prevalence:</b></label> {{ habit.prevalence }} <br>
+        <label for=""><b>Notes:</b></label> {{ habit.notes }}
+        </div>
+        {% endfor %}
+      </div>
+
+  </div>
   {% elif hnp == 0 %}
   <div class="card-body">
    There are no matching Habits n Practices to this PUC!

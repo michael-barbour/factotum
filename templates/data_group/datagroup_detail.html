@@ -58,7 +58,8 @@
         </dd>
         <dt class="col-sm-3">Data Source</dt>
         <dd class="col-sm-9">
-          <a href="{% url "data_source_detail" datagroup.data_source.id %}">{{ datagroup.data_source }}</a>
+          <a href="{% url "data_source_detail" datagroup.data_source.id %}" title="Return to Data Source">
+            {{ datagroup.data_source }}</a>
         </dd>
         {% if datagroup.updated_at %}
             <dt class="col-sm-3">Last updated</dt>

@@ -20,6 +20,7 @@ class UploadExtractedFileTest(TestCase):
         self.factory = RequestFactory()
         self.c.login(username='Karyn', password='specialP@55word')
 
+
     def generate_valid_chem_csv_string(self):
         csv_string = ("data_document_id,data_document_filename,"
                     "prod_name,doc_date,rev_num,raw_cas,raw_chem_name,"
@@ -34,6 +35,24 @@ class UploadExtractedFileTest(TestCase):
                     )
         return csv_string
     
+
+    def generate_chem_csv(self):
+        try:
+            myfile = open('British_Petroleum_(Air)_1_extract_template.csv', 'w')
+            wr = csv.writer(myfile)
+            wr.writerow(("data_document_id,data_document_filename,"
+                        "prod_name,doc_date,rev_num,raw_cas,raw_chem_name,"
+                        "report_funcuse,raw_min_comp,raw_max_comp,unit_type,"
+                        "ingredient_rank,raw_central_comp"))
+            wr.writerow(("8,11177849.pdf,Alberto European Hairspray (Aerosol) - All Variants,,,"
+                        "0000075-37-6,hydrofluorocarbon 152a (difluoroethane),,0.39,0.42,1,,"))
+            wr.writerow(("7,11165872.pdf,Alberto European Hairspray (Aerosol) - All Variants,,,"
+                        "0000064-17-5,sd alcohol 40-b (ethanol),,0.5,0.55,1,,"))
+        finally:
+            myfile.close()
+        return myfile
+
+
     def test_chem_upload(self):
         """
         '_post': 
@@ -45,6 +64,7 @@ class UploadExtractedFileTest(TestCase):
             'extract_file': [<InMemoryUploadedFile: British_Petroleum_(Air)_1_extract_template.csv (text/csv)>]
             }
         """
+
         sample_csv = self.generate_valid_chem_csv_string()
         sample_csv_bytes = sample_csv.encode(encoding='UTF-8',errors='strict' )
         in_mem_sample_csv = InMemoryUploadedFile(
@@ -55,11 +75,11 @@ class UploadExtractedFileTest(TestCase):
                 size=len(sample_csv),
                 charset='utf-8',
         )
-
         req_data = {'script_selection': 5, 
                     'weight_fraction_type': 1, 
                     'extract_button': 'Submit', 
                     }
+
         req = self.factory.post(path = '/datagroup/6' , data=req_data)
         req.FILES['extract_file'] = in_mem_sample_csv
         req.user = User.objects.get(username='Karyn')
@@ -70,3 +90,4 @@ class UploadExtractedFileTest(TestCase):
         resp = views.data_group_detail(request=req, pk=6)
         #print(resp.content)
         self.assertContains(resp,'2 extracted records uploaded successfully.')
+

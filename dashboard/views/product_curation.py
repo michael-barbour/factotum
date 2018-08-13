@@ -8,7 +8,8 @@ from django import forms
 from django.forms import ModelForm, ModelChoiceField
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-
+from django.urls import resolve
+from urllib import parse
 from dashboard.models import *
 from dashboard.forms import ProductPUCForm
 
@@ -30,12 +31,12 @@ class ProductForm(ModelForm):
 
     class Meta:
         model = Product
-        fields = ['title', 'manufacturer', 'brand_name', 'size', 'color', 'short_description', 'long_description',
-                  'model_number']
+        fields = ['title', 'manufacturer', 'brand_name', 'size', 'color', 'model_number', 'short_description',
+                  'long_description']
 
 class ProductViewForm(ProductForm):
     class Meta(ProductForm.Meta):
-        exclude = ('title',)
+        exclude = ('title', 'long_description',)
 
     def __init__(self, *args, **kwargs):
         super(ProductForm, self).__init__(*args, **kwargs)
@@ -131,9 +132,24 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
     p = Product.objects.get(pk=pk)
     if form.is_valid():
         puc = PUC.objects.get(id=form['puc'].value())
-        ProductToPUC.objects.create(PUC=puc, product=p, classification_method='MA',
+        producttopuc = ProductToPUC.objects.filter(product=p, classification_method='MA')
+        # if product already has a puc, update it with a new puc
+        if producttopuc.exists():
+            print('it exists!')
+            producttopub_obj = producttopuc.get()
+            producttopub_obj.puc = form['puc'].value()
+            producttopub_obj.puc_assigned_time = timezone.now()
+            producttopub_obj.puc_assigned_usr = request.user
+            producttopub_obj.save()
+        else:
+            ProductToPUC.objects.create(PUC=puc, product=p, classification_method='MA',
                                     puc_assigned_time=timezone.now(), puc_assigned_usr=request.user)
-        return redirect('category_assignment', pk=p.data_source.id)
+        if request.POST.get('referer') == 'product_detail':
+            formpk = p.id
+        else:
+            formpk = p.data_source.id
+        return redirect(request.POST.get('referer'), pk=formpk)
+    form.referer = resolve(parse.urlparse(request.META['HTTP_REFERER']).path).url_name
     return render(request, template_name,{'product': p, 'form': form})
 
 @login_required()
@@ -155,6 +171,16 @@ def product_update(request, pk, template_name=('product_curation/'
         return redirect('product_detail', pk=p.pk)
     return render(request, template_name,{'product': p, 'form': form})
 
+@login_required()
+# Stub for future delete functionality
+def product_delete(request, pk, template_name=('product_curation/'
+                                               'product_edit.html')):
+    p = Product.objects.get(pk=pk)
+    form = ProductForm(request.POST or None, instance=p)
+    if form.is_valid():
+        form.save()
+        return redirect('product_detail', pk=p.pk)
+    return render(request, template_name,{'product': p, 'form': form})
 
 @login_required()
 def product_list(request, template_name=('product_curation/'

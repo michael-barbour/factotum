@@ -55,14 +55,13 @@ class UploadExtractedFileTest(TestCase):
                 size=len(sample_csv),
                 charset='utf-8',
         )
-        self.in_mem_csv = in_mem_sample_csv
 
         req_data = {'script_selection': 5, 
                     'weight_fraction_type': 1, 
                     'extract_button': 'Submit', 
                     }
-        req = self.factory.post(path = '/datagroup/6' , data=req_data, kwargs=req_data)
-        req.FILES['extract_file'] = self.in_mem_csv
+        req = self.factory.post(path = '/datagroup/6' , data=req_data)
+        req.FILES['extract_file'] = in_mem_sample_csv
         req.user = User.objects.get(username='Karyn')
         print("About to submit request")
         print(req.POST)

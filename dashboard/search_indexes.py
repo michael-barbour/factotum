@@ -42,13 +42,9 @@ class DSSToxSubstanceIndex(indexes.SearchIndex, indexes.Indexable):
     result_css_class = indexes.CharField()
 
     true_chemname = indexes.EdgeNgramField(model_attr='true_chemname', null=True)
-
     true_cas = indexes.EdgeNgramField(model_attr='true_cas', null=True)
-
     extracted_text_id = indexes.EdgeNgramField(model_attr='extracted_chemical__extracted_text_id', null=False)
-
     data_document_id = indexes.EdgeNgramField(model_attr='extracted_chemical__extracted_text__data_document_id', null=False)
-
 
     def get_model(self):
         return DSSToxSubstance

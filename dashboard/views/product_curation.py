@@ -132,24 +132,26 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
     p = Product.objects.get(pk=pk)
     if form.is_valid():
         puc = PUC.objects.get(id=form['puc'].value())
+        print('Selected PUC: ' + str(puc))
         producttopuc = ProductToPUC.objects.filter(product=p, classification_method='MA')
         # if product already has a puc, update it with a new puc
         if producttopuc.exists():
-            print('it exists!')
-            producttopub_obj = producttopuc.get()
-            producttopub_obj.puc = form['puc'].value()
-            producttopub_obj.puc_assigned_time = timezone.now()
-            producttopub_obj.puc_assigned_usr = request.user
-            producttopub_obj.save()
+            producttopuc_obj = producttopuc.get()
+            producttopuc_obj.puc = puc # This assignment doesn't appear to be actually happening. . .
+            producttopuc_obj.puc_assigned_time = timezone.now()
+            producttopuc_obj.puc_assigned_usr = request.user
+            print('Updated ProductToPUC values:')
+            for i in producttopuc_obj._meta.get_fields():
+                print(str(i.name) + ': ' + str(getattr(producttopuc_obj, str(i.name))))
+            producttopuc_obj.save()
         else:
             ProductToPUC.objects.create(PUC=puc, product=p, classification_method='MA',
                                     puc_assigned_time=timezone.now(), puc_assigned_usr=request.user)
-        if request.POST.get('referer') == 'product_detail':
-            formpk = p.id
-        else:
-            formpk = p.data_source.id
-        return redirect(request.POST.get('referer'), pk=formpk)
-    form.referer = resolve(parse.urlparse(request.META['HTTP_REFERER']).path).url_name
+        referer = request.POST.get('referer') if request.POST.get('referer') else 'category_assignment'
+        pk = p.id if referer == 'product_detail' else p.data_source.id
+        return redirect(referer, pk=pk)
+    form.referer = resolve(parse.urlparse(request.META['HTTP_REFERER']).path).url_name\
+        if request.META['HTTP_REFERER'] else 'category_assignment'
     return render(request, template_name,{'product': p, 'form': form})
 
 @login_required()

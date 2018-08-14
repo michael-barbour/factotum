@@ -8,9 +8,10 @@
         <div class="btn-group float-lg-right" role="group" aria-label="Manage Product">
             <a class="btn btn-success btn-sm" role="button" title="edit" href="{% url 'product_edit' pk=product.pk %}">
                 <span class="oi oi-pencil"></span> </a>
-            <a class="btn btn-danger btn-sm disabled" role="button" title="delete"
-               href="{% url "product_delete" pk=product.pk %}">
-                <span class="oi oi-trash"></span> </a>
+            {#        Future functionality. . . . #}
+{#            <a class="btn btn-danger btn-sm disabled" role="button" title="delete"#}
+{#               href="{% url "product_delete" pk=product.pk %}">#}
+{#                <span class="oi oi-trash"></span> </a>#}
         </div>
     </h1>
     <br>
@@ -18,44 +19,72 @@
         <div class="col-3">
             {% if puc.id %}
                 <h2 class="col-12">
-                    <span name="PUC">PUC</span>
-                    <div class="btn-group float-lg-right" role="group" aria-label="Manage PUC">
-                        <a class="btn btn-info btn-sm disabled" role="button" title="list" href="">
-                            <span class="oi oi-list"></span> </a>
+                    <span>PUC</span>
+                <div class="btn-group float-lg-right" role="group" aria-label="Manage PUC">
+                        {#        Future functionality. . . . #}
+{#                        <a class="btn btn-info btn-sm disabled" role="button" title="list" href="">#}
+{#                            <span class="oi oi-list"></span> </a>#}
                         <a class="btn btn-success btn-sm" role="button" title="Edit PUC Relationship"
                            href="{% url 'product_puc' pk=product.pk %}">
                             <span class="oi oi-pencil"></span> </a>
-                        <a class="btn btn-danger btn-sm disabled" role="button" title="Delete PUC Relationship"
-                           href="">
-                            <span class="oi oi-trash"></span> </a>
-                    </div>
+                    {#        Future functionality. . . . #}
+{#                        <a class="btn btn-danger btn-sm disabled" role="button" title="Delete PUC Relationship"#}
+{#                           href="">#}
+{#                            <span class="oi oi-trash"></span> </a>#}
+                </div>
                 </h2>
-                {{  puc }}
+                <div class="form-group ">
+                    <label for="id_puc">Product Use Category:</label>
+                    <textarea name="puc" cols="40" rows="3" class="form-control" disabled=""
+                              id="id_puc">{{  puc }}</textarea>
+                </div>
+                <div class="form-group ">
+                <label for="id_puc_assigned_script">PUC Assignment Script</label>
+                <input name="puc_assigned_script" class="form-control"
+                       value="{{ ptopuc.puc_assigned_script }}"
+                       disabled="" id="id_puc_assigned_script" type="text">
+                </div>
+                <div class="form-group">
+                    <label for="id_puc_assigned_usr">PUC Assigned By</label>
+                    <input name="puc_assigned_usr" class="form-control"
+                           value="{{ ptopuc.puc_assigned_usr }}"
+                           disabled="" id="id_puc_assigned_usr" type="text">
+                </div>
+                <div class="form-group">
+                <label for="id_puc_assigned_time">PUC Assignment Date</label>
+                <input name="puc_puc_assigned_time" class="form-control"
+                       value="{{ ptopuc.puc_assigned_time }}"
+                       disabled="" id="id_puc_assigned_time" type="text">
+                </div>
             {%  else %}
                 <h2 class="col-12">
-                    <span name="PUC">PUC</span>
+                    <span>PUC</span>
                 </h2>
                 <div class="btn-group col-12" role="group" aria-label="Manage PUCs">
-                    <a class="btn btn-success" role="button" title="edit" href="{% url 'product_puc' pk=product.pk %}">
-                        Assign PUC </a>
+                    <a class="btn btn-success" role="button" title="edit" id="button_assign_puc"
+                       href="{% url 'product_puc' pk=product.pk %}">Assign PUC</a>
                 </div>
             {%  endif %}
             <br><br>
-            <h2 class="col-12">
-                <span name="Documents" class="disabled">Documents</span>
-                <div class="btn-group float-right" role="group" aria-label="Manage Documents">
-                    <a class="btn btn-success disabled btn-sm" role="button" alt="Not yet enabled" title="Add Documents"
-                       href="{% url 'product_edit' pk=product.pk %}">
-                        <span class="oi oi-plus disabled"></span> </a>
-                </div>
-            </h2>
-
-
+{#        Future functionality. . . . #}
+{#            <h2 class="col-12">#}
+{#                <span name="Documents" class="disabled">Documents</span>#}
+{#                <div class="btn-group float-right" role="group" aria-label="Manage Documents">#}
+{#                    <a class="btn btn-success disabled btn-sm" role="button" alt="Not yet enabled" title="Add Documents"#}
+{#                       href="{% url 'product_edit' pk=product.pk %}">#}
+{#                        <span class="oi oi-plus disabled"></span> </a>#}
+{#                </div>#}
+{#            </h2>#}
         </div>
         <div class="col-6">
+            {#        Future functionality. . . . #}
             <ul class="nav nav-tabs nav-justified" role="tablist">
-                <li class="active"> <a data-toggle="tab" href="#chemical_comp">Chemical Composition</a>  </li>
-                <li> <a data-toggle="tab" href="#ingredients">Ingredients</a> </li>
+                <li class="active"> <a data-toggle="tab" href="#chemical_comp">
+{#                    Chemical Composition#}
+                </a>  </li>
+                <li> <a data-toggle="tab" href="#ingredients">
+{#                    Ingredients#}
+                </a> </li>
             </ul>
             <div class="tab-content border">
                 <div id="chemical_comp" class="tab-pane fade active">
@@ -70,6 +99,7 @@
                 </div>
             </div>
             <br>
+{#<br><br><br><br><br><br><br><br><br><br><br>#}
             <div class="form-group ">
                 <label for="id_long_description">Long Description:</label>
                 <textarea name="long_description" cols="40" rows="16" class="form-control" disabled=""

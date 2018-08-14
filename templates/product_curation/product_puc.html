@@ -26,7 +26,7 @@ Link Product To PUC</h1>
       {{ form.as_p }}
     <input type="hidden" name="referer" value="{{ form.referer }}">
     <button type="submit" id="btn-assign-puc" class="btn btn-primary">Submit</button>
-    <a class="btn btn-secondary" href="{% url 'category_assignment' product.data_source.id %}">Cancel</a>
+    <a class="btn btn-secondary" href="{% url form.referer form.referer_pk %}">Cancel</a>
     </form>
 </div>
 

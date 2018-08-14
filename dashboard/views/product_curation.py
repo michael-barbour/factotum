@@ -9,7 +9,9 @@ from django.forms import ModelForm, ModelChoiceField
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
-from dashboard.models import DataSource, DataGroup, DataDocument, DocumentType, Product, ProductDocument, PUC, ProductToPUC
+from dashboard.models import *
+from dashboard.forms import ProductPUCForm
+
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 class ProductLinkForm(ModelForm):
@@ -111,8 +113,9 @@ def link_product_form(request, pk, template_name=('product_curation/'
                 product.size = form['size'].value()
                 product.color = form['color'].value()
                 product.save()
-            p = ProductDocument(product=product, document=doc)
-            p.save()
+            if not ProductDocument.objects.filter(document=doc).exists():
+                p = ProductDocument(product=product, document=doc)
+                p.save()
             document_type = form['document_type'].value()
             if document_type != doc.document_type:
                 doc.document_type = DocumentType.objects.get(pk=document_type)

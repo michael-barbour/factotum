@@ -1,4 +1,3 @@
-
 import csv
 import logging
 import datetime
@@ -14,10 +13,6 @@ from django.forms.models import model_to_dict
 
 from dashboard.models import *
 from dashboard.forms import HabitsPUCForm
-
-
-
-
 
 
 def get_data(request, template_name='get_data/get_data.html'):
@@ -37,12 +32,12 @@ def get_data(request, template_name='get_data/get_data.html'):
                                             'extracted_habits_and_practices',
                                             flat=True)
             hnp = ExtractedHabitsAndPractices.objects.filter(pk__in=links)
+            print(hnp)
     context = { 'hnp' : hnp,
                 'form': form,
-                'first': hnp[0].pk if hnp != None else 1,
+                'first': hnp[0].pk if hnp else 1,
     }
     return render(request, template_name, context)
-
 
 
 def stats_by_dtxsids(dtxs):

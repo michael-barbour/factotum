@@ -1,6 +1,7 @@
 {% extends 'core/base.html' %}
 {% load staticfiles %}
 {% load humanize %}
+{% block title %}Data Group Detail: {{ datagroup.name }}{% endblock %}
 
 {% block errors %}
   {% if msg %}
@@ -57,7 +58,10 @@
             </a>
         </dd>
         <dt class="col-sm-3">Data Source</dt>
-        <dd class="col-sm-9">{{ datagroup.data_source }}</dd>
+        <dd class="col-sm-9">
+          <a href="{% url "data_source_detail" datagroup.data_source.id %}" title="Return to Data Source">
+            {{ datagroup.data_source }}</a>
+        </dd>
         {% if datagroup.updated_at %}
             <dt class="col-sm-3">Last updated</dt>
             <dd class="col-sm-9">{{ datagroup.updated_at }}</dd>

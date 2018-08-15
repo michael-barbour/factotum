@@ -9,8 +9,6 @@ class DSSToxSubstance(CommonInfo):
 
     extracted_chemical = models.ForeignKey(ExtractedChemical, on_delete=models.CASCADE, null=False, blank=False)
     # TODO: confirm that deleting an ExtractedChemical should delete related DSSToxSubstance objects
-    ingredients = models.ManyToManyField(through='dashboard.DSSToxSubstanceToIngredient',
-                                         to='dashboard.DSSToxSubstance')
     true_cas = models.CharField(max_length=50, null=True, blank=True)
     true_chemname = models.CharField(max_length=500, null=True, blank=True)
     rid = models.CharField(max_length=50, null=True, blank=True)

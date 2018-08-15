@@ -19,24 +19,22 @@ def get_data(request, template_name='get_data/get_data.html'):
     hnp = None
     form = HabitsPUCForm()
     context = { 'hnp' : hnp,
-                'form': form,
+    'form': form,
+    'first': None,
     }
     if request.method == 'POST':
         form = HabitsPUCForm(request.POST)
         if form.is_valid():
-            # context['hnp'] = 1
-            print(form['puc'].value())
             puc_id = form['puc'].value()
             links = ExtractedHabitsAndPracticesToPUC.objects.filter(
                                             PUC_id=puc_id).values_list(
                                             'extracted_habits_and_practices',
                                             flat=True)
             hnp = ExtractedHabitsAndPractices.objects.filter(pk__in=links)
-            print(hnp)
-    context = { 'hnp' : hnp,
-                'form': form,
-                'first': hnp[0].pk if hnp else 1,
-    }
+            context['form'] = form
+            context['hnp'] = hnp if len(hnp)>0 else 0
+            if len(hnp)>0:
+                context['first'] = hnp[0].pk
     return render(request, template_name, context)
 
 

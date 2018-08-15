@@ -59,6 +59,8 @@ urlpatterns = [
                                             name='product_detail'),
     url(r'^product/edit/(?P<pk>\d+)$', views.product_update,
         name='product_edit'),
+    url(r'^product/delete/(?P<pk>\d+)$', views.product_delete,
+        name='product_delete'),
     url(r'^products/$', views.product_list, name='product_list'),
     url(r'^datadocument/(?P<pk>\d+)$', views.data_document_detail,
                                             name='data_document'),

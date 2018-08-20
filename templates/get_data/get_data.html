@@ -63,9 +63,9 @@
         {% endif %}
         <label for=""><b>Data Document:</b></label> <a href="/media/{{ habit.extracted_text.data_document.data_group.dgurl }}/pdf/{{ habit.extracted_text.data_document.filename }}" target="_blank" title="Link to {{ habit.extracted_text.data_document.filename }}"><b>{{ habit.extracted_text.data_document }}</b></a> <br>
         <label for=""><b>Product Surveyed:</b></label> {{ habit.product_surveyed }} <br>
-        <label for=""><b>Mass:</b></label> {{ habit.mass }} {{ habit.mass_unit }} <br>
-        <label for=""><b>Frequency:</b></label> {{ habit.frequency }} {{ habit.frequency_unit }} <br>
-        <label for=""><b>Duration:</b></label> {{ habit.duration }} {{ habit.duration_unit }} <br>
+        <label for=""><b>Mass:</b></label> {{ habit.mass|floatformat:2|intcomma }} {{ habit.mass_unit }} <br>
+        <label for=""><b>Frequency:</b></label> {{ habit.frequency|floatformat:2|intcomma }} {{ habit.frequency_unit }} <br>
+        <label for=""><b>Duration:</b></label> {{ habit.duration|floatformat:2|intcomma }} {{ habit.duration_unit }} <br>
         <label for=""><b>Prevalence:</b></label> {{ habit.prevalence }} <br>
         <label for=""><b>Notes:</b></label> {{ habit.notes }}
         </div>

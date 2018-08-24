@@ -2,11 +2,9 @@ from django.urls import resolve
 from django.test import TestCase, override_settings
 from django.test.client import Client
 
-from dashboard import views
-
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from dashboard.models import PUC, Product, ProductToPUC, ProductDocument
+from dashboard.models import PUC, Product, ProductToPUC, ProductDocument, DSSToxSubstance
 from dashboard.views.get_data import * 
 
 @override_settings(ALLOWED_HOSTS=['testserver'])
@@ -19,7 +17,7 @@ class TestGetData(TestCase):
     def setUp(self):
         self.client = Client()
 
-    def test_dtxsid_stats(self):
+    def test_dtxsid_pucs_n(self):
         dtxs =["DTXSID9022528", "DTXSID1020273","DTXSID6026296","DTXSID2021781"]
         # Functional test: the stats calculation
         stats = stats_by_dtxsids(dtxs)
@@ -63,8 +61,34 @@ class TestGetData(TestCase):
         ethylparaben_stats = stats.get(sid='DTXSID9022528')
         self.assertEqual(1, ethylparaben_stats['pucs_n'])
 
-        #csv_out = download_chem_stats(stats)
-        #print(csv_out.content)
+    def test_dtxsid_dds_n(self):
+        dtxs =["DTXSID9022528", "DTXSID1020273","DTXSID6026296","DTXSID2021781"]
+        # Functional test: the stats calculation
+        stats = stats_by_dtxsids(dtxs)
+        for e in stats:
+            if e['sid'] == 'DTXSID9022528':
+               ethylparaben_stats = e 
+
+        self.assertEqual(2, ethylparaben_stats['dds_n'], 'There should be 2 datadocuments associated with ethylaraben')
+        # change the number of related data documents by deleting one
+        self.client.login(username='Karyn', password='specialP@55word')
+        # get the associated documents for linking to products
+        dds = DataDocument.objects.filter(pk__in=DSSToxSubstance.objects.filter(sid='DTXSID9022528').\
+            values('extracted_chemical__extracted_text__data_document'))
+        dd = dds[0]
+        dd.delete()
+
+        stats = stats_by_dtxsids(dtxs)
+        for e in stats:
+            if e['sid'] == 'DTXSID9022528':
+               ethylparaben_stats = e 
+
+        self.assertEqual(1, ethylparaben_stats['dds_n'], 'There should now be 1 datadocument associated with ethylaraben')
+
+
+        
+
+
 
 
 

@@ -169,7 +169,7 @@ def upload_dtxsid_csv(request):
         #loop over the lines 
         dtxsids = []
         for line in lines:
-            print(line)
+            #print(line)
             if DSSToxSubstance.objects.filter(sid=str.strip(line)).count() > 0:
                 dtxsids.append(str.strip(line)) # only add DTXSIDs that appear in the database
 
@@ -181,6 +181,6 @@ def upload_dtxsid_csv(request):
     stats = stats_by_dtxsids(dtxsids)
     #stats  = {'pucs_n': 0, 'dds_n': 0, 'dds_wf_n': 0, 'products_n': 0}
     resp = download_chem_stats(stats)
-    print(resp)
+    #print(resp)
     return resp
 

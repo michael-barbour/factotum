@@ -14,6 +14,7 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from bootstrap_datepicker_plus import DatePickerInput
+from django.http import HttpResponse
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -348,10 +349,23 @@ def data_document_delete(request, pk, template_name='data_source/datasource_conf
     return render(request, template_name, {'object': doc})
 
 @login_required
-def dg_dd_csv_view(request, pk, template_name='data_group/docs_in_data_group.csv'):
+def dg_dd_csv_view(request, pk):
     qs = DataDocument.objects.filter(data_group_id=pk)
-    filename = DataGroup.objects.get(pk=pk).name
+    filename = DataGroup.objects.get(pk=pk).dgurl()
     return render_to_csv_response(qs, filename=filename, append_datestamp=True)
+
+@login_required
+def data_group_registered_records_csv(request, pk):
+    columnlist = ['filename','title','document_type','url','organization']
+    dg = DataGroup.objects.filter(pk=pk).first()
+    if dg:
+        columnlist.insert(0, "id")
+        qs = DataDocument.objects.filter(data_group_id=pk).values(*columnlist)
+        return render_to_csv_response(qs, filename=dg.dgurl() + "_registered_records.csv",
+                                      field_header_map={"id": "DataDocument_id"})
+    else:
+        qs = DataDocument.objects.filter(data_group_id=0).values(*columnlist)
+        return render_to_csv_response(qs, filename="registered_records.csv")
 
 @login_required()
 def habitsandpractices(request, pk,
@@ -378,12 +392,6 @@ def habitsandpractices(request, pk,
                   'hp_formset'  : hp_formset,
                   }
     if request.method == 'POST' and 'save' in request.POST:
-        # HPFormSet()
-        print(hp_formset.is_valid())
-        # print(ext_form.cleaned_data['data_document'])
-        # print(ext_form.cleaned_data['extraction_script'])
-        # print(ext_form.cleaned_data['doc_date'])
-        # print(ext_form.non_field_errors())
         if hp_formset.is_valid():
             hp_formset.save()
         if ext_form.is_valid():
@@ -394,6 +402,4 @@ def habitsandpractices(request, pk,
                       'ext_form'    : ext_form,
                       'hp_formset'  : hp_formset,
                       }
-        # render(request, template_name, context)
-        # return redirect('habitsandpractices', pk=doc.id)
     return render(request, template_name, context)

@@ -104,8 +104,8 @@ def data_group_detail(request, pk,
     paginator = Paginator(docs, npage)
     docs_page = paginator.page(1 if page is None else page)
     store = settings.MEDIA_URL + datagroup.name.replace(' ','_')
-    extract_fields = ['data_document_id','data_document_filename','prod_name','doc_date','rev_num',
-                      'raw_cas', 'raw_chem_name', 'report_funcuse',]
+    extract_fields = ['data_document_id','data_document_filename','prod_name','doc_date','rev_num', 'raw_category',
+                      'raw_cas', 'raw_chem_name', 'report_funcuse']
     if dg_type in ['Composition']:
         extract_fields = extract_fields + ['raw_min_comp','raw_max_comp',
                             'unit_type', 'ingredient_rank', 'raw_central_comp']
@@ -118,6 +118,7 @@ def data_group_detail(request, pk,
                   'extract_form'      : include_extract_form(datagroup, dg_type),
                   'bulk'              : len(docs) - len(prod_link),
                   'msg'               : '',
+                  'functional'        : dg_type == 'Functional use',
                   'hnp'               : dg_type == 'Habits and practices',
                   'composition'       : dg_type == 'Composition',
                   }
@@ -148,35 +149,26 @@ def data_group_detail(request, pk,
         context['extract_form'] = form
         context['msg'] = 'Matching records uploaded successfully.'
     if request.method == 'POST' and 'extract_button' in request.POST:
-        # print('------')
-        # print('Request POST and FILE objects before being passed to ExtractionScriptForm:')
-        # print(request.POST)
-        # print(request.FILES)
-        # print('just the extract_file object:')
-        # print(request.FILES.get('extract_file'))
-        # print('------')
-        # extract_form.collapsed = False
         extract_form = ExtractionScriptForm(request.POST,
                                                 request.FILES,dg_type=dg_type)
         wft_id = request.POST.get('weight_fraction_type',None)
         if extract_form.is_valid():
-            #print('form is valid, about to handle csv file')
             csv_file = request.FILES.get('extract_file')
-            # context['ext_err'][4] = {'47':'oops!'}
             script = Script.objects.get(pk=request.POST['script_selection'])
             info = [x.decode('ascii','ignore') for x in csv_file.readlines()]
             table = csv.DictReader(info)
-            missing =  list(set(table.fieldnames)-set(extract_fields))
+            missing =  list(set(extract_fields)-set(table.fieldnames))
             if missing: #column names are NOT a match, send back to user
-                context['msg'] = ('The following columns need to be renamed in '
+                context['msg'] = ('The following columns need to be added or renamed in '
                                                         f'the csv: {missing}')
                 return render(request, template_name, context)
             good_records = []
             for i, row in enumerate(csv.DictReader(info)):
-                text_data = OrderedDict(islice(row.items(),5))
+                # first 6 columns comprise data_document data
+                text_data = OrderedDict(islice(row.items(),6))
                 text_data.pop('data_document_filename') # not needed in dict
-                rec_data = OrderedDict(islice(row.items(),5,
-                                                        len(extract_fields)))
+                # all columns except first 6 comprise non-data_document data
+                rec_data = OrderedDict(islice(row.items(),6, len(extract_fields)))
                 dd = row['data_document_id']
                 doc = get_object_or_404(docs, pk=dd)
                 if ExtractedText.objects.filter(pk=dd).exists():

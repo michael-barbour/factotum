@@ -15,7 +15,7 @@ def create_data_documents(data_group, source_type, pdfs):
                 line['title'] = line['filename'].split('.')[0]
             dd = DataDocument.objects.create(filename=line['filename'],
                                             title=line['title'],
-                                            product_category=line['product'],
+                                            raw_category=line['product'],
                                             url=line['url'],
                                             matched = line['filename'] in pdfs,
                                             data_group=data_group)

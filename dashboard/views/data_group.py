@@ -284,7 +284,7 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
                 doc=DataDocument(filename=line['filename'],
                                  title=line['title'],
                                  document_type=doc_type,
-                                 product_category=line['product'],
+                                 raw_category=line['product'],
                                  url=line['url'],
                                  organization=line['organization'],
                                  data_group=datagroup)

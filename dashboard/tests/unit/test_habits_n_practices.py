@@ -15,9 +15,9 @@ class HabitViewTest(TestCase):
                                             extracted_text=self.objects.extext)
 
     def test_habitsandpractices(self):
-        found = resolve(f'/habitsandpractices/{self.objects.doc.pk}')
+        found = resolve(f'/habitsandpractices/{self.objects.doc.pk}/')
         self.assertEqual(found.func, views.habitsandpractices)
 
     def test_link_habitandpractice_to_puc(self):
-        found = resolve(f'/link_habitandpractice_to_puc/{self.hnp.pk}')
+        found = resolve(f'/link_habitandpractice_to_puc/{self.hnp.pk}/')
         self.assertEqual(found.func, views.link_habitsandpractices)

@@ -164,19 +164,20 @@ def data_group_detail(request, pk,
                 return render(request, template_name, context)
             good_records = []
             for i, row in enumerate(csv.DictReader(info)):
-                # first 6 columns comprise data_document data
-                text_data = OrderedDict(islice(row.items(),6))
-                text_data.pop('data_document_filename') # not needed in dict
+                # first 6 columns comprise extracted_text data
+                extracted_text_data = OrderedDict(islice(row.items(),6))
+                extracted_text_data.pop('data_document_filename') # not needed in dict
                 # all columns except first 6 comprise non-data_document data
                 rec_data = OrderedDict(islice(row.items(),6, len(extract_fields)))
                 dd = row['data_document_id']
-                doc = get_object_or_404(docs, pk=dd)
+                doc = docs.get(pk=dd)
+                doc.raw_category = row['raw_category']
                 if ExtractedText.objects.filter(pk=dd).exists():
-                    text = ExtractedText.objects.get(pk=dd)
+                    extracted_text = ExtractedText.objects.get(pk=dd)
                 else:
-                    text_data['extraction_script_id'] = script.id
-                    text = ExtractedText(**text_data)
-                rec_data['extracted_text'] = text
+                    extracted_text_data['extraction_script_id'] = script.id
+                    extracted_text = ExtractedText(**extracted_text_data)
+                rec_data['extracted_text'] = extracted_text
                 if dg_type in ['Functional use']:
                     record = ExtractedFunctionalUse(**rec_data)
                 if dg_type in ['Composition']:
@@ -187,12 +188,12 @@ def data_group_detail(request, pk,
                     rec_data['ingredient_rank'] = None if rank == '' else rank
                     record = ExtractedChemical(**rec_data)
                 try:
-                    text.full_clean()
-                    text.save()
+                    extracted_text.full_clean()
+                    extracted_text.save()
                     record.full_clean()
                 except ValidationError as e:
                     context['ext_err'][i+1] = e.message_dict
-                good_records.append((doc,text,record))
+                good_records.append((doc,extracted_text,record))
             if context['ext_err']: # if errors, send back with errors above <body>
                 print('HIT!')
                 return render(request, template_name, context)

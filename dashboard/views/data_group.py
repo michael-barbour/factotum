@@ -102,7 +102,8 @@ def data_group_detail(request, pk,
     page = request.GET.get('page')
     paginator = Paginator(docs, npage)
     docs_page = paginator.page(1 if page is None else page)
-    store = settings.MEDIA_URL + datagroup.name.replace(' ','_')
+    # store = settings.MEDIA_URL + datagroup.name.replace(' ','_')
+    store = settings.MEDIA_URL + str(datagroup.pk)
     extract_fields = ['data_document_id','data_document_filename','prod_name','doc_date','rev_num',
                       'raw_cas', 'raw_chem_name', 'report_funcuse',]
     if dg_type in ['Composition']:
@@ -295,7 +296,8 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
                 datagroup.delete()
                 return render(request, template_name, {'line_errors': errors,
                                                        'form': form})
-            dg_dir = datagroup.name.replace(' ','_')
+            #dg_dir = datagroup.name.replace(' ', '_')
+            dg_dir = str(datagroup.pk)
             zf = zipfile.ZipFile('media/{0}/{0}.zip'.format(dg_dir), 'w',
                                  zipfile.ZIP_DEFLATED)
             datagroup.zip_file = zf.filename

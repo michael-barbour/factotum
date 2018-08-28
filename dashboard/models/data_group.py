@@ -11,8 +11,11 @@ from .group_type import GroupType
 # could be used for dynamically creating filename on instantiation
 # in the 'upload_to' param on th FileField
 def update_filename(instance, filename):
-    name_fill_space = instance.name.replace(' ', '_')
-    name = '{0}/{0}_{1}'.format(name_fill_space, filename) # potential space errors in name
+    #name_fill_space = instance.name.replace(' ', '_')
+    pk_folder = str(DataGroup.objects.last().id + 1)
+    print(pk_folder)
+    name = '{0}/{0}_{1}'.format(pk_folder, filename) # potential space errors in name
+    print(name)
     return name
 
 
@@ -48,7 +51,7 @@ class DataGroup(CommonInfo):
         return self.name
 
     def dgurl(self):
-        return self.name.replace(' ', '_')
+        return self.pk
 
     def get_absolute_url(self):
         return reverse('data_group_edit', kwargs={'pk': self.pk})

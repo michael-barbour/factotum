@@ -251,7 +251,7 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
             info = [x.decode('ascii',
                              'ignore') for x in datagroup.csv.readlines()]
             table = csv.DictReader(info)
-            if not table.fieldnames == ['filename','title','document_type','product','url','organization']:
+            if not table.fieldnames == ['filename','title','document_type','url','organization']:
                 datagroup.csv.close()
                 datagroup.delete()
                 return render(request, template_name,
@@ -277,7 +277,6 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
                 doc=DataDocument(filename=line['filename'],
                                  title=line['title'],
                                  document_type=doc_type,
-                                 raw_category=line['product'],
                                  url=line['url'],
                                  organization=line['organization'],
                                  data_group=datagroup)

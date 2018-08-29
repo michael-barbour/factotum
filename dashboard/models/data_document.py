@@ -28,17 +28,11 @@ class DataDocument(CommonInfo):
     def get_absolute_url(self):
         return reverse('data_document', kwargs={'pk': self.pk})
 
-    def get_download_script(self):
-        return self__data_group.download_script
+    def get_abstract_filename(self):
+        ext = self.filename.split('.')[-1] #maybe not all are PDF??
+        return f'document_{self.pk}.{ext}'
 
-    def indexing(self):
-        obj = DataDocumentIndex(
-            meta={'id': self.id},
-            title=self.title,
-            filename=self.filename,
-            url=self.url,
-            group_type=self.data_group.group_type.title ,
-            facet_model_name='Data Document',
-        )
-        obj.save()
-        return obj.to_dict(include_meta=True)
+    def pdf_url(self):
+        dg = self.data_group.dgurl()
+        fn = self.get_abstract_filename()
+        return f'/media/{dg}/pdf/{fn}'

@@ -64,7 +64,8 @@ class ModelsTest(TestCase):
         # the pdfs via their file names
         self.assertEqual(self.objects.dg.matched_docs(), 2)
         # Test a link to an uploaded pdf
-        u = b'Data_Group_for_Test/pdf/0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf'
+        fn = docs[0].get_abstract_filename().encode('ascii')
+        u = b'Data_Group_for_Test/pdf/%s' % fn
         self.assertIn(u, dg_response.content, (
                                     'link to PDF should be in HTML!'))
         # DownloadScript
@@ -120,3 +121,9 @@ class ModelsTest(TestCase):
         self.objects.doc.organization = 'Test Organization'
         self.objects.doc.save()
         self.assertEqual(DataDocument.objects.filter(organization='Test Organization').count(), 1)
+
+    def test_data_document_filename(self):
+        pk = self.objects.doc.pk
+        self.assertEqual(self.objects.doc.get_abstract_filename(),
+                        f'document_{pk}.pdf',
+                        'This is used in the FileSystem naming convention.')

@@ -19,7 +19,7 @@ Link Product To PUC</h1>
       {% for dd in product.datadocument_set.all %}
         <p>
           <span class="oi oi-file" title="pdf" ></span>
-              <a href="/media/{{ dd.data_group.dgurl }}/pdf/{{ dd.filename }}" title="Link to {{ dd.filename }}" target = "_blank">{{dd.filename}}
+              <a href="{{ dd.pdf_url }}" title="Link to {{ dd.filename }}" target = "_blank">{{dd.filename}}
               </a>
         </p>
       {%endfor%}

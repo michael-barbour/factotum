@@ -101,7 +101,7 @@
                   <tr>
                       {% if doc.matched and not doc.extracted %}
                           <td>{{ doc.pk }}</td>
-                          <td>{{ doc.filename }}</td>
+                          <td>{{ doc.get_abstract_filename }}</td>
                       {% endif %}
                   </tr>
               {% endfor %}
@@ -166,8 +166,8 @@
           <tr>
           {% if doc.matched %}
             <td>
-              <a href="/media/{{ datagroup.dgurl }}/pdf/{{ doc.filename }}"
-                 title="Link to {{ doc.filename }}" target="_blank">{{ doc.title }}</a>
+              <a href="{{ doc.pdf_url }}"
+                 title="Link to {{ doc.get_abstract_filename }}" target="_blank">{{ doc.title }}</a>
             </td>
           {% else %}
             <td>{{ doc.title }}</td>
@@ -267,7 +267,7 @@
     {% for doc in all_documents %}
       <tr>
         <td>{{ doc.pk }}</td>
-        <td>{{ doc.filename }}</td>
+        <td>{{ doc.get_abstract_filename }}</td>
         <td>{{ doc.title }}</td>
         <td>{{ doc.product_category }}</td>
         <td>{{ doc.document_type.pk }}</td>

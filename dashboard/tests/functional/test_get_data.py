@@ -108,7 +108,44 @@ class TestGetData(TestCase):
         with weight fraction data associated with ethylaraben')
         
         
+    def test_dtxsid_products_n(self):
+        dtxs =["DTXSID9022528", "DTXSID1020273","DTXSID6026296","DTXSID2021781"]
+        # Functional test: the stats calculation
+        stats = stats_by_dtxsids(dtxs)
+        print('All stats:')
+        print(stats)
+        for e in stats:
+            if e['sid'] == 'DTXSID9022528':
+               ethylparaben_stats = e 
+        print('subset:')       
+        print(ethylparaben_stats)
+        self.assertEqual(0, ethylparaben_stats['products_n'], 'There should be 0 products \
+        associated with ethylparaben')
+        self.client.login(username='Karyn', password='specialP@55word')
+        # get the associated documents for linking to products
+        dds = DataDocument.objects.filter(pk__in=DSSToxSubstance.objects.filter(sid='DTXSID9022528').\
+        values('extracted_chemical__extracted_text__data_document'))
+        dd = dds[0]
 
+        print(dd.__dict__)
+        print('dd pk: %s' % dd.pk)
+        print('dd document_type: %s' % dd.document_type)
+        print('--related products before linking:')
+        print(dd.products.all())
+        ds = dd.data_group.data_source
+        p = Product.objects.create(data_source=ds, title='Test Product',
+                                upc='Test UPC for ProductToPUC')
+        pd = ProductDocument.objects.create(document=dd, product=p)
+        pd.save()
+        dd.refresh_from_db()
+        print('--related products after linking:')
+        print(dd.products.all())
+        stats = stats_by_dtxsids(dtxs)
+        for e in stats:
+            if e['sid'] == 'DTXSID9022528':
+               ethylparaben_stats = e 
+        self.assertEqual(1, ethylparaben_stats['products_n'], 'There should now be 1 product \
+        associated with ethylparaben')
 
 
 

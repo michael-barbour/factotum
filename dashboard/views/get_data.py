@@ -42,16 +42,13 @@ def stats_by_dtxsids(dtxs):
     """
     PUCS.n
     The number of unique PUCs (product categories) the chemical is associated with
-
     datadocs.n
     "The number of data documents (e.g.  MSDS, SDS, ingredient list, product label)
     the chemical is appears in"
-
     datadocs_w_wf.n
     "The number of data documents with associated weight fraction data
     that the chemical appears in (weight fraction data may be reported or predicted data,
      i.e., predicted from an ingredient list)"
-
     products.n
     "The number of products the chemical appears in, where a product is defined as a
     product entry in Factotum."

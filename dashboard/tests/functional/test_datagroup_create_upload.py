@@ -20,9 +20,9 @@ class RegisterRecordsTest(TestCase):
         self.client.login(username='Karyn', password='specialP@55word')
 
     def test_datagroup_create(self):
-        csv_string = ("filename,title,document_type,product,url,organization\n"
-                "0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf,NUTRA NAIL,1,,, \n"
-                "0c68ab16-2065-4d9b-a8f2-e428eb192465.pdf,Body Cream,1,,, \n")
+        csv_string = ("filename,title,document_type,url,organization\n"
+                "0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf,NUTRA NAIL,1,, \n"
+                "0c68ab16-2065-4d9b-a8f2-e428eb192465.pdf,Body Cream,1,, \n")
         data = io.StringIO(csv_string)
         sample_csv = InMemoryUploadedFile(data,
                                             field_name='csv',

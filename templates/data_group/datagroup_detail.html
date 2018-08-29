@@ -252,34 +252,6 @@
       </ul>
     </nav>
 
-<<<<<<< HEAD
-  <table class="table" id="registered" style="display:none;">
-    <thead class="table-primary">
-      <th>DataDocument_id</th>
-      <th>filename</th>
-      <th>title</th>
-      <th>product</th>
-      <th>document_type</th>
-      <th>url</th>
-      <th>organization</th>
-    </thead>
-    <tbody>
-    {% for doc in all_documents %}
-      <tr>
-        <td>{{ doc.pk }}</td>
-        <td>{{ doc.get_abstract_filename }}</td>
-        <td>{{ doc.title }}</td>
-        <td>{{ doc.product_category }}</td>
-        <td>{{ doc.document_type.pk }}</td>
-        <td>{{ doc.url }}</td>
-        <td>{{ doc.organization }}</td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
-
-=======
->>>>>>> dev
 <input type="hidden" id="dg_name" name="variable" value="{{ datagroup.dgurl }}">
 
 {% endblock %}

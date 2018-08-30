@@ -9,7 +9,7 @@ from django.test import Client
 from importlib import import_module
 
 
-class DataGroupTest(TestCase):
+class DataGroupDetailTest(TestCase):
 
     def setUp(self):
         self.objects = load_model_objects()

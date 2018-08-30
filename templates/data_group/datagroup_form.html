@@ -2,6 +2,9 @@
 {% load staticfiles %}
 
 {% block content %}
+    <h2 class="col-sm-12">
+        <span name="title">{{ header }}</span>
+    </h2>
 
   {% if field_error %}
   <p class="form-control is-invalid">CSV column headers are incorrect for upload.
@@ -20,7 +23,8 @@
         {% csrf_token %}
         {% include 'core/bs4_form.html' with form=form colspan='col-6'%}
         <button type="submit" class="btn btn-primary">Submit</button>
-        <a class="btn btn-secondary" href="{% url 'data_group_list' %}">Cancel</a>
+        {# This template can be accessed from multiple places #}
+        <a class="btn btn-secondary" href="{{ request.META.HTTP_REFERER }}">Cancel</a>
     </form>
     <br>
     <a id="reg" href="{% url 'registered_records.csv' 0 %}" class="btn btn-secondary">

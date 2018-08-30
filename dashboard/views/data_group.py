@@ -1,7 +1,6 @@
 import os
 import csv
 import zipfile
-from datetime import datetime
 from itertools import islice
 from collections import OrderedDict
 
@@ -16,9 +15,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from bootstrap_datepicker_plus import DatePickerInput
 from django.http import HttpResponse
 
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import Paginator
 
-from djqscsv import * # whatever this is used for, it shouldn't be a star import
+from djqscsv import render_to_csv_response
 
 from dashboard.models import *
 
@@ -28,9 +27,11 @@ class DataGroupForm(forms.ModelForm):
 
     class Meta:
         model = DataGroup
-        fields = ['name', 'description', 'group_type', 'downloaded_by', 'downloaded_at', 'download_script', 'data_source', 'csv']
+        fields = ['name', 'description', 'url', 'group_type', 'downloaded_by', 'downloaded_at', 'download_script',
+                  'data_source', 'csv']
         widgets = {'downloaded_at': DatePickerInput()}
-        labels = {'csv': _('Register Records CSV File'), }
+        labels = {'csv': _('Register Records CSV File'),
+                  'url': _('URL'), }
 
     def __init__(self, *args, **kwargs):
         qs = Script.objects.filter(script_type='DL')
@@ -49,11 +50,6 @@ class ExtractionScriptForm(forms.Form):
     extract_file = forms.FileField(label="Extracted Text CSV File")
 
     def __init__(self, *args, **kwargs):
-        # print('Inside ExtractionScriptForm, kwargs:')
-        # print(kwargs)
-        # print('Inside ExtractionScriptForm, args:')
-        # print(args)
-        # print('-------------')
         self.dg_type = kwargs.pop('dg_type', 0)
         self.user = kwargs.pop('user', None)
         super(ExtractionScriptForm, self).__init__(*args, **kwargs)
@@ -226,22 +222,14 @@ def data_group_detail(request, pk,
 
 
 @login_required()
-def data_group_create(request, template_name='data_group/datagroup_form.html'):
-    #if coming directly to this URL somehow, redirect
-    if not(request.session.get('datasource_title') and request.session.get('datasource_pk')):
-        return redirect('data_source_list')
-    # get the data source from which the create button was clicked
-    datasource_title = request.session['datasource_title']
-    datasource_pk = request.session['datasource_pk']
-    # the default name of the new data group is the name
-    # of its data source, followed by the count of existing data groups + 1
-    # This can result in the name defaulting to a name that already exists
-    #
-    group_key = DataGroup.objects.filter(data_source=datasource_pk).count() + 1
-    default_name = '{} {}'.format(datasource_title, group_key)
+def data_group_create(request, pk, template_name='data_group/datagroup_form.html'):
+    datasource = get_object_or_404(DataSource, pk=pk)
+    group_key = DataGroup.objects.filter(data_source=datasource).count() + 1
+    default_name = '{} {}'.format(datasource.title, group_key)
+    header = 'Create New Data Group For Data Source "' + str(datasource) + '"'
     initial_values = {'downloaded_by' : request.user,
                       'name'          : default_name,
-                      'data_source'   : datasource_pk}
+                      'data_source'   : datasource}
     if request.method == 'POST':
         form = DataGroupForm(request.POST, request.FILES,
                              user    = request.user,
@@ -300,20 +288,20 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
             return redirect('data_group_detail', pk=datagroup.id)
     else:
         form = DataGroupForm(user=request.user, initial=initial_values)
-    return render(request, template_name, {'form': form})
+    return render(request, template_name, {'form': form, 'header': header, 'datasource': datasource})
 
 
 @login_required()
-def data_group_update(request, pk):
+def data_group_update(request, pk, template_name='data_group/datagroup_form.html'):
     # TODO: Resolve whether this form save ought to also update Datadocuments
-    #       in the case the "Register Records CSV file" is updated.
-    # TODO: Shouldn't this return the user to the update form?
+    #  in the case the "Register Records CSV file" is updated.
     datagroup = get_object_or_404(DataGroup, pk=pk)
     form = DataGroupForm(request.POST or None, instance=datagroup)
+    header = 'Update Data Group for Data Source "' + str(datagroup.data_source) + '"'
     if form.is_valid():
         form.save()
-        return redirect('data_group_list')
-    return render(request, 'data_group/datagroup_form.html', {'form': form})
+        return redirect('data_group_detail', pk=datagroup.id)
+    return render(request, template_name, {'datagroup': datagroup, 'form': form, 'header': header})
 
 
 @login_required()
@@ -343,7 +331,7 @@ def data_document_delete(request, pk, template_name='data_source/datasource_conf
 @login_required
 def dg_dd_csv_view(request, pk):
     qs = DataDocument.objects.filter(data_group_id=pk)
-    filename = DataGroup.objects.get(pk=pk).dgurl()
+    filename = DataGroup.objects.get(pk=pk).name
     return render_to_csv_response(qs, filename=filename, append_datestamp=True)
 
 @login_required

@@ -364,7 +364,7 @@ def data_group_registered_records_csv(request, pk):
 def habitsandpractices(request, pk,
                       template_name='data_group/habitsandpractices.html'):
     doc = get_object_or_404(DataDocument, pk=pk, )
-    script = Script.objects.last() # this needs to be changed bewfore checking in!
+    script = Script.objects.get(title='Manual (dummy)', script_type='EX')
     extext, created = ExtractedText.objects.get_or_create(data_document=doc,
                                                     extraction_script=script)
     if created:

@@ -2,10 +2,10 @@ from django.urls import resolve
 from django.test import TestCase
 from django.http import HttpRequest
 
-from dashboard.tests.loader import load_model_objects
 from dashboard import views
 from dashboard.models import *
 from dashboard.forms import HnPFormSet
+from dashboard.tests.loader import load_model_objects
 
 
 
@@ -45,3 +45,11 @@ class HabitViewTest(TestCase):
         hp_formset = HnPFormSet(data, prefix='habits')
 
         self.assertTrue(hp_formset.is_valid())
+
+    def test_no_raw_category(self):
+        self.objects.exscript.title = 'Manual (dummy)'
+        self.objects.exscript.save()
+        self.client.login(username='Karyn', password='specialP@55word')
+        pk = self.objects.doc.pk
+        response = self.client.get(f'/habitsandpractices/{pk}/')
+        self.assertNotContains(response, 'Raw Category', html=True)

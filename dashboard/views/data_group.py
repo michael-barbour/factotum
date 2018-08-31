@@ -6,6 +6,7 @@ from itertools import islice
 from collections import OrderedDict
 
 from django import forms
+from django.urls import reverse
 from django.conf import settings
 from django.core.files import File
 from django.core.exceptions import ValidationError
@@ -311,9 +312,10 @@ def data_group_update(request, pk):
     # TODO: Shouldn't this return the user to the update form?
     datagroup = get_object_or_404(DataGroup, pk=pk)
     form = DataGroupForm(request.POST or None, instance=datagroup)
-    if form.is_valid():
-        form.save()
-        return redirect('data_group_list')
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            return redirect('data_group_detail', pk=datagroup.id)
     return render(request, 'data_group/datagroup_form.html', {'form': form})
 
 

@@ -39,7 +39,8 @@ def load_model_objects():
     dt = DocumentType.objects.create(title='msds/sds', group_type=gt)
     doc = DataDocument.objects.create(title='test document',
                                             data_group=dg,
-                                            document_type=dt)
+                                            document_type=dt,
+                                            filename='example.pdf')
     p = Product.objects.create(data_source=ds,
                                 upc='Test UPC for ProductToPUC')
 

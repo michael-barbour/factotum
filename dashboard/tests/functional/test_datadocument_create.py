@@ -49,23 +49,21 @@ class DDTestUpload(TestCase):
         self.factory = RequestFactory()
         self.client.login(username='Karyn', password='specialP@55word')
     
-    def testBadGroupTypeInCSV(self):
-        csv_string_bad = ("filename,title,document_type,url,organization\n"
-                "0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf,NUTRA NAIL,9,, \n"
-                "0c68ab16-2065-4d9b-a8f2-e428eb192465.pdf,Body Cream,9,, \n")
-                # DocumentType.objects.all().exclude(group_type__title='Composition').values('id', 'title')
-                # assigning the (incompatible) chemical use disclosure document type in the csv
+    def testGoodGroupTypeInCSV(self):
         csv_string_good = ("filename,title,document_type,url,organization\n"
                 "0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf,NUTRA NAIL,2,, \n"
                 "0c68ab16-2065-4d9b-a8f2-e428eb192465.pdf,Body Cream,2,, \n")
                 # DocumentType.objects.all().filter(group_type__title='Composition').values('id', 'title')
                 # assigning the (compatible) MSDS document type in the csv
-        data = io.StringIO(csv_string_bad)
+
+        data = io.StringIO(csv_string_good)
+        csv_len = len(csv_string_good)
+
         sample_csv = InMemoryUploadedFile(data,
                                             field_name='csv',
                                             name='register_records.csv',
                                             content_type='text/csv',
-                                            size=len(csv_string_bad),
+                                            size=csv_len,
                                             charset='utf-8')
         form_data= {'name': ['Composition Type Group'],
                     'description': ['test data group'],
@@ -87,6 +85,38 @@ class DDTestUpload(TestCase):
         newdg_pk = resolve(resp.url).kwargs['pk']
         newdg = DataGroup.objects.get(pk=newdg_pk)
         newdds = DataDocument.objects.filter(data_group=newdg)
-        print(newdds.values('title','document_type__title'))
+        self.assertEqual(newdds.count(),2,'There should be two new data documents')
 
-        
+    def testBadGroupTypeInCSV(self):
+        csv_string_bad = ("filename,title,document_type,url,organization\n"
+                "0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf,NUTRA NAIL,9,, \n"
+                "0c68ab16-2065-4d9b-a8f2-e428eb192465.pdf,Body Cream,4,, \n")
+                # DocumentType.objects.all().exclude(group_type__title='Composition').values('id', 'title')
+                # assigning the (incompatible) *chemical use disclosure* document type in row 1 of the csv
+
+        data = io.StringIO(csv_string_bad)
+        csv_len = len(csv_string_bad)
+
+        sample_csv = InMemoryUploadedFile(data,
+                                            field_name='csv',
+                                            name='register_records.csv',
+                                            content_type='text/csv',
+                                            size=csv_len,
+                                            charset='utf-8')
+        form_data= {'name': ['Composition Type Group'],
+                    'description': ['test data group'],
+                    'group_type': ['2'], # Composition
+                    'downloaded_by': ['1'],
+                    'downloaded_at': ['08/02/2018'],
+                    'download_script': ['1'],
+                    'data_source': ['10']}
+        request = self.factory.post(path='/datagroup/new', data=form_data)
+        request.FILES['csv'] = sample_csv
+        request.user = User.objects.get(username='Karyn')
+        request.session={}
+        request.session['datasource_title'] = 'Walmart'
+        request.session['datasource_pk'] = 10
+        resp = views.data_group_create(request=request)
+        # the upload form should be invalid
+        self.assertIn('CSV has bad data in row/s:'.encode(), resp.content)
+

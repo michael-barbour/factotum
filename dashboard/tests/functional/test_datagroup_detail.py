@@ -166,6 +166,6 @@ class DataGroupTest(TestCase):
                 'data_source': [dspk]}
         response = self.client.post(f'/datagroup/edit/{dgpk}/', data=data)
         self.assertEqual(response.status_code, 302,
-                                        "User is redirected to detail page.")
+                                         "User is redirected to detail page.")
         self.assertEqual(response.url, f'/datagroup/{dgpk}/',
-                                        "Should go to detail page.")
+                                         "Should go to detail page.")

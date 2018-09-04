@@ -6,6 +6,7 @@ from itertools import islice
 from collections import OrderedDict
 
 from django import forms
+from django.urls import reverse
 from django.conf import settings
 from django.core.files import File
 from django.core.exceptions import ValidationError
@@ -125,25 +126,26 @@ def data_group_detail(request, pk,
                   }
     if request.method == 'POST' and 'upload' in request.POST:
         # match filename to pdf name
-        proc_files = [f for d in docs for f
+        matched_files = [f for d in docs for f
                 in request.FILES.getlist('multifiles') if f.name == d.filename]
-        if not proc_files:  # return render here!
+        if not matched_files:
             context['msg'] = ('There are no matching records in the '
                                                         'selected directory.')
             return render(request, template_name, context)
         zf = zipfile.ZipFile(datagroup.zip_file, 'a', zipfile.ZIP_DEFLATED)
-        while proc_files:
-            pdf = proc_files.pop(0)
+        while matched_files:
+            f = matched_files.pop(0)
             # set the Matched value of each registered record to True
-            doc = DataDocument.objects.get(filename=pdf.name,
+            doc = DataDocument.objects.get(filename=f.name,
                                             data_group=datagroup.pk)
             if doc.matched:  # continue if already matched
                 continue
             doc.matched = True
             doc.save()
             fs = FileSystemStorage(store + '/pdf')
-            fs.save(pdf.name, pdf)
-            zf.write(store + '/pdf/' + pdf.name, pdf.name)
+            afn = doc.get_abstract_filename()
+            fs.save(afn, f)
+            zf.write(store + '/pdf/' + afn, afn)
         zf.close()
         form = include_extract_form(datagroup, dg_type)
         context['upload_form'] = not datagroup.all_matched()
@@ -289,9 +291,8 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
                 datagroup.delete()
                 return render(request, template_name, {'line_errors': errors,
                                                        'form': form})
-            #dg_dir = datagroup.name.replace(' ', '_')
-            dg_dir = str(datagroup.pk)
-            zf = zipfile.ZipFile('media/{0}/{0}.zip'.format(dg_dir), 'w',
+            name = datagroup.dgurl()
+            zf = zipfile.ZipFile(f'media/{name}/{name}.zip', 'w',
                                  zipfile.ZIP_DEFLATED)
             datagroup.zip_file = zf.filename
             zf.close()
@@ -312,9 +313,10 @@ def data_group_update(request, pk):
     # TODO: Shouldn't this return the user to the update form?
     datagroup = get_object_or_404(DataGroup, pk=pk)
     form = DataGroupForm(request.POST or None, instance=datagroup)
-    if form.is_valid():
-        form.save()
-        return redirect('data_group_list')
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            return redirect('data_group_detail', pk=datagroup.id)
     return render(request, 'data_group/datagroup_form.html', {'form': form})
 
 
@@ -365,7 +367,7 @@ def data_group_registered_records_csv(request, pk):
 def habitsandpractices(request, pk,
                       template_name='data_group/habitsandpractices.html'):
     doc = get_object_or_404(DataDocument, pk=pk, )
-    script = Script.objects.last() # this needs to be changed bewfore checking in!
+    script = Script.objects.get(title='Manual (dummy)', script_type='EX')
     extext, created = ExtractedText.objects.get_or_create(data_document=doc,
                                                     extraction_script=script)
     if created:

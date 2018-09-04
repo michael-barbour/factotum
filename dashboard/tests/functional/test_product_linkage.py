@@ -19,7 +19,7 @@ class TestProductLinkage(TestCase):
         dd.save()
         self.assertEqual(dd.document_type_id, 1,
                          'DataDocument 155324 must have a document_type_id of 1 for test to function')
-        response = self.client.post(f'/link_product_form/155324',
+        response = self.client.post(f'/link_product_form/155324/',
                                     {'title': 'x',
                                      'manufacturer': '',
                                      'brand_name': '',
@@ -40,7 +40,7 @@ class TestProductLinkage(TestCase):
         dg.group_type_id = 2
         dg.save()
 
-        response = self.client.get('/link_product_form/' + str(dd.pk)).content.decode('utf8')
+        response = self.client.get(f'/link_product_form/{str(dd.pk)}/').content.decode('utf8')
         response_html = html.fromstring(response)
 
         self.assertTrue(response_html.xpath('string(//*[@id="id_document_type"]/option[@value="5"])'),

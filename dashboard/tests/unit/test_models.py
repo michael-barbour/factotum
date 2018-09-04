@@ -51,7 +51,7 @@ class ModelsTest(TestCase):
         # DataGroup
         self.assertEqual(str(self.objects.dg), self.objects.dg.name)
         self.assertEqual(self.objects.dg.dgurl(),
-                            self.objects.dg.name.replace(' ', '_'))
+                            self.objects.dg.pk)
         # DataDocuments
         # Confirm that one of the data documents appears in the data group
         # show page after upload from CSV
@@ -64,7 +64,7 @@ class ModelsTest(TestCase):
         # the pdfs via their file names
         self.assertEqual(self.objects.dg.matched_docs(), 2)
         # Test a link to an uploaded pdf
-        u = b'Data_Group_for_Test/pdf/0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf'
+        u = "{0}/pdf/0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf".format(self.objects.dg.pk).encode('utf-8')
         self.assertIn(u, dg_response.content, (
                                     'link to PDF should be in HTML!'))
         # DownloadScript

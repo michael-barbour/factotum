@@ -46,8 +46,8 @@ class RegisterRecordsTest(TestCase):
         resp = views.data_group_create(request=request)
         self.assertEqual(resp.status_code,302,
                         "Should be redirected to new datagroup detail page")
-        self.assertIn('Walmart_MSDS_Test_Group',os.listdir(settings.MEDIA_ROOT))
         dg = DataGroup.objects.get(name='Walmart MSDS Test Group')
+        self.assertIn(str(dg.pk), os.listdir(settings.MEDIA_ROOT))
         docs = DataDocument.objects.filter(data_group=dg)
         self.assertEqual(len(docs), 2)
         f = TemporaryUploadedFile(name='0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf',
@@ -60,7 +60,8 @@ class RegisterRecordsTest(TestCase):
         resp = views.data_group_detail(request=request, pk=dg.pk)
         doc = DataDocument.objects.get(title='NUTRA NAIL')
         fn = doc.get_abstract_filename()
-        stored_file = f'Walmart_MSDS_Test_Group/pdf/{fn}'
+        folder_name = str(dg.pk)
+        stored_file = f'{folder_name}/pdf/{fn}'
         self.assertTrue(os.path.exists(settings.MEDIA_ROOT + stored_file))
         f.close()
 

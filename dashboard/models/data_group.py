@@ -12,7 +12,10 @@ from .group_type import GroupType
 # in the 'upload_to' param on th FileField
 def update_filename(instance, filename):
     #name_fill_space = instance.name.replace(' ', '_')
-    pk_folder = str(DataGroup.objects.last().id + 1)
+    if DataGroup.objects.last():
+        pk_folder = str(DataGroup.objects.last().id + 1)
+    else:
+        pk_folder = str(1)
     print(pk_folder)
     name = '{0}/{0}_{1}'.format(pk_folder, filename) # potential space errors in name
     print(name)

@@ -4,12 +4,12 @@ from dashboard.models import *
 from lxml import html
 from dashboard.views.data_group import ExtractionScriptForm, DataGroupForm
 from django.core.files.uploadedfile import SimpleUploadedFile
-
+from django.contrib.auth.models import User
 from django.test import Client
 from importlib import import_module
 
 
-class DataGroupTest(TestCase):
+class DataGroupDetailTest(TestCase):
 
     def setUp(self):
         self.objects = load_model_objects()
@@ -161,7 +161,7 @@ class DataGroupTest(TestCase):
         gtpk = str(self.objects.gt.pk)
         data = {'name': ['Changed Name'],
                 'group_type': [gtpk],
-                'downloaded_by': ['1'],
+                'downloaded_by': [str(User.objects.get(username='Karyn').pk)],
                 'downloaded_at': ['08/20/2017'],
                 'data_source': [dspk]}
         response = self.client.post(f'/datagroup/edit/{dgpk}/', data=data)

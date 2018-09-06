@@ -43,7 +43,7 @@ class RegisterRecordsTest(TestCase):
         request.session={}
         request.session['datasource_title'] = 'Walmart'
         request.session['datasource_pk'] = 10
-        resp = views.data_group_create(request=request)
+        resp = views.data_group_create(request=request, pk=10)
         self.assertEqual(resp.status_code,302,
                         "Should be redirected to new datagroup detail page")
         self.assertIn('Walmart_MSDS_Test_Group',os.listdir(settings.MEDIA_ROOT))

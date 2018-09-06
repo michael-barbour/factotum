@@ -3,7 +3,7 @@ from django.test import TestCase, override_settings, RequestFactory
 from dashboard.models import DataDocument, Script, ExtractedText, ExtractedChemical, QAGroup
 
 @override_settings(ALLOWED_HOSTS=['testserver'])
-class TestApprovalView(TestCase):
+class TestQaApproval(TestCase):
     fixtures = ['00_superuser.yaml','01_lookups.yaml',
     '02_datasource.yaml','03_datagroup.yaml',
     '04_PUC.yaml','05_product.yaml',

@@ -20,7 +20,8 @@ def habitsandpractices(request, pk,
         extext.doc_date = 'please add...'
     # print(extext.pk)
     ext_form = ExtractedTextForm(request.POST or None, instance=extext)
-    hp_formset = HnPFormSet(request.POST or None, instance=extext, prefix='habits')
+    hp_formset = HnPFormSet(request.POST or None,
+                            instance=extext, prefix='habits')
     context = {   'doc'         : doc,
                   'ext_form'    : ext_form,
                   'hp_formset'  : hp_formset,

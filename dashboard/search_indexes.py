@@ -108,7 +108,7 @@ class DataDocumentIndex(indexes.SearchIndex, indexes.Indexable):
     uploaded_at      = indexes.DateTimeField(model_attr='uploaded_at')
     result_css_class = indexes.CharField()
     
-    filename = indexes.EdgeNgramField(model_attr="filename", null=True)
+    filename = indexes.CharField(model_attr="filename", null=True)
 
     def prepare_facet_model_name(self, obj):
         return "Data Document"

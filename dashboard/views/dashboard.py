@@ -34,7 +34,7 @@ def index(request):
 def datadocument_count_by_date():
     # Datasets to populate linechart with document-upload statistics
     # Number of datadocuments, both overall and by type, that have been uploaded as of each date
-    select_upload_date = {"upload_date": """date(created_at)"""}
+    select_upload_date = {"upload_date": """date(dashboard_datadocument.created_at)"""}
     document_stats = {}
     document_stats['all'] = list(DataDocument.objects.extra(select=select_upload_date) \
                                  .values('upload_date') \

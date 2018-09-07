@@ -67,7 +67,7 @@ class ProductIndex(indexes.SearchIndex, indexes.Indexable):
     title = indexes.EdgeNgramField(model_attr='title')
     facet_model_name = indexes.CharField(faceted=True)
     result_css_class = indexes.CharField()
-    
+
     short_description = indexes.EdgeNgramField(model_attr="short_description", null=True)
 
     brand_name = indexes.CharField(
@@ -79,7 +79,7 @@ class ProductIndex(indexes.SearchIndex, indexes.Indexable):
         stored=True,
         faceted=True,
         null=True)
-       
+
 
     def prepare_pucs(self, obj):
         return [puc.pk for puc in obj.puc_set.all()]
@@ -104,15 +104,15 @@ class DataDocumentIndex(indexes.SearchIndex, indexes.Indexable):
     template_name='search/indexes/dashboard/data_document_text.txt')
     title            = indexes.EdgeNgramField(model_attr='title')
     facet_model_name = indexes.CharField(faceted=True)
-    group_type       = indexes.CharField(faceted=True, model_attr='data_group__group_type')
-    uploaded_at      = indexes.DateTimeField(model_attr='uploaded_at')
+    group_type       = indexes.CharField(faceted=True,
+                                            model_attr='data_group__group_type')
+    uploaded_at      = indexes.DateTimeField(model_attr='created_at', null=True)
     result_css_class = indexes.CharField()
-    
-    filename = indexes.EdgeNgramField(model_attr="filename", null=True)
+    filename         = indexes.EdgeNgramField(model_attr="filename", null=True)
 
     def prepare_facet_model_name(self, obj):
         return "Data Document"
-    
+
     def prepare_result_css_class(self, obj):
         return "datadocument-result"
 

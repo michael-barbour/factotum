@@ -139,8 +139,10 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
         producttopuc = ProductToPUC.objects.filter(product=p, classification_method='MA')
         # if product already has a puc, update it with a new puc
         if producttopuc.exists():
-            producttopuc_obj = producttopuc.get()
-            producttopuc_obj.puc = puc # This assignment doesn't appear to be actually happening. . .
+            # print(producttopuc)
+            # print(producttopuc.get())
+            producttopuc_obj = producttopuc.first()
+            producttopuc_obj.PUC = puc # This assignment doesn't appear to be actually happening. . .
             producttopuc_obj.puc_assigned_time = timezone.now()
             producttopuc_obj.puc_assigned_usr = request.user
             print('Updated ProductToPUC values:')

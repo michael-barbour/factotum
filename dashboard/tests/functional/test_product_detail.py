@@ -42,8 +42,16 @@ class TestProductDetail(TestCase):
                       response_html.xpath('string(//*[@id="button_assign_puc"]/text())'),
                       'There should be an Assign PUC button for this product')
 
-        response = self.client.post(f'/product_puc/{str(p.pk)}/',
-                                    {'puc': '96' })
+        response = self.client.get(f'/product_puc/{str(p.pk)}/')
+
+        self.assertNotIn('Currently assigned PUC:', response,
+                                'Assigned PUC should not be visible')
+
+        self.client.post(f'/product_puc/{str(p.pk)}/', {'puc': '96' })
+        response = self.client.get(f'/product_puc/{str(p.pk)}/')
+        
+        self.assertIn(b'Currently assigned PUC:', response.content,
+                                'Assigned PUC should be visible')
 
         p.refresh_from_db()
 
@@ -56,7 +64,3 @@ class TestProductDetail(TestCase):
         self.assertNotIn('Assign PUC',
                       response_html.xpath('string(//*[@id="button_assign_puc"]/text())'),
                       'There should not be an Assign PUC button for this product')
-
-
-
-

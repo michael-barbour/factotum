@@ -154,7 +154,7 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
         pk = p.id if referer == 'product_detail' else p.data_source.id
         return redirect(referer, pk=pk)
     form.referer = resolve(parse.urlparse(request.META['HTTP_REFERER']).path).url_name\
-        if request.META['HTTP_REFERER'] else 'category_assignment'
+        if hasattr(request.META,'HTTP_REFERER') else 'category_assignment'
     form.referer_pk = p.id if form.referer == 'product_detail' else p.data_source.id
     return render(request, template_name,{'product': p, 'form': form})
 

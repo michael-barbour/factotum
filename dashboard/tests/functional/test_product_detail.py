@@ -1,7 +1,10 @@
+from lxml import html
+
 from django.test import TestCase, override_settings
+
+from dashboard.models import *
 from dashboard.tests.loader import *
 from dashboard.views.product_curation import ProductForm, ProductViewForm
-from lxml import html
 
 
 @override_settings(ALLOWED_HOSTS=['testserver'])
@@ -49,10 +52,18 @@ class TestProductDetail(TestCase):
 
         self.client.post(f'/product_puc/{str(p.pk)}/', {'puc': '96' })
         response = self.client.get(f'/product_puc/{str(p.pk)}/')
-        
+
         self.assertIn(b'Currently assigned PUC:', response.content,
                                 'Assigned PUC should be visible')
-
+        # PUC is assigned....check that an edit will updated the record
+        link = ProductToPUC.objects.get(PUC_id=96)
+        print(link.product_id)
+        self.assertEqual(link.product_id, p.pk,
+                            "PUC link should exist in table")
+        self.client.post(f'/product_puc/{str(p.pk)}/', {'puc': '47' })
+        link = ProductToPUC.objects.get(product=p)
+        self.assertEqual(link.PUC_id, 47,
+                            "PUC link should be updated in table")
         p.refresh_from_db()
 
         self.assertTrue(p.get_uber_puc() != None,

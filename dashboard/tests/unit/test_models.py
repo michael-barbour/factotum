@@ -51,8 +51,7 @@ class ModelsTest(TestCase):
 
         # DataGroup
         self.assertEqual(str(self.objects.dg), self.objects.dg.name)
-        self.assertEqual(self.objects.dg.dgurl(),
-                            self.objects.dg.pk)
+
         # DataDocuments
         # Confirm that one of the data documents appears in the data group
         # show page after upload from CSV

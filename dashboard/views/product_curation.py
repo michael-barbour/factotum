@@ -135,12 +135,14 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
     p = Product.objects.get(pk=pk)
     if form.is_valid():
         puc = PUC.objects.get(id=form['puc'].value())
-        print('Selected PUC: ' + str(puc))
+        # print('Selected PUC: ' + str(puc))
         producttopuc = ProductToPUC.objects.filter(product=p, classification_method='MA')
         # if product already has a puc, update it with a new puc
         if producttopuc.exists():
-            producttopuc_obj = producttopuc.get()
-            producttopuc_obj.puc = puc # This assignment doesn't appear to be actually happening. . .
+            # print(producttopuc)
+            # print(producttopuc.get())
+            producttopuc_obj = producttopuc.first()
+            producttopuc_obj.PUC = puc # This assignment doesn't appear to be actually happening. . .
             producttopuc_obj.puc_assigned_time = timezone.now()
             producttopuc_obj.puc_assigned_usr = request.user
             print('Updated ProductToPUC values:')
@@ -154,7 +156,7 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
         pk = p.id if referer == 'product_detail' else p.data_source.id
         return redirect(referer, pk=pk)
     form.referer = resolve(parse.urlparse(request.META['HTTP_REFERER']).path).url_name\
-        if request.META['HTTP_REFERER'] else 'category_assignment'
+        if 'HTTP_REFERER' in request.META else 'category_assignment'
     form.referer_pk = p.id if form.referer == 'product_detail' else p.data_source.id
     return render(request, template_name,{'product': p, 'form': form})
 

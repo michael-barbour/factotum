@@ -4,6 +4,7 @@ import zipfile
 from datetime import datetime
 from itertools import islice
 from collections import OrderedDict
+from pathlib import Path
 
 from django import forms
 from django.urls import reverse
@@ -291,15 +292,25 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
                 datagroup.delete()
                 return render(request, template_name, {'line_errors': errors,
                                                        'form': form})
-            name = datagroup.dgurl()
-            zf = zipfile.ZipFile(f'media/{name}/{name}.zip', 'w',
-                                 zipfile.ZIP_DEFLATED)
-            datagroup.zip_file = zf.filename
-            zf.close()
+            #Save the DG to make sure the pk exists
             datagroup.save()
+            #Let's even write the csv first
             with open(datagroup.csv.path,'w') as f:
                 myfile = File(f)
                 myfile.write(''.join(text))
+            print(datagroup.pk)
+            print(datagroup.name)
+            print(datagroup.data_source)
+            #Let's explicitly use the full path for the actually writing of the zipfile
+            new_zip_name = Path(settings.MEDIA_URL + "/" + str(datagroup.pk) + "/" + str(datagroup.pk) + ".zip")
+            new_zip_path = Path(settings.MEDIA_ROOT + "/" + str(datagroup.pk) + "/" + str(datagroup.pk) + ".zip")
+            print(str(new_zip_name))
+            print(str(new_zip_path))
+            zf = zipfile.ZipFile(str(new_zip_path), 'w',
+                                 zipfile.ZIP_DEFLATED)
+            datagroup.zip_file = new_zip_name
+            zf.close()
+            datagroup.save()
             return redirect('data_group_detail', pk=datagroup.id)
     else:
         form = DataGroupForm(user=request.user, initial=initial_values)
@@ -347,7 +358,7 @@ def data_document_delete(request, pk, template_name='data_source/datasource_conf
 @login_required
 def dg_dd_csv_view(request, pk):
     qs = DataDocument.objects.filter(data_group_id=pk)
-    filename = DataGroup.objects.get(pk=pk).dgurl()
+    filename = DataGroup.objects.get(pk=pk).pk
     return render_to_csv_response(qs, filename=filename, append_datestamp=True)
 
 @login_required
@@ -357,7 +368,7 @@ def data_group_registered_records_csv(request, pk):
     if dg:
         columnlist.insert(0, "id")
         qs = DataDocument.objects.filter(data_group_id=pk).values(*columnlist)
-        return render_to_csv_response(qs, filename=dg.dgurl() + "_registered_records.csv",
+        return render_to_csv_response(qs, filename=dg.pk + "_registered_records.csv",
                                       field_header_map={"id": "DataDocument_id"})
     else:
         qs = DataDocument.objects.filter(data_group_id=0).values(*columnlist)

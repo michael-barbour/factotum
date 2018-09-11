@@ -53,9 +53,6 @@ class DataGroup(CommonInfo):
     def __str__(self):
         return self.name
 
-    def dgurl(self):
-        return self.pk
-
     def get_absolute_url(self):
         return reverse('data_group_edit', kwargs={'pk': self.pk})
 

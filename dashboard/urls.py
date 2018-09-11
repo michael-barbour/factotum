@@ -21,7 +21,7 @@ urlpatterns = [
                                             name='data_group_detail'),
     path('datagroup/docs_csv/<int:pk>/', views.dg_dd_csv_view,
                                             name='dg_dd_csv_view'),
-    path('datagroup/new/', views.data_group_create,
+    path('datasource/<int:pk>/datagroup_new/', views.data_group_create,
                                             name='data_group_new'),
     path('datagroup/<int:pk>/registered_records.csv', views.data_group_registered_records_csv,
                                             name="registered_records.csv"),

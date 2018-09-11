@@ -13,11 +13,11 @@ class ExtractedChemicalIndex(indexes.SearchIndex, indexes.Indexable):
 
     raw_chem_name = indexes.EdgeNgramField(model_attr='raw_chem_name', null=True)
 
-    raw_cas = indexes.EdgeNgramField(model_attr='raw_cas', null=True)
+    raw_cas = indexes.CharField(model_attr='raw_cas', null=True)
 
-    extracted_text_id = indexes.EdgeNgramField(model_attr='extracted_text_id', null=False)
+    extracted_text_id = indexes.CharField(model_attr='extracted_text_id', null=False)
 
-    data_document_id = indexes.EdgeNgramField(model_attr='extracted_text__data_document_id', null=False)
+    data_document_id = indexes.CharField(model_attr='extracted_text__data_document_id', null=False)
 
     def get_model(self):
         return ExtractedChemical
@@ -42,9 +42,9 @@ class DSSToxSubstanceIndex(indexes.SearchIndex, indexes.Indexable):
     result_css_class = indexes.CharField()
 
     true_chemname = indexes.EdgeNgramField(model_attr='true_chemname', null=True)
-    true_cas = indexes.EdgeNgramField(model_attr='true_cas', null=True)
-    extracted_text_id = indexes.EdgeNgramField(model_attr='extracted_chemical__extracted_text_id', null=False)
-    data_document_id = indexes.EdgeNgramField(model_attr='extracted_chemical__extracted_text__data_document_id', null=False)
+    true_cas = indexes.CharField(model_attr='true_cas', null=True)
+    extracted_text_id = indexes.CharField(model_attr='extracted_chemical__extracted_text_id', null=False)
+    data_document_id = indexes.CharField(model_attr='extracted_chemical__extracted_text__data_document_id', null=False)
 
     def get_model(self):
         return DSSToxSubstance
@@ -108,7 +108,7 @@ class DataDocumentIndex(indexes.SearchIndex, indexes.Indexable):
     uploaded_at      = indexes.DateTimeField(model_attr='uploaded_at')
     result_css_class = indexes.CharField()
     
-    filename = indexes.EdgeNgramField(model_attr="filename", null=True)
+    filename = indexes.CharField(model_attr="filename", null=True)
 
     def prepare_facet_model_name(self, obj):
         return "Data Document"

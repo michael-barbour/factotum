@@ -33,7 +33,7 @@ class RegisterRecordsTest(TestCase):
         form_data= {'name': ['Walmart MSDS Test Group'],
                     'description': ['test data group'],
                     'group_type': ['5'],
-                    'downloaded_by': ['1'],
+                    'downloaded_by': [str(User.objects.get(username='Karyn').pk)],
                     'downloaded_at': ['08/02/2018'],
                     'download_script': ['1'],
                     'data_source': ['10']}
@@ -43,6 +43,8 @@ class RegisterRecordsTest(TestCase):
         request.session={}
         request.session['datasource_title'] = 'Walmart'
         request.session['datasource_pk'] = 10
+        print('POST request for creating data group')
+        print(request.POST)
         resp = views.data_group_create(request=request)
         self.assertEqual(resp.status_code,302,
                         "Should be redirected to new datagroup detail page")
@@ -54,7 +56,7 @@ class RegisterRecordsTest(TestCase):
                                 content_type='application/pdf',
                                 size=47,
                                 charset=None)
-        request = self.factory.post(path='/datagroup/1', data={'upload':'Submit'})
+        request = self.factory.post(path='/datagroup/%s' % dg.pk, data={'upload':'Submit'})
         request.FILES['multifiles'] = f
         request.user = User.objects.get(username='Karyn')
         resp = views.data_group_detail(request=request, pk=dg.pk)

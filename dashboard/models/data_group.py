@@ -11,6 +11,8 @@ from .group_type import GroupType
 # could be used for dynamically creating filename on instantiation
 # in the 'upload_to' param on th FileField
 def update_filename(instance, filename):
+    # This doesn't work in cases where a newly created datagroup's pk
+    # is different from the number of existing datagroups + 1
     #name_fill_space = instance.name.replace(' ', '_')
     if DataGroup.objects.last():
         pk_folder = str(DataGroup.objects.last().id + 1)
@@ -34,6 +36,10 @@ class DataGroup(CommonInfo):
     zip_file = models.CharField(max_length=100)
     group_type = models.ForeignKey(GroupType, on_delete=models.SET_DEFAULT, default=1, null=True, blank=True)
 
+    def save(self, *args, **kwargs):
+        print('Saving new datagroup:')
+        print(self.csv)
+        super(DataGroup, self).save(*args, **kwargs)
 
     def matched_docs(self):
         return self.datadocument_set.filter(matched=True).count()

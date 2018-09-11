@@ -250,6 +250,7 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
                              user    = request.user,
                              initial = initial_values)
         if form.is_valid():
+            # what's the pk of the newly created datagroup?
             datagroup = form.save()
             info = [x.decode('ascii',
                              'ignore') for x in datagroup.csv.readlines()]
@@ -287,6 +288,8 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
                 # update line to hold the pk for writeout
                 text.append(str(doc.pk)+','+ ','.join(line.values())+'\n')
             if errors:
+                print('errors found while creating data group from csv:')
+                print(datagroup.__dict__)
                 datagroup.csv.close()
                 datagroup.delete()
                 return render(request, template_name, {'line_errors': errors,

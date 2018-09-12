@@ -82,17 +82,17 @@
                 <img src="{{ product.medium_image }}" height="180px" width="180px" alt="Product Medium Image">
                 <br>
             {% endif %}
-            <dl class="row col-sm-12">
-                <dt class="col-sm-3">Brand Name</dt>
-                <dd class="col-sm-9">{{ product.brand_name|default:"" }}</dd>
-                <dt class="col-sm-3">Manufacturer</dt>
-                <dd class="col-sm-9">{{ product.manufacturer|default:"" }}</dd>
-                <dt class="col-sm-3">Model Number</dt>
-                <dd class="col-sm-9">{{ product.model_number|default:"" }}</dd>
-                <dt class="col-sm-3">Size</dt>
-                <dd class="col-sm-9">{{ product.size|default:"" }}</dd>
-                <dt class="col-sm-3">Color</dt>
-                <dd class="col-sm-9">{{ product.color|default:"" }}</dd>
+            <dl class="col-sm-12">
+                <dt>Brand Name</dt>
+                <dd>{{ product.brand_name|default:"" }}</dd>
+                <dt>Manufacturer</dt>
+                <dd>{{ product.manufacturer|default:"" }}</dd>
+                <dt>Model Number</dt>
+                <dd>{{ product.model_number|default:"" }}</dd>
+                <dt>Size</dt>
+                <dd>{{ product.size|default:"" }}</dd>
+                <dt>Color</dt>
+                <dd>{{ product.color|default:"" }}</dd>
             </dl>
             {{ product.short_description|default:"" }}
         </div>

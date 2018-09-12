@@ -48,6 +48,8 @@ urlpatterns = [
     path('qa/', views.qa_index,            name='qa'),
     path('product_puc/<int:pk>/', views.assign_puc_to_product,
                                             name='product_puc'),
+    path('product_puc_delete/<int:pk>/', views.detach_puc_from_product,
+                                            name='product_puc_delete'),
     path('puc-autocomplete/', views.puc_autocomplete.PUCAutocomplete.as_view(),
                                             name='puc-autocomplete'),
     path('product/<int:pk>/', views.product_detail,

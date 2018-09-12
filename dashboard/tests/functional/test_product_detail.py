@@ -14,11 +14,15 @@ class TestProductDetail(TestCase):
     def setUp(self):
         self.client.login(username='Karyn', password='specialP@55word')
 
+    def test_product_delete(self):
+        self.assertTrue(Product.objects.get(pk=11),
+                         'Product 11 should exist')
+        response = self.client.get(f'/product/delete/11/')
+        self.assertFalse(Product.objects.filter(pk=11),
+                         'Product 11 should have been deleted')
+
     def test_product_update(self):
-        self.assertFalse('title' in ProductViewForm().fields,
-                            'ProductViewForm should not include the product title')
-        self.assertTrue(ProductForm().fields['title'],
-                         'ProductViewForm should include the product title')
+        p = Product.objects.get(pk=11)
         response = self.client.post(f'/product/edit/11/',
                                     {'title': 'x',
                                      'manufacturer': '',
@@ -28,7 +32,7 @@ class TestProductDetail(TestCase):
                                      'size': '',
                                      'color': '',
                                      'model_number': '2'})
-        p = Product.objects.get(pk=11)
+        p.refresh_from_db()
         self.assertEqual(p.title, 'x',
                          'Product 11 should have the title "x"')
 

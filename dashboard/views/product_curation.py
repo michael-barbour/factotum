@@ -128,6 +128,13 @@ def link_product_form(request, pk, template_name=('product_curation/'
     return render(request, template_name,{'document': doc, 'form': form})
 
 @login_required()
+def detach_puc_from_product(request, pk):
+    p = Product.objects.get(pk=pk)
+    pp = ProductToPUC.objects.get(product=p)
+    pp.delete()
+    return redirect('product_detail', pk=p.pk)
+
+@login_required()
 def assign_puc_to_product(request, pk, template_name=('product_curation/'
                                                       'product_puc.html')):
     """Assign a PUC to a single product"""
@@ -180,15 +187,10 @@ def product_update(request, pk, template_name=('product_curation/'
     return render(request, template_name,{'product': p, 'form': form})
 
 @login_required()
-# Stub for future delete functionality
-def product_delete(request, pk, template_name=('product_curation/'
-                                               'product_edit.html')):
+def product_delete(request, pk):
     p = Product.objects.get(pk=pk)
-    form = ProductForm(request.POST or None, instance=p)
-    if form.is_valid():
-        form.save()
-        return redirect('product_detail', pk=p.pk)
-    return render(request, template_name,{'product': p, 'form': form})
+    p.delete()
+    return redirect('product_curation')
 
 @login_required()
 def product_list(request, template_name=('product_curation/'

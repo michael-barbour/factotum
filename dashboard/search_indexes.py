@@ -79,8 +79,16 @@ class ProductIndex(indexes.SearchIndex, indexes.Indexable):
         null=True)
 
     def prepare_pucs(self, obj):
-        return [puc.pk for puc in obj.puc_set.all()]
-        #return obj.puc_set.all().values_list('pk', flat=True)
+        puc = obj.puc_set.first()
+        if puc:
+            if puc.prod_type:
+                return (puc.prod_type, '096192')
+            if puc.prod_fam:
+                return (puc.prod_fam, '1171ba')
+            if puc.gen_cat:
+                return (puc.gen_cat, '1399c6')
+        else:
+            return ('None','d9534f')
 
     def get_model(self):
         return Product

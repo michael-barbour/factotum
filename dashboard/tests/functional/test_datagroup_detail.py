@@ -7,10 +7,12 @@ from dashboard.tests.loader import load_model_objects
 from dashboard.views.data_group import ExtractionScriptForm, DataGroupForm
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth.models import User
+from django.test import Client
+from importlib import import_module
 
 from dashboard.models import *
 
-class DataGroupTest(TestCase):
+class DataGroupDetailTest(TestCase):
 
     def setUp(self):
         self.objects = load_model_objects()

@@ -4,7 +4,7 @@ from dashboard.models import QAGroup, ExtractedText
 
 
 
-class DataGroupTest(TestCase):
+class ExtractedQaTest(TestCase):
 
     def setUp(self):
         self.objects = load_model_objects()

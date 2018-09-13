@@ -50,7 +50,7 @@
       <tr>
         <th>PDF</th>
         <td>
-          <a href="/media/{{ doc.data_group.url }}/pdf/{{ doc.get_abstract_filename }}"
+          <a href="/media/{{ doc.data_group.get_dg_folder }}/pdf/{{ doc.get_abstract_filename }}"
               title="Link to {{ doc.get_abstract_filename }}" target="_blank">{{ doc.get_abstract_filename }}</a>
           <small><i>click to open PDF in new window</i></small>
         </td>

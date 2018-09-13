@@ -32,6 +32,6 @@ class DataDocument(CommonInfo):
         return f'document_{self.pk}.{ext}'
 
     def pdf_url(self):
-        dg = self.data_group.pk
+        dg = self.data_group
         fn = self.get_abstract_filename()
-        return f'/media/{dg}/pdf/{fn}'
+        return f'/media/{dg.fs_id}/pdf/{fn}'

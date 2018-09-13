@@ -68,7 +68,7 @@ class ModelsTest(TestCase):
         self.assertEqual(self.objects.dg.matched_docs(), 2)
         # Test a link to an uploaded pdf
         fn = docs[0].get_abstract_filename()
-        u = "{0}/pdf/{1}".format(self.objects.dg.pk, fn).encode('utf-8')
+        u = "{0}/pdf/{1}".format(self.objects.dg.fs_id, fn).encode('utf-8')
         self.assertIn(u, dg_response.content, (
                                     'link to PDF should be in HTML!'))
         # DownloadScript

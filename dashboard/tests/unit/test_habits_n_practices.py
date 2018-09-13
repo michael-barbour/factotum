@@ -2,10 +2,10 @@ from django.urls import resolve
 from django.test import TestCase
 from django.http import HttpRequest
 
-from dashboard.tests.loader import load_model_objects
 from dashboard import views
 from dashboard.models import *
 from dashboard.forms import HnPFormSet
+from dashboard.tests.loader import load_model_objects
 
 
 
@@ -26,22 +26,30 @@ class HabitViewTest(TestCase):
     def test_product_surveyed_field(self):
 
         data = {'habits-TOTAL_FORMS':'2',
-        'habits-INITIAL_FORMS':'1',
-        'habits-MIN_NUM_FORMS':'0',
-        'habits-MAX_NUM_FORMS':'1000',
-        'habits-0-id': self.objects.ehp.pk,
-        'habits-0-product_surveyed':'',
+                'habits-INITIAL_FORMS':'1',
+                'habits-MIN_NUM_FORMS':'0',
+                'habits-MAX_NUM_FORMS':'1000',
+                'habits-0-id': self.objects.ehp.pk,
+                'habits-0-product_surveyed':'',
         }
         hp_formset = HnPFormSet(data, prefix='habits')
         self.assertFalse(hp_formset.is_valid())
 
         data = {'habits-TOTAL_FORMS':'2',
-        'habits-INITIAL_FORMS':'1',
-        'habits-MIN_NUM_FORMS':'0',
-        'habits-MAX_NUM_FORMS':'1000',
-        'habits-0-id': self.objects.ehp.pk,
-        'habits-0-product_surveyed':'monster trucks',
+                'habits-INITIAL_FORMS':'1',
+                'habits-MIN_NUM_FORMS':'0',
+                'habits-MAX_NUM_FORMS':'1000',
+                'habits-0-id': self.objects.ehp.pk,
+                'habits-0-product_surveyed':'monster trucks',
         }
         hp_formset = HnPFormSet(data, prefix='habits')
 
         self.assertTrue(hp_formset.is_valid())
+
+    def test_no_raw_category(self):
+        self.objects.exscript.title = 'Manual (dummy)'
+        self.objects.exscript.save()
+        self.client.login(username='Karyn', password='specialP@55word')
+        pk = self.objects.doc.pk
+        response = self.client.get(f'/habitsandpractices/{pk}/')
+        self.assertNotContains(response, 'Raw Category', html=True)

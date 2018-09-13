@@ -1,15 +1,18 @@
+from lxml import html
+from importlib import import_module
+
+from django.test import Client
 from django.test import TestCase
 from dashboard.tests.loader import load_model_objects
-from dashboard.models import *
-from lxml import html
 from dashboard.views.data_group import ExtractionScriptForm, DataGroupForm
 from django.core.files.uploadedfile import SimpleUploadedFile
-
+from django.contrib.auth.models import User
 from django.test import Client
 from importlib import import_module
 
+from dashboard.models import *
 
-class DataGroupTest(TestCase):
+class DataGroupDetailTest(TestCase):
 
     def setUp(self):
         self.objects = load_model_objects()
@@ -84,14 +87,26 @@ class DataGroupTest(TestCase):
         self.assertEqual(response.context['bulk'], 0,
                 'Product linked to all DataDocuments, no bulk_create needed.')
         doc = DataDocument.objects.create(data_group=self.objects.dg)
+        doc.matched = True
+        self.objects.doc.matched = True
+        doc.save()
+        self.objects.doc.save()
         response = self.client.get(f'/datagroup/{self.objects.dg.pk}/')
         self.assertEqual(response.context['bulk'], 1,
                 'Not all DataDocuments linked to Product, bulk_create needed')
+        self.assertIn('Bulk Create', response.content.decode(),
+                            "Bulk create button should be present.")
         p = Product.objects.create(upc='stub_47',data_source=self.objects.ds)
         ProductDocument.objects.create(document=doc, product=p)
         response = self.client.get(f'/datagroup/{self.objects.dg.pk}/')
         self.assertEqual(response.context['bulk'], 0,
         'Product linked to all DataDocuments, no bulk_create needed.')
+        self.objects.dg.group_type = GroupType.objects.create(
+                                                title='Habits and practices')
+        response = self.client.get(f'/datagroup/{self.objects.dg.pk}/')
+        self.assertNotIn('Bulk Create', response.content.decode(),
+                            ("Bulk button shouldn't be present w/ "
+                            "Habits and practices group_type."))
 
     def test_bulk_create_post(self):
         '''test the POST to create Products and link if needed'''
@@ -154,3 +169,18 @@ class DataGroupTest(TestCase):
         response = self.client.get(f'/datagroup/{pk}/')
         self.assertContains(response,'<a href="/datasource/',
                     msg_prefix='Should be able to get back to DataSource from here.')
+
+    def test_edit_redirect(self):
+        dgpk = self.objects.dg.pk
+        dspk = str(self.objects.ds.pk)
+        gtpk = str(self.objects.gt.pk)
+        data = {'name': ['Changed Name'],
+                'group_type': [gtpk],
+                'downloaded_by': [str(User.objects.get(username='Karyn').pk)],
+                'downloaded_at': ['08/20/2017'],
+                'data_source': [dspk]}
+        response = self.client.post(f'/datagroup/edit/{dgpk}/', data=data)
+        self.assertEqual(response.status_code, 302,
+                                        "User is redirected to detail page.")
+        self.assertEqual(response.url, f'/datagroup/{dgpk}/',
+                                        "Should go to detail page.")

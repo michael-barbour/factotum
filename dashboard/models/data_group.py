@@ -1,6 +1,7 @@
 import os
 import shutil
 import uuid
+from factotum import settings
 
 from django.db import models
 from .common_info import CommonInfo
@@ -53,6 +54,32 @@ class DataGroup(CommonInfo):
     def get_absolute_url(self):
         return reverse('data_group_edit', kwargs={'pk': self.pk})
 
+    def get_dg_folder(self):
+        uuid_dir = f'{settings.MEDIA_ROOT}{str(self.fs_id)}'
+        name_dir = f'{settings.MEDIA_ROOT}{self.get_name_as_slug()}'
+        if os.path.isdir(uuid_dir):
+            return uuid_dir # UUID-based folder
+        elif os.path.isdir(name_dir):
+            return name_dir # name-based folder
+        else:
+            return 'no_folder_found'
+
+    def get_name_as_slug(self):
+        return self.name.replace(' ', '_')
+    
+    def get_zip_url(self):
+        # the path if the data group's folder was built from a UUID:
+        uuid_path = f'{self.get_dg_folder()}/{str(self.fs_id)}.zip'
+        # the path if the data group's folder was built from the old name-based method
+        zip_file_path = f'{self.get_dg_folder()}/{str(self.get_name_as_slug())}.zip'
+        if os.path.isfile(uuid_path):   # it is a newly-added data group
+            zip_url = uuid_path
+        elif os.path.isfile(zip_file_path): # it is a pre-UUID data group
+            zip_url = zip_file_path
+        else:
+            zip_url = 'no_path_found'
+        return zip_url
+
 
 @receiver(models.signals.post_delete, sender=DataGroup)
 def auto_delete_file_on_delete(sender, instance, **kwargs):
@@ -60,6 +87,7 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
     Deletes datagroup directory from filesystem
     when datagroup instance is deleted.
     """
-    dg_folder = os.path.split(instance.csv.path)[0]
+    dg_folder = instance.get_dg_folder()
     if os.path.isdir(dg_folder):
+        #print('deleting folder %s for data group %s' % (dg_folder, instance.pk))
         shutil.rmtree(dg_folder)

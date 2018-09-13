@@ -18,6 +18,11 @@ class RegisterRecordsTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
         self.client.login(username='Karyn', password='specialP@55word')
+    
+    def tearDown(self):
+        # clean up the file system by deleting the data group object
+        dg = DataGroup.objects.get(name='Walmart MSDS Test Group')
+        dg.delete()
 
     def test_datagroup_create(self):
         csv_string = ("filename,title,document_type,url,organization\n"
@@ -72,13 +77,30 @@ class RegisterRecordsTest(TestCase):
 
         # grab a filename from a data document and see if it's in the csv
         doc_fn = docs.first().filename
-        # test whether the csv download link works
-        resp_csv = self.client.get(csv_href) # this object should be of type StreamingHttpResponse
+        # test whether the registered records csv download link works
+        resp_rr_csv = self.client.get(csv_href) # this object should be of type StreamingHttpResponse
         docfound = 'not found'
-        for csv_row in resp_csv.streaming_content:
+        for csv_row in resp_rr_csv.streaming_content:
             if doc_fn in str(csv_row):
                 docfound = 'found'
-        self.assertEqual(docfound, 'found', "the document file name should appear in the csv")
+        self.assertEqual(docfound, 'found', "the document file name should appear in the registered records csv")
+
+        # Test whether the data document csv download works
+        # URL on data group detail page: datagroup/docs_csv/{pk}/
+        dd_csv_href = f'/datagroup/docs_csv/{dg.pk}/'
+        resp_dd_csv = self.client.get(dd_csv_href)
+        for csv_row in resp_dd_csv.streaming_content:
+            #print(csv_row)
+            if doc_fn in str(csv_row):
+                docfound = 'found'
+        self.assertEqual(docfound, 'found', "the document file name should appear in the data documents csv")
+
+
+        # test whether the "Download All PDF Documents" link works
+        #print('dg.get_zip_url(): %s' % dg.get_zip_url())
+        zip_href = f'/datagroup/{dg.pk}/registered_records.csv'
+        self.assertIn(csv_href, str(resp._container), 
+                        "The data group detail page must contain the right zip download link")
 
         # test uploading one pdf that matches a registered record
         f = TemporaryUploadedFile(name='0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf',

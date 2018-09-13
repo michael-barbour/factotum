@@ -87,7 +87,7 @@ class RegisterRecordsTest(TestCase):
 
         # Test whether the data document csv download works
         # URL on data group detail page: datagroup/docs_csv/{pk}/
-        dd_csv_href = f'/datagroup/docs_csv/{dg.pk}/'
+        dd_csv_href = f'/datagroup/docs_csv/{dg.pk}/'  # this is an interpreted django URL
         resp_dd_csv = self.client.get(dd_csv_href)
         for csv_row in resp_dd_csv.streaming_content:
             #print(csv_row)
@@ -98,9 +98,10 @@ class RegisterRecordsTest(TestCase):
 
         # test whether the "Download All PDF Documents" link works
         #print('dg.get_zip_url(): %s' % dg.get_zip_url())
-        zip_href = f'/datagroup/{dg.pk}/registered_records.csv'
-        self.assertIn(csv_href, str(resp._container), 
+        dg_zip_href = f'/datagroup/pdfs_zipped/{dg.pk}/' # this is the django-interpreted URL
+        self.assertIn(dg_zip_href, str(resp._container), 
                         "The data group detail page must contain the right zip download link")
+        resp_zip = self.client.get(dg_zip_href)
 
         # test uploading one pdf that matches a registered record
         f = TemporaryUploadedFile(name='0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf',

@@ -346,6 +346,16 @@ def dg_dd_csv_view(request, pk):
     return render_to_csv_response(qs, filename=filename, append_datestamp=True)
 
 @login_required
+def dg_pdfs_zip_view(request, pk):
+    dg = DataGroup.objects.get(pk=pk)
+    #print('opening zip file from %s' % dg.get_zip_url())
+    zip_file_name = f'{dg.fs_id}.zip'
+    zip_file = open(dg.get_zip_url(), 'rb')
+    response = HttpResponse(zip_file, content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename=%s' % zip_file_name
+    return response
+
+@login_required
 def data_group_registered_records_csv(request, pk):
     columnlist = ['filename','title','document_type','url','organization']
     dg = DataGroup.objects.filter(pk=pk).first()

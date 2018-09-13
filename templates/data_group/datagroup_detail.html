@@ -41,8 +41,15 @@
         </div>
     </h1>
     <dl class="row col-sm-12">
+        <dt class="col-sm-3">Data Source</dt>
+        <dd class="col-sm-9">
+            <a href="{% url "data_source_detail" datagroup.data_source.id %}" title="Return to Data Source">
+                {{ datagroup.data_source }}</a>
+        </dd>
         <dt class="col-sm-3">Description</dt>
         <dd class="col-sm-9">{{ datagroup.description }}</dd>
+        <dt class="col-sm-3">URL</dt>
+        <dd class="col-sm-9">{{ datagroup.url }}</dd>
         <dt class="col-sm-3">Group Type</dt>
         <dd class="col-sm-9">{{ datagroup.group_type }}</dd>
         <dt class="col-sm-3">Downloaded by</dt>
@@ -56,11 +63,6 @@
             <a href="{{ datagroup.download_script.url }}" target="_blank">
                 {{ datagroup.download_script }}
             </a>
-        </dd>
-        <dt class="col-sm-3">Data Source</dt>
-        <dd class="col-sm-9">
-          <a href="{% url "data_source_detail" datagroup.data_source.id %}" title="Return to Data Source">
-            {{ datagroup.data_source }}</a>
         </dd>
         {% if datagroup.updated_at %}
             <dt class="col-sm-3">Last updated</dt>
@@ -133,7 +135,7 @@
     <br>
     <h4>{{ datagroup.registered_docs }} documents registered, {{ datagroup.matched_docs }} matched, {{  datagroup.extracted_docs }} extracted</h4>
     <div class="inline-block">
-      {% if bulk and not upload_form %}
+      {% if bulk and not upload_form and composition %}
       <form class="float-right" method="post">
         {% csrf_token %}
         <input type="submit" class="btn btn-primary" name="bulk" value="Bulk Create {{ bulk }} Products">

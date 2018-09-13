@@ -69,8 +69,6 @@ def data_source_detail(request, pk,
             datasource.priority = priority
             datasource.save()
     datagroup_list = DataGroup.objects.filter(data_source=pk)
-    request.session['datasource_title'] = datasource.title
-    request.session['datasource_pk'] = datasource.pk
     context = 	{'object': 			datasource,
                 'datagroup_list':	datagroup_list,
                 'form': 			form}

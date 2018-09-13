@@ -43,9 +43,7 @@ class RegisterRecordsTest(TestCase):
         request.session={}
         request.session['datasource_title'] = 'Walmart'
         request.session['datasource_pk'] = 10
-        print('POST request for creating data group')
-        print(request.POST)
-        resp = views.data_group_create(request=request)
+        resp = views.data_group_create(request=request, pk=10)
         self.assertEqual(resp.status_code,302,
                         "Should be redirected to new datagroup detail page")
         dg = DataGroup.objects.get(name='Walmart MSDS Test Group')

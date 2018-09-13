@@ -27,6 +27,7 @@ class DataGroup(CommonInfo):
     csv = models.FileField(upload_to=csv_upload_path, null=True)
     zip_file = models.CharField(max_length=100)
     group_type = models.ForeignKey(GroupType, on_delete=models.SET_DEFAULT, default=1, null=True, blank=True)
+    url = models.CharField(max_length=150, blank=True)
 
     def save(self, *args, **kwargs):
         print('Saving new datagroup:')

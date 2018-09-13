@@ -48,16 +48,12 @@ class ModelsTest(TestCase):
 
         self.assertEqual(str(self.objects.dg), self.objects.dg.name)
         self.assertEqual('https://www.epa.gov', self.objects.dg.url)
-        self.assertEqual(self.objects.dg.dgurl(),
-                         self.objects.dg.name.replace(' ', '_'))
+
 
     def test_object_properties(self):
         # Test properties of objects
         # DataSource
         self.assertEqual(str(self.objects.ds), self.objects.ds.title)
-
-        # DataGroup
-        self.assertEqual(str(self.objects.dg), self.objects.dg.name)
 
         # DataDocuments
         # Confirm that one of the data documents appears in the data group

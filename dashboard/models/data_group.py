@@ -30,8 +30,6 @@ class DataGroup(CommonInfo):
     url = models.CharField(max_length=150, blank=True)
 
     def save(self, *args, **kwargs):
-        print('Saving new datagroup:')
-        print(self.csv)
         super(DataGroup, self).save(*args, **kwargs)
 
     def matched_docs(self):

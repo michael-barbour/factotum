@@ -106,7 +106,7 @@ def data_group_detail(request, pk,
     paginator = Paginator(docs, npage)
     docs_page = paginator.page(1 if page is None else page)
     # store = settings.MEDIA_URL + datagroup.name.replace(' ','_')
-    store = settings.MEDIA_URL + str(datagroup.pk)
+    store = settings.MEDIA_URL + str(datagroup.fs_id)
     extract_fields = ['data_document_id','data_document_filename','prod_name','doc_date','rev_num', 'raw_category',
                       'raw_cas', 'raw_chem_name', 'report_funcuse']
     if dg_type in ['Composition']:
@@ -302,11 +302,12 @@ def data_group_create(request, template_name='data_group/datagroup_form.html'):
                 myfile = File(f)
                 myfile.write(''.join(text))
             print(datagroup.pk)
+            print(datagroup.fs_id)
             print(datagroup.name)
             print(datagroup.data_source)
             #Let's explicitly use the full path for the actually writing of the zipfile
-            new_zip_name = Path(settings.MEDIA_URL + "/" + str(datagroup.pk) + "/" + str(datagroup.pk) + ".zip")
-            new_zip_path = Path(settings.MEDIA_ROOT + "/" + str(datagroup.pk) + "/" + str(datagroup.pk) + ".zip")
+            new_zip_name = Path(settings.MEDIA_URL + "/" + str(datagroup.fs_id) + "/" + str(datagroup.fs_id) + ".zip")
+            new_zip_path = Path(settings.MEDIA_ROOT + "/" + str(datagroup.fs_id) + "/" + str(datagroup.fs_id) + ".zip")
             print(str(new_zip_name))
             print(str(new_zip_path))
             zf = zipfile.ZipFile(str(new_zip_path), 'w',

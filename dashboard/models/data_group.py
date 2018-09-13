@@ -1,5 +1,6 @@
 import os
 import shutil
+import uuid
 
 from django.db import models
 from .common_info import CommonInfo
@@ -8,19 +9,9 @@ from django.dispatch import receiver
 from .group_type import GroupType
 
 
-# could be used for dynamically creating filename on instantiation
-# in the 'upload_to' param on th FileField
-def update_filename(instance, filename):
-    # This doesn't work in cases where a newly created datagroup's pk
-    # is different from the number of existing datagroups + 1
-    #name_fill_space = instance.name.replace(' ', '_')
-    if DataGroup.objects.last():
-        pk_folder = str(DataGroup.objects.last().id + 1)
-    else:
-        pk_folder = str(1)
-    print(pk_folder)
-    name = '{0}/{0}_{1}'.format(pk_folder, filename) # potential space errors in name
-    print(name)
+
+def csv_upload_path(instance, filename):
+    name = '{0}/{1}'.format(instance.fs_id, filename) # potential space errors in name
     return name
 
 
@@ -32,7 +23,8 @@ class DataGroup(CommonInfo):
     downloaded_at = models.DateTimeField()
     download_script = models.ForeignKey('Script', on_delete=models.SET_NULL, default=None, null=True, blank=True)
     data_source = models.ForeignKey('DataSource', on_delete=models.CASCADE)
-    csv = models.FileField(upload_to=update_filename, null=True)
+    fs_id = models.UUIDField(default=uuid.uuid4, editable=False)
+    csv = models.FileField(upload_to=csv_upload_path, null=True)
     zip_file = models.CharField(max_length=100)
     group_type = models.ForeignKey(GroupType, on_delete=models.SET_DEFAULT, default=1, null=True, blank=True)
 

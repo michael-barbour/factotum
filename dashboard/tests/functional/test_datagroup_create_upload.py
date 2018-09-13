@@ -45,11 +45,42 @@ class RegisterRecordsTest(TestCase):
         request.session['datasource_pk'] = 10
         resp = views.data_group_create(request=request, pk=10)
         self.assertEqual(resp.status_code,302,
-                        "Should be redirected to new datagroup detail page")
+                        "Should be redirecting")
+
         dg = DataGroup.objects.get(name='Walmart MSDS Test Group')
-        self.assertIn(str(dg.fs_id), os.listdir(settings.MEDIA_ROOT))
+
+        self.assertEqual(f'/datagroup/{dg.pk}/', resp.url, 
+                        "Should be redirecting to the proper URL")
+        
+        # test whether the file system folder was created
+        self.assertIn(str(dg.fs_id), os.listdir(settings.MEDIA_ROOT),
+                        "The data group's UUID should be a folder in MEDIA_ROOT")
+
+        # In the Data Group Detail Page
+        resp = self.client.get(f'/datagroup/{dg.pk}/')
+
+        # test whether the data documents were created
         docs = DataDocument.objects.filter(data_group=dg)
-        self.assertEqual(len(docs), 2)
+        self.assertEqual(len(docs), 2, "there should be two associated documents")
+
+        # test whether the "Download Registered Records" link is like this example
+        # <a href="/datagroup/a9c7f5a7-5ad4-4f75-b877-a3747f0cc081/registered_records.csv" class="btn btn-secondary">
+        # <span class="oi oi-spreadsheet"></span>&nbsp;Download Registered Records CSV</a>
+        csv_href = f'/datagroup/{dg.pk}/registered_records.csv'
+        self.assertIn(csv_href, str(resp._container), 
+                        "The data group detail page must contain the right download link")
+
+        # grab a filename from a data document and see if it's in the csv
+        doc_fn = docs.first().filename
+        # test whether the csv download link works
+        resp_csv = self.client.get(csv_href) # this object should be of type StreamingHttpResponse
+        docfound = 'not found'
+        for csv_row in resp_csv.streaming_content:
+            if doc_fn in str(csv_row):
+                docfound = 'found'
+        self.assertEqual(docfound, 'found', "the document file name should appear in the csv")
+
+        # test uploading one pdf that matches a registered record
         f = TemporaryUploadedFile(name='0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf',
                                 content_type='application/pdf',
                                 size=47,
@@ -62,23 +93,8 @@ class RegisterRecordsTest(TestCase):
         fn = doc.get_abstract_filename()
         folder_name = str(dg.fs_id)
         stored_file = f'{folder_name}/pdf/{fn}'
-        self.assertTrue(os.path.exists(settings.MEDIA_ROOT + stored_file))
+        pdf_path = f'{settings.MEDIA_ROOT}{stored_file}'
+        self.assertTrue(os.path.exists( pdf_path ),
+                            "the stored file should be in MEDIA_ROOT/dg.fs_id")
         f.close()
 
-# import os
-# import zipfile
-#
-# from dashboard.models import *
-#
-# groups = DataGroup.objects.all()
-# for group in groups:
-#     nm = group.dgurl()
-#     os.remove(group.zip_file)
-#     zf = zipfile.ZipFile(group.zip_file, 'a', zipfile.ZIP_DEFLATED)
-#     docs = DataDocument.objects.filter(data_group=group)
-#     loc = f'media/{nm}/pdf/'
-#     for doc in docs:
-#         afn = doc.get_abstract_filename()
-#         os.rename(loc + doc.filename, loc + afn)
-#         zf.write(loc + afn, afn)
-#     zf.close()

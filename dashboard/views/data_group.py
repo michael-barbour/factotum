@@ -289,15 +289,9 @@ def data_group_create(request, pk, template_name='data_group/datagroup_form.html
             with open(datagroup.csv.path,'w') as f:
                 myfile = File(f)
                 myfile.write(''.join(text))
-            print(datagroup.pk)
-            print(datagroup.fs_id)
-            print(datagroup.name)
-            print(datagroup.data_source)
             #Let's explicitly use the full path for the actually writing of the zipfile
             new_zip_name = Path(settings.MEDIA_URL + "/" + str(datagroup.fs_id) + "/" + str(datagroup.fs_id) + ".zip")
             new_zip_path = Path(settings.MEDIA_ROOT + "/" + str(datagroup.fs_id) + "/" + str(datagroup.fs_id) + ".zip")
-            print(str(new_zip_name))
-            print(str(new_zip_path))
             zf = zipfile.ZipFile(str(new_zip_path), 'w',
                                  zipfile.ZIP_DEFLATED)
             datagroup.zip_file = new_zip_name

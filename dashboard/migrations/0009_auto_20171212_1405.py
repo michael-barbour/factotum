@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='datagroup',
             name='csv',
-            field=models.FileField(null=True, upload_to=dashboard.models.data_group.csv_upload_path),
+            field=models.FileField(null=True, upload_to=dashboard.models.data_group.update_filename),
         ),
         migrations.AddField(
             model_name='datadocument',

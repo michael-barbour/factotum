@@ -10,6 +10,13 @@ from django.dispatch import receiver
 from .group_type import GroupType
 
 
+# could be used for dynamically creating filename on instantiation
+# in the 'upload_to' param on th FileField
+def update_filename(instance, filename):
+    name_fill_space = instance.name.replace(' ', '_')
+    name = '{0}/{0}_{1}'.format(name_fill_space, filename) # potential space errors in name
+    return name
+
 
 def csv_upload_path(instance, filename):
     name = '{0}/{1}'.format(instance.fs_id, filename) # potential space errors in name

@@ -40,6 +40,11 @@ class DataGroupFileDownloadTest(TestCase):
         self.c = Client()
         self.factory = RequestFactory()
         self.c.login(username='Karyn', password='specialP@55word')
+    
+    def tearDown(self):
+        # clean up the file system by deleting the data group object
+        dg = DataGroup.objects.get(pk=6)
+        dg.delete()
 
     def test_old_path(self):
         '''
@@ -50,6 +55,7 @@ class DataGroupFileDownloadTest(TestCase):
         build_datagroup_folder(testpath)
         # the get_dg_folder() method should be able to find the newly-created directory
         dg = DataGroup.objects.get(pk=6)
+        print('looking for folder %s' % dg.get_dg_folder().rsplit('/')[-1])
         self.assertEqual(testpath, dg.get_dg_folder().rsplit('/')[-1], 
         'The get_dg_folder() method should have returned the newly created directory')
         

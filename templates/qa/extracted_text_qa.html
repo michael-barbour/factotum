@@ -113,6 +113,10 @@
                   {{ form.raw_min_comp}}
               </div>
               <div class="text-center">
+                  <small><b>{{ form.raw_central_comp.label_tag }}</b></small><br>
+                  {{ form.raw_central_comp}}
+              </div>
+              <div class="text-center">
                 <small><b>{{ form.raw_max_comp.label_tag }}</b></small><br>
                   {{ form.raw_max_comp}}
               </div>
@@ -133,10 +137,6 @@
               <div class="text-center">
                 <small><b>{{ form.ingredient_rank.label_tag }}</b></small><br>
                   {{ form.ingredient_rank}}
-              </div>
-              <div class="text-center">
-                <small><b>{{ form.raw_central_comp.label_tag }}</b></small><br>
-                  {{ form.raw_central_comp}}
               </div>
               <div class="text-center">
                 {% if form.instance.pk %}

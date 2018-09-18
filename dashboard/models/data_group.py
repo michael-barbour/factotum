@@ -64,9 +64,12 @@ class DataGroup(CommonInfo):
     def get_dg_folder(self):
         uuid_dir = f'{settings.MEDIA_ROOT}{str(self.fs_id)}'
         name_dir = f'{settings.MEDIA_ROOT}{self.get_name_as_slug()}'
+        csv_dir  = f'{settings.MEDIA_ROOT}{self.csv.path.split(sep="/")[0]}'
         if os.path.isdir(uuid_dir):
             return uuid_dir # UUID-based folder
         elif os.path.isdir(name_dir):
+            return name_dir # name-based folder
+        elif os.path.isdir(csv_dir):
             return name_dir # name-based folder
         else:
             return 'no_folder_found'

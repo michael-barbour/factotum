@@ -61,7 +61,7 @@ class TestProductDetail(TestCase):
                                 'Assigned PUC should be visible')
         # PUC is assigned....check that an edit will updated the record
         link = ProductToPUC.objects.get(PUC_id=96)
-        print(link.product_id)
+        # print(link.product_id)
         self.assertEqual(link.product_id, p.pk,
                             "PUC link should exist in table")
         self.client.post(f'/product_puc/{str(p.pk)}/', {'puc': '47' })

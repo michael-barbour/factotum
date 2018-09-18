@@ -152,9 +152,9 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
             producttopuc_obj.PUC = puc # This assignment doesn't appear to be actually happening. . .
             producttopuc_obj.puc_assigned_time = timezone.now()
             producttopuc_obj.puc_assigned_usr = request.user
-            print('Updated ProductToPUC values:')
-            for i in producttopuc_obj._meta.get_fields():
-                print(str(i.name) + ': ' + str(getattr(producttopuc_obj, str(i.name))))
+            # print('Updated ProductToPUC values:')
+            # for i in producttopuc_obj._meta.get_fields():
+            #     print(str(i.name) + ': ' + str(getattr(producttopuc_obj, str(i.name))))
             producttopuc_obj.save()
         else:
             ProductToPUC.objects.create(PUC=puc, product=p, classification_method='MA',

@@ -70,7 +70,7 @@ class DataGroup(CommonInfo):
         elif os.path.isdir(name_dir):
             return name_dir # name-based folder
         elif os.path.isdir(csv_dir):
-            return name_dir # name-based folder
+            return csv_dir # name-based folder
         else:
             return 'no_folder_found'
 

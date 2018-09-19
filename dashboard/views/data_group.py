@@ -130,10 +130,9 @@ def data_group_detail(request, pk,
         zf = zipfile.ZipFile(datagroup.zip_file, 'a', zipfile.ZIP_DEFLATED)
         while matched_files:
             f = matched_files.pop(0)
-            # set the Matched value of each registered record to True
             doc = DataDocument.objects.get(filename=f.name,
                                             data_group=datagroup.pk)
-            if doc.matched:  # continue if already matched
+            if doc.matched:
                 continue
             doc.matched = True
             doc.save()
@@ -162,6 +161,8 @@ def data_group_detail(request, pk,
                 return render(request, template_name, context)
             good_records = []
             for i, row in enumerate(csv.DictReader(info)):
+                # print(row['data_document_id'])
+                # print(type(row))
                 # first 6 columns comprise extracted_text data
                 extracted_text_data = OrderedDict(islice(row.items(),6))
                 extracted_text_data.pop('data_document_filename') # not needed in dict
@@ -192,8 +193,7 @@ def data_group_detail(request, pk,
                 except ValidationError as e:
                     context['ext_err'][i+1] = e.message_dict
                 good_records.append((doc,extracted_text,record))
-            if context['ext_err']: # if errors, send back with errors above <body>
-                print('HIT!')
+            if context['ext_err']: # if errors, send back with errors
                 return render(request, template_name, context)
             if not context['ext_err']:  # no saving until all errors are removed
                 for doc,text,record in good_records:
@@ -214,9 +214,11 @@ def data_group_detail(request, pk,
         docs_needing_products = DataDocument.objects.filter(pk__in=list(a-b))
         stub = Product.objects.all().count() + 1
         for doc in docs_needing_products:
-            product = Product.objects.create(title='unknown',
-                                             upc=f'stub_{stub}',
-                                             data_source_id=doc.data_group.data_source_id)
+            product = Product.objects.create(
+                                    title='unknown',
+                                    upc=f'stub_{stub}',
+                                    data_source_id=doc.data_group.data_source_id
+                                    )
             ProductDocument.objects.create(product=product, document=doc)
             stub += 1
         context['bulk'] = 0
@@ -224,7 +226,8 @@ def data_group_detail(request, pk,
 
 
 @login_required()
-def data_group_create(request, pk, template_name='data_group/datagroup_form.html'):
+def data_group_create(request, pk,
+                        template_name='data_group/datagroup_form.html'):
     datasource = get_object_or_404(DataSource, pk=pk)
     group_key = DataGroup.objects.filter(data_source=datasource).count() + 1
     default_name = '{} {}'.format(datasource.title, group_key)
@@ -241,7 +244,8 @@ def data_group_create(request, pk, template_name='data_group/datagroup_form.html
             info = [x.decode('ascii',
                              'ignore') for x in datagroup.csv.readlines()]
             table = csv.DictReader(info)
-            if not table.fieldnames == ['filename','title','document_type','url','organization']:
+            if not table.fieldnames == ['filename','title','document_type',
+                                                        'url','organization']:
                 datagroup.csv.close()
                 datagroup.delete()
                 return render(request, template_name,
@@ -253,15 +257,16 @@ def data_group_create(request, pk, template_name='data_group/datagroup_form.html
             for line in table: # read every csv line, create docs for each
                 count+=1
                 doc_type = DocumentType.objects.get(pk=1)
+                dtype = line['document_type']
                 if line['filename'] == '':
                     errors.append(count)
                 if line['title'] == '': # updates title in line object
                     line['title'] = line['filename'].split('.')[0]
-                if line['document_type'] == '':
+                if dtype == '':
                     errors.append(count)
                 else:
-                    if DocumentType.objects.filter(pk=int(line['document_type'])).exists():
-                        doc_type = DocumentType.objects.get(pk=int(line['document_type']))
+                    if DocumentType.objects.filter(pk=int(dtype)).exists():
+                        doc_type = DocumentType.objects.get(pk=int(dtype))
                     else:
                         errors.append(count)
                 doc=DataDocument(filename=line['filename'],
@@ -290,7 +295,8 @@ def data_group_create(request, pk, template_name='data_group/datagroup_form.html
             return redirect('data_group_detail', pk=datagroup.id)
     else:
         form = DataGroupForm(user=request.user, initial=initial_values)
-    return render(request, template_name, {'form': form, 'header': header, 'datasource': datasource})
+    context = {'form': form, 'header': header, 'datasource': datasource}
+    return render(request, template_name, context)
 
 
 @login_required()

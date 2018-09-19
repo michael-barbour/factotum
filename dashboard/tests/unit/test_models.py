@@ -34,7 +34,6 @@ class ModelsTest(TestCase):
 
     def test_object_creation(self):
         self.assertTrue(isinstance(self.objects.ds, DataSource))
-        self.assertTrue(isinstance(self.objects.dg, DataGroup))
         self.assertTrue(isinstance(self.objects.script, Script))
         self.assertTrue(isinstance(self.objects.extext, ExtractedText))
         self.assertTrue(isinstance(self.objects.ec, ExtractedChemical))
@@ -44,15 +43,19 @@ class ModelsTest(TestCase):
         self.assertTrue(isinstance(self.objects.pd, ProductDocument))
         self.assertTrue(isinstance(self.objects.pa, ProductAttribute))
 
+    def test_datagroup(self):
+        self.assertTrue(isinstance(self.objects.dg, DataGroup))
+
+        self.assertEqual(str(self.objects.dg), self.objects.dg.name)
+        self.assertEqual('https://www.epa.gov', self.objects.dg.url)
+        self.assertEqual(self.objects.dg.dgurl(),
+                         self.objects.dg.name.replace(' ', '_'))
+
     def test_object_properties(self):
         # Test properties of objects
         # DataSource
         self.assertEqual(str(self.objects.ds), self.objects.ds.title)
 
-        # DataGroup
-        self.assertEqual(str(self.objects.dg), self.objects.dg.name)
-        self.assertEqual(self.objects.dg.dgurl(),
-                            self.objects.dg.name.replace(' ', '_'))
         # DataDocuments
         # Confirm that one of the data documents appears in the data group
         # show page after upload from CSV

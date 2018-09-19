@@ -78,7 +78,7 @@ class DDTestUpload(TestCase):
         request.session={}
         request.session['datasource_title'] = 'Walmart'
         request.session['datasource_pk'] = 10
-        resp = views.data_group_create(request=request)
+        resp = views.data_group_create(pk = 10, request=request)
         self.assertEqual(resp.status_code,302,
                         "Should be redirected to new datagroup detail page")
         # does the datagroup in the ORM contain the new data docs?
@@ -116,7 +116,7 @@ class DDTestUpload(TestCase):
         request.session={}
         request.session['datasource_title'] = 'Walmart'
         request.session['datasource_pk'] = 10
-        resp = views.data_group_create(request=request)
+        resp = views.data_group_create(pk = 10 , request=request)
         # the upload form should be invalid
         self.assertIn('CSV has bad data in row/s:'.encode(), resp.content)
 

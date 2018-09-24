@@ -2,6 +2,9 @@
 {% load widget_tweaks %}
 {% load staticfiles %}'
 
+{% block title %}QA Data Document {{doc.id}}: {{doc.title}}{% endblock %}
+
+
 {% load humanize %}
 {% if messages %}
     {% for message in messages %}
@@ -32,6 +35,12 @@
           <a title="Data Group"
               href="{% url 'data_group_detail' doc.data_group.id %}"> {{ doc.data_group }}
           </a>
+        </td>
+      </tr>
+      <tr>
+        <th>Document Type</th>
+        <td>
+          {{ doc.document_type }}
         </td>
       </tr>
       <tr>
@@ -108,6 +117,8 @@
                 <small><b>{{ form.raw_chem_name.label_tag }}</b></small><br>
                   {{ form.raw_chem_name}}
               </div>
+
+        {% if doc.data_group.group_type.title != "Functional use" %}
               <div class="text-center">
                 <small><b>{{ form.raw_min_comp.label_tag }}</b></small><br>
                   {{ form.raw_min_comp}}
@@ -128,15 +139,17 @@
                 {% else %}
                   {{ form.unit_type }}
                 {% endif %}
+            <div class="text-center">
+                <small><b>{{ form.ingredient_rank.label_tag }}</b></small><br>
+                    {{ form.ingredient_rank}}
+            </div>
+        </div>
+        {% endif  %}
 
-              </div>
+
               <div class="text-center">
                 <small><b>{{ form.report_funcuse.label_tag }}</b></small><br>
                   {{ form.report_funcuse}}
-              </div>
-              <div class="text-center">
-                <small><b>{{ form.ingredient_rank.label_tag }}</b></small><br>
-                  {{ form.ingredient_rank}}
               </div>
               <div class="text-center">
                 {% if form.instance.pk %}

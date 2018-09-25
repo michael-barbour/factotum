@@ -67,9 +67,9 @@
     <div class="col-sm-6">
     <h4>Extracted Text</h4>
     <div class="card-body border">
-        {% if error %}
+        {% if extracted_text_form.errors %}
             <div class="form-group has-error">
-                <span class="help-block">{{ error }}</span>
+                <span class="help-block">{{ extracted_text_form.errors }}</span>
             </div>
         {% endif %}
         <form method="post" >
@@ -105,16 +105,16 @@
     <h4>Extracted Chemicals</h4>
     <div class="card-body">
     <form method="post" >
+    {{ chemical_formset.management_form }}
     {% csrf_token %}
     <div class="row">
-        {{ chemical_formset.management_form }}
         {% for form in chemical_formset.forms %}
             <div class="col-sm-6">
                 <div class="card" >
                     <div class="card-body">
-                        {% if error %}
+                        {% if form.errors %}
                             <div class="form-group has-error">
-                                <span class="help-block">{{ error }}</span>
+                                <span class="help-block">{{ form.errors }}</span>
                             </div>
                         {% endif %}
                         {{ form.id.as_hidden }}
@@ -152,16 +152,16 @@
         <h4>Extracted Habits and Practices</h4>
         <div class="card-body">
         <form method="post" >
+            {{ habits_and_practices_formset.management_form }}
             {% csrf_token %}
             <div class="row">
-                {{ habits_and_practices_formset.management_form }}
                 {% for form in habits_and_practices_formset.forms %}
                     <div class="col-sm-6">
                         <div class="card" >
                             <div class="card-body">
-                                {% if error %}
+                                {% if form.errors %}
                                     <div class="form-group has-error">
-                                        <span class="help-block">{{ error }}</span>
+                                        <span class="help-block">{{ form.errors }}</span>
                                     </div>
                                 {% endif %}
                                 {{ form.id.as_hidden }}

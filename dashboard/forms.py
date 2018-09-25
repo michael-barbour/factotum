@@ -30,11 +30,7 @@ class HabitsPUCForm(BasePUCForm):
 class ExtractedTextForm(forms.ModelForm):
     class Meta:
         model = ExtractedText
-        fields = ['data_document',
-                  'prod_name',
-                  'rev_num',
-                  'doc_date',
-                  'extraction_script']
+        fields = ['doc_date', 'data_document', 'extraction_script']
         widgets = {
             'data_document': forms.HiddenInput(),
             'extraction_script': forms.HiddenInput(),

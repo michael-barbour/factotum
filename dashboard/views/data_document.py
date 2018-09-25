@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from dashboard.forms import HnPFormSet, ChemicalFormSet, ExtractedTextForm
+from dashboard.forms import HnPFormSet, ChemicalFormSet
 
 from djqscsv import render_to_csv_response
 
@@ -19,35 +19,46 @@ class DocumentTypeForm(forms.ModelForm):
             'onchange': 'form.submit();'
         })
 
+class ExtractedTextForm(forms.ModelForm):
+    class Meta:
+        model = ExtractedText
+        fields = ['prod_name',
+                  'rev_num',
+                  'doc_date']
+
 
 @login_required()
 def data_document_detail(request, pk,
                          template_name='data_document/data_document_detail.html'):
     doc = get_object_or_404(DataDocument, pk=pk, )
-    document_type_form = DocumentTypeForm(request.POST or None, instance=doc)
-    extracted_text = ExtractedText.objects.filter(data_document = doc).get()
-    extracted_text_form = ExtractedTextForm(request.POST or None, instance=extracted_text)
+    extracted_text = ExtractedText.objects.filter(data_document=doc).get()
+    extracted_text_form = ExtractedTextForm(instance=extracted_text)
     chemical_formset = ChemicalFormSet(instance=extracted_text, prefix='chemicals')
     habits_and_practices_formset = HnPFormSet(instance=extracted_text, prefix='habits_and_practices')
+    document_type_form = DocumentTypeForm(instance=doc)
+    if request.method == 'POST' and 'save_extracted_text' in request.POST:
+        extracted_text_form = ExtractedTextForm(request.POST, instance=extracted_text)
+        if extracted_text_form.is_valid():
+            extracted_text_form.save()
+    elif request.method == 'POST' and 'save_habits_and_practices' in request.POST:
+        habits_and_practices_formset = HnPFormSet(request.POST, instance=extracted_text, prefix='habits_and_practices')
+        if habits_and_practices_formset.is_valid():
+            habits_and_practices_formset.save()
+    elif request.method == 'POST' and 'save_chemicals' in request.POST:
+        chemical_formset = ChemicalFormSet(request.POST, instance=extracted_text, prefix='chemicals')
+        if chemical_formset.is_valid():
+            chemical_formset.save()
+    elif request.method == 'POST':
+        document_type_form = DocumentTypeForm(request.POST, instance=doc)
+        if document_type_form.is_valid():
+            document_type = document_type_form.cleaned_data['document_type']
+            doc.document_type = document_type
+            doc.save()
     habits_and_practices_formset.extra = 0
     document_type_form.fields['document_type'].queryset = \
         document_type_form.fields['document_type'].queryset.filter(group_type_id = doc.data_group.group_type_id)
     if not document_type_form.fields['document_type'].queryset.count():
         document_type_form = False
-    if request.method == 'POST' and 'save_extracted_text' in request.POST:
-        if extracted_text_form.is_valid():
-            extracted_text_form.save()
-    elif request.method == 'POST' and 'save_habits_and_practices' in request.POST:
-        if habits_and_practices_formset.is_valid():
-            habits_and_practices_formset.save()
-    elif request.method == 'POST' and 'save_chemicals' in request.POST:
-        if chemical_formset.is_valid():
-            chemical_formset.save()
-    elif request.method == 'POST':
-        if document_type_form.is_valid():
-            priority = document_type_form.cleaned_data['document_type']
-            doc.priority = priority
-            doc.save()
     context = {'doc': doc,
                'extracted_text': extracted_text,
                'extracted_text_form': extracted_text_form,

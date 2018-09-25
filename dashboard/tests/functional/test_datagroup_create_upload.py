@@ -32,7 +32,7 @@ class RegisterRecordsTest(TestCase):
                                             charset='utf-8')
         form_data= {'name': ['Walmart MSDS Test Group'],
                     'description': ['test data group'],
-                    'group_type': ['5'],
+                    'group_type': ['4'],
                     'downloaded_by': ['1'],
                     'downloaded_at': ['08/02/2018'],
                     'download_script': ['1'],
@@ -63,21 +63,3 @@ class RegisterRecordsTest(TestCase):
         stored_file = f'Walmart_MSDS_Test_Group/pdf/{fn}'
         self.assertTrue(os.path.exists(settings.MEDIA_ROOT + stored_file))
         f.close()
-
-# import os
-# import zipfile
-#
-# from dashboard.models import *
-#
-# groups = DataGroup.objects.all()
-# for group in groups:
-#     nm = group.dgurl()
-#     os.remove(group.zip_file)
-#     zf = zipfile.ZipFile(group.zip_file, 'a', zipfile.ZIP_DEFLATED)
-#     docs = DataDocument.objects.filter(data_group=group)
-#     loc = f'media/{nm}/pdf/'
-#     for doc in docs:
-#         afn = doc.get_abstract_filename()
-#         os.rename(loc + doc.filename, loc + afn)
-#         zf.write(loc + afn, afn)
-#     zf.close()

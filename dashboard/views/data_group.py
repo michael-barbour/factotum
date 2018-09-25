@@ -260,8 +260,11 @@ def data_group_create(request, pk, template_name='data_group/datagroup_form.html
                 else:
                     if DocumentType.objects.filter(pk=int(line['document_type'])).exists():
                         doc_type = DocumentType.objects.get(pk=int(line['document_type']))
+                        if doc_type.group_type != datagroup.group_type:
+                            errors.append(count)
                     else:
                         errors.append(count)
+                    
                 doc=DataDocument(filename=line['filename'],
                                  title=line['title'],
                                  document_type=doc_type,

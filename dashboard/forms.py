@@ -66,8 +66,5 @@ ChemicalFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
                                             'weight_fraction_type',
                                             'ingredient_rank',
                                             ],
-                                    widgets={'extracted_text': forms.HiddenInput(),
-                                             'ingredient_rank': forms.HiddenInput(),
-                                            },
                                     extra=0)
 

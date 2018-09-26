@@ -4,7 +4,6 @@ from .common_info import CommonInfo
 
 class GroupType(CommonInfo):
     title = models.CharField(max_length=50)
-    code = models.TextField(null=False, default='UN')
     description = models.TextField(null=True, blank=True)
 
     def __str__(self):

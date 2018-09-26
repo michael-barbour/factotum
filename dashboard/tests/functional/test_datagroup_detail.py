@@ -180,6 +180,7 @@ class DataGroupDetailTest(TestCase):
                 'downloaded_at': ['08/20/2017'],
                 'data_source': [dspk]}
         response = self.client.post(f'/datagroup/edit/{dgpk}/', data=data)
+        print(response.content)
         self.assertEqual(response.status_code, 302,
                                          "User is redirected to detail page.")
         self.assertEqual(response.url, f'/datagroup/{dgpk}/',

@@ -1,4 +1,10 @@
 - model: dashboard.datadocument
+  pk: 5
+  fields: {created_at: null, updated_at: null, filename: test_functional_use_1.pdf, title: Test Functional Use Doc 1,
+    url: '', raw_category: '', data_group: 5, matched: true, extracted: true,
+    created_at: !!timestamp '2018-08-21 13:16:47.965719', document_type: null, organization: ''}
+
+- model: dashboard.datadocument
   pk: 156051
   fields: {created_at: null, updated_at: null, filename: Sun_INDS_89.pdf, title: Sun_INDS_89,
     url: '', raw_category: '', data_group: 22, matched: true, extracted: false,

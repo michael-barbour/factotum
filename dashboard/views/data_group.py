@@ -165,15 +165,14 @@ def data_group_detail(request, pk,
             good_records = []
             for i, row in enumerate(csv.DictReader(info)):
                 # first 6 columns comprise extracted_text data
+                doc = docs.get(pk=row['data_document_id'])
                 extracted_text_data = OrderedDict(islice(row.items(),6))
                 extracted_text_data.pop('data_document_filename') # not needed in dict
+                doc.raw_category = extracted_text_data.pop('raw_category')
                 # all columns except first 6 comprise non-data_document data
                 rec_data = OrderedDict(islice(row.items(),6, len(extract_fields)))
-                dd = row['data_document_id']
-                doc = docs.get(pk=dd)
-                doc.raw_category = row['raw_category']
-                if ExtractedText.objects.filter(pk=dd).exists():
-                    extracted_text = ExtractedText.objects.get(pk=dd)
+                if ExtractedText.objects.filter(pk=doc.pk).exists():
+                    extracted_text = ExtractedText.objects.get(pk=doc.pk)
                 else:
                     extracted_text_data['extraction_script_id'] = script.id
                     extracted_text = ExtractedText(**extracted_text_data)
@@ -265,8 +264,11 @@ def data_group_create(request, pk, template_name='data_group/datagroup_form.html
                 else:
                     if DocumentType.objects.filter(pk=int(line['document_type'])).exists():
                         doc_type = DocumentType.objects.get(pk=int(line['document_type']))
+                        if doc_type.group_type != datagroup.group_type:
+                            errors.append(count)
                     else:
                         errors.append(count)
+                    
                 doc=DataDocument(filename=line['filename'],
                                  title=line['title'],
                                  document_type=doc_type,

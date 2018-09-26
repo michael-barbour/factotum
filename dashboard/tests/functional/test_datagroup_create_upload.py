@@ -18,7 +18,7 @@ class RegisterRecordsTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
         self.client.login(username='Karyn', password='specialP@55word')
-    
+
     def tearDown(self):
         # clean up the file system by deleting the data group object
         dg = DataGroup.objects.get(name='Walmart MSDS Test Group')
@@ -54,9 +54,9 @@ class RegisterRecordsTest(TestCase):
 
         dg = DataGroup.objects.get(name='Walmart MSDS Test Group')
 
-        self.assertEqual(f'/datagroup/{dg.pk}/', resp.url, 
+        self.assertEqual(f'/datagroup/{dg.pk}/', resp.url,
                         "Should be redirecting to the proper URL")
-        
+
         # test whether the file system folder was created
         self.assertIn(str(dg.fs_id), os.listdir(settings.MEDIA_ROOT),
                         "The data group's UUID should be a folder in MEDIA_ROOT")
@@ -72,7 +72,7 @@ class RegisterRecordsTest(TestCase):
         # <a href="/datagroup/a9c7f5a7-5ad4-4f75-b877-a3747f0cc081/registered_records.csv" class="btn btn-secondary">
         # <span class="oi oi-spreadsheet"></span>&nbsp;Download Registered Records CSV</a>
         csv_href = f'/datagroup/{dg.pk}/registered_records.csv'
-        self.assertIn(csv_href, str(resp._container), 
+        self.assertIn(csv_href, str(resp._container),
                         "The data group detail page must contain the right download link")
 
         # grab a filename from a data document and see if it's in the csv
@@ -99,7 +99,7 @@ class RegisterRecordsTest(TestCase):
         # test whether the "Download All PDF Documents" link works
         #print('dg.get_zip_url(): %s' % dg.get_zip_url())
         dg_zip_href = f'/datagroup/pdfs_zipped/{dg.pk}/' # this is the django-interpreted URL
-        self.assertIn(dg_zip_href, str(resp._container), 
+        self.assertIn(dg_zip_href, str(resp._container),
                         "The data group detail page must contain the right zip download link")
         resp_zip = self.client.get(dg_zip_href)
 

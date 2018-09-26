@@ -1,4 +1,11 @@
 - model: dashboard.datagroup
+  pk: 5
+  fields: {created_at: !!timestamp '2018-08-11 07:00:37.681930', updated_at: !!timestamp '2018-09-20
+      12:16:49.053559', name: Functional Use Example Group 1, description: '', downloaded_by: 1,
+    downloaded_at: !!timestamp '2018-08-09 11:31:35', download_script: null, data_source: 6,
+    csv: null,
+    zip_file: media/test_func_use/test_func_use.zip, group_type: 3}
+- model: dashboard.datagroup
   pk: 6
   fields: {created_at: !!timestamp '2018-05-11 07:00:37.681930', updated_at: !!timestamp '2018-06-20
       12:16:49.053559', name: British Petroleum (Air) 1, description: '', downloaded_by: 1,

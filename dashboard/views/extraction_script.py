@@ -196,7 +196,7 @@ def extracted_text_qa(request, pk,
     ext_form =  ExtractedTextForm(instance=extext)
     note, created = QANotes.objects.get_or_create(extracted_text=extext)
     notesform =  QANotesForm(instance=note)
-    detail_formset = DetailFormSet(instance=extext, prefix='chemicals')
+    detail_formset = DetailFormSet(instance=extext, prefix='details')
     context = {
         'extracted_text': extext,
         'doc': datadoc,
@@ -211,7 +211,7 @@ def extracted_text_qa(request, pk,
     if request.method == 'POST' and 'save' in request.POST:
         print('---saving')
         detail_formset = DetailFormSet(request.POST, instance=extext,
-                                                        prefix='chemicals')
+                                                        prefix='details')
         ext_form =  ExtractedTextForm(request.POST, instance=extext)
         notesform = QANotesForm(request.POST, instance=note)
         if detail_formset.has_changed() or ext_form.has_changed():

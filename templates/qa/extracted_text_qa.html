@@ -74,7 +74,12 @@
       <div class="card-header form-inline">
         <h3 class="text-center col-9">Extracted Text</h3>
       <button type="button" id="btn-toggle-edit" data-toggle="button" class="btn btn-secondary" onclick="toggleChemicalEdit(true)">
-              <span id="btn-toggle-label" class="oi oi-wrench"></span>Edit Extracted Chemicals
+              <span id="btn-toggle-label" class="oi oi-wrench"></span>
+              {% if doc.data_group.group_type.title != "Functional use" %}
+              Edit Extracted Chemicals
+              {% else %}
+              Edit Extracted Functional Use Records
+              {% endif %}
       </button>
       </div>
       <div class="card-body">

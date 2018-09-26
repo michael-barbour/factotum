@@ -34,3 +34,28 @@ class DataDocumentDetailTest(TestCase):
         dd.refresh_from_db()
         self.assertEqual(dd.document_type_id, 2,
                          'DataDocument 7 should have a final document_type_id of 2')
+
+    def test_datadocument_extractedtext_qa(self):
+        dd = DataDocument.objects.get(pk=7)
+
+        response = self.client.get(f'/datadocument/{str(dd.pk)}/').content.decode('utf8')
+        response_html = html.fromstring(response)
+
+        self.assertTrue(response_html.xpath('string(//*[@id="qa_approve_button"])'),
+                        'Extracted Text should contain button linking to QA Approval')
+
+        self.assertIn('No', response_html.xpath('string(//*[@id="qa_approved"])'),
+                            'Extracted Text should show that QA Approval is No ')
+
+        dd.extractedtext.qa_checked = True
+        dd.extractedtext.save()
+        dd.refresh_from_db()
+
+        response = self.client.get(f'/datadocument/{str(dd.pk)}/').content.decode('utf8')
+        response_html = html.fromstring(response)
+
+        self.assertFalse(response_html.xpath('string(//*[@id="qa_approve_button"])'),
+                        'Extracted Text should not contain button linking to QA Approval')
+
+        self.assertIn('Yes', response_html.xpath('string(//*[@id="qa_approved"])'),
+                            'Extracted Text should show that QA Approval is Yes ')

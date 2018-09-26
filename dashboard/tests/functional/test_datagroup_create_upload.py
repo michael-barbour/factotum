@@ -32,7 +32,7 @@ class RegisterRecordsTest(TestCase):
                                             charset='utf-8')
         form_data= {'name': ['Walmart MSDS Test Group'],
                     'description': ['test data group'],
-                    'group_type': ['4'],
+                    'group_type': ['1'],
                     'downloaded_by': ['1'],
                     'downloaded_at': ['08/02/2018'],
                     'download_script': ['1'],

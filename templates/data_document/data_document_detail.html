@@ -87,7 +87,7 @@
                 </dd>
                 <dt class="col-sm-6">Script</dt>
                 <dd  class="col-sm-6">
-                    <a href="{{ extracted_text.extraction_script.url }}" target="_blank">
+                    <a href="{{ extracted_text.extraction_script.url| default_if_none:'' }}" target="_blank">
                         {{ extracted_text.extraction_script.title }}
                     </a>
                 </dd>

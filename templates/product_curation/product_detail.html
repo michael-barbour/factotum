@@ -2,6 +2,9 @@
 {% load staticfiles %}
 {% load humanize %}
 
+{% block title %}Product {{ product.id }}: {{ product.title }}{% endblock %}
+
+
 {% block content %}
     <h1 class="col-12">
         <span name="title">{{ product.title }}</span>

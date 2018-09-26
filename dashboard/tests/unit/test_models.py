@@ -17,7 +17,7 @@ def create_data_documents(data_group, source_type, pdfs):
                                             title=line['title'],
                                             document_type=DocumentType.objects.get(pk=line['document_type']),
                                             url=line['url'],
-                                            organization=line['organization'],  
+                                            organization=line['organization'],
                                             matched = line['filename'] in pdfs,
                                             data_group=data_group)
             dd.save()
@@ -48,8 +48,7 @@ class ModelsTest(TestCase):
 
         self.assertEqual(str(self.objects.dg), self.objects.dg.name)
         self.assertEqual('https://www.epa.gov', self.objects.dg.url)
-        self.assertEqual(self.objects.dg.dgurl(),
-                         self.objects.dg.name.replace(' ', '_'))
+
 
     def test_object_properties(self):
         # Test properties of objects
@@ -68,8 +67,8 @@ class ModelsTest(TestCase):
         # the pdfs via their file names
         self.assertEqual(self.objects.dg.matched_docs(), 2)
         # Test a link to an uploaded pdf
-        fn = docs[0].get_abstract_filename().encode('ascii')
-        u = b'Data_Group_for_Test/pdf/%s' % fn
+        fn = docs[0].get_abstract_filename()
+        u = "{0}/pdf/{1}".format(self.objects.dg.fs_id, fn).encode('utf-8')
         self.assertIn(u, dg_response.content, (
                                     'link to PDF should be in HTML!'))
         # DownloadScript

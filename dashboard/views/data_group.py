@@ -117,8 +117,8 @@ def data_group_detail(request, pk,
                   'extract_form'      : include_extract_form(datagroup, dg_type),
                   'bulk'              : len(docs) - len(prod_link),
                   'msg'               : '',
-                  'functional'        : dg_type == 'Functional use',
-                  'hnp'               : dg_type == 'Habits and practices',
+                  'functional'        : dg_type == 'Functional Use',
+                  'hnp'               : dg_type == 'Habits and Practices',
                   'composition'       : dg_type == 'Composition',
                   }
     if request.method == 'POST' and 'upload' in request.POST:
@@ -194,7 +194,6 @@ def data_group_detail(request, pk,
                     context['ext_err'][i+1] = e.message_dict
                 good_records.append((doc,extracted_text,record))
             if context['ext_err']: # if errors, send back with errors above <body>
-                print('HIT!')
                 return render(request, template_name, context)
             if not context['ext_err']:  # no saving until all errors are removed
                 for doc,text,record in good_records:
@@ -324,28 +323,6 @@ def data_group_delete(request, pk, template_name='data_source/datasource_confirm
         datagroup.delete()
         return redirect('data_group_list')
     return render(request, template_name, {'object': datagroup})
-
-
-@login_required()
-def data_document_detail(request, pk,
-                         template_name='data_group/data_document_detail.html'):
-    doc = get_object_or_404(DataDocument, pk=pk, )
-    return render(request, template_name, {'doc'  : doc,})
-
-@login_required()
-def data_document_delete(request, pk, template_name='data_source/datasource_confirm_delete.html'):
-    doc = get_object_or_404(DataDocument, pk=pk)
-    datagroup_id = doc.data_group_id
-    if request.method == 'POST':
-        doc.delete()
-        return redirect('data_group_detail', pk=datagroup_id)
-    return render(request, template_name, {'object': doc})
-
-@login_required
-def dg_dd_csv_view(request, pk):
-    qs = DataDocument.objects.filter(data_group_id=pk)
-    filename = DataGroup.objects.get(pk=pk).name
-    return render_to_csv_response(qs, filename=filename, append_datestamp=True)
 
 @login_required
 def dg_pdfs_zip_view(request, pk):

@@ -37,7 +37,7 @@ class RegisterRecordsTest(TestCase):
                                             charset='utf-8')
         form_data= {'name': ['Walmart MSDS Test Group'],
                     'description': ['test data group'],
-                    'group_type': ['5'],
+                    'group_type': ['1'],
                     'downloaded_by': [str(User.objects.get(username='Karyn').pk)],
                     'downloaded_at': ['08/02/2018'],
                     'download_script': ['1'],
@@ -49,10 +49,13 @@ class RegisterRecordsTest(TestCase):
         request.session['datasource_title'] = 'Walmart'
         request.session['datasource_pk'] = 10
         resp = views.data_group_create(request=request, pk=10)
+        dg = DataGroup.objects.get(name='Walmart MSDS Test Group')
+        print(dg.__dict__)
+
         self.assertEqual(resp.status_code,302,
                         "Should be redirecting")
 
-        dg = DataGroup.objects.get(name='Walmart MSDS Test Group')
+        
 
         self.assertEqual(f'/datagroup/{dg.pk}/', resp.url,
                         "Should be redirecting to the proper URL")

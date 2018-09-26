@@ -96,7 +96,7 @@
                     {% if not extracted_text.qa_checked %}
                         <div class="btn-group float-lg-right" role="group">
                         <a class="btn btn-primary btn-sm" role="button" title="QA"
-                           href="{% url "extracted_text_qa" extracted_text.pk %}">QA</a>
+                           href="{% url "data_document_extracted_text_qa" extracted_text.pk %}">QA</a>
                         </div>
                     {% endif %}
                 </dd>

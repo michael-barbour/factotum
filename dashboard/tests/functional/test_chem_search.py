@@ -21,11 +21,13 @@ class ChemSearchTest(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        update_index.Command().handle( remove=True, using=['test_index'], interactive=False)
+        update_index.Command().handle( remove=True, using=['test_index'],
+                                            interactive=False, verbosity=0)
 
     @classmethod
     def tearDownClass(cls):
-        clear_index.Command().handle( using=['test_index'], interactive=False)
+        clear_index.Command().handle( using=['test_index'],
+                                            interactive=False, verbosity=0)
         super().tearDownClass()
 
     def setUp(self):

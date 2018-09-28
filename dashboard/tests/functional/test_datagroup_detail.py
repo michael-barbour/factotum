@@ -62,7 +62,6 @@ class DataGroupDetailTest(TestCase):
         self.assertEqual(str(self.objects.dg.group_type),'Functional use',
             'Type of DataGroup needs to be "Functional_use" for this test.')
         response = self.client.get(f'/datagroup/{pk}/')
-        print(response.context['extract_fields'])
         self.assertEqual(response.context['extract_fields'],
                 ['data_document_id','data_document_filename',
                 'prod_name','doc_date','rev_num', 'raw_category',
@@ -181,7 +180,6 @@ class DataGroupDetailTest(TestCase):
                 'downloaded_at': ['08/20/2017'],
                 'data_source': [dspk]}
         response = self.client.post(f'/datagroup/edit/{dgpk}/', data=data)
-        print(response.content)
         self.assertEqual(response.status_code, 302,
                                          "User is redirected to detail page.")
         self.assertEqual(response.url, f'/datagroup/{dgpk}/',

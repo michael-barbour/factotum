@@ -32,7 +32,7 @@ class TestQaPage(TestCase):
         response = self.client.get('/qa/extractionscript/5', follow=True)
         # Follow the first approval link
         response = self.client.get('/qa/extractedtext/7', follow=True)
-        print(response.context['extracted_text'])
+        # print(response.context['extracted_text'])
 
 
     def test_hidden_fields(self):

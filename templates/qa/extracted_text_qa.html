@@ -173,13 +173,15 @@
         <div class="col-sm-6">
           <button type = "submit" id="approve" name="approve" class="btn btn-success btn-lg btn-block" role="button">Approve</button>
           <br>
-          {% if nextid > 0 %}
-              <a class="btn btn-warning btn-lg btn-block" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>
-          {% else %}
-              <button type="button" title="All the other documents in this QA group have been approved" class="btn btn-secondary btn-lg btn-block" aria-disabled="true" disabled>Skip</button>
+          {% if referer != 'data_document'%}
+              {% if nextid > 0 %}
+                  <a class="btn btn-warning btn-lg btn-block" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>
+              {% else %}
+                  <button type="button" title="All the other documents in this QA group have been approved" class="btn btn-secondary btn-lg btn-block" aria-disabled="true" disabled>Skip</button>
+              {% endif %}
           {% endif %}
           <br>
-          <a class="btn btn-secondary btn-lg btn-block" href="{% url "extraction_script_qa" script.id %}" role="button">Exit</a>
+          <a class="btn btn-secondary btn-lg btn-block" href="{% url referer doc.id %}" role="button">Exit</a>
         </div>
         <div class="col-sm-6 text-center">
           <b>{{ notesform.qa_notes.label_tag }}</b>

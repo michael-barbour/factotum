@@ -73,7 +73,7 @@
     <div class="col-sm-12">
         <a href="{% url 'registered_records.csv' datagroup.pk  %}" class="btn btn-secondary">
             <span class="oi oi-spreadsheet"></span>&nbsp;Download Registered Records CSV</a>
-        <a href = "/{{ datagroup.zip_file }}" class="btn btn-secondary
+        <a href = "{%url 'dg_pdfs_zip_view' datagroup.pk %}" class="btn btn-secondary
               {% if datagroup.matched_docs == 0 %}disabled{% endif %}">
           <span class="oi oi-data-transfer-download"></span> Download All PDF Documents
         </a>
@@ -167,8 +167,10 @@
           <tr>
           {% if doc.matched %}
             <td>
+              <a href="{{ doc.get_absolute_url }}"
+                 title="Link to document detail">{{ doc.title }}</a>
               <a href="{{ doc.pdf_url }}"
-                 title="Link to {{ doc.get_abstract_filename }}" target="_blank">{{ doc.title }}</a>
+                 title="Link to {{ doc.get_abstract_filename }}" target="_blank"><span class="oi oi-document"></span></a>
             </td>
           {% else %}
             <td>{{ doc.title }}</td>
@@ -254,7 +256,7 @@
       </ul>
     </nav>
 
-<input type="hidden" id="dg_name" name="variable" value="{{ datagroup.dgurl }}">
+<input type="hidden" id="dg_name" name="variable" value="{{ datagroup.url }}">
 
 {% endblock %}
 {% block js %}

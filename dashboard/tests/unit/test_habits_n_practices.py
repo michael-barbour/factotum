@@ -2,6 +2,8 @@ from django.urls import resolve
 from django.test import TestCase
 from django.http import HttpRequest
 
+from lxml import html
+
 from dashboard import views
 from dashboard.models import *
 from dashboard.forms import HnPFormSet
@@ -46,10 +48,18 @@ class HabitViewTest(TestCase):
 
         self.assertTrue(hp_formset.is_valid())
 
-    def test_no_raw_category(self):
+    def test_edit_hnp_detail(self):
         self.objects.exscript.title = 'Manual (dummy)'
         self.objects.exscript.save()
         self.client.login(username='Karyn', password='specialP@55word')
         pk = self.objects.doc.pk
         response = self.client.get(f'/habitsandpractices/{pk}/')
         self.assertNotContains(response, 'Raw Category', html=True)
+
+        # Ensure there are Cancel and Back buttons with the correct URL to return to the DG detail page
+        self.assertContains(response, f'href="/datagroup/{self.objects.dg.pk}/" role="button">Cancel</a>')
+        self.assertContains(response, f'href="/datagroup/{self.objects.dg.pk}/" role="button">Back</a>')
+
+        # Ensure that the URL above responds correctly
+        response2 = self.client.get(f'/datagroup/{self.objects.dg.pk}/')
+        self.assertContains(response2, 'Data Group Detail: Data Group for Test')

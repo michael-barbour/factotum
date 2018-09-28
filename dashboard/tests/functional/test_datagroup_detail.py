@@ -184,3 +184,17 @@ class DataGroupDetailTest(TestCase):
                                          "User is redirected to detail page.")
         self.assertEqual(response.url, f'/datagroup/{dgpk}/',
                                          "Should go to detail page.")
+
+class TestDynamicDetail(TestCase):
+    fixtures = ['00_superuser.yaml', '01_lookups.yaml',
+                '02_datasource.yaml', '03_datagroup.yaml', '04_PUC.yaml',
+                '05_product.yaml', '06_datadocument.yaml', '07_script.yaml',
+                '08_extractedtext.yaml', '09_productdocument.yaml', '10_extractedchemical', '11_dsstoxsubstance']
+
+    def setUp(self):
+        self.c = Client()
+        self.factory = RequestFactory()
+        self.c.login(username='Karyn', password='specialP@55word')
+    
+    def test_composition_detail():
+        dg = DataGroup.objects.get(name='')

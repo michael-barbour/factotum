@@ -37,7 +37,7 @@ class RegisterRecordsTest(TestCase):
                                             charset='utf-8')
         form_data= {'name': ['Walmart MSDS Test Group'],
                     'description': ['test data group'],
-                    'group_type': ['5'],
+                    'group_type': ['1'],
                     'downloaded_by': [str(User.objects.get(username='Karyn').pk)],
                     'downloaded_at': ['08/02/2018'],
                     'download_script': ['1'],

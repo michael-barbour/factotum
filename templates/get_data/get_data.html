@@ -5,7 +5,9 @@
 
 {% block content %}
 
-<h1>Get Data: A resource for accessing exposure related data stored in Factotum</h1>
+<h1>Get Data: A resource for accessing exposure related data stored in Factotum
+    <a class="btn btn-success float-lg-right" role="button" href="{% url "download_PUCs" %}">Download PUCs</a>
+</h1>
 
 <div class="card">
     <h3 class="card-header">Report: Summary metrics by chemical</h3>

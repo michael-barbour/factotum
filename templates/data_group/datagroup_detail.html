@@ -256,7 +256,7 @@
       </ul>
     </nav>
 
-<input type="hidden" id="dg_name" name="variable" value="{{ datagroup.url }}">
+<input type="hidden" id="dg_name" name="variable" value="{{ datagroup.get_name_as_slug }}">
 
 {% endblock %}
 {% block js %}

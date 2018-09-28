@@ -3,8 +3,8 @@
   fields: {created_at: !!timestamp '2018-08-11 07:00:37.681930', updated_at: !!timestamp '2018-09-20
       12:16:49.053559', name: Functional Use Example Group 1, description: '', downloaded_by: 1,
     downloaded_at: !!timestamp '2018-08-09 11:31:35', download_script: null, data_source: 6,
-    csv: path/to/uuid,
-    zip_file: media/test_func_use/test_func_use.zip, group_type: 3}
+    fs_id: f6ef84dd-e176-477c-814b-c1b4cfc6e714, csv: path/to/uuid, zip_file: media/test_func_use/test_func_use.zip,
+    group_type: 3, url: ''}
 - model: dashboard.datagroup
   pk: 6
   fields: {created_at: !!timestamp '2018-05-11 07:00:37.681930', updated_at: !!timestamp '2018-06-20
@@ -128,3 +128,11 @@
     downloaded_at: !!timestamp '2018-05-09 00:00:00', download_script: null, data_source: 25,
     fs_id: 45f6d6b0-f866-4177-beb6-776d60fdc39a, csv: Airgas_MixedGases/Airgas_MixedGases_airgas_mixedgas.csv,
     zip_file: media/Airgas_MixedGases/Airgas_MixedGases.zip, group_type: 1, url: ''}
+- model: dashboard.datagroup
+  pk: 49
+  fields: {created_at: !!timestamp '2018-09-27 22:49:26.938843', updated_at: !!timestamp '2018-09-27
+      22:49:27.024094', name: SIRI Chemical Presence, description: free chemical presence
+      associations, downloaded_by: 1, downloaded_at: !!timestamp '2018-01-11 00:00:00',
+    download_script: 1, data_source: 28, fs_id: 1ea5b64d-4cf0-4edd-8bfe-fb21ca65f842,
+    csv: 1ea5b64d-4cf0-4edd-8bfe-fb21ca65f842/register_records_matching.csv, zip_file: media/1ea5b64d-4cf0-4edd-8bfe-fb21ca65f842/1ea5b64d-4cf0-4edd-8bfe-fb21ca65f842.zip,
+    group_type: 6, url: www.chemicals_in_the_wild.com}

@@ -64,11 +64,15 @@ class DataGroup(CommonInfo):
     def get_dg_folder(self):
         uuid_dir = f'{settings.MEDIA_ROOT}{str(self.fs_id)}'
         name_dir = f'{settings.MEDIA_ROOT}{self.get_name_as_slug()}'
-        csv_folder = self.csv.path.split(sep="/")[-2] # parse the media folder from the penultimate piece of the csv file path
-        csv_fullfolderpath   = f'{settings.MEDIA_ROOT}{csv_folder}'
+
+        #this needs to handle missing csv files
+        if bool(self.csv.name):
+            csv_folder = self.csv.path.split(sep="/")[-2] # parse the media folder from the penultimate piece of the csv file path
+            csv_fullfolderpath   = f'{settings.MEDIA_ROOT}{csv_folder}'
+        
         if os.path.isdir(uuid_dir):
             return uuid_dir # UUID-based folder
-        elif os.path.isdir(csv_fullfolderpath):
+        elif bool(self.csv.name) and os.path.isdir(csv_fullfolderpath):
             return csv_fullfolderpath # csv path-based folder
         else:
             return 'no_folder_found'

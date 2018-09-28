@@ -1,5 +1,6 @@
 import os
 import io
+import shutil
 
 from django.test import RequestFactory, TestCase, Client
 from django.contrib.auth.models import User
@@ -18,6 +19,9 @@ class RegisterRecordsTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
         self.client.login(username='Karyn', password='specialP@55word')
+        media_root = settings.MEDIA_ROOT
+        shutil.rmtree(media_root)
+
 
     def tearDown(self):
         # clean up the file system by deleting the data group object

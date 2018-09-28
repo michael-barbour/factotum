@@ -170,13 +170,13 @@ def extracted_text_qa(request, pk,
     stats = '%s document(s) approved, %s documents remaining' % (a, r)
 
     # Create the formset factory for the extracted records
-    # The model used for the formset depends on whether the 
-    # extracted text object matches a data document 
+    # The model used for the formset depends on whether the
+    # extracted text object matches a data document
     dg_type = datadoc.data_group.group_type.title
-    if (dg_type == 'Functional use'): 
+    if (dg_type == 'Functional use'):
         detail_model = ExtractedFunctionalUse
         detail_fields = ['extracted_text','raw_cas',
-                        'raw_chem_name', 
+                        'raw_chem_name',
                         'report_funcuse'
                         ]
     else:
@@ -228,7 +228,6 @@ def extracted_text_qa(request, pk,
 
     # APPROVAL
     elif request.method == 'POST' and 'approve' in request.POST:
-        print('--approve')
         notesform =  QANotesForm(request.POST, instance=note)
         context['notesform'] = notesform
         nextpk = extext.next_extracted_text_in_qa_group()

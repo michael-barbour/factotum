@@ -1,6 +1,10 @@
 from dal import autocomplete
 from django import forms
-from dashboard.models import *
+from dashboard.models import Product, PUC, ProductToPUC, \
+                            DataDocument, ExtractedFunctionalUse, \
+                            ExtractedChemical, ExtractedText, \
+                            ExtractedCPCat, ExtractedHabitsAndPractices, \
+                            ExtractedListPresence, ExtractedHabitsAndPracticesToPUC
 
 class ProductForm(forms.ModelForm):
     required_css_class = 'required' # adds to label tag
@@ -40,15 +44,16 @@ def create_detail_formset(parent_extext):
 # Create the formset factory for the extracted records
     # The model used for the formset depends on whether the 
     # extracted text object matches a data document 
-    datadoc = parent_extext
-    dg_type = datadoc.data_group.group_type.title
-    if (dg_type == 'Functional use'): 
-        child_model = ExtractedFunctionalUse
+    et = parent_extext
+    dd = DataDocument.objects.get(pk=et.pk)
+    dg_code = dd.data_group.group_type.code
+    if (dg_code == 'FU'):               # Functional use
+        detail_model = ExtractedFunctionalUse
         detail_fields = ['extracted_text','raw_cas',
                         'raw_chem_name', 
                         'report_funcuse'
                         ]
-    else:
+    elif (dg_code == 'CO'):              # Composition
         detail_model = ExtractedChemical
         detail_fields = ['extracted_text','raw_cas',
                         'raw_chem_name', 'raw_min_comp',
@@ -57,14 +62,32 @@ def create_detail_formset(parent_extext):
                         'ingredient_rank',
                         'raw_central_comp']
 
-    DetailFormSet = inlineformset_factory(parent_model=ExtractedText,
+    elif (dg_code == 'HP' ):             # Habits and practices
+        detail_model = ExtractedHabitsAndPractices,
+        detail_fields=['product_surveyed',
+                        'mass',
+                        'mass_unit',
+                        'frequency',
+                        'frequency_unit',
+                        'duration',
+                        'duration_unit',
+                        'prevalence',
+                        'notes']
+    
+    else:
+        detail_model = None
+        detail_fields = []
+    print('Creating DetailFormsetFactory for group_type %s ' % dg_code)
+    print('detail_model: %s ' % detail_model)
+    print('fields: %s ' % detail_fields)
+    print('detail records: %s' % detail_model.objects.filter(extracted_text = et ).count() )
+    DetailFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
                                         model=detail_model,
-                                        formset=BaseExtractedDetailFormSet,
                                         fields=detail_fields,
                                                 extra=1)
+    return DetailFormSet(instance=et, prefix='detail')
 
-    ext_form =  ExtractedTextForm(instance=extext)
-    detail_formset = ExtractedDetailFormSet(instance=extext, prefix='details')
+
 
 
 

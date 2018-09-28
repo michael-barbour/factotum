@@ -10,6 +10,8 @@ from django.contrib.auth.models import User
 from django.test import Client
 from importlib import import_module
 
+from dashboard.forms import *
+
 from dashboard.models import *
 
 class DataGroupDetailTest(TestCase):
@@ -193,8 +195,14 @@ class TestDynamicDetail(TestCase):
 
     def setUp(self):
         self.c = Client()
-        self.factory = RequestFactory()
         self.c.login(username='Karyn', password='specialP@55word')
+
+    def test_every_single_extext(self):
+        ''''Loop through all the ExtractedText objects and test the detail form output
+        '''
+        for et in ExtractedText.objects.all():
+            print('Testing detail formset with ExtractedText object %s: %s ' % (et.pk , et))
+            test_formset = create_detail_formset(et)
+            #print(test_formset.__dict__ )
+
     
-    def test_composition_detail():
-        dg = DataGroup.objects.get(name='')

@@ -36,7 +36,7 @@ class ExtractedTextForm(forms.ModelForm):
             'extraction_script': forms.HiddenInput(),
         }
 
-def create_detail_formset(parent_extext, child_model = ExtractedChemical)
+def create_detail_formset(parent_extext, child_model = ExtractedChemical):
 # Create the formset factory for the extracted records
     # The model used for the formset depends on whether the 
     # extracted text object matches a data document 
@@ -62,36 +62,37 @@ def create_detail_formset(parent_extext, child_model = ExtractedChemical)
                                         formset=BaseExtractedDetailFormSet,
                                         fields=detail_fields,
                                                 extra=1)
+
     ext_form =  ExtractedTextForm(instance=extext)
     detail_formset = ExtractedDetailFormSet(instance=extext, prefix='details')
 
 
 
-HnPFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
-                                    model=ExtractedHabitsAndPractices,
-                                    fields=['product_surveyed',
-                                            'mass',
-                                            'mass_unit',
-                                            'frequency',
-                                            'frequency_unit',
-                                            'duration',
-                                            'duration_unit',
-                                            'prevalence',
-                                            'notes'],
-                                            extra=1)
+    HnPFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
+                                        model=ExtractedHabitsAndPractices,
+                                        fields=['product_surveyed',
+                                                'mass',
+                                                'mass_unit',
+                                                'frequency',
+                                                'frequency_unit',
+                                                'duration',
+                                                'duration_unit',
+                                                'prevalence',
+                                                'notes'],
+                                                extra=1)
 
-ChemicalFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
-                                    model=ExtractedChemical,
-                                    fields=['extracted_text',
-                                            'raw_cas',
-                                            'raw_chem_name',
-                                            'raw_min_comp',
-                                            'raw_central_comp',
-                                            'raw_max_comp',
-                                            'unit_type',
-                                            'report_funcuse',
-                                            'weight_fraction_type',
-                                            'ingredient_rank',
-                                            ],
-                                    extra=0)
+    ChemicalFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
+                                        model=ExtractedChemical,
+                                        fields=['extracted_text',
+                                                'raw_cas',
+                                                'raw_chem_name',
+                                                'raw_min_comp',
+                                                'raw_central_comp',
+                                                'raw_max_comp',
+                                                'unit_type',
+                                                'report_funcuse',
+                                                'weight_fraction_type',
+                                                'ingredient_rank',
+                                                ],
+                                        extra=0)
 

@@ -6,7 +6,7 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
+    atomic = False
     dependencies = [
         ('dashboard', '0043_auto_20180518_1246'),
     ]

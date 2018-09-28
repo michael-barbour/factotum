@@ -5,6 +5,7 @@ from itertools import islice
 from collections import OrderedDict
 from djqscsv import render_to_csv_response
 from bootstrap_datepicker_plus import DatePickerInput
+from pathlib import Path
 
 from django import forms
 from django.urls import reverse
@@ -98,7 +99,7 @@ def data_group_detail(request, pk,
     page = request.GET.get('page')
     paginator = Paginator(docs, npage)
     docs_page = paginator.page(1 if page is None else page)
-    store = settings.MEDIA_URL + datagroup.name.replace(' ','_')
+    store = settings.MEDIA_URL + str(datagroup.fs_id)
     extract_fields = datagroup.get_extracted_template_fieldnames()
     context = {   'datagroup'         : datagroup,
                   'documents'         : docs_page,
@@ -108,8 +109,7 @@ def data_group_detail(request, pk,
                   'extract_form'      : include_extract_form(datagroup, dg_type),
                   'bulk'              : len(docs) - len(prod_link),
                   'msg'               : '',
-                  'functional'        : dg_type == 'Functional use',
-                  'hnp'               : dg_type == 'Habits and practices',
+                  'hnp'               : dg_type == 'Habits and Practices',
                   'composition'       : dg_type == 'Composition',
                   }
     if request.method == 'POST' and 'upload' in request.POST:
@@ -144,7 +144,8 @@ def data_group_detail(request, pk,
                                                 request.FILES,dg_type=dg_type)
         if extract_form.is_valid():
             csv_file = request.FILES.get('extract_file')
-            script = Script.objects.get(pk=request.POST['script_selection'])
+            script_pk = int(request.POST['script_selection'])
+            script = Script.objects.get(pk=script_pk)
             info = [x.decode('ascii','ignore') for x in csv_file.readlines()]
             table = csv.DictReader(info)
             missing =  list(set(extract_fields)-set(table.fieldnames))
@@ -155,20 +156,21 @@ def data_group_detail(request, pk,
             good_records = []
             ext_parent_fn, ext_child = get_extracted_models(dg_type)
             for i, row in enumerate(csv.DictReader(info)):
-                doc = docs.get(pk=row['data_document_id'])
+                doc = docs.get(pk=int(row['data_document_id']))
                 doc.raw_category = row.pop('raw_category')
                 wft = request.POST.get('weight_fraction_type', None)
-                if wft:
+                if wft: # this signifies 'Composition' type
                     w = 'weight_fraction_type'
-                    row[w] = WeightFractionType.objects.get(pk=wft)
-                    row['unit_type'] = UnitType.objects.get(pk=row['unit_type'])
-                print(doc.pk)
+                    row[w] = WeightFractionType.objects.get(pk=int(wft))
+                    unit_type_id = int(row['unit_type'])
+                    row['unit_type'] = UnitType.objects.get(pk=unit_type_id)
+                    rank = row['ingredient_rank']
+                    row['ingredient_rank'] = None if rank == '' else rank
                 ext, created = ext_parent_fn(data_document=doc,
                                                 extraction_script=script)
                 if created:
                     update_fields(row, ext)
                 row['extracted_text'] = ext
-                # row['extractedtext_ptr_id'] = ext.pk
                 row = clean_dict(row, ext_child)
                 try:
                     ext.full_clean()
@@ -225,6 +227,7 @@ def data_group_create(request, pk,
                              user    = request.user,
                              initial = initial_values)
         if form.is_valid():
+            # what's the pk of the newly created datagroup?
             datagroup = form.save()
             info = [x.decode('ascii',
                              'ignore') for x in datagroup.csv.readlines()]
@@ -244,16 +247,19 @@ def data_group_create(request, pk,
                 doc_type = DocumentType.objects.get(pk=1)
                 dtype = line['document_type']
                 if line['filename'] == '':
-                    errors.append(count)
+                    errors.append([count,"Filename can't be empty!"])
                 if line['title'] == '': # updates title in line object
                     line['title'] = line['filename'].split('.')[0]
                 if dtype == '':
-                    errors.append(count)
+                    errors.append([count,
+                                    "'document_type' field can't be empty"])
+                if DocumentType.objects.filter(pk=int(dtype)).exists():
+                    doc_type = DocumentType.objects.get(pk=int(dtype))
+                    if doc_type.group_type != datagroup.group_type:
+                        errors.append([count,"Group Type doesn't match"])
                 else:
-                    if DocumentType.objects.filter(pk=int(dtype)).exists():
-                        doc_type = DocumentType.objects.get(pk=int(dtype))
-                    else:
-                        errors.append(count)
+                    errors.append([count,"GroupType id doesn't exist."])
+
                 doc=DataDocument(filename=line['filename'],
                                  title=line['title'],
                                  document_type=doc_type,
@@ -268,15 +274,20 @@ def data_group_create(request, pk,
                 datagroup.delete()
                 return render(request, template_name, {'line_errors': errors,
                                                        'form': form})
-            name = datagroup.dgurl()
-            zf = zipfile.ZipFile(f'media/{name}/{name}.zip', 'w',
-                                 zipfile.ZIP_DEFLATED)
-            datagroup.zip_file = zf.filename
-            zf.close()
+            #Save the DG to make sure the pk exists
             datagroup.save()
+            #Let's even write the csv first
             with open(datagroup.csv.path,'w') as f:
                 myfile = File(f)
                 myfile.write(''.join(text))
+            #Let's explicitly use the full path for the actually writing of the zipfile
+            new_zip_name = Path(settings.MEDIA_URL + "/" + str(datagroup.fs_id) + "/" + str(datagroup.fs_id) + ".zip")
+            new_zip_path = Path(settings.MEDIA_ROOT + "/" + str(datagroup.fs_id) + "/" + str(datagroup.fs_id) + ".zip")
+            zf = zipfile.ZipFile(str(new_zip_path), 'w',
+                                 zipfile.ZIP_DEFLATED)
+            datagroup.zip_file = new_zip_name
+            zf.close()
+            datagroup.save()
             return redirect('data_group_detail', pk=datagroup.id)
     else:
         form = DataGroupForm(user=request.user, initial=initial_values)
@@ -304,27 +315,15 @@ def data_group_delete(request, pk, template_name='data_source/datasource_confirm
         return redirect('data_group_list')
     return render(request, template_name, {'object': datagroup})
 
-
-@login_required()
-def data_document_detail(request, pk,
-                         template_name='data_group/data_document_detail.html'):
-    doc = get_object_or_404(DataDocument, pk=pk, )
-    return render(request, template_name, {'doc'  : doc,})
-
-@login_required()
-def data_document_delete(request, pk, template_name='data_source/datasource_confirm_delete.html'):
-    doc = get_object_or_404(DataDocument, pk=pk)
-    datagroup_id = doc.data_group_id
-    if request.method == 'POST':
-        doc.delete()
-        return redirect('data_group_detail', pk=datagroup_id)
-    return render(request, template_name, {'object': doc})
-
 @login_required
-def dg_dd_csv_view(request, pk):
-    qs = DataDocument.objects.filter(data_group_id=pk)
-    filename = DataGroup.objects.get(pk=pk).name
-    return render_to_csv_response(qs, filename=filename, append_datestamp=True)
+def dg_pdfs_zip_view(request, pk):
+    dg = DataGroup.objects.get(pk=pk)
+    #print('opening zip file from %s' % dg.get_zip_url())
+    zip_file_name = f'{dg.fs_id}.zip'
+    zip_file = open(dg.get_zip_url(), 'rb')
+    response = HttpResponse(zip_file, content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename=%s' % zip_file_name
+    return response
 
 @login_required
 def data_group_registered_records_csv(request, pk):
@@ -333,7 +332,7 @@ def data_group_registered_records_csv(request, pk):
     if dg:
         columnlist.insert(0, "id")
         qs = DataDocument.objects.filter(data_group_id=pk).values(*columnlist)
-        return render_to_csv_response(qs, filename=dg.dgurl() + "_registered_records.csv",
+        return render_to_csv_response(qs, filename=(dg.fs_id , "_registered_records.csv"),
                                       field_header_map={"id": "DataDocument_id"})
     else:
         qs = DataDocument.objects.filter(data_group_id=0).values(*columnlist)

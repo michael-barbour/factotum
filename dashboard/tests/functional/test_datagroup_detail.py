@@ -25,14 +25,14 @@ class DataGroupDetailTest(TestCase):
                     ('Document should start w/ matched False'))
         self.assertFalse(self.objects.doc.extracted,
                     ('Document should start w/ extracted False'))
-        self.assertTrue(response.context['upload_form'],
+        self.assertFalse(response.context['datagroup'].all_matched(),
                     ('UploadForm should be included in the page!'))
         self.assertFalse(response.context['extract_form'],
                     ('ExtractForm should not be included in the page!'))
         self.objects.doc.matched = True
         self.objects.doc.save()
         response = self.client.get(f'/datagroup/{pk}/')
-        self.assertFalse(response.context['upload_form'], (
+        self.assertTrue(response.context['datagroup'].all_matched(), (
                     'UploadForm should not be included in the page!'))
         self.assertIsInstance(response.context['extract_form'],
                                             ExtractionScriptForm,
@@ -40,7 +40,7 @@ class DataGroupDetailTest(TestCase):
         self.objects.doc.extracted = True
         self.objects.doc.save()
         response = self.client.get(f'/datagroup/{pk}/')
-        self.assertFalse(response.context['upload_form'],
+        self.assertTrue(response.context['datagroup'].all_matched(),
                     ('UploadForm should not be included in the page!'))
         self.assertFalse(response.context['extract_form'],
                     ('ExtractForm should not be included in the page!'))
@@ -57,11 +57,12 @@ class DataGroupDetailTest(TestCase):
                 'report_funcuse','raw_min_comp','raw_max_comp', 'unit_type',
                 'ingredient_rank', 'raw_central_comp'],
                 "Fieldnames passed are incorrect!")
-        self.objects.gt.title = 'Functional_use'
+        self.objects.gt.title = 'Functional use'
         self.objects.gt.save()
-        self.assertEqual(str(self.objects.dg.group_type),'Functional_use',
+        self.assertEqual(str(self.objects.dg.group_type),'Functional use',
             'Type of DataGroup needs to be "Functional_use" for this test.')
         response = self.client.get(f'/datagroup/{pk}/')
+        print(response.context['extract_fields'])
         self.assertEqual(response.context['extract_fields'],
                 ['data_document_id','data_document_filename',
                 'prod_name','doc_date','rev_num', 'raw_category',
@@ -180,7 +181,8 @@ class DataGroupDetailTest(TestCase):
                 'downloaded_at': ['08/20/2017'],
                 'data_source': [dspk]}
         response = self.client.post(f'/datagroup/edit/{dgpk}/', data=data)
+        print(response.content)
         self.assertEqual(response.status_code, 302,
-                                        "User is redirected to detail page.")
+                                         "User is redirected to detail page.")
         self.assertEqual(response.url, f'/datagroup/{dgpk}/',
-                                        "Should go to detail page.")
+                                         "Should go to detail page.")

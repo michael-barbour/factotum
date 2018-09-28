@@ -1,5 +1,7 @@
 import os
 import shutil
+import uuid
+from factotum import settings
 
 from django.db import models
 from .common_info import CommonInfo
@@ -16,6 +18,11 @@ def update_filename(instance, filename):
     return name
 
 
+def csv_upload_path(instance, filename):
+    name = '{0}/{1}'.format(instance.fs_id, filename) # potential space errors in name
+    return name
+
+
 class DataGroup(CommonInfo):
 
     name = models.CharField(max_length=50)
@@ -24,11 +31,14 @@ class DataGroup(CommonInfo):
     downloaded_at = models.DateTimeField()
     download_script = models.ForeignKey('Script', on_delete=models.SET_NULL, default=None, null=True, blank=True)
     data_source = models.ForeignKey('DataSource', on_delete=models.CASCADE)
-    csv = models.FileField(upload_to=update_filename, null=True)
+    fs_id = models.UUIDField(default=uuid.uuid4, editable=False)
+    csv = models.FileField(upload_to=csv_upload_path, null=True)
     zip_file = models.CharField(max_length=100)
     group_type = models.ForeignKey(GroupType, on_delete=models.SET_DEFAULT, default=1, null=True, blank=True)
     url = models.CharField(max_length=150, blank=True)
 
+    def save(self, *args, **kwargs):
+        super(DataGroup, self).save(*args, **kwargs)
 
     def matched_docs(self):
         return self.datadocument_set.filter(matched=True).count()
@@ -48,11 +58,36 @@ class DataGroup(CommonInfo):
     def __str__(self):
         return self.name
 
-    def dgurl(self):
-        return self.name.replace(' ', '_')
-
     def get_absolute_url(self):
         return reverse('data_group_edit', kwargs={'pk': self.pk})
+
+    def get_dg_folder(self):
+        uuid_dir = f'{settings.MEDIA_ROOT}{str(self.fs_id)}'
+        name_dir = f'{settings.MEDIA_ROOT}{self.get_name_as_slug()}'
+        csv_folder = self.csv.path.split(sep="/")[-2] # parse the media folder from the penultimate piece of the csv file path
+        csv_fullfolderpath   = f'{settings.MEDIA_ROOT}{csv_folder}'
+        if os.path.isdir(uuid_dir):
+            return uuid_dir # UUID-based folder
+        elif os.path.isdir(csv_fullfolderpath):
+            return csv_fullfolderpath # csv path-based folder
+        else:
+            return 'no_folder_found'
+
+    def get_name_as_slug(self):
+        return self.name.replace(' ', '_')
+
+    def get_zip_url(self):
+        # the path if the data group's folder was built from a UUID:
+        uuid_path = f'{self.get_dg_folder()}/{str(self.fs_id)}.zip'
+        # the path if the data group's folder was built from the old name-based method
+        zip_file_path = f'{self.get_dg_folder()}/{str(self.get_name_as_slug())}.zip'
+        if os.path.isfile(uuid_path):   # it is a newly-added data group
+            zip_url = uuid_path
+        elif os.path.isfile(zip_file_path): # it is a pre-UUID data group
+            zip_url = zip_file_path
+        else:
+            zip_url = 'no_path_found'
+        return zip_url
 
     def get_extracted_template_fieldnames(self):
         extract_fields = ['data_document_id','data_document_filename',
@@ -75,6 +110,7 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
     Deletes datagroup directory from filesystem
     when datagroup instance is deleted.
     """
-    dg_folder = os.path.split(instance.csv.path)[0]
+    dg_folder = instance.get_dg_folder()
     if os.path.isdir(dg_folder):
+        #print('deleting folder %s for data group %s' % (dg_folder, instance.pk))
         shutil.rmtree(dg_folder)

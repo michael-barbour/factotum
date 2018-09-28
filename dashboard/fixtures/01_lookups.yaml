@@ -15,7 +15,11 @@
   fields: {created_at: !!timestamp '2018-07-12 10:49:45.927857', updated_at: !!timestamp '2018-07-12
       10:49:45.927877', title: Habits and practices, description: ''}
 - model: dashboard.grouptype
-  pk: 5
+  pk: 6
+  fields: {created_at: !!timestamp '2018-07-12 10:51:29.240851', updated_at: !!timestamp '2018-07-12
+      10:51:29.240872', title: Supplemental documents, description: ''}
+- model: dashboard.grouptype
+  pk: 7
   fields: {created_at: !!timestamp '2018-07-12 10:51:29.240851', updated_at: !!timestamp '2018-07-12
       10:51:29.240872', title: Composition & Functional use, description: ''}
 - model: dashboard.grouptype
@@ -62,11 +66,23 @@
 - model: dashboard.documenttype
   pk: 10
   fields: {created_at: !!timestamp '2018-07-12 10:51:41.054772', updated_at: !!timestamp '2018-07-12
-      10:51:41.054792', title: MSDS, description: '', group_type: 5}
+      10:51:41.054792', title: Memo, description: '', group_type: 6}
 - model: dashboard.documenttype
   pk: 11
   fields: {created_at: !!timestamp '2018-07-12 10:51:46.155168', updated_at: !!timestamp '2018-07-12
-      10:51:46.155186', title: SDS, description: '', group_type: 5}
+      10:51:46.155186', title: 'journal article', description: '', group_type: 4}
+- model: dashboard.documenttype
+  pk: 12
+  fields: {created_at: !!timestamp '2018-07-12 10:51:46.155168', updated_at: !!timestamp '2018-07-12
+      10:51:46.155186', title: 'poster', description: '', group_type: 4}
+- model: dashboard.documenttype
+  pk: 13
+  fields: {created_at: !!timestamp '2018-07-12 10:51:46.155168', updated_at: !!timestamp '2018-07-12
+      10:51:46.155186', title: 'professional society report', description: '', group_type: 4}
+- model: dashboard.documenttype
+  pk: 14
+  fields: {created_at: !!timestamp '2018-07-12 10:51:46.155168', updated_at: !!timestamp '2018-07-12
+      10:51:46.155186', title: 'other survey/study', description: '', group_type: 4}
 - model: dashboard.unittype
   pk: 1
   fields: {created_at: !!timestamp '2018-05-07 16:29:57', updated_at: null, title: weight

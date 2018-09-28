@@ -2,6 +2,7 @@ import os
 import shutil
 import uuid
 from factotum import settings
+from pathlib import Path, PurePath
 
 from django.db import models
 from .common_info import CommonInfo
@@ -67,7 +68,9 @@ class DataGroup(CommonInfo):
 
         #this needs to handle missing csv files
         if bool(self.csv.name):
-            csv_folder = self.csv.path.split(sep="/")[-2] # parse the media folder from the penultimate piece of the csv file path
+            # parse the media folder from the penultimate piece of the csv file path
+            p = PurePath(self.csv.path)
+            csv_folder=p.parts[-2]
             csv_fullfolderpath   = f'{settings.MEDIA_ROOT}{csv_folder}'
         
         if os.path.isdir(uuid_dir):

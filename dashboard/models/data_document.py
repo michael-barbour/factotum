@@ -3,6 +3,8 @@ from .common_info import CommonInfo
 from django.urls import reverse
 from django.utils import timezone
 from .document_type import DocumentType
+from django.core.exceptions import ValidationError
+
 
 
 class DataDocument(CommonInfo):
@@ -32,6 +34,17 @@ class DataDocument(CommonInfo):
         return f'document_{self.pk}.{ext}'
 
     def pdf_url(self):
-        dg = self.data_group.dgurl()
+        dg = self.data_group
         fn = self.get_abstract_filename()
-        return f'/media/{dg}/pdf/{fn}'
+        return f'/media/{dg.fs_id}/pdf/{fn}'
+
+    def clean(self):
+        # the document_type must be one of the children types
+        # of the datadocument's parent datagroup
+        dg = self.data_group
+        gtype = dg.group_type
+
+        if not self.document_type in DocumentType.objects.filter(group_type=gtype):
+            raise ValidationError('The document type must be allowed by the parent data group.')
+
+

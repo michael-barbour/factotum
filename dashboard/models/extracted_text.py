@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django import forms
 from .data_document import DataDocument
 from .script import Script
+from itertools import chain
 
 class ExtractedText(CommonInfo):
     data_document = models.OneToOneField(DataDocument,on_delete=models.CASCADE,
@@ -35,6 +36,17 @@ class ExtractedText(CommonInfo):
         if extextnext == self:
             nextid = 0
         return nextid
+
+    def fetch_extracted_records(self):
+        '''Collect the related objects in all the Extracted... models
+        '''
+        return chain(self.practices.all(), self.chemicals.all(), self.uses.all())
+        
+
+            
+
+                
+
 
 
 def get_next_or_prev(models, item, direction):

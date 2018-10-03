@@ -63,7 +63,10 @@ def create_detail_formset(parent_extext):
                         'raw_central_comp']
 
     elif (dg_code == 'HP' ):             # Habits and practices
-        detail_model = ExtractedHabitsAndPractices,
+        detail_model = ExtractedHabitsAndPractices
+        #print('Habits and Practices branch')
+        #print(detail_model)
+        #print('detail records: %s' % detail_model.objects.filter(extracted_text = et ).count() )
         detail_fields=['product_surveyed',
                         'mass',
                         'mass_unit',
@@ -74,23 +77,32 @@ def create_detail_formset(parent_extext):
                         'prevalence',
                         'notes']
     
+    elif (dg_code == 'CP' ):             # Habits and practices
+        detail_model = ExtractedListPresence
+        detail_fields=['extracted_text','raw_cas',
+                        'raw_chem_name'
+                        ]
     else:
         detail_model = None
         detail_fields = []
-    print('Creating DetailFormsetFactory for group_type %s ' % dg_code)
-    print('detail_model: %s ' % detail_model)
-    print('fields: %s ' % detail_fields)
-    print('detail records: %s' % detail_model.objects.filter(extracted_text = et ).count() )
-    DetailFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
-                                        model=detail_model,
-                                        fields=detail_fields,
-                                                extra=1)
+    if detail_model != None:
+        #print('Creating DetailFormsetFactory for group_type %s ' % dg_code)
+        #print('detail_model: %s ' % detail_model)
+        #print('fields: %s ' % detail_fields)
+        #print('detail records: %s' % detail_model.objects.filter(extracted_text = et ).count() )
+        DetailFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
+                                            model=detail_model,
+                                            fields=detail_fields,
+                                                    extra=1)
+    else:
+        print('No formset was created for %s' % dd)
+        return None
     return DetailFormSet(instance=et, prefix='detail')
 
 
 
 
-
+# Do not delete these model-specific formset methods.
 HnPFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
                                     model=ExtractedHabitsAndPractices,
                                     fields=['product_surveyed',

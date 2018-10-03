@@ -191,18 +191,66 @@ class TestDynamicDetail(TestCase):
     fixtures = ['00_superuser.yaml', '01_lookups.yaml',
                 '02_datasource.yaml', '03_datagroup.yaml', '04_PUC.yaml',
                 '05_product.yaml', '06_datadocument.yaml', '07_script.yaml',
-                '08_extractedtext.yaml', '09_productdocument.yaml', '10_extractedchemical', '11_dsstoxsubstance']
+                '08_extractedtext.yaml', '09_productdocument.yaml', '10_extractedchemical', 
+                '11_dsstoxsubstance', '12_habits_and_practices']
 
     def setUp(self):
         self.c = Client()
         self.c.login(username='Karyn', password='specialP@55word')
+    
+    def test_fetch_extracted_records(self):
+        # A Composition example
+        for et in ExtractedText.objects.filter(pk__in=[5]):
+            print('Fetching extracted child records from %s: %s ' % (et.pk , et))
+            for ex_child in et.fetch_extracted_records():
+                print('    %s (%s)' % (ex_child, ex_child.__class__.__name__ ))
+                self.assertEqual(et.pk , ExtractedChemical.objects.get(pk=ex_child.pk).extracted_text.pk,
+                    'The ExtractedChemical object with the returned child pk should have the correct extracted_text')
+        
+        # A Habits & Practices example
+        for et in ExtractedText.objects.filter(pk__in=[53,54]):
+            print('Fetching extracted child records from %s: %s ' % (et.pk , et))
+            for ex_child in et.fetch_extracted_records():
+                print(ExtractedHabitsAndPractices.objects.get(pk=ex_child.pk))
+                print('    %s (%s)' % (ex_child, ex_child.__class__.__name__ ))
+                self.assertEqual(et.pk , ExtractedHabitsAndPractices.objects.get(pk=ex_child.pk).extracted_text.pk,
+                    'The ExtractedChemical object with the returned child pk should have the correct extracted_text')
+
 
     def test_every_single_extext(self):
         ''''Loop through all the ExtractedText objects and test the detail form output
         '''
-        for et in ExtractedText.objects.all():
-            print('Testing detail formset with ExtractedText object %s: %s ' % (et.pk , et))
+        for et in ExtractedText.objects.all()[0:20]:
             test_formset = create_detail_formset(et)
-            #print(test_formset.__dict__ )
+            # compare to the old method
+            if (DataDocument.objects.get(id=et.data_document_id).data_group.group_type.code == 'HP'):
+                old_fs = HnPFormSet(instance=et, prefix='detail')
+                self.assertEqual(old_fs[0]['product_surveyed'].value(), 
+                    test_formset[0]['product_surveyed'].value(),
+                    'The old and new methods should return the same items')
+            
+            if (DataDocument.objects.get(id=et.data_document_id).data_group.group_type.code == 'CO'):
+                old_fs = ChemicalFormSet(instance=et, prefix='detail')
+                self.assertEqual(old_fs[0]['raw_chem_name'].value(), 
+                    test_formset[0]['raw_chem_name'].value(),
+                    'The old and new methods should return the same items')
+            
+            if (DataDocument.objects.get(id=et.data_document_id).data_group.group_type.code == 'CP'):
+                old_fs = ChemicalFormSet(instance=et, prefix='detail')
+                self.assertEqual(old_fs[0]['raw_chem_name'].value(), 
+                    test_formset[0]['raw_chem_name'].value(),
+                    'The old and new methods should return the same items')
+
+
+        print('print(some important stuff)')
+        print('|￣￣￣￣￣￣|')
+        print('|   HI      |')
+        print('|           |' )
+        print('|  RICK     |' )    
+        print('|           |')
+        print('|___________|') 
+        print('(\__/) || ')
+        print('(•ㅅ•) || ')
+        print('/ 　 づ')
 
     

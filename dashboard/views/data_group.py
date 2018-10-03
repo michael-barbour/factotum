@@ -242,11 +242,14 @@ def data_group_create(request, pk, template_name='data_group/datagroup_form.html
             info = [x.decode('ascii',
                              'ignore') for x in datagroup.csv.readlines()]
             table = csv.DictReader(info)
-            if not table.fieldnames == ['filename','title','document_type','url','organization']:
+            good_fields = ['filename','title','document_type',
+                                                    'url','organization']
+            if not table.fieldnames == good_fields:
                 datagroup.csv.close()
                 datagroup.delete()
                 return render(request, template_name,
                               {'field_error': table.fieldnames,
+                              'good_fields': good_fields,
                                'form': form})
             text = ['DataDocument_id,' + ','.join(table.fieldnames)+'\n']
             errors = []
@@ -267,7 +270,7 @@ def data_group_create(request, pk, template_name='data_group/datagroup_form.html
                             errors.append(count)
                     else:
                         errors.append(count)
-                    
+
                 doc=DataDocument(filename=line['filename'],
                                  title=line['title'],
                                  document_type=doc_type,

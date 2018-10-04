@@ -50,7 +50,7 @@
         {% endif %}
     </dl>
 
-    <div class=" row col-sm-12">
+    <div class="row col-sm-12">
 
     {%  if not habits_and_practices_formset.forms %}
     <div class="col-sm-6">
@@ -113,6 +113,43 @@
     </div>
 
 
+    {%  if detail_formset.forms %}
+            <div class="row col-sm-12">
+                <h4>{{ doc.data_group.group_type }} detail</h4>
+            </div>
+            <div class="card-body">
+            <form method="post" >
+                {{ chemical_formset.management_form }}
+                {% csrf_token %}
+                <div class="row">
+                {% for form in detail_formset.forms %}
+                    <div class="col-sm-6">
+                    <div class="card" >
+                    <div class="card-body">
+                                {% if form.errors %}
+                                    <div class="form-group has-error">
+                                        <span class="help-block">{{ form.errors }}</span>
+                                    </div>
+                                {% endif %}
+                                {{ form.id.as_hidden }}
+                                <dl class="row col-sm-12"></dl>
+                                {% for field in form %}
+                                        <dt class="col-sm-6">{{ field.label_tag }}</dt>
+                                        <dd  class="col-sm-6">{{ field}}</dd>
+                                {% endfor %}
+                                </dl>
+                            <button type="submit" id="save_details" name="save_details"
+                                class="btn btn-primary detail-control" role="button">Save edits</button>
+                    </div>
+                    </div>    
+                    </div>
+                {% endfor %}
+            </div>
+            </form>
+            </div>
+    {% endif %}
+
+
     {%  if chemical_formset.forms %}
     <br>
     <h4>Extracted Chemicals</h4>
@@ -170,7 +207,6 @@
             <div class="row">
                 {% for form in habits_and_practices_formset.forms %}
                     <div class="col-sm-6">
-                        <div class="card" >
                             <div class="card-body">
                                 {% if form.errors %}
                                     <div class="form-group has-error">
@@ -200,7 +236,6 @@
                                 </dl>
                                 <button type="submit" id="save_habits_and_practices" name="save_habits_and_practices"
                                         class="btn btn-primary chem-control" role="button">Save edits</button>
-                            </div>
                         </div>
                     </div>
                 {% endfor %}

@@ -15,3 +15,6 @@ class ExtractedFunctionalUse(CommonInfo):
 
     def __str__(self):
         return self.raw_chem_name
+
+    def get_extractedtext(self):
+        return self.extracted_text

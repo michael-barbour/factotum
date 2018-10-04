@@ -1,0 +1,8 @@
+- model: dashboard.extractedcpcat
+  pk: 254780
+  fields: {prod_name: CPCAT Example Product 1, cat_code: CPCat code 1, description_cpcat: desc, cpcat_code: cpcat_code,
+    cpcat_sourcetype: free}
+- model: dashboard.extractedcpcat
+  pk: 254781
+  fields: {prod_name: CPCAT Example Product 2, cat_code: CPCat code 2, description_cpcat: desc, cpcat_code: cpcat_code,
+    cpcat_sourcetype: free}

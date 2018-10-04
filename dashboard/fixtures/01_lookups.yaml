@@ -21,11 +21,11 @@
 - model: dashboard.grouptype
   pk: 7
   fields: {created_at: !!timestamp '2018-07-12 10:51:29.240851', updated_at: !!timestamp '2018-07-12
-      10:51:29.240872', title: Composition & Functional use, description: ''}
+      10:51:29.240872', title: Composition & Functional use, description: '', code: 'CF'}
 - model: dashboard.grouptype
   pk: 6
   fields: {created_at: !!timestamp '2018-09-17 23:46:47.762560', updated_at: !!timestamp '2018-09-17
-      23:46:47.762583', title: Chemical presence list, description: ''}
+      23:46:47.762583', title: Chemical presence list, description: '', code: 'CP'}
 - model: dashboard.documenttype
   pk: 1
   fields: {created_at: !!timestamp '2018-06-20 12:16:49.070487', updated_at: !!timestamp '2018-06-20

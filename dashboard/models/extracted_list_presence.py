@@ -1,9 +1,9 @@
 from django.db import models
 
-from dashboard.models import CommonInfo
+from dashboard.models import CommonInfo, ExtractedText
 
 class ExtractedListPresence(CommonInfo):
-    extracted_text = models.ForeignKey('ExtractedCPCat', on_delete=models.CASCADE,
+    extracted_cpcat = models.ForeignKey('ExtractedCPCat', on_delete=models.CASCADE,
                                         related_name='presence')
     raw_cas = models.CharField("Raw CAS", max_length=100,
                                         null=True, blank=True)
@@ -14,4 +14,7 @@ class ExtractedListPresence(CommonInfo):
         return self.raw_chem_name
 
     def get_datadocument_url(self):
-        return self.extracted_text.data_document.get_absolute_url()
+        return self.extracted_cpcat.data_document.get_absolute_url()
+
+    def get_extractedtext(self):
+        return self.extracted_cpcat.extractedtext_ptr

@@ -39,3 +39,6 @@ class ExtractedChemical(CommonInfo):
         )
         obj.save()
         return obj.to_dict(include_meta=True)
+
+    def get_extractedtext(self):
+        return self.extracted_text

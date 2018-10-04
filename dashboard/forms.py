@@ -40,20 +40,22 @@ class ExtractedTextForm(forms.ModelForm):
             'extraction_script': forms.HiddenInput(),
         }
 
-def create_detail_formset(parent_extext):
+def create_detail_formset(parent_exobject):
 # Create the formset factory for the extracted records
     # The model used for the formset depends on whether the 
     # extracted text object matches a data document 
-    et = parent_extext
-    dd = DataDocument.objects.get(pk=et.pk)
+    ex = parent_exobject
+    ex_model = ex.__class__
+    dd = DataDocument.objects.get(pk=ex.pk)
     dg_code = dd.data_group.group_type.code
+    
     if (dg_code == 'FU'):               # Functional use
         detail_model = ExtractedFunctionalUse
         detail_fields = ['extracted_text','raw_cas',
                         'raw_chem_name', 
                         'report_funcuse'
                         ]
-    elif (dg_code == 'CO'):              # Composition
+    elif (dg_code in ['CO','UN']):              # Composition
         detail_model = ExtractedChemical
         detail_fields = ['extracted_text','raw_cas',
                         'raw_chem_name', 'raw_min_comp',
@@ -64,9 +66,6 @@ def create_detail_formset(parent_extext):
 
     elif (dg_code == 'HP' ):             # Habits and practices
         detail_model = ExtractedHabitsAndPractices
-        #print('Habits and Practices branch')
-        #print(detail_model)
-        #print('detail records: %s' % detail_model.objects.filter(extracted_text = et ).count() )
         detail_fields=['product_surveyed',
                         'mass',
                         'mass_unit',
@@ -77,27 +76,31 @@ def create_detail_formset(parent_extext):
                         'prevalence',
                         'notes']
     
-    elif (dg_code == 'CP' ):             # Habits and practices
+    elif (dg_code == 'CP' ):             # Chemical Presence List
+        ex_model = ExtractedCPCat
         detail_model = ExtractedListPresence
-        detail_fields=['extracted_text','raw_cas',
+        detail_fields=['extracted_cpcat','raw_cas',
                         'raw_chem_name'
                         ]
     else:
         detail_model = None
         detail_fields = []
     if detail_model != None:
-        #print('Creating DetailFormsetFactory for group_type %s ' % dg_code)
-        #print('detail_model: %s ' % detail_model)
-        #print('fields: %s ' % detail_fields)
-        #print('detail records: %s' % detail_model.objects.filter(extracted_text = et ).count() )
-        DetailFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
-                                            model=detail_model,
-                                            fields=detail_fields,
+"""         print('Creating DetailFormsetFactory for group_type %s ' % dg_code)
+        print('    parent_model: %s ' % ex_model)
+        print('    detail_model: %s ' % detail_model)
+        print('    fields: %s ' % detail_fields)
+        print('    detail record count: %s' % len(list(ex.fetch_extracted_records())) ) """
+        detail_factory = forms.inlineformset_factory(parent_model=ex_model,
+                                                    model=detail_model,
+                                                    fields=detail_fields,
                                                     extra=1)
+        print('detail_factory instantiated')
+        extracted_detail_form = detail_factory(instance=ex, prefix='detail')
     else:
-        print('No formset was created for %s' % dd)
+        print('No formset was created for dd %s %s' % (dd.id, dd))
         return None
-    return DetailFormSet(instance=et, prefix='detail')
+    return extracted_detail_form
 
 
 

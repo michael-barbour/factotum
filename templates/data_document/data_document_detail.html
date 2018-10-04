@@ -113,7 +113,7 @@
     </div>
 
 
-    {%  if detail_formset.forms %}
+    {%  if doc.data_group.group_type.code == 'CP' and detail_formset.forms %}
             <div class="row col-sm-12">
                 <h4>{{ doc.data_group.group_type }} detail</h4>
             </div>
@@ -133,13 +133,22 @@
                                 {% endif %}
                                 {{ form.id.as_hidden }}
                                 <dl class="row col-sm-12">
-                                {% for field in form %}
+                                {% for field in form.visible_fields %}
                                         <dt class="col-sm-6">{{ field.label_tag }}</dt>
                                         <dd  class="col-sm-6">{{ field}}</dd>
                                 {% endfor %}
                                 </dl>
-                            <button type="submit" id="save_details" name="save_details"
-                                class="btn btn-primary detail-control" role="button">Save edits</button>
+                            {% if doc.data_group.group_type.code == 'CP' %}
+                                <button type="submit" id="save_presences" name="save_presences"
+                                class="btn btn-primary presence-control" role="button">Save edits</button>
+                            {% elif doc.data_group.group_type.code == 'CO' %}
+                                <button type="submit" id="save_chemicals" name="save_chemicals"
+                                class="btn btn-primary chem-control" role="button">Save edits</button>
+                            {% elif doc.data_group.group_type.code == 'HP'  %}
+                                <button type="submit" id="save_habits_and_practices" name="save_habits_and_practices"
+                                class="btn btn-primary chem-control" role="button">Save edits</button>
+                            {% endif %}
+                            
                     </div>
                     </div>    
                     </div>

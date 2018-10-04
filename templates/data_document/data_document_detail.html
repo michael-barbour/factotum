@@ -95,6 +95,15 @@
                         {{ extracted_text.extraction_script.title }}
                     </a>
                 </dd>
+                <dt class="col-sm-6">QA Approved</dt>
+                <dd  class="col-sm-6">{{ extracted_text.qa_checked | yesno | capfirst}}
+                    {% if not extracted_text.qa_checked %}
+                        <div class="btn-group float-lg-right" role="group">
+                        <a class="btn btn-primary btn-sm" role="button" title="QA"
+                           href="{% url "data_document_extracted_text_qa" extracted_text.pk %}">QA</a>
+                        </div>
+                    {% endif %}
+                </dd>
             </dl>
             <button type="submit" id="save_extracted_text" name="save_extracted_text"
                     class="btn btn-primary chem-control" role="button">Save edits</button>

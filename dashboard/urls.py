@@ -45,6 +45,8 @@ urlpatterns = [
                                             name='extraction_script_qa'),
     path('qa/extractedtext/<int:pk>/', views.extracted_text_qa,
                                             name='extracted_text_qa'),
+    path('datadocument/qa/extractedtext/<int:pk>/', views.extracted_text_qa,
+                                            name='data_document_extracted_text_qa'),
     path('extractionscript/<int:pk>/', views.extraction_script_detail,
                                             name='extraction_script_detail'),
     path('qa/', views.qa_index,            name='qa'),

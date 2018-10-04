@@ -1,13 +1,14 @@
 import os
 import math
 from random import shuffle
+from urllib import parse
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import (ModelForm, Form, BaseInlineFormSet,
                             inlineformset_factory, TextInput, CharField,
                             Textarea, HiddenInput, ValidationError)
 
-from django.urls import reverse
+from django.urls import reverse, resolve
 from django.utils import timezone
 from django.core.files import File
 from django.http import HttpResponseRedirect
@@ -158,6 +159,10 @@ def extracted_text_qa(request, pk,
     # The related DataDocument has the same pk as the ExtractedText object
     datadoc = DataDocument.objects.get(pk=pk)
     exscript = extext.extraction_script
+    # when not coming from extraction_script page, we don't necessarily have a qa_group created
+    if not extext.qa_group:
+        extext.qa_group = QAGroup.objects.create(extraction_script=exscript)
+        extext.save()
     # get the next unapproved Extracted Text object
     # Its ID will populate the URL for the "Skip" button
     if extext.qa_checked:  # if ExtractedText object's QA process done, use 0
@@ -165,9 +170,11 @@ def extracted_text_qa(request, pk,
     else:
         nextid = extext.next_extracted_text_in_qa_group()
     # derive number of approved records and remaining unapproved in QA Group
+
     a = extext.qa_group.get_approved_doc_count()
     r = ExtractedText.objects.filter(qa_group=extext.qa_group).count() - a
     stats = '%s document(s) approved, %s documents remaining' % (a, r)
+    referer = 'data_document' if 'datadocument' in request.path else 'extraction_script_qa'
 
     # Create the formset factory for the extracted records
     # The model used for the formset depends on whether the
@@ -205,7 +212,8 @@ def extracted_text_qa(request, pk,
         'nextid': nextid,
         'detail_formset': detail_formset,
         'notesform': notesform,
-        'ext_form': ext_form
+        'ext_form': ext_form,
+        'referer': referer
         }
 
     if request.method == 'POST' and 'save' in request.POST:
@@ -223,11 +231,8 @@ def extracted_text_qa(request, pk,
                 extext.save()
         context['detail_formset'] = detail_formset
         context['ext_form'] = ext_form
-        # context['notesform'] = notesform
         context.update({'notesform' : notesform}) # calls the clean method? y?
-
-    # APPROVAL
-    elif request.method == 'POST' and 'approve' in request.POST:
+    elif request.method == 'POST' and 'approve' in request.POST: # APPROVAL
         notesform =  QANotesForm(request.POST, instance=note)
         context['notesform'] = notesform
         nextpk = extext.next_extracted_text_in_qa_group()
@@ -237,11 +242,13 @@ def extracted_text_qa(request, pk,
             extext.qa_checked =  True
             extext.save()
             notesform.save()
-            if not nextpk == 0:
+            if referer == 'data_document':
+                return HttpResponseRedirect(
+                    reverse(referer, kwargs={'pk': pk}))
+            elif not nextpk == 0:
                 return HttpResponseRedirect(
                             reverse('extracted_text_qa', args=[(nextpk)]))
-            if nextpk == 0:
+            elif nextpk == 0:
                 return HttpResponseRedirect(
                             reverse('qa'))
-
     return render(request, template_name, context)

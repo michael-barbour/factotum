@@ -200,21 +200,21 @@ class TestDynamicDetail(TestCase):
         self.c.login(username='Karyn', password='specialP@55word')
     
     def test_fetch_extracted_records(self):
-    ''' Confirm that each detail child object returned by the function has the correct parent '''
-    for et in ExtractedText.objects.filter(pk__in=[5, 53]):
-        print('Fetching extracted child records from %s: %s ' % (et.pk , et))
-        for ex_child in et.fetch_extracted_records():
-            child_model = ex_child.__class__ # the fetch_extracted_records function returns different classes
-            print('    %s: %s' % (ex_child.__class__.__name__ , ex_child ))
-            self.assertEqual(et.pk , child_model.objects.get(pk=ex_child.pk).extracted_text.pk,
-                'The ExtractedChemical object with the returned child pk should have the correct extracted_text parent')
+        ''' Confirm that each detail child object returned by the function has the correct parent '''
+        for et in ExtractedText.objects.filter(pk__in=[5, 53]):
+            #print('Fetching extracted child records from %s: %s ' % (et.pk , et))
+            for ex_child in et.fetch_extracted_records():
+                child_model = ex_child.__class__ # the fetch_extracted_records function returns different classes
+                #print('    %s: %s' % (ex_child.__class__.__name__ , ex_child ))
+                self.assertEqual(et.pk , child_model.objects.get(pk=ex_child.pk).extracted_text.pk,
+                    'The ExtractedChemical object with the returned child pk should have the correct extracted_text parent')
 
 
     def test_every_extractedtext(self):
         ''''Loop through all the ExtractedText objects and test the detail form output
         '''
         for et in ExtractedText.objects.all().filter(data_document__data_group__group_type__code = 'CP'):
-            print('Testing formset creation for ExtractedText object %s (%s) ' % (et.pk, et ) )
+            # print('Testing formset creation for ExtractedText object %s (%s) ' % (et.pk, et ) )
             test_formset = create_detail_formset(et)
             # compare to the old method
             if (DataDocument.objects.get(id=et.data_document_id).data_group.group_type.code == 'HP'):

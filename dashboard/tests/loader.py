@@ -26,7 +26,7 @@ def load_model_objects():
     exscript = Script.objects.create(title='Test Extraction Script',
                                    url='http://www.epa.gov/',
                                    qa_begun=False, script_type='EX')
-    gt = GroupType.objects.create(title='Composition')
+    gt = GroupType.objects.create(id=2, title='Composition', code='CO')
     dg = DataGroup.objects.create(name='Data Group for Test',
                                         description='Testing...',
                                         data_source = ds,
@@ -36,7 +36,8 @@ def load_model_objects():
                                         group_type=gt,
                                         csv='register_records_matching.csv',
                                         url='https://www.epa.gov')
-    dt = DocumentType.objects.create(title='msds/sds', group_type=gt)
+    dt = DocumentType.objects.create(id=2, title='MSDS', group_type=gt)
+    
     doc = DataDocument.objects.create(title='test document',
                                             data_group=dg,
                                             document_type=dt,

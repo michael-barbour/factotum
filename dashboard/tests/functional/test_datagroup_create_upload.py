@@ -25,10 +25,10 @@ class RegisterRecordsTest(TestCase):
 
     def tearDown(self):
         # clean up the file system by deleting the data group object
-        
-        if DataGroup.objects.get(name='Walmart MSDS Test Group').exists():
-            dg = DataGroup.objects.get(name='Walmart MSDS Test Group')
-            dg.delete()
+        try:
+            DataGroup.objects.get(name='Walmart MSDS Test Group').delete()
+        except:
+            print("An exception occurred deleting the datagroup")
 
     def test_datagroup_create(self):
         csv_string = ("filename,title,document_type,url,organization\n"
@@ -56,7 +56,6 @@ class RegisterRecordsTest(TestCase):
         request.session['datasource_pk'] = 10
         resp = views.data_group_create(request=request, pk=10)
         dg = DataGroup.objects.get(name='Walmart MSDS Test Group')
-        print(dg.__dict__)
 
         self.assertEqual(resp.status_code,302,
                         "Should be redirecting")

@@ -86,7 +86,7 @@ def create_detail_formset(parent_exobject):
         detail_model = None
         detail_fields = []
     if detail_model != None:
-"""         print('Creating DetailFormsetFactory for group_type %s ' % dg_code)
+        """         print('Creating DetailFormsetFactory for group_type %s ' % dg_code)
         print('    parent_model: %s ' % ex_model)
         print('    detail_model: %s ' % detail_model)
         print('    fields: %s ' % detail_fields)
@@ -95,10 +95,8 @@ def create_detail_formset(parent_exobject):
                                                     model=detail_model,
                                                     fields=detail_fields,
                                                     extra=1)
-        print('detail_factory instantiated')
         extracted_detail_form = detail_factory(instance=ex, prefix='detail')
     else:
-        print('No formset was created for dd %s %s' % (dd.id, dd))
         return None
     return extracted_detail_form
 

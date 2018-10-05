@@ -10,6 +10,13 @@ class ExtractedListPresence(CommonInfo):
     raw_chem_name = models.CharField("Raw chemical name", max_length=500,
                                         null=True, blank=True)
 
+    # Use a property to simulate the extracted_text attribute so that that
+    # the child of an ExtractedCPCat object behaves like the child of an
+    # ExtractedText object
+    @property
+    def extracted_text(self):
+        return self.extracted_cpcat.extractedtext_ptr
+
     def __str__(self):
         return self.raw_chem_name
 
@@ -18,3 +25,4 @@ class ExtractedListPresence(CommonInfo):
 
     def get_extractedtext(self):
         return self.extracted_cpcat.extractedtext_ptr
+

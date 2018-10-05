@@ -37,7 +37,7 @@ class DataDocumentDetailTest(TestCase):
         self.assertEqual(dd.document_type_id, 2,
                          'DataDocument 7 should have a final document_type_id of 2')     
 
-class TestDynamicDetail(TestCase):
+class TestDynamicDetailFormsets(TestCase):
     fixtures = fixtures_standard
 
     def setUp(self):
@@ -45,7 +45,8 @@ class TestDynamicDetail(TestCase):
         self.c.login(username='Karyn', password='specialP@55word')
     
     def test_fetch_extracted_records(self):
-        ''' Confirm that each detail child object returned by the function has the correct parent '''
+        ''' Confirm that each detail child object returned by the fetch_extracted_records 
+        function has the correct parent '''
         for et in ExtractedText.objects.all():
             #print('Fetching extracted child records from %s: %s ' % (et.pk , et))
             for ex_child in et.fetch_extracted_records():
@@ -53,8 +54,7 @@ class TestDynamicDetail(TestCase):
                 #print('    %s: %s' % (ex_child.__class__.__name__ , ex_child ))
                 self.assertEqual(et.pk , child_model.objects.get(pk=ex_child.pk).extracted_text.pk,
                     'The ExtractedChemical object with the returned child pk should have the correct extracted_text parent')
-
-
+        
     def test_every_extractedtext(self):
         ''''Loop through all the ExtractedText objects and confirm that the new
         create_detail_formset method returns form values that match what the old  
@@ -76,13 +76,20 @@ class TestDynamicDetail(TestCase):
                     test_formset[0]['raw_chem_name'].value(),
                     'The old and new methods should return the same items')
             
+            if (DataDocument.objects.get(id=et.data_document_id).data_group.group_type.code == 'UN'):
+                # for Unknown types, the old method used the ChemicalFormset
+                old_fs = ChemicalFormSet(instance=et, prefix='detail')
+                self.assertEqual(old_fs[0]['raw_chem_name'].value(), 
+                    test_formset[0]['raw_chem_name'].value(),
+                    'The old and new methods should return the same items')
+            
             if (DataDocument.objects.get(id=et.data_document_id).data_group.group_type.code == 'CP'):
                 # for Chemical Presence, there is no old form-construction method to compare to
                 self.assertTrue(len(test_formset[0]['raw_chem_name'].value()) > 0, 
                     'There should be a raw_chem_name value')
 
 
-        print('print(some important stuff)')
+        print('\nprint(some very important test output)')
         print('|￣￣￣￣￣|')
         print('|   HI      |')
         print('|           |' )

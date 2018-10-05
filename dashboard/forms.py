@@ -40,6 +40,14 @@ class ExtractedTextForm(forms.ModelForm):
             'extraction_script': forms.HiddenInput(),
         }
 
+class ExtractedCPCatForm(forms.ModelForm):
+    class Meta:
+        model = ExtractedCPCat
+        fields = ['cat_code', 'description_cpcat', 'cpcat_code', 'cpcat_sourcetype']
+        widgets = {
+            'extraction_script': forms.HiddenInput(),
+        }
+
 def create_detail_formset(parent_exobject):
 # Create the formset factory for the extracted records
     # The model used for the formset depends on whether the 

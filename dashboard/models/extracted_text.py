@@ -40,7 +40,20 @@ class ExtractedText(CommonInfo):
     def fetch_extracted_records(self):
         '''Collect the related objects in all the Extracted... models
         '''
-        return chain(self.practices.all(), self.chemicals.all(), self.uses.all())
+        # Start with the known children of the base Model: ExtractedText
+        full_chain = chain(self.practices.all(), 
+                    self.chemicals.all(), 
+                    self.uses.all()
+                    )
+        # Try to get all the child objects of derived (inherited) models
+
+        # ExtractedCPCat has related ExtractedListPresence objects connected
+        # by the .presence relation
+        if hasattr(self, 'extractedcpcat'):
+            presence_chain = self.extractedcpcat.presence.all()
+            full_chain = chain(full_chain, presence_chain)
+
+        return full_chain
         
 
             

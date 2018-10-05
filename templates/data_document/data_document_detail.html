@@ -112,6 +112,9 @@
     </div>
     </div>
 
+    <!-- This code is only for rendering the Chemical Presence data group, 
+    but the detail_formset can eventually return inline formsets for 
+    every type of data group -->
 
     {%  if doc.data_group.group_type.code == 'CP' and detail_formset.forms %}
             <div class="row col-sm-12">

@@ -6,7 +6,10 @@ from dashboard.models import *
 fixtures_standard = ['00_superuser.yaml','01_lookups.yaml','02_datasource.yaml','03_datagroup.yaml',
                     '04_PUC.yaml','05_product.yaml','06_datadocument.yaml','07_script.yaml',
                     '08_extractedtext.yaml','09_productdocument.yaml','10_extractedchemical.yaml',
-                     '11_dsstoxsubstance.yaml']
+                     '11_dsstoxsubstance.yaml', '12_habits_and_practices.yaml', 
+                     '13_habits_and_practices_to_puc.yaml','14_product_to_puc.yaml',
+                     '15_extractedfunctionaluse.yaml',
+                     '16_extractedcpcat.yaml','17_extractedlistpresence.yaml']
 
 class dotdict(dict):
     """dot.notation access to dictionary attributes"""

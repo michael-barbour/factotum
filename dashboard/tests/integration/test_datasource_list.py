@@ -70,7 +70,26 @@ class TestIntegration(StaticLiveServerTestCase):
 
     def test_hem(self):
         for i in range(27):
-            DataSource.objects.create(title=f'Test_DS_{i}')
-        self.browser.get(self.live_server_url + '/datasources/')
+            ds = DataSource.objects.create(title=f'Test_DS_{i}')
+        list_url = self.live_server_url + '/datasources/'
+        self.browser.get(list_url)
         row_count = len(self.browser.find_elements_by_xpath("//table[@id='sources']/tbody/tr"))
         self.assertEqual(row_count, 25, 'Should be 25 datasources in the table')
+        # go to edit page from datasource list
+        self.browser.find_element_by_xpath('//*[@title="edit"]').click()
+        btn = self.browser.find_element_by_name('cancel')
+        self.assertEqual(btn.get_attribute("href"), list_url,
+                        "User should go back to list view when clicking cancel")
+        self.browser.find_element_by_name('submit').click()
+        self.assertIn('/datasource/', self.browser.current_url,
+                        "User should always return to detail page after submit")
+        detail_url = self.live_server_url + f'/datasource/{ds.pk}'
+        self.browser.get(detail_url)
+        # go to edit page from datasource detail
+        self.browser.find_element_by_xpath('//*[@title="edit"]').click()
+        btn = self.browser.find_element_by_name('cancel')
+        self.assertEqual(btn.get_attribute("href"), detail_url,
+                    "User should go back to detail view when clicking cancel")
+        self.browser.find_element_by_name('submit').click()
+        self.assertIn('/datasource/', self.browser.current_url,
+                        "User should always return to detail page after submit")

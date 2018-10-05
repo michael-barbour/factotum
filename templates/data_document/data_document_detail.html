@@ -80,6 +80,11 @@
             {% csrf_token %}
             {{ form.id.as_hidden }}
             <dl class="row col-sm-12">
+                {% if extracted_text_form.cat_code %}
+                <dt class="col-sm-6">CPCat Code</dt>
+                <dd  class="col-sm-6">{{ extracted_text_form.cat_code }}
+                </dd>
+                {% endif %}
                 <dt class="col-sm-6">Product Name</dt>
                 <dd  class="col-sm-6">{{ extracted_text_form.prod_name }}
                 </dd>

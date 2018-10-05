@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from dashboard.forms import HnPFormSet, ChemicalFormSet, create_detail_formset
+from dashboard.forms import ExtractedTextForm, ExtractedCPCatForm, HnPFormSet, ChemicalFormSet, create_detail_formset
 
 from djqscsv import render_to_csv_response
 
@@ -19,12 +19,7 @@ class DocumentTypeForm(forms.ModelForm):
             'onchange': 'form.submit();'
         })
 
-class ExtractedTextForm(forms.ModelForm):
-    class Meta:
-        model = ExtractedText
-        fields = ['prod_name',
-                  'rev_num',
-                  'doc_date']
+
 
 
 @login_required()
@@ -33,6 +28,11 @@ def data_document_detail(request, pk,
     doc = get_object_or_404(DataDocument, pk=pk, )
     extracted_text = ExtractedText.objects.filter(data_document=doc).get()
     extracted_text_form = ExtractedTextForm(instance=extracted_text)
+
+    if hasattr(extracted_text, 'extractedcpcat'):     # use the CPCat-specific form if the instance is ExtractedCPCat
+        print('replacing ExtractedTextForm with ExtractedCPCatForm')
+        extracted_text_form = ExtractedCPCatForm(instance=extracted_text.extractedcpcat)
+        
     chemical_formset = ChemicalFormSet(instance=extracted_text, prefix='chemicals')
     habits_and_practices_formset = HnPFormSet(instance=extracted_text, prefix='habits_and_practices')
     document_type_form = DocumentTypeForm(instance=doc)

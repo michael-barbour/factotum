@@ -34,19 +34,18 @@ class HabitsPUCForm(BasePUCForm):
 class ExtractedTextForm(forms.ModelForm):
     class Meta:
         model = ExtractedText
-        fields = ['doc_date', 'data_document', 'extraction_script']
+        fields = ['prod_name', 'rev_num', 'doc_date']
+
         widgets = {
             'data_document': forms.HiddenInput(),
             'extraction_script': forms.HiddenInput(),
         }
 
-class ExtractedCPCatForm(forms.ModelForm):
+class ExtractedCPCatForm(ExtractedTextForm):
     class Meta:
         model = ExtractedCPCat
-        fields = ['cat_code', 'description_cpcat', 'cpcat_code', 'cpcat_sourcetype']
-        widgets = {
-            'extraction_script': forms.HiddenInput(),
-        }
+        fields = ['doc_date', 'data_document', 'extraction_script', 'cat_code', 'description_cpcat','cpcat_sourcetype']
+
 
 def create_detail_formset(parent_exobject):
 # Create the formset factory for the extracted records

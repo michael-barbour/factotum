@@ -257,12 +257,14 @@ def data_group_create(request, pk, template_name='data_group/datagroup_form.html
             for line in table: # read every csv line, create docs for each
                 count+=1
                 doc_type = DocumentType.objects.get(pk=1)
-                if line['filename'] == '':
+                if line['filename'] == '' or len(line['filename'])>100:
                     errors.append(count)
+                    continue
                 if line['title'] == '': # updates title in line object
                     line['title'] = line['filename'].split('.')[0]
                 if line['document_type'] == '':
                     errors.append(count)
+                    continue
                 else:
                     if DocumentType.objects.filter(pk=int(line['document_type'])).exists():
                         doc_type = DocumentType.objects.get(pk=int(line['document_type']))

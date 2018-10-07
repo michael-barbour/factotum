@@ -9,6 +9,9 @@ class PUCAdmin(admin.ModelAdmin):
         get_data['last_edited_by'] = request.user.pk
         return get_data
 
+class ProductAttributeAdmin(admin.ModelAdmin):
+    list_display = ('title','PUC',)
+    list_filter = ('PUC',)
 
 # Register your models here.
 admin.site.register(DataSource)
@@ -29,8 +32,7 @@ admin.site.register(DSSToxSubstance)
 admin.site.register(QAGroup)
 admin.site.register(UnitType)
 admin.site.register(WeightFractionType)
-admin.site.register(ProductAttribute)
-admin.site.register(PUCAttribute)
+admin.site.register(ProductAttribute,ProductAttributeAdmin)
 admin.site.register(Taxonomy)
 admin.site.register(TaxonomySource)
 admin.site.register(TaxonomyToPUC)

@@ -10,7 +10,6 @@ class PUC(CommonInfo):
     description = models.TextField(null=False, blank=False)
     last_edited_by = models.ForeignKey('auth.User', default=1, on_delete=models.CASCADE)
     products = models.ManyToManyField(Product, through='ProductToPUC')
-    attribute = models.ForeignKey('PUCAttribute', on_delete=models.PROTECT, null=True, blank=True)
     extracted_habits_and_practices = models.ManyToManyField('dashboard.ExtractedHabitsAndPractices',
                                                             through='dashboard.ExtractedHabitsAndPracticesToPUC')
 

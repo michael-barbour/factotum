@@ -52,13 +52,8 @@ class DashboardTest(TestCase):
         self.assertEqual('100%', extracted_doc_count)
 
     def test_PUC_download(self):
-        # assign an attribute to PUC
-        puc_a = PUCAttribute.objects.create(name='test_puc_attribute')
-        self.objects.puc.attribute = puc_a
-        self.objects.puc.save()
-        self.objects.puc.attribute.save()
         p = self.objects.puc
-        puc_line = (p.gen_cat+','+p.prod_fam+','+p.prod_type+','+p.description+','+str(p.attribute))
+        puc_line = (p.gen_cat+','+p.prod_fam+','+p.prod_type+','+p.description)
         # get csv
         response = self.client.get('/dl_pucs/')
         self.assertEqual(response.status_code, 200)

@@ -13,8 +13,10 @@
 
   {% if line_errors %}
   <p class="form-control is-invalid">CSV has bad data in row/s:
+    <br>
      {% for error in line_errors %}
-        {{error}}
+        row {{error.0}}: {{error.1}}
+        <br>
      {% endfor %}
      Please fix this before uploading.</p>
   {% endif %}

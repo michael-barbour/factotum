@@ -35,7 +35,6 @@ class DDTestModel(TestCase):
         dt_comp = DocumentType.objects.filter(group_type__title='Composition').first()
         dd = DataDocument.objects.create(filename="some.pdf", title="My Document", document_type = dt_comp , data_group=dgcomp)
         dd.save()
-        print(dd)
         self.assertEqual(dt_comp.title, dd.document_type.title )
 
 class DDTestUpload(TestCase):
@@ -48,7 +47,7 @@ class DDTestUpload(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
         self.client.login(username='Karyn', password='specialP@55word')
-    
+
     def testGoodGroupTypeInCSV(self):
         csv_string_good = ("filename,title,document_type,url,organization\n"
                 "0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf,NUTRA NAIL,2,, \n"
@@ -119,4 +118,3 @@ class DDTestUpload(TestCase):
         resp = views.data_group_create(pk = 10 , request=request)
         # the upload form should be invalid
         self.assertIn('CSV has bad data in row/s:'.encode(), resp.content)
-

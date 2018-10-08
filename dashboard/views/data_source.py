@@ -1,8 +1,6 @@
-from urllib import parse
 from datetime import datetime
 
 from django import forms
-from django.urls import resolve
 from django.forms import inlineformset_factory
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404

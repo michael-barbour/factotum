@@ -232,12 +232,14 @@ def data_group_create(request, pk,
             info = [x.decode('ascii',
                              'ignore') for x in datagroup.csv.readlines()]
             table = csv.DictReader(info)
-            if not table.fieldnames == ['filename','title','document_type',
-                                                        'url','organization']:
+            good_fields = ['filename','title','document_type',
+                                                    'url','organization']
+            if not table.fieldnames == good_fields:
                 datagroup.csv.close()
                 datagroup.delete()
                 return render(request, template_name,
                               {'field_error': table.fieldnames,
+                              'good_fields': good_fields,
                                'form': form})
             text = ['DataDocument_id,' + ','.join(table.fieldnames)+'\n']
             errors = []
@@ -336,7 +338,8 @@ def data_group_registered_records_csv(request, pk):
                                       field_header_map={"id": "DataDocument_id"})
     else:
         qs = DataDocument.objects.filter(data_group_id=0).values(*columnlist)
-        return render_to_csv_response(qs, filename="registered_records.csv")
+        return render_to_csv_response(qs, filename="registered_records.csv",
+                                        use_verbose_names=False)
 
 @login_required()
 def habitsandpractices(request, pk,

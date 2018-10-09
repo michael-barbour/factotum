@@ -71,9 +71,9 @@ def data_source_detail(request, pk,
             datasource.priority = priority
             datasource.save()
     datagroup_list = DataGroup.objects.filter(data_source=pk)
-    context = 	{'object': 			datasource,
-                'datagroup_list':	datagroup_list,
-                'form': 			form}
+    context =     {'object':             datasource,
+                'datagroup_list':    datagroup_list,
+                'form':             form}
     return render(request, template_name, context)
 
 

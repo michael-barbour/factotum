@@ -1,15 +1,15 @@
 from haystack.forms import FacetedSearchForm
 
 class FacetedProductSearchForm(FacetedSearchForm):
-  def __init__(self, *args, **kwargs):
-    data = dict(kwargs.get("data", []))
-    self.pucs = data.get('pucs', [])
-    self.brands = data.get('brand_name', [])
-    self.models = data.get('facet_model_name',[])
-    self.group_types = data.get('group_type',[])
-    super(FacetedProductSearchForm, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        data = dict(kwargs.get("data", []))
+        self.pucs = data.get('pucs', [])
+        self.brands = data.get('brand_name', [])
+        self.models = data.get('facet_model_name',[])
+        self.group_types = data.get('group_type',[])
+        super(FacetedProductSearchForm, self).__init__(*args, **kwargs)
 
-  def search(self):
+    def search(self):
     sqs = super(FacetedProductSearchForm, self).search()
     # The SearchQuerySet should only return Products and Data Documents
     sqs = sqs.filter(facet_model_name__in=['Data Document' ,'Product'])

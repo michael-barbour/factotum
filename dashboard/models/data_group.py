@@ -72,7 +72,7 @@ class DataGroup(CommonInfo):
             p = PurePath(self.csv.path)
             csv_folder=p.parts[-2]
             csv_fullfolderpath   = f'{settings.MEDIA_ROOT}{csv_folder}'
-        
+
         if os.path.isdir(uuid_dir):
             return uuid_dir # UUID-based folder
         elif bool(self.csv.name) and os.path.isdir(csv_fullfolderpath):

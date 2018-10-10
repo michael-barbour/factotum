@@ -29,8 +29,7 @@ class RegisterRecordsTest(TestCase):
         dg.delete()
 
     def test_datagroup_create(self):
-        long_fn = ('this is a filename that is too long for the current'
-                'requirements in the model. Let it fail the validation.')
+        long_fn = 'a filename that is too long ' * 10
         csv_string = ("filename,title,document_type,url,organization\n"
                 "0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf,NUTRA NAIL,1,, \n"
                 f"{long_fn},Body Cream,1,, \n")
@@ -48,7 +47,7 @@ class RegisterRecordsTest(TestCase):
                     'downloaded_at': ['08/02/2018'],
                     'download_script': ['1'],
                     'data_source': ['10']}
-        request = self.factory.post(path='/datagroup/new', data=form_data)
+        request = self.factory.post(path='/datagroup/new/', data=form_data)
         request.FILES['csv'] = sample_csv
         request.user = User.objects.get(username='Karyn')
         request.session={}
@@ -61,9 +60,6 @@ class RegisterRecordsTest(TestCase):
         self.assertContains(resp,'Please fix this before uploading')
         self.assertFalse(dg_exists,)
         # print(dg.__dict__)
-
-
-
 
         csv_string = ("filename,title,document_type,url,organization\n"
                 "0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf,NUTRA NAIL,1,, \n"

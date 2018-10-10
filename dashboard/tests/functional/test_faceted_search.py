@@ -33,4 +33,3 @@ class FacetedSearchTest(TestCase):
         response = self.c.get('/find/?q=terro')
         self.assertContains(response, '<table')
         self.assertContains(response, '<th>Record</th>')
-        

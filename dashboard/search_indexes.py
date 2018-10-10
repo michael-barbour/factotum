@@ -113,7 +113,7 @@ class DataDocumentIndex(indexes.SearchIndex, indexes.Indexable):
                                             model_attr='data_group__group_type')
     created_at      = indexes.DateTimeField(model_attr='created_at', null=True)
     result_css_class = indexes.CharField()
-    
+
     filename = indexes.CharField(model_attr="filename", null=True)
 
     def prepare_facet_model_name(self, obj):

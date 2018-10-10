@@ -111,7 +111,7 @@
             </table>
         {% endif %}
 
-        {% if upload_form %}
+        {% if not datagroup.all_matched %}
             <a class="btn btn-secondary" data-toggle="collapse" href="#upload_form">
                 <span class="oi oi-data-transfer-upload"></span>&nbsp;Upload Data Group PDFs
             </a>
@@ -121,7 +121,7 @@
                     {% csrf_token %}
                     <div class="form-group col-md-9">
                         <label class="required" for="id_extract_file">Data Group PDF Directory:</label>
-                        <input type="file" id="files" class="btn btn-light form-control is-valid" name="multifiles" webkitdirectory multiple>
+                        <input type="file" id="files" class="btn btn-light form-control" name="multifiles" webkitdirectory multiple>
                     </div>
                     <input type="submit" class="btn btn-primary" name="upload" value="Submit">
                 </form>
@@ -135,7 +135,7 @@
     <br>
     <h4>{{ datagroup.registered_docs }} documents registered, {{ datagroup.matched_docs }} matched, {{  datagroup.extracted_docs }} extracted</h4>
     <div class="inline-block">
-      {% if bulk and not upload_form and composition %}
+      {% if bulk and datagroup.all_matched and composition %}
       <form class="float-right" method="post">
         {% csrf_token %}
         <input type="submit" class="btn btn-primary" name="bulk" value="Bulk Create {{ bulk }} Products">
@@ -256,7 +256,7 @@
       </ul>
     </nav>
 
-<input type="hidden" id="dg_name" name="variable" value="{{ datagroup.url }}">
+<input type="hidden" id="dg_name" name="variable" value="{{ datagroup.get_name_as_slug }}">
 
 {% endblock %}
 {% block js %}

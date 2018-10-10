@@ -305,8 +305,10 @@ def data_group_update(request, pk, template_name='data_group/datagroup_form.html
     form = DataGroupForm(request.POST or None, instance=datagroup)
     header = 'Update Data Group for Data Source "' + str(datagroup.data_source) + '"'
     if form.is_valid():
-        form.save()
+        if form.has_changed():
+            form.save()
         return redirect('data_group_detail', pk=datagroup.id)
+    form.referer = request.META.get('HTTP_REFERER', None)
     return render(request, template_name, {'datagroup': datagroup, 'form': form, 'header': header})
 
 @login_required()
@@ -335,7 +337,8 @@ def data_group_registered_records_csv(request, pk):
         columnlist.insert(0, "id")
         qs = DataDocument.objects.filter(data_group_id=pk).values(*columnlist)
         return render_to_csv_response(qs, filename=(dg.fs_id , "_registered_records.csv"),
-                                      field_header_map={"id": "DataDocument_id"})
+                                      field_header_map={"id": "DataDocument_id"},
+                                      use_verbose_names=False)
     else:
         qs = DataDocument.objects.filter(data_group_id=0).values(*columnlist)
         return render_to_csv_response(qs, filename="registered_records.csv",

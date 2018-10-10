@@ -81,4 +81,3 @@ def dg_dd_csv_view(request, pk):
     qs = DataDocument.objects.filter(data_group_id=pk)
     filename = DataGroup.objects.get(pk=pk).name
     return render_to_csv_response(qs, filename=filename, append_datestamp=True)
-

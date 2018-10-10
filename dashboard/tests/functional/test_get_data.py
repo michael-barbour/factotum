@@ -158,5 +158,3 @@ class TestGetData(TestCase):
         response = self.client.get('/get_data/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Download PUCs')
-
-

@@ -54,7 +54,7 @@ class RegisterRecordsTest(TestCase):
         request.session['datasource_pk'] = 10
         resp = views.data_group_create(request=request, pk=10)
         dg = DataGroup.objects.get(name='Walmart MSDS Test Group')
-        print(dg.__dict__)
+        # print(dg.__dict__)
 
         self.assertEqual(resp.status_code,302,
                         "Should be redirecting")

@@ -8,7 +8,7 @@
 
   {% if field_error %}
   <p class="form-control is-invalid">CSV column headers are incorrect for upload.
-     {{field_error}}, should read ['filename', 'title', 'document_type', 'product', 'url', 'organization']</p>
+     {{field_error}}, should read {{good_fields}}</p>
   {% endif %}
 
   {% if line_errors %}
@@ -26,7 +26,12 @@
         {% include 'core/bs4_form.html' with form=form colspan='col-6'%}
         <button type="submit" class="btn btn-primary">Submit</button>
         {# This template can be accessed from multiple places #}
-        <a class="btn btn-secondary" href="{{ request.META.HTTP_REFERER }}">Cancel</a>
+        <a class="btn btn-secondary" href={% if form.referer %}
+                                          "{{ form.referer }}"
+                                          {% else %}
+                                          "{% url 'data_group_list' %}"
+                                          {% endif %}
+                                          name='cancel'>Cancel</a>
     </form>
     <br>
     <a id="reg" href="{% url 'registered_records.csv' 0 %}" class="btn btn-secondary">

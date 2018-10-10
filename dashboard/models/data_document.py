@@ -46,5 +46,3 @@ class DataDocument(CommonInfo):
 
         if not self.document_type in DocumentType.objects.filter(group_type=gtype):
             raise ValidationError('The document type must be allowed by the parent data group.')
-
-

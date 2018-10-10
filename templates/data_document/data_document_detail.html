@@ -127,7 +127,7 @@
             </div>
             <div class="card-body">
             <form method="post" >
-                {{ chemical_formset.management_form }}
+                {{ detail_formset.management_form }}
                 {% csrf_token %}
                 <div class="row">
                 {% for form in detail_formset.forms %}
@@ -147,8 +147,8 @@
                                 {% endfor %}
                                 </dl>
                             {% if doc.data_group.group_type.code == 'CP' %}
-                                <button type="submit" id="save_presences" name="save_presences"
-                                class="btn btn-primary presence-control" role="button">Save edits</button>
+                                <button type="submit" id="save_extracted_detail" name="save_extracted_detail"
+                                class="btn btn-primary detail-control" role="button">Save edits</button>
                             {% elif doc.data_group.group_type.code == 'CO' %}
                                 <button type="submit" id="save_chemicals" name="save_chemicals"
                                 class="btn btn-primary chem-control" role="button">Save edits</button>

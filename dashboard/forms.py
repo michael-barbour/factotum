@@ -47,15 +47,18 @@ class ExtractedCPCatForm(ExtractedTextForm):
         fields = ['doc_date', 'data_document', 'extraction_script', 'cat_code', 'description_cpcat','cpcat_sourcetype']
 
 
-def create_detail_formset(parent_exobject):
+
+def create_detail_formset(req, parent_exobject):
 # Create the formset factory for the extracted records
     # The model used for the formset depends on whether the 
     # extracted text object matches a data document 
+    # The req argument takes an http request with POST
+    # data for editing and saving objects
     ex = parent_exobject
     ex_model = ex.__class__
     dd = DataDocument.objects.get(pk=ex.pk)
     dg_code = dd.data_group.group_type.code
-    
+
     if (dg_code == 'FU'):               # Functional use
         detail_model = ExtractedFunctionalUse
         detail_fields = ['extracted_text','raw_cas',
@@ -93,16 +96,20 @@ def create_detail_formset(parent_exobject):
         detail_model = None
         detail_fields = []
     if detail_model != None:
-        """         print('Creating DetailFormsetFactory for group_type %s ' % dg_code)
+        """         print('Creating DetailFormset for group_type %s ' % dg_code)
         print('    parent_model: %s ' % ex_model)
         print('    detail_model: %s ' % detail_model)
         print('    fields: %s ' % detail_fields)
         print('    detail record count: %s' % len(list(ex.fetch_extracted_records())) ) """
-        detail_factory = forms.inlineformset_factory(parent_model=ex_model,
+        DetailFormset = forms.inlineformset_factory(parent_model=ex_model,
                                                     model=detail_model,
                                                     fields=detail_fields,
                                                     extra=1)
-        extracted_detail_form = detail_factory(instance=ex, prefix='detail')
+        if (req):
+            if req.method == 'POST' :
+                extracted_detail_form = DetailFormset(req.POST, instance=ex, prefix='detail')
+        else:
+            extracted_detail_form = DetailFormset(instance=ex, prefix='detail')
     else:
         return None
     return extracted_detail_form

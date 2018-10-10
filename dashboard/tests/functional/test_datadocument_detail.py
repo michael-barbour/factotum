@@ -62,7 +62,7 @@ class TestDynamicDetailFormsets(TestCase):
         '''
         for et in ExtractedText.objects.all():
             # print('Testing formset creation for ExtractedText object %s (%s) ' % (et.pk, et ) )
-            test_formset = create_detail_formset(et)
+            test_formset = create_detail_formset(req=None, parent_exobject=et)
             # compare to the old method
             if (DataDocument.objects.get(id=et.data_document_id).data_group.group_type.code == 'HP'):
                 old_fs = HnPFormSet(instance=et, prefix='detail')

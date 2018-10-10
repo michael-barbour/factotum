@@ -32,18 +32,26 @@ def data_document_detail(request, pk,
     if hasattr(extracted_text, 'extractedcpcat'):     # use the CPCat-specific form if the instance is ExtractedCPCat
         print('replacing ExtractedTextForm with ExtractedCPCatForm')
         extracted_text_form = ExtractedCPCatForm(instance=extracted_text.extractedcpcat)
-        
+        extracted_text = extracted_text.extractedcpcat
+
+    # The unified formset creation method should replace the others
+    detail_formset = create_detail_formset(request, extracted_text)
+
     chemical_formset = ChemicalFormSet(instance=extracted_text, prefix='chemicals')
     habits_and_practices_formset = HnPFormSet(instance=extracted_text, prefix='habits_and_practices')
     document_type_form = DocumentTypeForm(instance=doc)
     
-    # The unified formset creation method should replace the others
-    detail_formset = create_detail_formset(extracted_text)
-
     if request.method == 'POST' and 'save_extracted_text' in request.POST:
         extracted_text_form = ExtractedTextForm(request.POST, instance=extracted_text)
         if extracted_text_form.is_valid():
             extracted_text_form.save()
+    elif request.method == 'POST' and 'save_extracted_detail' in request.POST:
+        print('Saving data in new general formset')
+        detail_formset = create_detail_formset(request, extracted_text )
+        print(detail_formset.__dict__)
+        if detail_formset.is_valid():
+            detail_formset.save()
+
     elif request.method == 'POST' and 'save_habits_and_practices' in request.POST:
         habits_and_practices_formset = HnPFormSet(request.POST, instance=extracted_text, prefix='habits_and_practices')
         if habits_and_practices_formset.is_valid():

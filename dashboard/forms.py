@@ -93,6 +93,7 @@ def create_detail_formset(req, parent_exobject):
                         'raw_chem_name'
                         ]
     else:
+        print('no applicable detail model found')
         detail_model = None
         detail_fields = []
     if detail_model != None:
@@ -108,11 +109,14 @@ def create_detail_formset(req, parent_exobject):
         if (req):
             if req.method == 'POST' :
                 extracted_detail_form = DetailFormset(req.POST, instance=ex, prefix='detail')
+            else:
+                extracted_detail_form = DetailFormset(instance=ex, prefix='detail')
         else:
             extracted_detail_form = DetailFormset(instance=ex, prefix='detail')
+        return extracted_detail_form
     else:
         return None
-    return extracted_detail_form
+    
 
 
 

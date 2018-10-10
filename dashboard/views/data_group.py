@@ -283,8 +283,8 @@ def data_group_create(request, pk, template_name='data_group/datagroup_form.html
                 # update line to hold the pk for writeout
                 text.append(str(doc.pk)+','+ ','.join(line.values())+'\n')
             if errors:
-                print('errors found while creating data group from csv:')
-                print(datagroup.__dict__)
+                # print('errors found while creating data group from csv:')
+                # print(datagroup.__dict__)
                 datagroup.csv.close()
                 datagroup.delete()
                 return render(request, template_name, {'line_errors': errors,

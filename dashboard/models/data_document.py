@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 
 class DataDocument(CommonInfo):
 
-    filename = models.CharField(max_length=100)
+    filename = models.CharField(max_length=100z)
     title = models.CharField(max_length=255)
     url = models.CharField(null=True, blank=True, max_length=200)
     raw_category = models.CharField(null=True, blank=True, max_length=50)
@@ -46,5 +46,3 @@ class DataDocument(CommonInfo):
 
         if not self.document_type in DocumentType.objects.filter(group_type=gtype):
             raise ValidationError('The document type must be allowed by the parent data group.')
-
-

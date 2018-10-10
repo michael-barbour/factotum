@@ -337,7 +337,8 @@ def data_group_registered_records_csv(request, pk):
         columnlist.insert(0, "id")
         qs = DataDocument.objects.filter(data_group_id=pk).values(*columnlist)
         return render_to_csv_response(qs, filename=(dg.fs_id , "_registered_records.csv"),
-                                      field_header_map={"id": "DataDocument_id"})
+                                      field_header_map={"id": "DataDocument_id"},
+                                      use_verbose_names=False)
     else:
         qs = DataDocument.objects.filter(data_group_id=0).values(*columnlist)
         return render_to_csv_response(qs, filename="registered_records.csv",

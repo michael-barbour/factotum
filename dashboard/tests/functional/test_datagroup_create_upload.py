@@ -1,5 +1,6 @@
 import os
 import io
+import shutil
 
 from django.test import RequestFactory, TestCase, Client
 from django.contrib.auth.models import User
@@ -18,6 +19,9 @@ class RegisterRecordsTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
         self.client.login(username='Karyn', password='specialP@55word')
+        media_root = settings.MEDIA_ROOT
+        shutil.rmtree(media_root)
+
 
     def tearDown(self):
         # clean up the file system by deleting the data group object
@@ -42,17 +46,20 @@ class RegisterRecordsTest(TestCase):
                     'downloaded_at': ['08/02/2018'],
                     'download_script': ['1'],
                     'data_source': ['10']}
-        request = self.factory.post(path='/datagroup/new', data=form_data)
+        request = self.factory.post(path='/datagroup/new/', data=form_data)
         request.FILES['csv'] = sample_csv
         request.user = User.objects.get(username='Karyn')
         request.session={}
         request.session['datasource_title'] = 'Walmart'
         request.session['datasource_pk'] = 10
         resp = views.data_group_create(request=request, pk=10)
+        dg = DataGroup.objects.get(name='Walmart MSDS Test Group')
+        # print(dg.__dict__)
+
         self.assertEqual(resp.status_code,302,
                         "Should be redirecting")
 
-        dg = DataGroup.objects.get(name='Walmart MSDS Test Group')
+
 
         self.assertEqual(f'/datagroup/{dg.pk}/', resp.url,
                         "Should be redirecting to the proper URL")
@@ -120,4 +127,3 @@ class RegisterRecordsTest(TestCase):
         self.assertTrue(os.path.exists( pdf_path ),
                             "the stored file should be in MEDIA_ROOT/dg.fs_id")
         f.close()
-

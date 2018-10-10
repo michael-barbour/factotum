@@ -2,6 +2,7 @@ import os
 import shutil
 import uuid
 from factotum import settings
+from pathlib import Path, PurePath
 
 from django.db import models
 from .common_info import CommonInfo
@@ -67,9 +68,11 @@ class DataGroup(CommonInfo):
 
         #this needs to handle missing csv files
         if bool(self.csv.name):
-            csv_folder = self.csv.path.split(sep="/")[-2] # parse the media folder from the penultimate piece of the csv file path
+            # parse the media folder from the penultimate piece of the csv file path
+            p = PurePath(self.csv.path)
+            csv_folder=p.parts[-2]
             csv_fullfolderpath   = f'{settings.MEDIA_ROOT}{csv_folder}'
-        
+
         if os.path.isdir(uuid_dir):
             return uuid_dir # UUID-based folder
         elif bool(self.csv.name) and os.path.isdir(csv_fullfolderpath):
@@ -79,7 +82,7 @@ class DataGroup(CommonInfo):
 
     def get_name_as_slug(self):
         return self.name.replace(' ', '_')
-    
+
     def get_zip_url(self):
         # the path if the data group's folder was built from a UUID:
         uuid_path = f'{self.get_dg_folder()}/{str(self.fs_id)}.zip'
@@ -93,6 +96,20 @@ class DataGroup(CommonInfo):
             zip_url = 'no_path_found'
         return zip_url
 
+    def get_extracted_template_fieldnames(self):
+        extract_fields = ['data_document_id','data_document_filename',
+                            'prod_name', 'doc_date','rev_num', 'raw_category',
+                            'raw_cas', 'raw_chem_name', 'report_funcuse']
+        if self.group_type.title == 'Functional use':
+            return extract_fields
+        if self.group_type.title == 'Composition':
+            return extract_fields + ['raw_min_comp','raw_max_comp', 'unit_type',
+                                        'ingredient_rank', 'raw_central_comp']
+        if self.group_type.title == 'Chemical presence list':
+            for name in ['prod_name','rev_num','report_funcuse']:
+                extract_fields.remove(name)
+            return extract_fields + ['cat_code','description_cpcat',
+                                    'cpcat_code','cpcat_sourcetype']
 
 @receiver(models.signals.post_delete, sender=DataGroup)
 def auto_delete_file_on_delete(sender, instance, **kwargs):

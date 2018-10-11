@@ -57,7 +57,7 @@ class RegisterRecordsTest(TestCase):
         # print(resp.content)
         dg_exists = DataGroup.objects.filter(
                                         name='Walmart MSDS Test Group').exists()
-        self.assertContains(resp,'Please fix this before uploading')
+        self.assertContains(resp,'Filename too long')
         self.assertFalse(dg_exists,)
         # print(dg.__dict__)
 

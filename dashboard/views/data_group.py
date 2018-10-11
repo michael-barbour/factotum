@@ -248,8 +248,11 @@ def data_group_create(request, pk,
                 count+=1
                 doc_type = DocumentType.objects.get(pk=1)
                 dtype = line['document_type']
-                if line['filename'] == '' or len(line['filename'])>255:
+                if line['filename'] == '' :
                     errors.append([count,"Filename can't be empty!"])
+                    continue
+                if len(line['filename'])>255:
+                    errors.append([count,"Filename too long!"])
                     continue
                 if line['title'] == '': # updates title in line object
                     line['title'] = line['filename'].split('.')[0]

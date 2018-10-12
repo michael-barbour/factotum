@@ -29,6 +29,10 @@
         <dd class="col-sm-9">
             {{ doc.data_group.group_type }}
         </dd>
+        <dt class="col-sm-3">Data Group Type Code</dt>
+        <dd class="col-sm-9">
+            {{ doc.data_group.group_type.code }}
+        </dd>
         {% if document_type_form %}
         <dt class="col-sm-3">Data Document Type</dt>
         <dd class="col-sm-9">
@@ -46,7 +50,7 @@
         {% endif %}
     </dl>
 
-    <div class=" row col-sm-12">
+    <div class="row col-sm-12">
 
     {%  if not habits_and_practices_formset.forms %}
     <div class="col-sm-6">
@@ -76,6 +80,11 @@
             {% csrf_token %}
             {{ form.id.as_hidden }}
             <dl class="row col-sm-12">
+                {% if extracted_text_form.cat_code %}
+                <dt class="col-sm-6">CPCat Code</dt>
+                <dd  class="col-sm-6">{{ extracted_text_form.cat_code }}
+                </dd>
+                {% endif %}
                 <dt class="col-sm-6">Product Name</dt>
                 <dd  class="col-sm-6">{{ extracted_text_form.prod_name }}
                 </dd>
@@ -107,6 +116,55 @@
     </div>
     </div>
     </div>
+
+    <!-- This code is only for rendering the Chemical Presence data group, 
+    but the detail_formset can eventually return inline formsets for 
+    every type of data group -->
+
+    {%  if doc.data_group.group_type.code == 'CP' and detail_formset.forms %}
+            <div class="row col-sm-12">
+                <h4>{{ doc.data_group.group_type }} detail</h4>
+            </div>
+            <div class="card-body">
+            <form method="post" >
+                {{ detail_formset.management_form }}
+                {% csrf_token %}
+                <div class="row">
+                {% for form in detail_formset.forms %}
+                    <div class="col-sm-6">
+                    <div class="card" >
+                    <div class="card-body">
+                                {% if form.errors %}
+                                    <div class="form-group has-error">
+                                        <span class="help-block">{{ form.errors }}</span>
+                                    </div>
+                                {% endif %}
+                                {{ form.id.as_hidden }}
+                                <dl class="row col-sm-12">
+                                {% for field in form.visible_fields %}
+                                        <dt class="col-sm-6">{{ field.label_tag }}</dt>
+                                        <dd  class="col-sm-6">{{ field}}</dd>
+                                {% endfor %}
+                                </dl>
+                            {% if doc.data_group.group_type.code == 'CP' %}
+                                <button type="submit" id="save_extracted_detail" name="save_extracted_detail"
+                                class="btn btn-primary detail-control" role="button">Save edits</button>
+                            {% elif doc.data_group.group_type.code == 'CO' %}
+                                <button type="submit" id="save_chemicals" name="save_chemicals"
+                                class="btn btn-primary chem-control" role="button">Save edits</button>
+                            {% elif doc.data_group.group_type.code == 'HP'  %}
+                                <button type="submit" id="save_habits_and_practices" name="save_habits_and_practices"
+                                class="btn btn-primary chem-control" role="button">Save edits</button>
+                            {% endif %}
+                            
+                    </div>
+                    </div>    
+                    </div>
+                {% endfor %}
+            </div>
+            </form>
+            </div>
+    {% endif %}
 
 
     {%  if chemical_formset.forms %}
@@ -166,7 +224,6 @@
             <div class="row">
                 {% for form in habits_and_practices_formset.forms %}
                     <div class="col-sm-6">
-                        <div class="card" >
                             <div class="card-body">
                                 {% if form.errors %}
                                     <div class="form-group has-error">
@@ -196,7 +253,6 @@
                                 </dl>
                                 <button type="submit" id="save_habits_and_practices" name="save_habits_and_practices"
                                         class="btn btn-primary chem-control" role="button">Save edits</button>
-                            </div>
                         </div>
                     </div>
                 {% endfor %}

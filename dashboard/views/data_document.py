@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from dashboard.forms import HnPFormSet, ChemicalFormSet
+from dashboard.forms import ExtractedTextForm, ExtractedCPCatForm, HnPFormSet, ChemicalFormSet, create_detail_formset
 
 from djqscsv import render_to_csv_response
 
@@ -19,12 +19,7 @@ class DocumentTypeForm(forms.ModelForm):
             'onchange': 'form.submit();'
         })
 
-class ExtractedTextForm(forms.ModelForm):
-    class Meta:
-        model = ExtractedText
-        fields = ['prod_name',
-                  'rev_num',
-                  'doc_date']
+
 
 
 @login_required()
@@ -33,13 +28,30 @@ def data_document_detail(request, pk,
     doc = get_object_or_404(DataDocument, pk=pk, )
     extracted_text = ExtractedText.objects.filter(data_document=doc).get()
     extracted_text_form = ExtractedTextForm(instance=extracted_text)
+
+    if hasattr(extracted_text, 'extractedcpcat'):     # use the CPCat-specific form if the instance is ExtractedCPCat
+        print('replacing ExtractedTextForm with ExtractedCPCatForm')
+        extracted_text_form = ExtractedCPCatForm(instance=extracted_text.extractedcpcat)
+        extracted_text = extracted_text.extractedcpcat
+
+    # The unified formset creation method should replace the others
+    detail_formset = create_detail_formset(request, extracted_text)
+
     chemical_formset = ChemicalFormSet(instance=extracted_text, prefix='chemicals')
     habits_and_practices_formset = HnPFormSet(instance=extracted_text, prefix='habits_and_practices')
     document_type_form = DocumentTypeForm(instance=doc)
+    
     if request.method == 'POST' and 'save_extracted_text' in request.POST:
         extracted_text_form = ExtractedTextForm(request.POST, instance=extracted_text)
         if extracted_text_form.is_valid():
             extracted_text_form.save()
+    elif request.method == 'POST' and 'save_extracted_detail' in request.POST:
+        print('Saving data in new general formset')
+        detail_formset = create_detail_formset(request, extracted_text )
+        print(detail_formset.__dict__)
+        if detail_formset.is_valid():
+            detail_formset.save()
+
     elif request.method == 'POST' and 'save_habits_and_practices' in request.POST:
         habits_and_practices_formset = HnPFormSet(request.POST, instance=extracted_text, prefix='habits_and_practices')
         if habits_and_practices_formset.is_valid():
@@ -55,6 +67,7 @@ def data_document_detail(request, pk,
             doc.document_type = document_type
             doc.save()
     habits_and_practices_formset.extra = 0
+
     document_type_form.fields['document_type'].queryset = \
         document_type_form.fields['document_type'].queryset.filter(group_type_id = doc.data_group.group_type_id)
     if not document_type_form.fields['document_type'].queryset.count():
@@ -62,6 +75,7 @@ def data_document_detail(request, pk,
     context = {'doc': doc,
                'extracted_text': extracted_text,
                'extracted_text_form': extracted_text_form,
+               'detail_formset': detail_formset, 
                'chemical_formset': chemical_formset,
                'habits_and_practices_formset': habits_and_practices_formset,
                'document_type_form': document_type_form}

@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
         ('dashboard', '0048_datagroup_group_type'),
     ]
 
-    operations = [
-        migrations.RunPython(create_default_data_group_type),
-        migrations.RunPython(create_default_document_type),
-    ]
+    # operations = [
+    #     migrations.RunPython(create_default_data_group_type),
+    #     migrations.RunPython(create_default_document_type),
+    # ]

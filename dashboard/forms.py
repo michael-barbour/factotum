@@ -1,6 +1,10 @@
 from dal import autocomplete
 from django import forms
-from dashboard.models import *
+from dashboard.models import Product, PUC, ProductToPUC, \
+                            DataDocument, ExtractedFunctionalUse, \
+                            ExtractedChemical, ExtractedText, \
+                            ExtractedCPCat, ExtractedHabitsAndPractices, \
+                            ExtractedListPresence, ExtractedHabitsAndPracticesToPUC
 
 class ProductForm(forms.ModelForm):
     required_css_class = 'required' # adds to label tag
@@ -30,12 +34,94 @@ class HabitsPUCForm(BasePUCForm):
 class ExtractedTextForm(forms.ModelForm):
     class Meta:
         model = ExtractedText
-        fields = ['doc_date', 'data_document', 'extraction_script']
+        fields = ['prod_name', 'rev_num', 'doc_date']
+
         widgets = {
             'data_document': forms.HiddenInput(),
             'extraction_script': forms.HiddenInput(),
         }
 
+class ExtractedCPCatForm(ExtractedTextForm):
+    class Meta:
+        model = ExtractedCPCat
+        fields = ['doc_date', 'data_document', 'extraction_script', 'cat_code', 'description_cpcat','cpcat_sourcetype']
+
+
+
+def create_detail_formset(req, parent_exobject):
+# Create the formset factory for the extracted records
+    # The model used for the formset depends on whether the 
+    # extracted text object matches a data document 
+    # The req argument takes an http request with POST
+    # data for editing and saving objects
+    ex = parent_exobject
+    ex_model = ex.__class__
+    dd = DataDocument.objects.get(pk=ex.pk)
+    dg_code = dd.data_group.group_type.code
+
+    if (dg_code == 'FU'):               # Functional use
+        detail_model = ExtractedFunctionalUse
+        detail_fields = ['extracted_text','raw_cas',
+                        'raw_chem_name', 
+                        'report_funcuse'
+                        ]
+    elif (dg_code in ['CO','UN']):              # Composition
+        detail_model = ExtractedChemical
+        detail_fields = ['extracted_text','raw_cas',
+                        'raw_chem_name', 'raw_min_comp',
+                        'raw_max_comp', 'unit_type',
+                        'report_funcuse',
+                        'ingredient_rank',
+                        'raw_central_comp']
+
+    elif (dg_code == 'HP' ):             # Habits and practices
+        detail_model = ExtractedHabitsAndPractices
+        detail_fields=['product_surveyed',
+                        'mass',
+                        'mass_unit',
+                        'frequency',
+                        'frequency_unit',
+                        'duration',
+                        'duration_unit',
+                        'prevalence',
+                        'notes']
+    
+    elif (dg_code == 'CP' ):             # Chemical Presence List
+        ex_model = ExtractedCPCat
+        detail_model = ExtractedListPresence
+        detail_fields=['extracted_cpcat','raw_cas',
+                        'raw_chem_name'
+                        ]
+    else:
+        print('no applicable detail model found')
+        detail_model = None
+        detail_fields = []
+    if detail_model != None:
+        """         print('Creating DetailFormset for group_type %s ' % dg_code)
+        print('    parent_model: %s ' % ex_model)
+        print('    detail_model: %s ' % detail_model)
+        print('    fields: %s ' % detail_fields)
+        print('    detail record count: %s' % len(list(ex.fetch_extracted_records())) ) """
+        DetailFormset = forms.inlineformset_factory(parent_model=ex_model,
+                                                    model=detail_model,
+                                                    fields=detail_fields,
+                                                    extra=1)
+        if (req):
+            if req.method == 'POST' :
+                extracted_detail_form = DetailFormset(req.POST, instance=ex, prefix='detail')
+            else:
+                extracted_detail_form = DetailFormset(instance=ex, prefix='detail')
+        else:
+            extracted_detail_form = DetailFormset(instance=ex, prefix='detail')
+        return extracted_detail_form
+    else:
+        return None
+    
+
+
+
+
+# Do not delete these model-specific formset methods.
 HnPFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
                                     model=ExtractedHabitsAndPractices,
                                     fields=['product_surveyed',

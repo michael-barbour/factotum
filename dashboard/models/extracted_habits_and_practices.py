@@ -36,3 +36,6 @@ class ExtractedHabitsAndPractices(CommonInfo):
         if self.duration and self.duration_unit == "":
             msg = "Duration unit must be supplied if duration is specified."
             raise ValidationError({'duration_unit': msg})
+
+    def get_extractedtext(self):
+        return self.extracted_text

@@ -25,8 +25,10 @@ class RegisterRecordsTest(TestCase):
 
     def tearDown(self):
         # clean up the file system by deleting the data group object
-        dg = DataGroup.objects.get(name='Walmart MSDS Test Group')
-        dg.delete()
+        try:
+            DataGroup.objects.get(name='Walmart MSDS Test Group').delete()
+        except:
+            print("An exception occurred deleting the datagroup")
 
     def test_datagroup_create(self):
         csv_string = ("filename,title,document_type,url,organization\n"

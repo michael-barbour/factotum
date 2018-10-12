@@ -38,6 +38,22 @@ class DataGroup(CommonInfo):
     group_type = models.ForeignKey(GroupType, on_delete=models.SET_DEFAULT, default=1, null=True, blank=True)
     url = models.CharField(max_length=150, blank=True)
 
+    @property
+    def type(self):
+        return str(self.group_type.code)
+
+    @property
+    def is_composition(self):
+        return self.type == 'CO'
+
+    @property
+    def is_habits_and_practices(self):
+        return self.type == 'HP'
+
+    @property
+    def is_functional_use(self):
+        return self.type == 'FU'
+
     def save(self, *args, **kwargs):
         super(DataGroup, self).save(*args, **kwargs)
 

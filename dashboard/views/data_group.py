@@ -95,23 +95,18 @@ def data_group_detail(request, pk,
     dg_type = str(datagroup.group_type)
     docs = datagroup.datadocument_set.get_queryset()#this needs to be updated after matching...
     prod_link = ProductDocument.objects.filter(document__in=docs)
-    npage = 50 # TODO: make this dynamic someday in its own ticket
     page = request.GET.get('page')
-    paginator = Paginator(docs, npage)
-    docs_page = paginator.page(1 if page is None else page)
+    paginator = Paginator(docs, 50) # TODO: make this dynamic someday in its own ticket
     store = settings.MEDIA_URL + str(datagroup.fs_id)
-    extract_fields = datagroup.get_extracted_template_fieldnames()
-    context = {   'datagroup'         : datagroup,
-                  'documents'         : docs_page,
-                  'all_documents'     : docs, # this used for template download
-                  'extract_fields'    : extract_fields,
-                  'ext_err'           : {},
-                  'extract_form'      : include_extract_form(datagroup, dg_type),
-                  'bulk'              : len(docs) - len(prod_link),
-                  'msg'               : '',
-                  'hnp'               : dg_type == 'Habits and Practices',
-                  'composition'       : dg_type == 'Composition',
-                  }
+    context = { 'datagroup'      : datagroup,
+                'documents'      : paginator.page(1 if page is None else page),
+                'all_documents'  : docs, # this used for template download
+                'extract_fields' : datagroup.get_extracted_template_fieldnames(),
+                'ext_err'        : {},
+                'extract_form'   : include_extract_form(datagroup, dg_type),
+                'bulk'           : len(docs) - len(prod_link),
+                'msg'            : '',
+                }
     if request.method == 'POST' and 'upload' in request.POST:
         # match filename to pdf name
         matched_files = [f for d in docs for f

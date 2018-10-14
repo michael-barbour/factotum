@@ -1,25 +1,68 @@
 from dal import autocomplete
+from bootstrap_datepicker_plus import DatePickerInput
 
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from dashboard.models import *
 
-class ExtractionScriptForm(forms.ModelForm):
-    required_css_class = 'required'  # adds to label tag
+class DataGroupForm(forms.ModelForm):
+    required_css_class = 'required' # adds to label tag
 
     class Meta:
-        model = Script
-        fields = ['title', 'url', 'qa_begun']
-        labels = {
-            'qa_begun': _('QA has begun'),
-        }
+        model = DataGroup
+        fields = ['name','description','url','group_type','downloaded_by',
+                    'downloaded_at','download_script','data_source','csv']
+        widgets = {'downloaded_at': DatePickerInput()}
+        labels = {'csv': _('Register Records CSV File'),
+                  'url': _('URL'), }
 
     def __init__(self, *args, **kwargs):
+        qs = Script.objects.filter(script_type='DL')
+        self.user = kwargs.pop('user', None)
+        super(DataGroupForm, self).__init__(*args, **kwargs)
+        self.fields['csv'].widget.attrs.update({'accept':'.csv'})
+        self.fields['download_script'].queryset = qs
+
+class ExtractionScriptForm(forms.Form):
+    required_css_class = 'required' # adds to label tag
+    script_selection = forms.ModelChoiceField(queryset=Script.objects.filter(script_type='EX')
+                                              , label="Extraction Script")
+    weight_fraction_type = forms.ModelChoiceField(queryset=WeightFractionType.objects.all()
+                                                  , label="Weight Fraction Type"
+                                                  , initial="1")
+    extract_file = forms.FileField(label="Extracted Text CSV File")
+
+    def __init__(self, *args, **kwargs):
+        self.dg_type = kwargs.pop('dg_type', 0)
         self.user = kwargs.pop('user', None)
         super(ExtractionScriptForm, self).__init__(*args, **kwargs)
+        self.fields['weight_fraction_type'].widget.attrs.update({'style':'height:2.75rem; !important'})
+        self.fields['script_selection'].widget.attrs.update({'style':'height:2.75rem; !important'})
+        self.fields['extract_file'].widget.attrs.update({'accept':'.csv'})
+        if self.dg_type in ['FU','CP']:
+            del self.fields['weight_fraction_type']
+        self.collapsed = True
+
+class DataSourceForm(forms.ModelForm):
+    required_css_class = 'required'
+    class Meta:
+        model = DataSource
+        fields = ['title', 'url', 'estimated_records', 'state', 'priority',
+                  'description']
 
 
+class PriorityForm(forms.ModelForm):
+    class Meta:
+        model = DataSource
+        fields = ['priority']
+
+    def __init__(self, *args, **kwargs):
+        super(PriorityForm, self).__init__(*args, **kwargs)
+        self.fields['priority'].label = ''
+        self.fields['priority'].widget.attrs.update({
+            'onchange': 'form.submit();'
+            })
 
 class QANotesForm(forms.ModelForm):
 
@@ -40,7 +83,6 @@ class ExtractedTextQAForm(forms.ModelForm):
         model = ExtractedText
         fields = ['prod_name', 'data_document', 'qa_checked']
 
-
 class BaseExtractedDetailFormSet(forms.BaseInlineFormSet):
     """
     Base class for the form in which users edit the chemical composition or functional use data
@@ -58,12 +100,34 @@ class BaseExtractedDetailFormSet(forms.BaseInlineFormSet):
             for field in form.fields:
                 form.fields[field].widget.attrs.update(
                                         {'class': 'chem-control form-control'})
-#############################################################################
-class ProductForm(forms.ModelForm):
+
+class ProductLinkForm(forms.ModelForm):
     required_css_class = 'required' # adds to label tag
+    document_type = forms.ModelChoiceField(
+        queryset=DocumentType.objects.all(),
+        label="Data Document Type",
+        required=True)
+
     class Meta:
         model = Product
         fields = ['title', 'manufacturer', 'brand_name', 'upc', 'size', 'color']
+
+class ProductForm(forms.ModelForm):
+    required_css_class = 'required' # adds to label tag
+
+    class Meta:
+        model = Product
+        fields = ['title','manufacturer','brand_name','size','color',
+                    'model_number','short_description','long_description']
+
+class ProductViewForm(ProductForm):
+    class Meta(ProductForm.Meta):
+        exclude = ('title', 'long_description',)
+
+    def __init__(self, *args, **kwargs):
+        super(ProductForm, self).__init__(*args, **kwargs)
+        for f in self.fields:
+            self.fields[f].disabled = True
 
 class BasePUCForm(forms.ModelForm):
     puc = forms.ModelChoiceField(
@@ -89,16 +153,6 @@ class ExtractedTextForm(forms.ModelForm):
     class Meta:
         model = ExtractedText
         fields = ['prod_name', 'doc_date', 'rev_num']
-
-class ExtractedTextForm(forms.ModelForm):
-    class Meta:
-        model = ExtractedText
-        fields = ['prod_name', 'rev_num', 'doc_date']
-
-        widgets = {
-            'data_document': forms.HiddenInput(),
-            'extraction_script': forms.HiddenInput(),
-        }
 
 class ExtractedCPCatForm(ExtractedTextForm):
     class Meta:
@@ -166,32 +220,14 @@ def create_detail_formset(group_type):
     }
     func = dg_types.get(group_type, lambda: None)
     return func()
-
-# # Do not delete these model-specific formset methods.
-# HnPFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
-#                                     model=ExtractedHabitsAndPractices,
-#                                     fields=['product_surveyed',
-#                                             'mass',
-#                                             'mass_unit',
-#                                             'frequency',
-#                                             'frequency_unit',
-#                                             'duration',
-#                                             'duration_unit',
-#                                             'prevalence',
-#                                             'notes'],
-#                                             extra=1)
+    
+## This was used in data_group_detail, but works w/o the widgets, may cause prob
+# class ExtractedTextForm(forms.ModelForm):
+#     class Meta:
+#         model = ExtractedText
+#         fields = ['prod_name', 'rev_num', 'doc_date']
 #
-# ChemicalFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
-#                                     model=ExtractedChemical,
-#                                     fields=['extracted_text',
-#                                             'raw_cas',
-#                                             'raw_chem_name',
-#                                             'raw_min_comp',
-#                                             'raw_central_comp',
-#                                             'raw_max_comp',
-#                                             'unit_type',
-#                                             'report_funcuse',
-#                                             'weight_fraction_type',
-#                                             'ingredient_rank',
-#                                             ],
-#                                     extra=0)
+#         widgets = {
+#             'data_document': forms.HiddenInput(),
+#             'extraction_script': forms.HiddenInput(),
+#         }

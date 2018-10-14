@@ -2,83 +2,18 @@ import os
 import math
 from random import shuffle
 from urllib import parse
+
 from django.conf import settings
-from django.shortcuts import render, redirect, get_object_or_404
-
-from django.forms import (ModelForm, Form, BaseInlineFormSet,
-                            inlineformset_factory,
-                            Textarea)
-
 from django.urls import reverse, resolve
-from django.utils import timezone
-from django.core.files import File
 from django.http import HttpResponseRedirect
-from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
+from django.shortcuts import render, redirect, get_object_or_404
+from django.core.files import File
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
 
-from dashboard.models import (DataGroup, DataDocument, DataSource, QANotes,
-                              ExtractedText, Script, QAGroup, ExtractedChemical, ExtractedFunctionalUse)
-
-
-class ExtractionScriptForm(ModelForm):
-    required_css_class = 'required'  # adds to label tag
-
-    class Meta:
-        model = Script
-        fields = ['title', 'url', 'qa_begun']
-        labels = {
-            'qa_begun': _('QA has begun'),
-        }
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
-        super(ExtractionScriptForm, self).__init__(*args, **kwargs)
-
-class ExtractedTextForm(ModelForm):
-
-    class Meta:
-        model = ExtractedText
-        fields = ['prod_name', 'doc_date', 'rev_num']
-
-class QANotesForm(ModelForm):
-
-    class Meta:
-        model = QANotes
-        fields = ['qa_notes']
-        widgets = {
-            'qa_notes' : Textarea,
-        }
-        labels = {
-            'qa_notes': _('QA Notes (required if approving edited records)'),
-        }
-
-class ExtractedTextQAForm(ModelForm):
-    required_css_class = 'required'  # adds to label tag
-
-    class Meta:
-        model = ExtractedText
-        fields = ['prod_name', 'data_document', 'qa_checked']
-
-
-class BaseExtractedDetailFormSet(BaseInlineFormSet):
-    """
-    Base class for the form in which users edit the chemical composition or functional use data
-    """
-    required_css_class = 'required'  # adds to label tag
-
-    class Meta:
-        model = ExtractedChemical
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
-        super(BaseExtractedDetailFormSet, self).__init__(*args, **kwargs)
-
-        for form in self.forms:
-            for field in form.fields:
-                form.fields[field].widget.attrs.update(
-                                        {'class': 'chem-control form-control'})
-
+from dashboard.models import *
+from dashboard.forms import QANotesForm, create_detail_formset
 
 
 @login_required()
@@ -175,27 +110,7 @@ def extracted_text_qa(request, pk,
     # Create the formset factory for the extracted records
     # The model used for the formset depends on whether the
     # extracted text object matches a data document
-    dg_type = datadoc.data_group.group_type.title
-    if (dg_type == 'Functional use'):
-        detail_model = ExtractedFunctionalUse
-        detail_fields = ['extracted_text','raw_cas',
-                        'raw_chem_name',
-                        'report_funcuse'
-                        ]
-    else:
-        detail_model = ExtractedChemical
-        detail_fields = ['extracted_text','raw_cas',
-                        'raw_chem_name', 'raw_min_comp',
-                        'raw_max_comp', 'unit_type',
-                        'report_funcuse',
-                        'ingredient_rank',
-                        'raw_central_comp']
-
-    DetailFormSet = inlineformset_factory(parent_model=ExtractedText,
-                                        model=detail_model,
-                                        formset=BaseExtractedDetailFormSet,
-                                        fields=detail_fields,
-                                                extra=1)
+    ExtractedTextForm, DetailFormSet = create_detail_formset(datadoc.data_group.type)
     ext_form =  ExtractedTextForm(instance=extext)
     note, created = QANotes.objects.get_or_create(extracted_text=extext)
     notesform =  QANotesForm(instance=note)
@@ -219,7 +134,7 @@ def extracted_text_qa(request, pk,
         ext_form =  ExtractedTextForm(request.POST, instance=extext)
         notesform = QANotesForm(request.POST, instance=note)
         if detail_formset.has_changed() or ext_form.has_changed():
-            print(str(extext.qa_edited))
+            # print(str(extext.qa_edited))
             if detail_formset.is_valid() and ext_form.is_valid():
                 detail_formset.save()
                 ext_form.save()

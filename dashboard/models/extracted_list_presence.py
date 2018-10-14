@@ -1,6 +1,6 @@
 from django.db import models
 
-from dashboard.models import CommonInfo, ExtractedText
+from dashboard.models import CommonInfo
 
 class ExtractedListPresence(CommonInfo):
     extracted_cpcat = models.ForeignKey('ExtractedCPCat', on_delete=models.CASCADE,
@@ -25,4 +25,3 @@ class ExtractedListPresence(CommonInfo):
 
     def get_extractedtext(self):
         return self.extracted_cpcat.extractedtext_ptr
-

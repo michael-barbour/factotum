@@ -149,10 +149,10 @@ def data_group_detail(request, pk,
                                             f'renamed in the csv: {missing}')
                 return render(request, template_name, context)
             good_records = []
-            ext_parent_fn, ext_child = get_extracted_models(dg_type)
+            ext_parent, ext_child = get_extracted_models(dg_type)
             for i, row in enumerate(csv.DictReader(info)):
-                doc = docs.get(pk=int(row['data_document_id']))
-                doc.raw_category = row.pop('raw_category')
+                d = docs.get(pk=int(row['data_document_id']))
+                d.raw_category = row.pop('raw_category')
                 wft = request.POST.get('weight_fraction_type', None)
                 if wft: # this signifies 'Composition' type
                     w = 'weight_fraction_type'
@@ -161,8 +161,8 @@ def data_group_detail(request, pk,
                     row['unit_type'] = UnitType.objects.get(pk=unit_type_id)
                     rank = row['ingredient_rank']
                     row['ingredient_rank'] = None if rank == '' else rank
-                ext, created = ext_parent_fn(data_document=doc,
-                                                extraction_script=script)
+                ext, created = ext_parent.objects.get_or_create(data_document=d,
+                                                    extraction_script=script)
                 if created:
                     update_fields(row, ext)
                 row['extracted_text'] = ext
@@ -176,7 +176,7 @@ def data_group_detail(request, pk,
                     record.full_clean()
                 except ValidationError as e:
                     context['ext_err'][i+1] = e.message_dict
-                good_records.append((doc,ext,record))
+                good_records.append((d,ext,record))
             if context['ext_err']: # if errors, send back with errors
                 return render(request, template_name, context)
             if not context['ext_err']:  # no saving until all errors are removed

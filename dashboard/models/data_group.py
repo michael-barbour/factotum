@@ -9,7 +9,11 @@ from .common_info import CommonInfo
 from django.urls import reverse
 from django.dispatch import receiver
 from .group_type import GroupType
-
+from .extracted_text import ExtractedText
+from .extracted_cpcat import ExtractedCPCat
+from .extracted_chemical import ExtractedChemical
+from .extracted_functional_use import ExtractedFunctionalUse
+from .extracted_list_presence import ExtractedListPresence
 
 # could be used for dynamically creating filename on instantiation
 # in the 'upload_to' param on th FileField
@@ -23,6 +27,11 @@ def csv_upload_path(instance, filename):
     name = '{0}/{1}'.format(instance.fs_id, filename) # potential space errors in name
     return name
 
+extract_models = {
+    'CO': (ExtractedText, ExtractedChemical),
+    'FU': (ExtractedText, ExtractedFunctionalUse),
+    'CP': (ExtractedCPCat, ExtractedListPresence)
+}
 
 class DataGroup(CommonInfo):
 
@@ -53,6 +62,10 @@ class DataGroup(CommonInfo):
     @property
     def is_functional_use(self):
         return self.type == 'FU'
+
+    def get_extract_models(self):
+        '''returns a tuple with parent/child extract models'''
+        return extract_models.get(self.type)
 
     def save(self, *args, **kwargs):
         super(DataGroup, self).save(*args, **kwargs)

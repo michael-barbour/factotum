@@ -4,9 +4,10 @@ from random import shuffle
 from urllib import parse
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
+
 from django.forms import (ModelForm, Form, BaseInlineFormSet,
-                            inlineformset_factory, TextInput, CharField,
-                            Textarea, HiddenInput, ValidationError)
+                            inlineformset_factory,
+                            Textarea)
 
 from django.urls import reverse, resolve
 from django.utils import timezone
@@ -52,7 +53,12 @@ class QANotesForm(ModelForm):
             'qa_notes': _('QA Notes (required if approving edited records)'),
         }
 
+class ExtractedTextQAForm(ModelForm):
+    required_css_class = 'required'  # adds to label tag
 
+    class Meta:
+        model = ExtractedText
+        fields = ['prod_name', 'data_document', 'qa_checked']
 
 
 class BaseExtractedDetailFormSet(BaseInlineFormSet):
@@ -128,7 +134,6 @@ def extraction_script_qa(request, pk,
                                            'extractedtexts': texts,
                                            'qagroup': qa_group})
 
-
 @login_required()
 def extraction_script_detail(request, pk,
                              template_name='extraction_script/extraction_script_detail.html'):
@@ -136,15 +141,6 @@ def extraction_script_detail(request, pk,
     data = {}
     data['object_list'] = extractionscript
     return render(request, template_name, data)
-
-
-class ExtractedTextQAForm(ModelForm):
-    required_css_class = 'required'  # adds to label tag
-
-    class Meta:
-        model = ExtractedText
-        fields = ['prod_name', 'data_document', 'qa_checked']
-
 
 
 @login_required()

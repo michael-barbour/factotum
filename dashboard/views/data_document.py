@@ -1,46 +1,36 @@
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from dashboard.forms import ExtractedTextForm, ExtractedCPCatForm, HnPFormSet, ChemicalFormSet, create_detail_formset
+from dashboard.forms import (ExtractedTextForm, ExtractedCPCatForm,
+                                DocumentTypeForm, create_detail_formset)
 
 from djqscsv import render_to_csv_response
 
 from dashboard.models import *
-
-class DocumentTypeForm(forms.ModelForm):
-    class Meta:
-        model = DataDocument
-        fields = ['document_type']
-
-    def __init__(self, *args, **kwargs):
-        super(DocumentTypeForm, self).__init__(*args, **kwargs)
-        self.fields['document_type'].label = ''
-        self.fields['document_type'].widget.attrs.update({
-            'onchange': 'form.submit();'
-        })
-
-
-
 
 @login_required()
 def data_document_detail(request, pk,
                          template_name='data_document/data_document_detail.html'):
     doc = get_object_or_404(DataDocument, pk=pk, )
     extracted_text = ExtractedText.objects.filter(data_document=doc).get()
-    extracted_text_form = ExtractedTextForm(instance=extracted_text)
+    ParentForm, ChildForm = create_detail_formset(doc.data_group.type)
+
+
+    extracted_text_form = ParentForm(instance=extracted_text)
 
     if hasattr(extracted_text, 'extractedcpcat'):     # use the CPCat-specific form if the instance is ExtractedCPCat
         print('replacing ExtractedTextForm with ExtractedCPCatForm')
-        extracted_text_form = ExtractedCPCatForm(instance=extracted_text.extractedcpcat)
+        # extracted_text_form = ExtractedCPCatForm(instance=extracted_text.extractedcpcat)
         extracted_text = extracted_text.extractedcpcat
 
     # The unified formset creation method should replace the others
-    detail_formset = create_detail_formset(request, extracted_text)
+    #detail_formset = create_detail_formset(request, extracted_text)
 
-    chemical_formset = ChemicalFormSet(instance=extracted_text, prefix='chemicals')
-    habits_and_practices_formset = HnPFormSet(instance=extracted_text, prefix='habits_and_practices')
+    # chemical_formset = ChemicalFormSet(instance=extracted_text, prefix='chemicals')
+    # habits_and_practices_formset = HnPFormSet(instance=extracted_text, prefix='habits_and_practices')
+    child_formset = ChildForm(instance=extracted_text, prefix='detail')
     document_type_form = DocumentTypeForm(instance=doc)
-    
+
     if request.method == 'POST' and 'save_extracted_text' in request.POST:
         extracted_text_form = ExtractedTextForm(request.POST, instance=extracted_text)
         if extracted_text_form.is_valid():
@@ -66,7 +56,7 @@ def data_document_detail(request, pk,
             document_type = document_type_form.cleaned_data['document_type']
             doc.document_type = document_type
             doc.save()
-    habits_and_practices_formset.extra = 0
+    # habits_and_practices_formset.extra = 0
 
     document_type_form.fields['document_type'].queryset = \
         document_type_form.fields['document_type'].queryset.filter(group_type_id = doc.data_group.group_type_id)
@@ -75,9 +65,9 @@ def data_document_detail(request, pk,
     context = {'doc': doc,
                'extracted_text': extracted_text,
                'extracted_text_form': extracted_text_form,
-               'detail_formset': detail_formset, 
-               'chemical_formset': chemical_formset,
-               'habits_and_practices_formset': habits_and_practices_formset,
+               'detail_formset': child_formset,
+               'chemical_formset': child_formset,
+               'habits_and_practices_formset': child_formset,
                'document_type_form': document_type_form}
     return render(request, template_name, context)
 

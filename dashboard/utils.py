@@ -4,13 +4,13 @@ def get_extracted_models(t):
     '''Returns the parent model function and and the associated child model
     based on datagroup type'''
     def one():
-        return (ExtractedText.objects.get_or_create, ExtractedChemical)
+        return (ExtractedText, ExtractedChemical)
 
     def two():
-        return (ExtractedText.objects.get_or_create, ExtractedFunctionalUse)
+        return (ExtractedText, ExtractedFunctionalUse)
 
     def three():
-        return (ExtractedCPCat.objects.get_or_create, ExtractedListPresence)
+        return (ExtractedCPCat, ExtractedListPresence)
 
     models = {
         'Composition': one,

@@ -2,7 +2,7 @@ from django.test import TestCase, override_settings
 from django.test import Client
 
 from dashboard.tests.loader import *
-from dashboard.views.data_document import *
+from dashboard.forms import *
 from lxml import html
 
 
@@ -35,7 +35,7 @@ class DataDocumentDetailTest(TestCase):
                                     {'document_type': 2})
         dd.refresh_from_db()
         self.assertEqual(dd.document_type_id, 2,
-                         'DataDocument 7 should have a final document_type_id of 2')     
+                         'DataDocument 7 should have a final document_type_id of 2')
 
 class TestDynamicDetailFormsets(TestCase):
     fixtures = fixtures_standard
@@ -43,9 +43,9 @@ class TestDynamicDetailFormsets(TestCase):
     def setUp(self):
         self.c = Client()
         self.c.login(username='Karyn', password='specialP@55word')
-    
+
     def test_fetch_extracted_records(self):
-        ''' Confirm that each detail child object returned by the fetch_extracted_records 
+        ''' Confirm that each detail child object returned by the fetch_extracted_records
         function has the correct parent '''
         for et in ExtractedText.objects.all():
             #print('Fetching extracted child records from %s: %s ' % (et.pk , et))
@@ -54,38 +54,38 @@ class TestDynamicDetailFormsets(TestCase):
                 #print('    %s: %s' % (ex_child.__class__.__name__ , ex_child ))
                 self.assertEqual(et.pk , child_model.objects.get(pk=ex_child.pk).extracted_text.pk,
                     'The ExtractedChemical object with the returned child pk should have the correct extracted_text parent')
-        
+
     def test_every_extractedtext(self):
         ''''Loop through all the ExtractedText objects and confirm that the new
-        create_detail_formset method returns form values that match what the old  
+        create_detail_formset method returns form values that match what the old
         method delivered
         '''
         for et in ExtractedText.objects.all():
             # print('Testing formset creation for ExtractedText object %s (%s) ' % (et.pk, et ) )
-            test_formset = create_detail_formset(req=None, parent_exobject=et)
+            test_formset = create_detail_formset(et.data_document.data_group.type)
             # compare to the old method
             if (DataDocument.objects.get(id=et.data_document_id).data_group.group_type.code == 'HP'):
                 old_fs = HnPFormSet(instance=et, prefix='detail')
-                self.assertEqual(old_fs[0]['product_surveyed'].value(), 
+                self.assertEqual(old_fs[0]['product_surveyed'].value(),
                     test_formset[0]['product_surveyed'].value(),
                     'The old and new methods should return the same items')
-            
+
             if (DataDocument.objects.get(id=et.data_document_id).data_group.group_type.code == 'CO'):
                 old_fs = ChemicalFormSet(instance=et, prefix='detail')
-                self.assertEqual(old_fs[0]['raw_chem_name'].value(), 
+                self.assertEqual(old_fs[0]['raw_chem_name'].value(),
                     test_formset[0]['raw_chem_name'].value(),
                     'The old and new methods should return the same items')
-            
+
             if (DataDocument.objects.get(id=et.data_document_id).data_group.group_type.code == 'UN'):
                 # for Unknown types, the old method used the ChemicalFormset
                 old_fs = ChemicalFormSet(instance=et, prefix='detail')
-                self.assertEqual(old_fs[0]['raw_chem_name'].value(), 
+                self.assertEqual(old_fs[0]['raw_chem_name'].value(),
                     test_formset[0]['raw_chem_name'].value(),
                     'The old and new methods should return the same items')
-            
+
             if (DataDocument.objects.get(id=et.data_document_id).data_group.group_type.code == 'CP'):
                 # for Chemical Presence, there is no old form-construction method to compare to
-                self.assertTrue(len(test_formset[0]['raw_chem_name'].value()) > 0, 
+                self.assertTrue(len(test_formset[0]['raw_chem_name'].value()) > 0,
                     'There should be a raw_chem_name value')
 
 
@@ -93,9 +93,9 @@ class TestDynamicDetailFormsets(TestCase):
         print('|￣￣￣￣￣|')
         print('|   HI      |')
         print('|           |' )
-        print('|  RICK     |' )    
+        print('|  RICK     |' )
         print('|           |')
-        print('|___________|') 
+        print('|___________|')
         print('(\__/) || ')
         print('(•ㅅ•) || ')
         print('/ 　 づ')

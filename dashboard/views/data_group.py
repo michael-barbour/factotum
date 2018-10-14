@@ -50,7 +50,6 @@ def data_group_detail(request, pk,
                 'bulk'           : len(docs) - len(prod_link),
                 'msg'            : '',
                 }
-    print(include_extract_form(dg))
     if request.method == 'POST' and 'upload' in request.POST:
         # match filename to pdf name
         matched_files = [f for d in docs for f
@@ -87,7 +86,8 @@ def data_group_detail(request, pk,
             script = Script.objects.get(pk=script_pk)
             info = [x.decode('ascii','ignore') for x in csv_file.readlines()]
             table = csv.DictReader(info)
-            missing =  list(set(extract_fields)-set(table.fieldnames))
+            missing =  list(set(dg.get_extracted_template_fieldnames())-
+                                                        set(table.fieldnames))
             if missing: #column names are NOT a match, send back to user
                 context['msg'] = ('The following columns need to be added or '
                                             f'renamed in the csv: {missing}')

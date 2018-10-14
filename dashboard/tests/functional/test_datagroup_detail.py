@@ -78,7 +78,7 @@ class DataGroupDetailTest(TestCase):
         self.assertIsInstance(response.context['extract_form'],
                                             ExtractionScriptForm,
                     ('ExtractForm should be included in the page!'))
-        self.objects.gt.title = 'Unidentified'
+        self.objects.gt.code = 'UN'
         self.objects.gt.save()
         response = self.client.get(f'/datagroup/{pk}/')
         self.assertFalse(response.context['extract_form'],
@@ -186,7 +186,3 @@ class DataGroupDetailTest(TestCase):
                                          "User is redirected to detail page.")
         self.assertEqual(response.url, f'/datagroup/{dgpk}/',
                                          "Should go to detail page.")
-
-
-
-    

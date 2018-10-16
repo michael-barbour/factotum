@@ -2,24 +2,13 @@ from django import forms
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from dashboard.forms import (ExtractedTextForm, ExtractedCPCatForm,
-                                # DocumentTypeForm,
+                                DocumentTypeForm,
                                 create_detail_formset)
 
 from djqscsv import render_to_csv_response
 
 from dashboard.models import *
 
-class DocumentTypeForm(forms.ModelForm):
-    class Meta:
-        model = DataDocument
-        fields = ['document_type']
-
-    def __init__(self, *args, **kwargs):
-        super(DocumentTypeForm, self).__init__(*args, **kwargs)
-        self.fields['document_type'].label = ''
-        self.fields['document_type'].widget.attrs.update({
-            'onchange': 'form.submit();'
-        })
 
 @login_required()
 def data_document_detail(request, pk,
@@ -29,26 +18,14 @@ def data_document_detail(request, pk,
     ParentForm, ChildForm = create_detail_formset(doc.data_group.type)
     extracted_text = extracted_text.pull_out_cp() #get CP if exists
     extracted_text_form = ParentForm(instance=extracted_text)
-    child_formset = ChildForm(instance=extracted_text, prefix='presence')
+    child_formset = ChildForm(instance=extracted_text)
+    colors = ['#d6d6a6','#dfcaa9','#d8e5bf'] * 47
+    color = (hex for hex in colors)
+    for form in child_formset.forms:
+        form.color = next(color)
     document_type_form = DocumentTypeForm(request.POST or None, instance=doc)
     qs = DocumentType.objects.filter(group_type=doc.data_group.group_type)
     document_type_form.fields['document_type'].queryset = qs
-    # elif request.method == 'POST' and 'save_extracted_detail' in request.POST:
-    #     print('Saving data in new general formset')
-    #     detail_formset = create_detail_formset(request, extracted_text )
-    #     print(detail_formset.__dict__)
-    #     if detail_formset.is_valid():
-    #         detail_formset.save()
-    # elif request.method == 'POST' and 'save_habits_and_practices' in request.POST:
-    #     print('habits_and_practices_formset')
-    #     habits_and_practices_formset = HnPFormSet(request.POST, instance=extracted_text, prefix='habits_and_practices')
-    #     if habits_and_practices_formset.is_valid():
-    #         habits_and_practices_formset.save()
-    # elif request.method == 'POST' and 'save_chemicals' in request.POST:
-    #     chemical_formset = ChemicalFormSet(request.POST, instance=extracted_text, prefix='chemicals')
-    #     if chemical_formset.is_valid():
-    #         chemical_formset.save()
-
     context = {'doc': doc,
                'extracted_text': extracted_text,
                'extracted_text_form': extracted_text_form,

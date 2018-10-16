@@ -123,12 +123,11 @@
     <button type="submit" id="save_extracted_detail" name="save_extracted_detail"
     class="btn btn-primary detail-control" role="button">Save {{ doc.data_group.group_type }} edits</button>
     <div class="card-body">
-        {{ detail_formset.management_form }}
         {% csrf_token %}
         <div class="row">
         {% for form in detail_formset.forms %}
-        <div class="col-sm-6">
-            <div class="card" >
+        <div class="col-sm-6" style="padding-top: 30px;" >
+            <div class="card" style="background-color:{{ form.color }};" >
                 <div class="card-body">
                     {% if form.errors %}
                         <div class="form-group has-error">
@@ -139,10 +138,11 @@
                     <dl class="row col-sm-12">
                     {% for field in form.visible_fields %}
                         <dt class="col-sm-6">{{ field.label_tag }}</dt>
-                        <dd  class="col-sm-6">{{ field}}</dd>
+                        <dd  class="col-sm-6 small" style="max-width: 100%;max-height: 100%;">{{ field}}</dd>
                     {% endfor %}
                     </dl>
                 </div>
+                {{ detail_formset.management_form }}
             </div>
         </div>
         {% endfor %}

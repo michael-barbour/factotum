@@ -195,7 +195,10 @@ def include_extract_form(dg):
 
 
 def create_detail_formset(group_type):
-    '''Returns the pair of formsets that will be needed based on group_type.
+    '''Returns the pair of formsets that will be needed based on group_typeself.
+    .                       ('CO'),('CP'),('FU'),('HP')
+    .
+
     '''
     def one(): # for chemicals
         detail_fields = ['extracted_text','raw_cas','raw_chem_name',

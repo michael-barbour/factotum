@@ -109,7 +109,7 @@ def data_group_detail(request, pk,
                   'extract_form'      : include_extract_form(datagroup, dg_type),
                   'bulk'              : len(docs) - len(prod_link),
                   'msg'               : '',
-                  'hnp'               : dg_type == 'Habits and Practices',
+                  'hnp'               : dg_type == 'Habits and practices',
                   'composition'       : dg_type == 'Composition',
                   }
     if request.method == 'POST' and 'upload' in request.POST:
@@ -336,9 +336,10 @@ def data_group_registered_records_csv(request, pk):
     if dg:
         columnlist.insert(0, "id")
         qs = DataDocument.objects.filter(data_group_id=pk).values(*columnlist)
-        return render_to_csv_response(qs, filename=(dg.fs_id , "_registered_records.csv"),
-                                      field_header_map={"id": "DataDocument_id"},
-                                      use_verbose_names=False)
+        return render_to_csv_response(qs, filename=(dg.get_name_as_slug() +
+                                                    "_registered_records.csv"),
+                                  field_header_map={"id": "DataDocument_id"},
+                                  use_verbose_names=False)
     else:
         qs = DataDocument.objects.filter(data_group_id=0).values(*columnlist)
         return render_to_csv_response(qs, filename="registered_records.csv",

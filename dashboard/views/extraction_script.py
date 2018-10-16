@@ -6,6 +6,7 @@ from urllib import parse
 from django.conf import settings
 from django.urls import reverse, resolve
 from django.http import HttpResponseRedirect
+from django.forms import inlineformset_factory
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.files import File
@@ -14,7 +15,9 @@ from django.contrib.auth.decorators import login_required
 
 from factotum.settings import EXTRA
 from dashboard.models import *
-from dashboard.forms import QANotesForm, create_detail_formset
+from dashboard.utils import get_extracted_models
+from dashboard.forms import (BaseExtractedDetailFormSet, ExtractedTextForm,
+                                                                    QANotesForm)
 
 
 @login_required()
@@ -110,10 +113,14 @@ def extracted_text_qa(request, pk,
 
     # Create the formset factory for the extracted records
     # The model used for the formset depends on whether the
-    # extracted text object matches a data document
-    ExtractedTextForm, DetailFormSet = create_detail_formset(doc.data_group.type,
-                                                                        EXTRA)
+    # extracted text object matches a data document()
+    parent_model, detail_model = get_extracted_models(doc.data_group.type)
     ext_form =  ExtractedTextForm(instance=extext)
+    DetailFormSet = inlineformset_factory(parent_model=parent_model,
+                                        model=detail_model,
+                                        formset=BaseExtractedDetailFormSet,
+                                        fields=detail_model.detail_fields(),
+                                                extra=1)
     note, created = QANotes.objects.get_or_create(extracted_text=extext)
     notesform =  QANotesForm(instance=note)
     detail_formset = DetailFormSet(instance=extext, prefix='details')

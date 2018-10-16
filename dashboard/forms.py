@@ -149,13 +149,6 @@ class HabitsPUCForm(BasePUCForm):
         model = ExtractedHabitsAndPracticesToPUC
         fields = ['puc']
 
-# class ExtractedTextForm(forms.ModelForm):
-#
-#     class Meta:
-#         model = ExtractedText
-#         fields = ['prod_name', 'doc_date', 'rev_num']
-
-# This was used in data_group_detail, but works w/o the widgets, may cause prob
 class ExtractedTextForm(forms.ModelForm):
     class Meta:
         model = ExtractedText

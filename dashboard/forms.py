@@ -194,7 +194,7 @@ def include_extract_form(dg):
         return False
 
 
-def create_detail_formset(group_type):
+def create_detail_formset(group_type, extra=0):
     '''Returns the pair of formsets that will be needed based on group_typeself.
     .                       ('CO'),('CP'),('FU'),('HP')
     .
@@ -207,7 +207,7 @@ def create_detail_formset(group_type):
         ChemicalFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
                                                 model=ExtractedChemical,
                                                 fields=detail_fields,
-                                                extra=1)
+                                                extra=extra)
         return (ExtractedTextForm, ChemicalFormSet)
 
     def two(): # for functional_use
@@ -216,7 +216,7 @@ def create_detail_formset(group_type):
         FunctionalUseFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
                                                 model=ExtractedFunctionalUse,
                                                 fields=detail_fields,
-                                                extra=1)
+                                                extra=extra)
         return (ExtractedTextForm, FunctionalUseFormSet)
 
     def three(): # for habits_and_practices
@@ -226,7 +226,7 @@ def create_detail_formset(group_type):
         HnPFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
                                                 model=ExtractedHabitsAndPractices,
                                                 fields=detail_fields,
-                                                extra=1)
+                                                extra=extra)
         return (ExtractedTextForm, HnPFormSet)
 
     def four(): # for extracted_list_presence
@@ -234,7 +234,7 @@ def create_detail_formset(group_type):
         ListPresenceFormSet = forms.inlineformset_factory(parent_model=ExtractedCPCat,
                                                 model=ExtractedListPresence,
                                                 fields=detail_fields,
-                                                extra=1)
+                                                extra=extra)
         return (ExtractedCPCatForm, ListPresenceFormSet)
     dg_types = {
         'CO': one,

@@ -9,13 +9,15 @@ from djqscsv import render_to_csv_response
 
 from dashboard.models import *
 
+# if this goes to 0, tests will fail because of what num form we search for
+EXTRA = 1
 
 @login_required()
 def data_document_detail(request, pk,
                          template_name='data_document/data_document_detail.html'):
     doc = get_object_or_404(DataDocument, pk=pk, )
     extracted_text = ExtractedText.objects.get(data_document=doc)
-    ParentForm, ChildForm = create_detail_formset(doc.data_group.type)
+    ParentForm, ChildForm = create_detail_formset(doc.data_group.type, EXTRA)
     extracted_text = extracted_text.pull_out_cp() #get CP if exists
     extracted_text_form = ParentForm(instance=extracted_text)
     child_formset = ChildForm(instance=extracted_text)
@@ -54,7 +56,7 @@ def save_ext_form(request, pk):
 @login_required()
 def save_child_form(request, pk):
     doc = get_object_or_404(DataDocument, pk=pk)
-    _, ChildForm = create_detail_formset(doc.data_group.type)
+    _, ChildForm = create_detail_formset(doc.data_group.type, EXTRA)
     extracted_text = doc.extractedtext.pull_out_cp()
     ext_text_form = ChildForm(request.POST, instance=extracted_text)
     if ext_text_form.is_valid() and ext_text_form.has_changed():

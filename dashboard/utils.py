@@ -19,7 +19,8 @@ def get_extracted_models(t):
         'CO': one,
         'FU': two,
         'CP': three,
-        'HP': four
+        'HP': four,
+        'UN': one
     }
     func = models.get(t, lambda: None)
     return func()

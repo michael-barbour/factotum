@@ -19,9 +19,9 @@ from django.core.paginator import Paginator
 
 from dashboard.models import *
 from dashboard.forms import (DataGroupForm, ExtractionScriptForm,
-                                                create_detail_formset)
-from dashboard.utils import (get_extracted_models, clean_dict, update_fields,
-                                                        include_extract_form)
+                                                create_detail_formset,
+                                                include_extract_form)
+from dashboard.utils import get_extracted_models, clean_dict, update_fields
 
 
 @login_required()

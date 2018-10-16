@@ -1,4 +1,3 @@
-from dashboard.forms import ExtractionScriptForm
 from dashboard.models import *
 
 def get_extracted_models(t):
@@ -33,15 +32,3 @@ def update_fields(odict, model):
     for f in model._meta.get_fields():
         if f.name in odict.keys():
             setattr(model,f.name,odict[f.name])
-
-
-def include_extract_form(dg):
-    '''Returns the ExtractionScriptForm based on conditions of DataGroup
-    type as well as whether all records are matched, but not extracted
-    '''
-    if not dg.type in ['FU','CO','CP']:
-        return False
-    if dg.all_matched() and not dg.all_extracted():
-        return ExtractionScriptForm(dg_type=dg.type)
-    else:
-        return False

@@ -128,13 +128,12 @@ def extracted_text_qa(request, pk,
         }
 
     if request.method == 'POST' and 'save' in request.POST:
-        print('---saving')
+        # print('---saving')
         detail_formset = DetailFormSet(request.POST, instance=extext,
                                                         prefix='details')
         ext_form =  ExtractedTextForm(request.POST, instance=extext)
         notesform = QANotesForm(request.POST, instance=note)
         if detail_formset.has_changed() or ext_form.has_changed():
-            # print(str(extext.qa_edited))
             if detail_formset.is_valid() and ext_form.is_valid():
                 detail_formset.save()
                 ext_form.save()

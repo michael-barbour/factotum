@@ -148,16 +148,27 @@ class HabitsPUCForm(BasePUCForm):
         model = ExtractedHabitsAndPracticesToPUC
         fields = ['puc']
 
-class ExtractedTextForm(forms.ModelForm):
+# class ExtractedTextForm(forms.ModelForm):
+#
+#     class Meta:
+#         model = ExtractedText
+#         fields = ['prod_name', 'doc_date', 'rev_num']
 
+# This was used in data_group_detail, but works w/o the widgets, may cause prob
+class ExtractedTextForm(forms.ModelForm):
     class Meta:
         model = ExtractedText
-        fields = ['prod_name', 'doc_date', 'rev_num']
+        fields = ['prod_name', 'rev_num', 'doc_date']
+
+        widgets = {
+            'data_document': forms.HiddenInput(),
+            'extraction_script': forms.HiddenInput(),
+        }
 
 class ExtractedCPCatForm(ExtractedTextForm):
     class Meta:
         model = ExtractedCPCat
-        fields = ['doc_date', 'data_document', 'extraction_script', 'cat_code', 'description_cpcat','cpcat_sourcetype']
+        fields = ['doc_date','cat_code', 'description_cpcat','cpcat_sourcetype']
 
 class DocumentTypeForm(forms.ModelForm):
     class Meta:
@@ -171,13 +182,24 @@ class DocumentTypeForm(forms.ModelForm):
             'onchange': 'form.submit();'
         })
 
+def include_extract_form(dg):
+    '''Returns the ExtractionScriptForm based on conditions of DataGroup
+    type as well as whether all records are matched, but not extracted
+    '''
+    if not dg.type in ['FU','CO','CP']:
+        return False
+    if dg.all_matched() and not dg.all_extracted():
+        return ExtractionScriptForm(dg_type=dg.type)
+    else:
+        return False
+
 
 def create_detail_formset(group_type):
     '''Returns the pair of formsets that will be needed based on group_type.
     '''
     def one(): # for chemicals
         detail_fields = ['extracted_text','raw_cas','raw_chem_name',
-                        'raw_min_comp','raw_max_comp', 'unit_type',
+                        'raw_min_comp','raw_max_comp', 'unit_type','weight_fraction_type',
                         'report_funcuse','ingredient_rank','raw_central_comp']
         ChemicalFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
                                                 model=ExtractedChemical,
@@ -205,7 +227,7 @@ def create_detail_formset(group_type):
         return (ExtractedTextForm, HnPFormSet)
 
     def four(): # for extracted_list_presence
-        detail_fields = ['extracted_cpcat','raw_cas','raw_chem_name']
+        detail_fields = ['raw_cas','raw_chem_name']
         ListPresenceFormSet = forms.inlineformset_factory(parent_model=ExtractedCPCat,
                                                 model=ExtractedListPresence,
                                                 fields=detail_fields,
@@ -220,14 +242,3 @@ def create_detail_formset(group_type):
     }
     func = dg_types.get(group_type, lambda: None)
     return func()
-    
-## This was used in data_group_detail, but works w/o the widgets, may cause prob
-# class ExtractedTextForm(forms.ModelForm):
-#     class Meta:
-#         model = ExtractedText
-#         fields = ['prod_name', 'rev_num', 'doc_date']
-#
-#         widgets = {
-#             'data_document': forms.HiddenInput(),
-#             'extraction_script': forms.HiddenInput(),
-#         }

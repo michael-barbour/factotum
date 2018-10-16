@@ -18,7 +18,7 @@ class DataDocumentDetailTest(TestCase):
                         'ExtractedTextForm must include prod_name')
         dd = DataDocument.objects.get(pk=7)
         et = ExtractedText.objects.filter(data_document=dd).get()
-        response = self.client.post(f'/datadocument/{dd.pk}/',
+        response = self.client.post(f'/save_ext/{dd.pk}/',
                                     {'prod_name': 'zzz',
                                      'rev_num': '1',
                                      'doc_date': '01/01/2018',
@@ -31,7 +31,7 @@ class DataDocumentDetailTest(TestCase):
         self.assertTrue(DocumentTypeForm().fields['document_type'],
                         'DocumentTypeForm must include document_type')
         dd = DataDocument.objects.get(pk=7)
-        response = self.client.post(f'/datadocument/{dd.pk}/',
+        response = self.client.post(f'/save_type/{dd.pk}/',
                                     {'document_type': 2})
         dd.refresh_from_db()
         self.assertEqual(dd.document_type_id, 2,

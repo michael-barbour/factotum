@@ -41,8 +41,8 @@ class ExtractedText(CommonInfo):
         '''Collect the related objects in all the Extracted... models
         '''
         # Start with the known children of the base Model: ExtractedText
-        full_chain = chain(self.practices.all(), 
-                    self.chemicals.all(), 
+        full_chain = chain(self.practices.all(),
+                    self.chemicals.all(),
                     self.uses.all()
                     )
         # Try to get all the child objects of derived (inherited) models
@@ -54,11 +54,16 @@ class ExtractedText(CommonInfo):
             full_chain = chain(full_chain, presence_chain)
 
         return full_chain
-        
 
-            
+    def pull_out_cp(self):
+        if hasattr(self, 'extractedcpcat'):
+            return self.extractedcpcat
+        else:
+            return self
 
-                
+
+
+
 
 
 

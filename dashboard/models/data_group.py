@@ -63,6 +63,10 @@ class DataGroup(CommonInfo):
     def is_functional_use(self):
         return self.type == 'FU'
 
+    @property
+    def is_chemical_presence(self):
+        return self.type == 'CP'
+
     def get_extract_models(self):
         '''returns a tuple with parent/child extract models'''
         return extract_models.get(self.type)

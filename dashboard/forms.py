@@ -5,6 +5,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from dashboard.models import *
+from dashboard.utils import get_extracted_models
 
 class DataGroupForm(forms.ModelForm):
     required_css_class = 'required' # adds to label tag
@@ -195,46 +196,32 @@ def include_extract_form(dg):
 
 
 def create_detail_formset(group_type, extra=0):
-    '''Returns the pair of formsets that will be needed based on group_typeself.
+    '''Returns the pair of formsets that will be needed based on group_type.
     .                       ('CO'),('CP'),('FU'),('HP')
     .
 
     '''
+    parent, child = get_extracted_models(group_type)
+    def make_formset(parent_model,model,fields):
+        return forms.inlineformset_factory(parent_model=parent_model,
+                                            model=model,
+                                            fields=fields,
+                                            extra=extra)
+
     def one(): # for chemicals
-        detail_fields = ['extracted_text','raw_cas','raw_chem_name',
-                        'raw_min_comp','raw_max_comp', 'unit_type','weight_fraction_type',
-                        'report_funcuse','ingredient_rank','raw_central_comp']
-        ChemicalFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
-                                                model=ExtractedChemical,
-                                                fields=detail_fields,
-                                                extra=extra)
+        ChemicalFormSet = make_formset(parent,child,child.detail_fields())
         return (ExtractedTextForm, ChemicalFormSet)
 
     def two(): # for functional_use
-        detail_fields = ['extracted_text','raw_cas',
-                            'raw_chem_name','report_funcuse']
-        FunctionalUseFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
-                                                model=ExtractedFunctionalUse,
-                                                fields=detail_fields,
-                                                extra=extra)
+        FunctionalUseFormSet = make_formset(parent,child,child.detail_fields())
         return (ExtractedTextForm, FunctionalUseFormSet)
 
     def three(): # for habits_and_practices
-        detail_fields = ['product_surveyed','mass','mass_unit','frequency',
-                        'frequency_unit','duration','duration_unit',
-                        'prevalence','notes']
-        HnPFormSet = forms.inlineformset_factory(parent_model=ExtractedText,
-                                                model=ExtractedHabitsAndPractices,
-                                                fields=detail_fields,
-                                                extra=extra)
+        HnPFormSet = make_formset(parent,child,child.detail_fields())
         return (ExtractedTextForm, HnPFormSet)
 
     def four(): # for extracted_list_presence
-        detail_fields = ['raw_cas','raw_chem_name']
-        ListPresenceFormSet = forms.inlineformset_factory(parent_model=ExtractedCPCat,
-                                                model=ExtractedListPresence,
-                                                fields=detail_fields,
-                                                extra=extra)
+        ListPresenceFormSet = make_formset(parent,child,child.detail_fields())
         return (ExtractedCPCatForm, ListPresenceFormSet)
     dg_types = {
         'CO': one,

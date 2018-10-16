@@ -12,10 +12,14 @@ def get_extracted_models(t):
     def three():
         return (ExtractedCPCat, ExtractedListPresence)
 
+    def four():
+        return (ExtractedText, ExtractedHabitsAndPractices)
+
     models = {
         'CO': one,
         'FU': two,
-        'CP': three
+        'CP': three,
+        'HP': four
     }
     func = models.get(t, lambda: None)
     return func()

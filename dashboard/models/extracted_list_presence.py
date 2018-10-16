@@ -17,6 +17,10 @@ class ExtractedListPresence(CommonInfo):
     def extracted_text(self):
         return self.extracted_cpcat.extractedtext_ptr
 
+    @classmethod
+    def detail_fields(cls):
+        return ['raw_cas','raw_chem_name']
+
     def __str__(self):
         return self.raw_chem_name
 

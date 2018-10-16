@@ -7,10 +7,9 @@ from dashboard.forms import (ExtractedTextForm, ExtractedCPCatForm,
 
 from djqscsv import render_to_csv_response
 
+from factotum.settings import EXTRA # if this goes to 0, tests will fail because of what num form we search for
 from dashboard.models import *
 
-# if this goes to 0, tests will fail because of what num form we search for
-EXTRA = 1
 
 @login_required()
 def data_document_detail(request, pk,

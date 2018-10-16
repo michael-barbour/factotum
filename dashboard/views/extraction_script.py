@@ -12,6 +12,7 @@ from django.core.files import File
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
 
+from factotum.settings import EXTRA
 from dashboard.models import *
 from dashboard.forms import QANotesForm, create_detail_formset
 
@@ -88,7 +89,7 @@ def extracted_text_qa(request, pk,
     """
     extext = get_object_or_404(ExtractedText, pk=pk)
     # The related DataDocument has the same pk as the ExtractedText object
-    datadoc = DataDocument.objects.get(pk=pk)
+    doc = DataDocument.objects.get(pk=pk)
     exscript = extext.extraction_script
     # when not coming from extraction_script page, we don't necessarily have a qa_group created
     if not extext.qa_group:
@@ -110,14 +111,15 @@ def extracted_text_qa(request, pk,
     # Create the formset factory for the extracted records
     # The model used for the formset depends on whether the
     # extracted text object matches a data document
-    ExtractedTextForm, DetailFormSet = create_detail_formset(datadoc.data_group.type)
+    ExtractedTextForm, DetailFormSet = create_detail_formset(doc.data_group.type,
+                                                                        EXTRA)
     ext_form =  ExtractedTextForm(instance=extext)
     note, created = QANotes.objects.get_or_create(extracted_text=extext)
     notesform =  QANotesForm(instance=note)
     detail_formset = DetailFormSet(instance=extext, prefix='details')
     context = {
         'extracted_text': extext,
-        'doc': datadoc,
+        'doc': doc,
         'script': exscript,
         'stats': stats,
         'nextid': nextid,

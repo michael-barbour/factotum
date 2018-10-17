@@ -4,6 +4,7 @@ from django.test import Client
 from dashboard.tests.loader import *
 from dashboard.forms import *
 from lxml import html
+from factotum.settings import EXTRA 
 
 
 @override_settings(ALLOWED_HOSTS=['testserver'])
@@ -57,36 +58,21 @@ class TestDynamicDetailFormsets(TestCase):
 
     def test_every_extractedtext(self):
         ''''Loop through all the ExtractedText objects and confirm that the new
-        create_detail_formset method returns form values that match what the old
-        method delivered
+        create_detail_formset method returns forms based on the correct models
         '''
         for et in ExtractedText.objects.all():
-            # print('Testing formset creation for ExtractedText object %s (%s) ' % (et.pk, et ) )
-            test_formset = create_detail_formset(et.data_document.data_group.type)
-            # compare to the old method
-            if (DataDocument.objects.get(id=et.data_document_id).data_group.group_type.code == 'HP'):
-                old_fs = HnPFormSet(instance=et, prefix='detail')
-                self.assertEqual(old_fs[0]['product_surveyed'].value(),
-                    test_formset[0]['product_surveyed'].value(),
-                    'The old and new methods should return the same items')
+            dd = et.data_document
+            ParentForm, ChildForm = create_detail_formset(dd.data_group.type, EXTRA)
+            extracted_text = et.pull_out_cp() #get CP if exists
+            extracted_text_form = ParentForm(instance=extracted_text)
+            child_formset = ChildForm(instance=extracted_text)
+            # Compare the model of the child formset's QuerySet to the model
+            # of the ExtractedText object's child objects
+            dd_child_model  = get_extracted_models(dd.data_group.group_type.code)[1]
+            childform_model = child_formset.__dict__.get('queryset').__dict__.get('model')
+            self.assertEqual(dd_child_model, childform_model)
 
-            if (DataDocument.objects.get(id=et.data_document_id).data_group.group_type.code == 'CO'):
-                old_fs = ChemicalFormSet(instance=et, prefix='detail')
-                self.assertEqual(old_fs[0]['raw_chem_name'].value(),
-                    test_formset[0]['raw_chem_name'].value(),
-                    'The old and new methods should return the same items')
-
-            if (DataDocument.objects.get(id=et.data_document_id).data_group.group_type.code == 'UN'):
-                # for Unknown types, the old method used the ChemicalFormset
-                old_fs = ChemicalFormSet(instance=et, prefix='detail')
-                self.assertEqual(old_fs[0]['raw_chem_name'].value(),
-                    test_formset[0]['raw_chem_name'].value(),
-                    'The old and new methods should return the same items')
-
-            if (DataDocument.objects.get(id=et.data_document_id).data_group.group_type.code == 'CP'):
-                # for Chemical Presence, there is no old form-construction method to compare to
-                self.assertTrue(len(test_formset[0]['raw_chem_name'].value()) > 0,
-                    'There should be a raw_chem_name value')
+            
 
 
         print('\nprint(some very important test output)')

@@ -26,7 +26,7 @@ class RegisterRecordsTest(TestCase):
     def tearDown(self):
         # clean up the file system by deleting the data group object
         dg = DataGroup.objects.filter(name='Walmart MSDS Test Group')
-        if dg.__len__() > 0:
+        if len(dg) > 0:
             dg[0].delete()
 
     def test_datagroup_create(self):

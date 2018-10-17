@@ -115,10 +115,8 @@
     </div>
     </div>
 
-    <!-- This code is only for rendering the Chemical Presence data group,
-    but the detail_formset can eventually return inline formsets for
-    every type of data group -->
-<form method="post" action="{% url 'save_child_form' doc.pk %}">
+
+<form method="post" action="">
     <div class="row col-sm-12">
         <h4>{{ doc.data_group.group_type }} detail</h4>
     </div>

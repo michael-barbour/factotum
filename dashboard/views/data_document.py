@@ -15,6 +15,8 @@ from dashboard.models import *
 def data_document_detail(request, pk,
                          template_name='data_document/data_document_detail.html'):
     doc = get_object_or_404(DataDocument, pk=pk, )
+    # TODO: this needs to account for the absence of an ExtractedText object
+    # https://github.com/HumanExposure/factotum/issues/470
     extracted_text = ExtractedText.objects.get(data_document=doc)
     ParentForm, ChildForm = create_detail_formset(doc.data_group.type, EXTRA)
     extracted_text = extracted_text.pull_out_cp() #get CP if exists
@@ -27,11 +29,15 @@ def data_document_detail(request, pk,
     document_type_form = DocumentTypeForm(request.POST or None, instance=doc)
     qs = DocumentType.objects.filter(group_type=doc.data_group.group_type)
     document_type_form.fields['document_type'].queryset = qs
+    if request.method== 'POST':
+        child_formset = ChildForm(request.POST, instance=extracted_text)
+        if child_formset.is_valid() and child_formset.has_changed():
+            child_formset.save()
     context = {'doc': doc,
-               'extracted_text': extracted_text,
-               'extracted_text_form': extracted_text_form,
-               'detail_formset': child_formset,
-               'document_type_form': document_type_form}
+            'extracted_text': extracted_text,
+            'extracted_text_form': extracted_text_form,
+            'detail_formset': child_formset,
+            'document_type_form': document_type_form}
     return render(request, template_name, context)
 
 @login_required()
@@ -57,9 +63,11 @@ def save_child_form(request, pk):
     doc = get_object_or_404(DataDocument, pk=pk)
     _, ChildForm = create_detail_formset(doc.data_group.type, EXTRA)
     extracted_text = doc.extractedtext.pull_out_cp()
-    ext_text_form = ChildForm(request.POST, instance=extracted_text)
-    if ext_text_form.is_valid() and ext_text_form.has_changed():
-        ext_text_form.save()
+    ext_child_form = ChildForm(request.POST, instance=extracted_text)
+    if ext_child_form.is_valid() and ext_child_form.has_changed():
+        ext_child_form.save()
+    elif not(ext_child_form.is_valid()) and ext_child_form.has_changed():
+        print('Invalid form: %s' % ext_child_form.errors )
     return redirect('data_document', pk=pk)
 
 @login_required()

@@ -25,8 +25,9 @@ class RegisterRecordsTest(TestCase):
 
     def tearDown(self):
         # clean up the file system by deleting the data group object
-        dg = DataGroup.objects.get(name='Walmart MSDS Test Group')
-        dg.delete()
+        dg = DataGroup.objects.filter(name='Walmart MSDS Test Group')
+        if dg.__len__() > 0:
+            dg[0].delete()
 
     def test_datagroup_create(self):
         csv_string = ("filename,title,document_type,url,organization\n"
@@ -127,3 +128,31 @@ class RegisterRecordsTest(TestCase):
         self.assertTrue(os.path.exists( pdf_path ),
                             "the stored file should be in MEDIA_ROOT/dg.fs_id")
         f.close()
+
+    def test_datagroup_create_dupe_filename(self):
+        csv_string = ("filename,title,document_type,url,organization\n"
+                "0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf,NUTRA NAIL,1,, \n"
+                "0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf,Body Cream,1,, \n")
+        data = io.StringIO(csv_string)
+        sample_csv = InMemoryUploadedFile(data,
+                                            field_name='csv',
+                                            name='register_records.csv',
+                                            content_type='text/csv',
+                                            size=len(csv_string),
+                                            charset='utf-8')
+        form_data= {'name': ['Walmart MSDS Test Group'],
+                    'description': ['test data group'],
+                    'group_type': ['1'],
+                    'downloaded_by': [str(User.objects.get(username='Karyn').pk)],
+                    'downloaded_at': ['08/02/2018'],
+                    'download_script': ['1'],
+                    'data_source': ['10']}
+        request = self.factory.post(path='/datagroup/new/', data=form_data)
+        request.FILES['csv'] = sample_csv
+        request.user = User.objects.get(username='Karyn')
+        request.session={}
+        request.session['datasource_title'] = 'Walmart'
+        request.session['datasource_pk'] = 10
+        resp = views.data_group_create(request=request, pk=10)
+
+        self.assertContains(resp, 'Duplicate filename found')

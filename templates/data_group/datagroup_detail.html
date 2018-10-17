@@ -103,7 +103,7 @@
                   <tr>
                       {% if doc.matched and not doc.extracted %}
                           <td>{{ doc.pk }}</td>
-                          <td>{{ doc.get_abstract_filename }}</td>
+                          <td>{{ doc.filename }}</td>
                       {% endif %}
                   </tr>
               {% endfor %}

@@ -249,15 +249,21 @@ def data_group_create(request, pk,
                 count+=1
                 doc_type = DocumentType.objects.get(pk=1)
                 dtype = line['document_type']
-                if line['filename'] == '':
+                if line['filename'] == '' :
                     errors.append([count,"Filename can't be empty!"])
+                    continue
+                if len(line['filename'])>255:
+                    errors.append([count,"Filename too long!"])
+                    continue
                 if line['filename'] in filenames:
                     errors.append([count, "Duplicate filename found in csv"])
+                    continue
                 if line['title'] == '': # updates title in line object
                     line['title'] = line['filename'].split('.')[0]
                 if dtype == '':
                     errors.append([count,
                                     "'document_type' field can't be empty"])
+                    continue
                 if DocumentType.objects.filter(pk=int(dtype)).exists():
                     doc_type = DocumentType.objects.get(pk=int(dtype))
                     if doc_type.group_type != datagroup.group_type:

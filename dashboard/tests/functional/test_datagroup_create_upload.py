@@ -30,9 +30,10 @@ class RegisterRecordsTest(TestCase):
             dg[0].delete()
 
     def test_datagroup_create(self):
+        long_fn = 'a filename that is too long ' * 10
         csv_string = ("filename,title,document_type,url,organization\n"
                 "0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf,NUTRA NAIL,1,, \n"
-                "0c68ab16-2065-4d9b-a8f2-e428eb192465.pdf,Body Cream,1,, \n")
+                f"{long_fn},Body Cream,1,, \n")
         data = io.StringIO(csv_string)
         sample_csv = InMemoryUploadedFile(data,
                                             field_name='csv',
@@ -54,12 +55,36 @@ class RegisterRecordsTest(TestCase):
         request.session['datasource_title'] = 'Walmart'
         request.session['datasource_pk'] = 10
         resp = views.data_group_create(request=request, pk=10)
-        dg = DataGroup.objects.get(name='Walmart MSDS Test Group')
+        # print(resp.content)
+        dg_exists = DataGroup.objects.filter(
+                                        name='Walmart MSDS Test Group').exists()
+        self.assertContains(resp,'Filename too long')
+        self.assertFalse(dg_exists,)
         # print(dg.__dict__)
+
+        csv_string = ("filename,title,document_type,url,organization\n"
+                "0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf,NUTRA NAIL,1,, \n"
+                "0c68ab16-2065-4d9b-a8f2-e428eb192465.pdf,Body Cream,1,, \n")
+        data = io.StringIO(csv_string)
+        sample_csv = InMemoryUploadedFile(data,
+                                            field_name='csv',
+                                            name='register_records.csv',
+                                            content_type='text/csv',
+                                            size=len(csv_string),
+                                            charset='utf-8')
+        request = self.factory.post(path='/datagroup/new', data=form_data)
+        request.FILES['csv'] = sample_csv
+        request.user = User.objects.get(username='Karyn')
+        request.session={}
+        request.session['datasource_title'] = 'Walmart'
+        request.session['datasource_pk'] = 10
+        resp = views.data_group_create(request=request, pk=10)
+
 
         self.assertEqual(resp.status_code,302,
                         "Should be redirecting")
 
+        dg = DataGroup.objects.get(name='Walmart MSDS Test Group')
 
 
         self.assertEqual(f'/datagroup/{dg.pk}/', resp.url,

@@ -3,6 +3,8 @@
 {% load humanize %}
 {% load widget_tweaks %}
 
+{% block title %}Data Doc {{ doc.id }}: {{ doc.title }}{% endblock %}
+
 {% block content %}
     <h1 class="col-12">
         <span name="title">{{ doc.title }}</span>

@@ -69,8 +69,6 @@ urlpatterns = [
                                             name='save_doc_form'),
     path('save_ext/<int:pk>/', views.save_ext_form,
                                             name='save_ext_form'),
-    path('save_child/<int:pk>/', views.save_child_form,
-                                            name='save_child_form'),
     path('search/', include('haystack.urls')),
     path('find/', views.search.FacetedSearchView.as_view(),
                                             name='haystack_search'),

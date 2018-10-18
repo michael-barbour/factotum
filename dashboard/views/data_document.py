@@ -21,10 +21,6 @@ def data_document_detail(request, pk,
     extracted_text = extracted_text.pull_out_cp() #get CP if exists
     extracted_text_form = ParentForm(instance=extracted_text)
     child_formset = ChildForm(instance=extracted_text)
-    colors = ['#d6d6a6','#dfcaa9','#d8e5bf'] * 47
-    color = (hex for hex in colors)
-    for form in child_formset.forms:
-        form.color = next(color)
     document_type_form = DocumentTypeForm(request.POST or None, instance=doc)
     qs = DocumentType.objects.filter(group_type=doc.data_group.group_type)
     document_type_form.fields['document_type'].queryset = qs
@@ -32,6 +28,11 @@ def data_document_detail(request, pk,
         child_formset = ChildForm(request.POST, instance=extracted_text)
         if child_formset.is_valid() and child_formset.has_changed():
             child_formset.save()
+            child_formset = ChildForm(instance=extracted_text) # load extra form
+    colors = ['#d6d6a6','#dfcaa9','#d8e5bf'] * 47
+    color = (hex for hex in colors)
+    for form in child_formset.forms:
+        form.color = next(color)
     context = {'doc': doc,
             'extracted_text': extracted_text,
             'extracted_text_form': extracted_text_form,
@@ -55,18 +56,6 @@ def save_ext_form(request, pk):
     ext_text_form = ExtractedTextForm(request.POST, instance=extracted_text)
     if ext_text_form.is_valid() and ext_text_form.has_changed():
         ext_text_form.save()
-    return redirect('data_document', pk=pk)
-
-@login_required()
-def save_child_form(request, pk):
-    doc = get_object_or_404(DataDocument, pk=pk)
-    _, ChildForm = create_detail_formset(doc.data_group.type, EXTRA)
-    extracted_text = doc.extractedtext.pull_out_cp()
-    ext_child_form = ChildForm(request.POST, instance=extracted_text)
-    if ext_child_form.is_valid() and ext_child_form.has_changed():
-        ext_child_form.save()
-    elif not(ext_child_form.is_valid()) and ext_child_form.has_changed():
-        print('Invalid form: %s' % ext_child_form.errors )
     return redirect('data_document', pk=pk)
 
 @login_required()

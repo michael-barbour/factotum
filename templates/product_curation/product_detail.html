@@ -4,9 +4,8 @@
 
 {% block title %}Product {{ product.id }}: {{ product.title }}{% endblock %}
 
-
 {% block content %}
-    <h1 class="col-12">
+    <h1>
         <span name="title">{{ product.title }}</span>
         <div class="btn-group float-lg-right" role="group" aria-label="Manage Product">
             <a class="btn btn-success btn-sm" role="button" title="edit" href="{% url 'product_edit' pk=product.pk %}">
@@ -16,13 +15,13 @@
                 <span class="oi oi-trash"></span> </a>
         </div>
     </h1>
-    <h2 class="col-12">
+    <h2>
     <span name="title">{{ product.upc }}</span>
     </h2>
     <br>
     <div class="row">
         <div class="col-3">
-                <h2 class="col-12">
+                <h4>
                     <span>PUC</span>
                     <div class="btn-group float-lg-right" role="group" aria-label="Manage PUC">
                         {% if puc.id %}
@@ -37,13 +36,26 @@
                                href="{% url 'product_puc' pk=product.pk %}">Assign PUC</a>
                         {%  endif %}
                     </div>
-                </h2>
+                </h4>
                 <div class="form-group ">
                     {{  puc|default:"PUC not yet assigned" }}
                 </div>
-            <br><br>
-{#        Future document functionality. . . . #}
-{#            <h2 class="col-12">#}
+            {% if puc.id %}
+            <h4>
+                <span name="PUCTags" class="disabled">PUC Tags</span>
+            </h4>
+            <div class="form-group ">
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    {{ tagform }}
+                    <div class="btn-group float-lg-right" role="group">
+                        <button type="submit" class="btn btn-success">Submit</button>
+                    </div>
+                </form>
+            </div>
+            {%  endif %}
+{#        Future document functionality - do not delete. . . . #}
+{#            <h2>#}
 {#                <span name="Documents" class="disabled">Documents</span>#}
 {#                <div class="btn-group float-right" role="group" aria-label="Manage Documents">#}
 {#                    <a class="btn btn-success disabled btn-sm" role="button" alt="Not yet enabled" title="Add Documents"#}
@@ -53,7 +65,7 @@
 {#            </h2>#}
         </div>
         <div class="col-6">
-            {#        Future tabbed functionality. . . . #}
+            {#        Future tabbed functionality - do not delete. . . . #}
 {#            <ul class="nav nav-tabs nav-justified" role="tablist">#}
 {#                <li class="active"> <a data-toggle="tab" href="#chemical_comp">#}
 {#                    Chemical Composition#}
@@ -100,4 +112,21 @@
             {{ product.short_description|default:"" }}
         </div>
     </div>
+{% endblock %}
+
+{% block css %}
+    {{ tagform.media.css }}
+    <style>
+        .taggit-labels.taggit-list .taggit-tag.selected {
+            background-color: #0071bc;
+            color: #FFFFFF;
+            border-color: #0071bc;
+        }
+    </style>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        $('#id_tags').addClass('taggit-labels taggit-list')
+    </script>
+    {{ tagform.media.js }}
 {% endblock %}

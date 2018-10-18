@@ -14,34 +14,32 @@ class TestQaPage(TestCase):
 
     def setUp(self):
         self.factory = RequestFactory()
-        self.client.login(username='karyn', password='specialP@55word')
+        self.client.login(username='Karyn', password='specialP@55word')
 
 
     def test_qa_begin(self):
         """
         Check that starting the QA process flips the variable on the Script
         """
-        self.assertTrue( not Script.objects.get(pk=5).qa_begun, 
-        'The Script should have qa_begun of False at the beginning')
-        response = self.client.get('/qa/extractionscript/5', follow=True)
-        self.assertTrue(Script.objects.get(pk=5).qa_begun, 
-        'qa_begun should now be true')
-        #self.assertIn(b'<title>factotum</title>', response.content)
-        
+        self.assertFalse(Script.objects.get(pk=5).qa_begun,
+                    'The Script should have qa_begun of False at the beginning')
+        response = self.client.get('/qa/extractionscript/5/')
+        self.assertTrue(Script.objects.get(pk=5).qa_begun,
+                    'qa_begun should now be true')
 
     def test_approval(self):
         # Open the Script page to create a QA Group
         response = self.client.get('/qa/extractionscript/5', follow=True)
         # Follow the first approval link
         response = self.client.get('/qa/extractedtext/7', follow=True)
-        print(response.context['extracted_text'])
+        # print(response.context['extracted_text'])
 
-        
+
     def test_hidden_fields(self):
         '''ExtractionScript 15 includes a functional use data group with pk = 5.
         Its QA page should hide the composition fields '''
         # Create the QA group by opening the Script's page
-        response = self.client.get('/qa/extractionscript/15', follow=True)
+        response = self.client.get('/qa/extractionscript/15/', follow=True)
         # Open the DataGroup's first QA approval link
         response = self.client.get('/qa/extractedtext/5/', follow=True)
         # A raw_cas field should be in the page
@@ -57,19 +55,3 @@ class TestQaPage(TestCase):
         response = self.client.get('/qa/extractedtext/7/', follow=True)
         # This page should include a unit_type input form
         self.assertIn(b'details-1-unit_type', response.content)
-
-        
-
-
-
-
-        
-
-
-
-
-    
-
-
-
-

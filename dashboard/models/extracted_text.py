@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django import forms
 from .data_document import DataDocument
 from .script import Script
-
+from itertools import chain
 
 class ExtractedText(CommonInfo):
     data_document = models.OneToOneField(DataDocument,on_delete=models.CASCADE,
@@ -37,12 +37,33 @@ class ExtractedText(CommonInfo):
             nextid = 0
         return nextid
 
-    def clean(self):
-        # print('cleaning ExtractedText object in the model')
-        if self.doc_date:
-            if len(self.doc_date) > 25:
-                raise ValidationError(
-                            {'doc_date': "Date format is the wrong length."})
+    def fetch_extracted_records(self):
+        '''Collect the related objects in all the Extracted... models
+        '''
+        # Start with the known children of the base Model: ExtractedText
+        full_chain = chain(self.practices.all(),
+                    self.chemicals.all(),
+                    self.uses.all()
+                    )
+        # Try to get all the child objects of derived (inherited) models
+
+        # ExtractedCPCat has related ExtractedListPresence objects connected
+        # by the .presence relation
+        if hasattr(self, 'extractedcpcat'):
+            presence_chain = self.extractedcpcat.presence.all()
+            full_chain = chain(full_chain, presence_chain)
+
+        return full_chain
+
+    def pull_out_cp(self):
+        if hasattr(self, 'extractedcpcat'):
+            return self.extractedcpcat
+        else:
+            return self
+
+
+
+
 
 
 

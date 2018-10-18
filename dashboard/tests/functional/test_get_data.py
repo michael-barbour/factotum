@@ -5,7 +5,7 @@ from django.test.client import Client
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from dashboard.models import PUC, Product, ProductToPUC, ProductDocument, DSSToxSubstance
-from dashboard.views.get_data import * 
+from dashboard.views.get_data import *
 from django.test import TestCase
 from django.test.client import Client
 
@@ -58,7 +58,7 @@ class TestGetData(TestCase):
 
         ppuc = ProductToPUC.objects.create(product=Product.objects.get(pk=pid),
                                         PUC=puc,
-                                        puc_assigned_usr=User.objects.get(username='karyn'))
+                                        puc_assigned_usr=User.objects.get(username='Karyn'))
         ppuc.refresh_from_db()
         stats = stats_by_dtxsids(dtxs)
         # select out the stats for one DTXSID, ethylparaben
@@ -71,7 +71,7 @@ class TestGetData(TestCase):
         stats = stats_by_dtxsids(dtxs)
         for e in stats:
             if e['sid'] == 'DTXSID9022528':
-               ethylparaben_stats = e 
+               ethylparaben_stats = e
 
         self.assertEqual(2, ethylparaben_stats['dds_n'], 'There should be 2 datadocuments associated with ethylaraben')
         # change the number of related data documents by deleting one
@@ -85,7 +85,7 @@ class TestGetData(TestCase):
         stats = stats_by_dtxsids(dtxs)
         for e in stats:
             if e['sid'] == 'DTXSID9022528':
-               ethylparaben_stats = e 
+               ethylparaben_stats = e
 
         self.assertEqual(1, ethylparaben_stats['dds_n'], 'There should now be 1 datadocument associated with ethylaraben')
 
@@ -95,7 +95,7 @@ class TestGetData(TestCase):
         stats = stats_by_dtxsids(dtxs)
         for e in stats:
             if e['sid'] == 'DTXSID9022528':
-               ethylparaben_stats = e 
+               ethylparaben_stats = e
 
         self.assertEqual(1, ethylparaben_stats['dds_wf_n'], 'There should be 1 extracted chemical \
         with weight fraction data associated with ethylaraben')
@@ -106,12 +106,12 @@ class TestGetData(TestCase):
         stats = stats_by_dtxsids(dtxs)
         for e in stats:
             if e['sid'] == 'DTXSID9022528':
-               ethylparaben_stats = e 
+               ethylparaben_stats = e
 
         self.assertEqual(1, ethylparaben_stats['dds_wf_n'], 'There should be 2 extracted chemicals \
         with weight fraction data associated with ethylaraben')
-        
-        
+
+
     def test_dtxsid_products_n(self):
         dtxs =["DTXSID9022528", "DTXSID1020273","DTXSID6026296","DTXSID2021781"]
         # Functional test: the stats calculation
@@ -119,7 +119,7 @@ class TestGetData(TestCase):
 
         for e in stats:
             if e['sid'] == 'DTXSID9022528':
-               ethylparaben_stats = e 
+               ethylparaben_stats = e
 
         self.assertEqual(0, ethylparaben_stats['products_n'], 'There should be 0 products \
         associated with ethylparaben')
@@ -140,7 +140,7 @@ class TestGetData(TestCase):
         stats = stats_by_dtxsids(dtxs)
         for e in stats:
             if e['sid'] == 'DTXSID9022528':
-               ethylparaben_stats = e 
+               ethylparaben_stats = e
         self.assertEqual(1, ethylparaben_stats['products_n'], 'There should now be 1 product \
         associated with ethylparaben')
 
@@ -158,5 +158,3 @@ class TestGetData(TestCase):
         response = self.client.get('/get_data/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Download PUCs')
-
-

@@ -1,33 +1,12 @@
 from datetime import datetime
 
-from django import forms
-from django.forms import inlineformset_factory
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 
+from dashboard.forms import DataSourceForm, PriorityForm
 from dashboard.models import DataSource, DataGroup, DataDocument
 from .data_group import DataGroupForm
 
-
-class DataSourceForm(forms.ModelForm):
-    required_css_class = 'required'
-    class Meta:
-        model = DataSource
-        fields = ['title', 'url', 'estimated_records', 'state', 'priority',
-                  'description']
-
-
-class PriorityForm(forms.ModelForm):
-    class Meta:
-        model = DataSource
-        fields = ['priority']
-
-    def __init__(self, *args, **kwargs):
-        super(PriorityForm, self).__init__(*args, **kwargs)
-        self.fields['priority'].label = ''
-        self.fields['priority'].widget.attrs.update({
-            'onchange': 'form.submit();'
-            })
 
 @login_required()
 def data_source_list(request, template_name='data_source/datasource_list.html'):
@@ -69,9 +48,9 @@ def data_source_detail(request, pk,
             datasource.priority = priority
             datasource.save()
     datagroup_list = DataGroup.objects.filter(data_source=pk)
-    context = 	{'object': 			datasource,
-                'datagroup_list':	datagroup_list,
-                'form': 			form}
+    context =     {'object':             datasource,
+                'datagroup_list':    datagroup_list,
+                'form':             form}
     return render(request, template_name, context)
 
 
@@ -91,10 +70,11 @@ def data_source_update(request, pk, template_name=('data_source/'
     datasource = get_object_or_404(DataSource, pk=pk)
     form = DataSourceForm(request.POST or None, instance=datasource)
     if form.is_valid():
-        form.save()
-        return redirect('data_source_list')
+        if form.has_changed():
+            form.save()
+        return redirect('data_source_detail', pk=pk)
+    form.referer = request.META.get('HTTP_REFERER', None)
     return render(request, template_name, {'form': form})
-
 
 @login_required()
 def data_source_delete(request, pk,

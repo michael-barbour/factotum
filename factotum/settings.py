@@ -128,3 +128,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 HAYSTACK_CONN = 'default'
 
 TAGGIT_CASE_INSENSITIVE = True
+
+EXTRA = 1

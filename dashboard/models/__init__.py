@@ -9,9 +9,11 @@ from .product import Product
 from .source_category import SourceCategory
 from .product_document import ProductDocument
 from .extracted_text import ExtractedText
+from .extracted_cpcat import ExtractedCPCat
 from .extracted_chemical import ExtractedChemical
 from .extracted_functional_use import ExtractedFunctionalUse
 from .extracted_habits_and_practices import ExtractedHabitsAndPractices
+from .extracted_list_presence import ExtractedListPresence
 from .script import Script
 from .dsstox_substance import DSSToxSubstance
 from .qa_group import QAGroup

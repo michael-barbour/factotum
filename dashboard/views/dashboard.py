@@ -1,13 +1,13 @@
 import csv
 import datetime
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
-from django.db.models import Count, F, DateField, DateTimeField
-from dashboard.models import (DataGroup, DataDocument, DataSource, Product,
-                                                            ProductToPUC, PUC)
 from dateutil.relativedelta import relativedelta
+
+from django.http import HttpResponse
+from django.shortcuts import render
+from django.db.models import Count, F, DateField, DateTimeField
 from django.db.models.functions import Trunc
+
+from dashboard.models import *
 
 current_date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d')
 chart_start_datetime = datetime.datetime(datetime.datetime.now().year - 1, datetime.datetime.now().month + 1, 1)
@@ -25,6 +25,7 @@ def index(request):
     stats['datadocument_count_by_month'] = datadocument_count_by_month()
 
     stats['product_count'] = Product.objects.count()
+    stats['chemical_count'] = ExtractedChemical.objects.count()
     #TODO: This may need to be updated later to handle both manual and automatically assigned PUCs
     stats['product_with_puc_count'] = ProductToPUC.objects.filter(classification_method='MA').count()
     stats['product_with_puc_count_by_month'] = product_with_puc_count_by_month()

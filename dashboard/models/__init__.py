@@ -8,7 +8,6 @@ from .ingredient import Ingredient
 from .product import Product
 from .source_category import SourceCategory
 from .product_document import ProductDocument
-from .PUC import PUC
 from .extracted_text import ExtractedText
 from .extracted_chemical import ExtractedChemical
 from .extracted_functional_use import ExtractedFunctionalUse
@@ -18,8 +17,10 @@ from .dsstox_substance import DSSToxSubstance
 from .qa_group import QAGroup
 from .unit_type import UnitType
 from .weight_fraction_type import WeightFractionType
-from .product_attribute import ProductAttribute
-from .product_to_attribute import ProductToAttribute
+from .PUC import PUC
+from .PUC_tag import PUCTag
+from .PUC_to_tag import PUCToTag
+from .product_to_tag import ProductToTag
 from .product_to_puc import ProductToPUC
 from .extracted_habits_and_practices_to_puc import ExtractedHabitsAndPracticesToPUC
 from .qa_notes import QANotes

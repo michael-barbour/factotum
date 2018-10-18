@@ -71,7 +71,7 @@ def load_model_objects():
                                             ingredient = ing)
     dsstox = DSSToxSubstance.objects.create(extracted_chemical=ec,
                                             true_chemname='Test Chem Name')
-    pa = ProductAttribute.objects.create(title="Test Product Attribute")
+    pa = PUCTag.objects.create(title="Test PUC Attribute")
     pd = ProductDocument.objects.create(product=p, document=doc)
     ehp = ExtractedHabitsAndPractices.objects.create(extracted_text=extext,
                                                      product_surveyed='Test Product Surveyed',

@@ -1,48 +1,18 @@
 from dal import autocomplete
+from urllib import parse
 from datetime import datetime
+
+from django.urls import resolve
+from django.utils import timezone
 from django.shortcuts import redirect
 from django.db.models import Count, Q
-
-from django.utils import timezone
-from django import forms
-from django.forms import ModelForm, ModelChoiceField
 from django.shortcuts import render, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.urls import resolve
-from urllib import parse
-from dashboard.models import *
-from dashboard.forms import ProductPUCForm
-
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.decorators import login_required
 
-class ProductLinkForm(ModelForm):
-    required_css_class = 'required' # adds to label tag
-    document_type = forms.ModelChoiceField(
-        queryset=DocumentType.objects.all(),
-        label="Data Document Type",
-        required=True)
-
-    class Meta:
-        model = Product
-        fields = ['title', 'manufacturer', 'brand_name', 'upc', 'size', 'color']
-
-class ProductForm(ModelForm):
-    required_css_class = 'required' # adds to label tag
-
-    class Meta:
-        model = Product
-        fields = ['title', 'manufacturer', 'brand_name', 'size', 'color', 'model_number', 'short_description',
-                  'long_description']
-
-class ProductViewForm(ProductForm):
-    class Meta(ProductForm.Meta):
-        exclude = ('title', 'long_description',)
-
-    def __init__(self, *args, **kwargs):
-        super(ProductForm, self).__init__(*args, **kwargs)
-        for f in self.fields:
-            self.fields[f].disabled = True
-
+from dashboard.models import *
+from dashboard.forms import (ProductPUCForm, ProductViewForm, ProductLinkForm,
+                                                                    ProductForm)
 
 
 @login_required()

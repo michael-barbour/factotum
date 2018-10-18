@@ -70,10 +70,10 @@
             <abbr title="extract script">Extraction Script URL</abbr>
         </dt>
         <dd class="col-sm-9">
-            {% with all_documents|first as image %}
-                {% if image.extracted %}
-                <a href="{{ image.extractedtext.extraction_script.url }}" target="_blank">
-                    {{ image.extractedtext.extraction_script }}
+            {% with all_documents|first as document %}
+                {% if document.extracted %}
+                <a href="{{ document.extractedtext.extraction_script.url }}" target="_blank">
+                    {{ document.extractedtext.extraction_script }}
                 </a>
                 {% else %}
                 No extraction script associated.

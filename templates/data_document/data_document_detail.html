@@ -130,15 +130,17 @@
             <div class="card" style="background-color:{{ form.color }};" >
                 <div class="card-body">
                     {% if form.errors %}
-                        <div class="form-group has-error">
-                            <span class="help-block">{{ form.errors }}</span>
+                        <div class="form-group alert alert-danger" role="alert">
+                            <span class="alert-danger">{{ form.errors }}</span>
                         </div>
                     {% endif %}
                     {{ form.id.as_hidden }}
                     <dl class="row col-sm-12">
                     {% for field in form.visible_fields %}
                         <dt class="col-sm-6">{{ field.label_tag }}</dt>
-                        <dd  class="col-sm-6 small" style="max-width: 100%;max-height: 100%;">{{ field}}</dd>
+                        <dd  class="col-sm-6 small form-group {%if field.errors %}alert-danger{%endif%}" style="max-width: 100%;max-height: 100%;">
+                            {{ field}}
+                        </dd>
                     {% endfor %}
                     </dl>
                 </div>

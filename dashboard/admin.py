@@ -1,10 +1,8 @@
 from django.contrib import admin
 from dashboard.models import *
 from django import forms
-from django.db import models
-from taggit.forms import TagField
 from taggit_labels.widgets import LabelWidget
-
+from dashboard.signals import *
 
 class PUCAdminForm(forms.ModelForm):
     class Meta:

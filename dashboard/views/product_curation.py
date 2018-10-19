@@ -1,21 +1,20 @@
-from dal import autocomplete
 from urllib import parse
-from datetime import datetime
 
 from django.urls import resolve
 from django.utils import timezone
 from django.shortcuts import redirect
 from django.db.models import Count, Q
 from django.shortcuts import render, get_object_or_404
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 
+from django.forms import ModelForm
 from dashboard.models import *
-from dashboard.forms import ProductPUCForm
+from dashboard.forms import (ProductPUCForm, ProductLinkForm,
+                             ProductForm)
 
 from taggit.forms import TagField
 from taggit_labels.widgets import LabelWidget
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import Paginator
 
 class FilteredLabelWidget(LabelWidget):
     # overriding django-taggit-label function to display subset of tags
@@ -25,13 +24,6 @@ class FilteredLabelWidget(LabelWidget):
         return [(tag.name, 'selected taggit-tag' if tag.name in tags else 'taggit-tag')
                 for tag in self.model.objects.filter(puc = puc)]
 
-class ProductForm(ModelForm):
-    required_css_class = 'required' # adds to label tag
-    class Meta:
-        model = Product
-        fields = ['title', 'manufacturer', 'brand_name', 'size', 'color', 'model_number', 'short_description',
-                  'long_description']
-
 class ProductTagForm(ModelForm):
     tags = TagField(required=False, widget=FilteredLabelWidget(model=PUCTag))
     class Meta:
@@ -40,19 +32,6 @@ class ProductTagForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(ProductTagForm, self).__init__(*args, **kwargs)
         self.fields['tags'].widget.form_instance = self
-
-class ProductLinkForm(ModelForm):
-    required_css_class = 'required' # adds to label tag
-    document_type = forms.ModelChoiceField(
-        queryset=DocumentType.objects.all(),
-        label="Data Document Type",
-        required=True)
-    class Meta:
-        model = Product
-        fields = ['title', 'manufacturer', 'brand_name', 'upc', 'size', 'color']
-
-from dashboard.forms import (ProductPUCForm, ProductViewForm, ProductLinkForm,
-                                                                    ProductForm)
 
 
 @login_required()
@@ -150,16 +129,8 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
         puc = PUC.objects.get(id=form['puc'].value())
         producttopuc = ProductToPUC.objects.filter(product=p, classification_method='MA')
         if producttopuc.exists():
-            producttopuc_obj = producttopuc.first()
-            producttopuc_obj.PUC = puc # This assignment doesn't appear to be actually happening. . .
-            producttopuc_obj.puc_assigned_time = timezone.now()
-            producttopuc_obj.puc_assigned_usr = request.user
-            # print('Updated ProductToPUC values:')
-            # for i in producttopuc_obj._meta.get_fields():
-            #     print(str(i.name) + ': ' + str(getattr(producttopuc_obj, str(i.name))))
-            producttopuc_obj.save()
-        else:
-            ProductToPUC.objects.create(PUC=puc, product=p, classification_method='MA',
+            producttopuc.delete()
+        ProductToPUC.objects.create(PUC=puc, product=p, classification_method='MA',
                                     puc_assigned_time=timezone.now(), puc_assigned_usr=request.user)
         referer = request.POST.get('referer') if request.POST.get('referer') else 'category_assignment'
         pk = p.id if referer == 'product_detail' else p.data_source.id

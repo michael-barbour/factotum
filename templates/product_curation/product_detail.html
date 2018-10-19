@@ -45,13 +45,17 @@
                 <span name="PUCTags" class="disabled">PUC Tags</span>
             </h4>
             <div class="form-group ">
-                <form method="post" enctype="multipart/form-data" novalidate>
-                    {% csrf_token %}
-                    {{ tagform }}
-                    <div class="btn-group float-lg-right" role="group">
-                        <button type="submit" class="btn btn-success">Submit</button>
-                    </div>
-                </form>
+                {% if product.get_puc_tag_list|length > 1 %}
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        {{ tagform }}
+                        <div class="btn-group float-lg-right" role="group">
+                            <button type="submit" class="btn btn-success">Submit</button>
+                        </div>
+                    </form>
+                {%  else %}
+                    No tags are associated with this PUC
+                {% endif %}
             </div>
             {%  endif %}
 {#        Future document functionality - do not delete. . . . #}

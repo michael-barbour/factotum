@@ -15,5 +15,5 @@ elasticsearch>=2.0.0,<3.0.0
 django-bootstrap-datepicker-plus==3.0.5
 selenium>=3.11.0
 lxml>=4.2.2
-django-taggit==0.23.0
-django-taggit-labels==0.5.1
+django-taggit>=0.23.0
+django-taggit-labels

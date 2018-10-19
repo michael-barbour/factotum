@@ -74,3 +74,8 @@ class DashboardTest(TestCase):
         response_html = html.fromstring(response)
         self.assertTrue(response_html.xpath('//*[@id="chemical_search"]'),
                       'The chemical search input should appear on the dashboard')
+
+    def test_chemical_card(self): #this can be joined w/ the one being merged in
+        response = self.client.get('/').content.decode('utf8')
+        self.assertIn('DSS Tox Chemicals', response,
+                                    'Where is the DSS Tox Chemicals card???')

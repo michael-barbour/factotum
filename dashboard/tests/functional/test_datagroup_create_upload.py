@@ -25,9 +25,10 @@ class RegisterRecordsTest(TestCase):
 
     def tearDown(self):
         # clean up the file system by deleting the data group object
-        dg = DataGroup.objects.filter(name='Walmart MSDS Test Group')
-        if len(dg) > 0:
-            dg[0].delete()
+        try:
+            DataGroup.objects.get(name='Walmart MSDS Test Group').delete()
+        except:
+            print("An exception occurred deleting the datagroup")
 
     def test_datagroup_create(self):
         long_fn = 'a filename that is too long ' * 10

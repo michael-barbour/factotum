@@ -43,9 +43,9 @@ class TestQaPage(TestCase):
         # Open the DataGroup's first QA approval link
         response = self.client.get('/qa/extractedtext/5/', follow=True)
         # A raw_cas field should be in the page
-        self.assertIn(b'<input type="text" name="details-1-raw_cas"', response.content)
+        self.assertIn(b'<input type="text" name="uses-1-raw_cas"', response.content)
         # There should not be any unit_type field in the functional use QA display
-        self.assertNotIn(b'<input type="text" name="details-1-unit_type"', response.content)
+        self.assertNotIn(b'<input type="text" name="uses-1-unit_type"', response.content)
         # The values shown should match the functional use record, not the chemical record
         self.assertIn(b'Functional Use Chem1', response.content)
 
@@ -54,4 +54,4 @@ class TestQaPage(TestCase):
         # Open the QA page for a non-FunctionalUse document
         response = self.client.get('/qa/extractedtext/7/', follow=True)
         # This page should include a unit_type input form
-        self.assertIn(b'details-1-unit_type', response.content)
+        self.assertIn(b'chemicals-1-unit_type', response.content)

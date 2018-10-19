@@ -9,7 +9,7 @@ import taggit.managers
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dashboard', '0067_auto_20181004_1146'),
+        ('dashboard', '0067_auto_20181019_1406'),
     ]
 
     operations = [

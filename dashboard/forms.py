@@ -203,8 +203,6 @@ def create_detail_formset(group_type, extra=0):
     
     def one(): # for chemicals
         ChemicalFormSet = make_formset(parent,child,child.detail_fields())
-        print('ChemicalFormSet:')
-        print(ChemicalFormSet.__dict__)
         return (ExtractedTextForm, ChemicalFormSet)
 
     def two(): # for functional_use

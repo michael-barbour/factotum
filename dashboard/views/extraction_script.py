@@ -172,8 +172,6 @@ def extracted_text_qa(request, pk,
 
         notesform = QANotesForm(request.POST, instance=note)
         if detail_formset.has_changed() or ext_form.has_changed():
-            # This needs to account for either ExtractedText or ExtractedCPCat 
-            print(ext_form.__dict__)
             if detail_formset.is_valid() and ext_form.is_valid():
                 detail_formset.save()
                 ext_form.save()

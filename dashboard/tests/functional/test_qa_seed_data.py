@@ -1,16 +1,11 @@
 from django.test import Client
+from dashboard.tests.loader import *
 from django.test import TestCase, override_settings, RequestFactory
 from dashboard.models import DataDocument, Script, ExtractedText, ExtractedChemical, QAGroup
 
 @override_settings(ALLOWED_HOSTS=['testserver'])
 class TestQaPage(TestCase):
-    fixtures = ['00_superuser.yaml','01_lookups.yaml',
-    '02_datasource.yaml','03_datagroup.yaml',
-    '04_PUC.yaml','05_product.yaml',
-    '06_datadocument.yaml','07_script.yaml',
-    '08_extractedtext.yaml','09_productdocument.yaml',
-    '10_extractedchemical.yaml', '11_dsstoxsubstance.yaml',
-    '15_extractedfunctionaluse.yaml']
+    fixtures = fixtures_standard
 
     def setUp(self):
         self.factory = RequestFactory()
@@ -34,6 +29,15 @@ class TestQaPage(TestCase):
         response = self.client.get('/qa/extractedtext/7', follow=True)
         # print(response.context['extracted_text'])
 
+    def test_chemical_presence_formset(self):
+        # Open the Script page to create a QA Group
+        response = self.client.get('/qa/extractionscript/11', follow=True)
+        # Follow the first approval link
+        response = self.client.get('/qa/extractedtext/254781', follow=True)
+        self.assertIn(b'<input type="text" name="presence-0-raw_cas" value="0000064-17-5"', response.content)
+        self.assertIn(b'<input type="text" name="presence-0-raw_chem_name" value="sd alcohol 40-b (ethanol)"', response.content)
+        # Check for the presence of the new Chemical Presence-specific class tags
+        self.assertIn(b'class="detail-control form-control CP"', response.content)
 
     def test_hidden_fields(self):
         '''ExtractionScript 15 includes a functional use data group with pk = 5.

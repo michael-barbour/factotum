@@ -17,7 +17,10 @@ from factotum.settings import EXTRA
 from dashboard.models import *
 from dashboard.utils import get_extracted_models
 from dashboard.forms import (BaseExtractedDetailFormSet, ExtractedTextForm,
-                                                                    QANotesForm)
+                            create_detail_formset,   QANotesForm)
+
+
+from factotum.settings import EXTRA # if this goes to 0, tests will fail because of what num form we search for
 
 
 @login_required()
@@ -121,9 +124,21 @@ def extracted_text_qa(request, pk,
                                         formset=BaseExtractedDetailFormSet,
                                         fields=detail_model.detail_fields(),
                                                 extra=1)
+    
+    ParentForm, ChildForm = create_detail_formset(doc.data_group.type, EXTRA)
+    extracted_text = extext.pull_out_cp() #get CP if exists
+    ext_form = ParentForm(instance=extext)
+    detail_formset = ChildForm(instance=extext)
+    # Add CSS selector classes to each form
+    for form in detail_formset:
+        for field in form.fields:
+            form.fields[field].widget.attrs.update(
+                {'class': f'detail-control form-control %s' % doc.data_group.type}
+                )
+
     note, created = QANotes.objects.get_or_create(extracted_text=extext)
     notesform =  QANotesForm(instance=note)
-    detail_formset = DetailFormSet(instance=extext, prefix='details')
+
     context = {
         'extracted_text': extext,
         'doc': doc,

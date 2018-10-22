@@ -14,7 +14,8 @@ class PUC(CommonInfo):
     extracted_habits_and_practices = models.ManyToManyField('dashboard.ExtractedHabitsAndPractices',
                                                             through='dashboard.ExtractedHabitsAndPracticesToPUC')
     tags = TaggableManager(through='dashboard.PUCToTag',
-                           to='dashboard.PUCTag')
+                           to='dashboard.PUCTag',
+                           help_text='A set of PUC Tags applicable to this PUC')
 
     class Meta:
         ordering = ['gen_cat', 'prod_fam', 'prod_type']

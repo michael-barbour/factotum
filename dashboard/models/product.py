@@ -11,7 +11,8 @@ class Product(CommonInfo):
     documents = models.ManyToManyField(through='dashboard.ProductDocument',
                                        to='dashboard.DataDocument')
     tags = TaggableManager(through='dashboard.ProductToTag',
-                                 to='dashboard.PUCTag')
+                           to='dashboard.PUCTag',
+                           help_text='A set of PUC Tags applicable to this Product')
     source_category = models.ForeignKey(SourceCategory,
                                         on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=255)

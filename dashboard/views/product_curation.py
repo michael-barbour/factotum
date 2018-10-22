@@ -150,7 +150,13 @@ def product_detail(request, pk, template_name=('product_curation/'
     puc = p.get_uber_puc()
     if tagform.is_valid():
         tagform.save()
-    return render(request, template_name, {'product': p, 'puc': puc, 'ptopuc': ptopuc, 'tagform': tagform})
+    docs = p.datadocument_set.order_by('-created_at')
+    return render(request, template_name, {'product': p,
+                                            'puc'   : puc,
+                                            'ptopuc': ptopuc,
+                                            'tagform'  : tagform,
+                                            'docs'  : docs
+                                            })
 
 @login_required()
 def product_update(request, pk, template_name=('product_curation/'

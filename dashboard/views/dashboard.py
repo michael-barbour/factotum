@@ -6,6 +6,9 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.db.models import Count, F, DateField, DateTimeField
 from django.db.models.functions import Trunc
+from django.contrib.auth.decorators import login_required
+
+from dashboard.models import *
 
 from dashboard.models import *
 
@@ -23,15 +26,15 @@ def index(request):
         DataDocument.objects.filter(extracted = True).count()/DataDocument.objects.count()*100
     stats['datadocument_count_by_date'] = datadocument_count_by_date()
     stats['datadocument_count_by_month'] = datadocument_count_by_month()
-
     stats['product_count'] = Product.objects.count()
+    stats['dss_tox_count'] = DSSToxSubstance.objects.count()
     stats['chemical_count'] = ExtractedChemical.objects.count()
     #TODO: This may need to be updated later to handle both manual and automatically assigned PUCs
     stats['product_with_puc_count'] = ProductToPUC.objects.filter(classification_method='MA').count()
     stats['product_with_puc_count_by_month'] = product_with_puc_count_by_month()
-
     return render(request, 'dashboard/index.html', stats)
 
+  
 def datadocument_count_by_date():
     # Datasets to populate linechart with document-upload statistics
     # Number of datadocuments, both overall and by type, that have been uploaded as of each date
@@ -61,6 +64,7 @@ def datadocument_count_by_date():
                                                 , 'document_count': document_count})
     return document_stats
 
+  
 def datadocument_count_by_month():
     # GROUP BY issue solved with https://stackoverflow.com/questions/8746014/django-group-by-date-day-month-year
     document_stats = list(DataDocument.objects.filter(created_at__gte=chart_start_datetime)\
@@ -76,6 +80,7 @@ def datadocument_count_by_month():
                 document_stats.insert(i, {'document_count': '0', 'upload_month': chart_month})
     return document_stats
 
+  
 def product_with_puc_count_by_month():
     # GROUP BY issue solved with https://stackoverflow.com/questions/8746014/django-group-by-date-day-month-year
     # TODO: currently just grabs manually assigned PUCs, logic to be updated for handling Auto assigned PUCS

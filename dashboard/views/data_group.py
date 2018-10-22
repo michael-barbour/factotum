@@ -184,6 +184,7 @@ def data_group_create(request, pk,
                                'form': form})
             text = ['DataDocument_id,' + ','.join(table.fieldnames)+'\n']
             errors = []
+            filenames = []
             count = 0
             for line in table: # read every csv line, create docs for each
                 count+=1
@@ -194,6 +195,9 @@ def data_group_create(request, pk,
                     continue
                 if len(line['filename'])>255:
                     errors.append([count,"Filename too long!"])
+                    continue
+                if line['filename'] in filenames:
+                    errors.append([count, "Duplicate filename found in csv"])
                     continue
                 if line['title'] == '': # updates title in line object
                     line['title'] = line['filename'].split('.')[0]
@@ -208,6 +212,7 @@ def data_group_create(request, pk,
                 else:
                     errors.append([count,"GroupType id doesn't exist."])
 
+                filenames.append(line['filename'])
                 doc=DataDocument(filename=line['filename'],
                                  title=line['title'],
                                  document_type=doc_type,
@@ -282,9 +287,10 @@ def data_group_registered_records_csv(request, pk):
     if dg:
         columnlist.insert(0, "id")
         qs = DataDocument.objects.filter(data_group_id=pk).values(*columnlist)
-        return render_to_csv_response(qs, filename=(dg.fs_id , "_registered_records.csv"),
-                                      field_header_map={"id": "DataDocument_id"},
-                                      use_verbose_names=False)
+        return render_to_csv_response(qs, filename=(dg.get_name_as_slug() +
+                                                    "_registered_records.csv"),
+                                  field_header_map={"id": "DataDocument_id"},
+                                  use_verbose_names=False)
     else:
         qs = DataDocument.objects.filter(data_group_id=0).values(*columnlist)
         return render_to_csv_response(qs, filename="registered_records.csv",

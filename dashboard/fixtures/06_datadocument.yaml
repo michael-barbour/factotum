@@ -3524,4 +3524,4 @@
   fields: {created_at: !!timestamp '2018-09-27 22:49:26.999437', updated_at: !!timestamp '2018-09-27
       22:49:26.999467', filename: 0c68ab16-2065-4d9b-a8f2-e428eb192465.pdf, title: List of Chemicals 2,
       url: 'https://www.epa.gov', raw_category: null,
-    data_group: 49, matched: true, extracted: false, document_type: 10, organization: ''}
+    data_group: 49, matched: true, extracted: true, document_type: 10, organization: ''}

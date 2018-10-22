@@ -6,7 +6,10 @@ from dashboard.models import *
 fixtures_standard = ['00_superuser.yaml','01_lookups.yaml','02_datasource.yaml','03_datagroup.yaml',
                     '04_PUC.yaml','05_product.yaml','06_datadocument.yaml','07_script.yaml',
                     '08_extractedtext.yaml','09_productdocument.yaml','10_extractedchemical.yaml',
-                     '11_dsstoxsubstance.yaml']
+                     '11_dsstoxsubstance.yaml', '12_habits_and_practices.yaml', 
+                     '13_habits_and_practices_to_puc.yaml','14_product_to_puc.yaml',
+                     '15_extractedfunctionaluse.yaml',
+                     '16_extractedcpcat.yaml','17_extractedlistpresence.yaml']
 
 class dotdict(dict):
     """dot.notation access to dictionary attributes"""
@@ -26,7 +29,7 @@ def load_model_objects():
     exscript = Script.objects.create(title='Test Extraction Script',
                                    url='http://www.epa.gov/',
                                    qa_begun=False, script_type='EX')
-    gt = GroupType.objects.create(title='Composition')
+    gt = GroupType.objects.create(id=2, title='Composition', code='CO')
     dg = DataGroup.objects.create(name='Data Group for Test',
                                         description='Testing...',
                                         data_source = ds,
@@ -36,7 +39,8 @@ def load_model_objects():
                                         group_type=gt,
                                         csv='register_records_matching.csv',
                                         url='https://www.epa.gov')
-    dt = DocumentType.objects.create(title='msds/sds', group_type=gt)
+    dt = DocumentType.objects.create(id=2, title='MSDS', group_type=gt)
+    
     doc = DataDocument.objects.create(title='test document',
                                             data_group=dg,
                                             document_type=dt,

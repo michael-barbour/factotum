@@ -39,7 +39,7 @@ class TestQaPage(TestCase):
         '''ExtractionScript 15 includes a functional use data group with pk = 5.
         Its QA page should hide the composition fields '''
         # Create the QA group by opening the Script's page
-        response = self.client.get('/qa/extractionscript/15', follow=True)
+        response = self.client.get('/qa/extractionscript/15/', follow=True)
         # Open the DataGroup's first QA approval link
         response = self.client.get('/qa/extractedtext/5/', follow=True)
         # A raw_cas field should be in the page

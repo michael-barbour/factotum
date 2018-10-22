@@ -1,10 +1,12 @@
 {% extends 'core/base.html' %}
 {% load staticfiles %}
 {% load humanize %}
-
+<!-- @zach the code that you commented out exists on commit <194662c> or earlier
+if you want to check it out -->
 {% block title %}Product {{ product.id }}: {{ product.title }}{% endblock %}
 
 {% block content %}
+
     <h1>
         <span name="title">{{ product.title }}</span>
         <div class="btn-group float-lg-right" role="group" aria-label="Manage Product">
@@ -94,28 +96,77 @@
 {#            <br><br><br><br><br><br><br><br><br><br><br>#}
             <div class="form-group ">
                 {{ product.long_description|default:"" }}
+
             </div>
-        </div>
-        <div class="col-3">
-            {% if product.medium_image %}
-                <img src="{{ product.medium_image }}" height="180px" width="180px" alt="Product Medium Image">
-                <br>
-            {% endif %}
-            <dl class="col-sm-12">
-                <dt>Brand Name</dt>
-                <dd>{{ product.brand_name|default:"" }}</dd>
-                <dt>Manufacturer</dt>
-                <dd>{{ product.manufacturer|default:"" }}</dd>
-                <dt>Model Number</dt>
-                <dd>{{ product.model_number|default:"" }}</dd>
-                <dt>Size</dt>
-                <dd>{{ product.size|default:"" }}</dd>
-                <dt>Color</dt>
-                <dd>{{ product.color|default:"" }}</dd>
-            </dl>
-            {{ product.short_description|default:"" }}
+            <span>{{  puc|default:"PUC not yet assigned" }}</span>
+        </h2>
+    <br><br>
+    </div>
+    <div class="col-5">
+        <div class="form-group ">
+            {{ product.long_description|default:"" }}
         </div>
     </div>
+    <div class="col-4">
+        {% if product.medium_image %}
+            <img src="{{ product.medium_image }}" height="180px" width="180px" alt="Product Medium Image">
+            <br>
+        {% endif %}
+        <dl class="">
+            <dt>Brand Name</dt><dd>{{ product.brand_name|default:"" }}</dd>
+            <dt>Manufacturer</dt>
+            <dd>{{ product.manufacturer|default:"" }}</dd>
+            <dt>Model Number</dt>
+            <dd>{{ product.model_number|default:"" }}</dd>
+            <dt>Size</dt>
+            <dd>{{ product.size|default:"" }}</dd>
+            <dt>Color</dt>
+            <dd>{{ product.color|default:"" }}</dd>
+        </dl>
+        {{ product.short_description|default:"" }}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-bordered dataTable no-footer table-sm" align="center">
+          <thead class="table-primary">
+              <!-- data document title, the document type,
+              if it has been extracted or not,
+              and a link that opens up the pdf in a new page (perhaps a pdf icon)  -->
+              <th>Linked Documents</th>
+              <th>Type</th>
+              <th>Extracted</th>
+              <th>Link</th>
+          </thead>
+          <tbody>
+          {% for doc in docs %}
+            <tr>
+              <td align="center"><a href="{% url "data_document" doc.id %}"> {{ doc.title }}</a></td>
+              <td align="center">{{ doc.document_type }}</td>
+              <td align="center">
+                  {% if doc.extracted %}
+                  <span class="oi oi-circle-check" style="color:green;"></span>
+                  <p style="display:none;">{{doc.extracted}}</p>
+                  {% else %}
+                  <a class="btn btn-danger btn-sm" role="button" title="delete"
+                   href="{% url "data_document_delete" doc.id %}">
+                    <span class="oi oi-trash"></span>
+                  </a><p style="display:none;">{{doc.extracted}}</p>
+                  {% endif %}
+              </td>
+              <td align="center">
+                <div class="btn-group">
+                    <a href="{{ doc.pdf_url }}" title="Link to {{ doc.get_abstract_filename }}" target="_blank">
+                        <img src="{% static 'images/PDF_32.png' %}" height="32px" width="32px">
+                    </a>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}
 
 {% block css %}

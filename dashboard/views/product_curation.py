@@ -152,6 +152,7 @@ def product_detail(request, pk, template_name=('product_curation/'
         tagform.save()
     return render(request, template_name, {'product': p, 'puc': puc, 'ptopuc': ptopuc, 'tagform': tagform})
 
+
 @login_required()
 def product_update(request, pk, template_name=('product_curation/'
                                                'product_edit.html')):

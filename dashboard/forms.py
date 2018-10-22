@@ -200,7 +200,7 @@ def create_detail_formset(group_type, extra=0):
                                             model=model,
                                             fields=fields,
                                             extra=extra)
-
+    
     def one(): # for chemicals
         ChemicalFormSet = make_formset(parent,child,child.detail_fields())
         return (ExtractedTextForm, ChemicalFormSet)

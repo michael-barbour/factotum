@@ -8,8 +8,8 @@ fixtures_standard = ['00_superuser.yaml','01_lookups.yaml','02_datasource.yaml',
                     '08_extractedtext.yaml','09_productdocument.yaml','10_extractedchemical.yaml',
                      '11_dsstoxsubstance.yaml', '12_habits_and_practices.yaml', 
                      '13_habits_and_practices_to_puc.yaml','14_product_to_puc.yaml',
-                     '15_extractedfunctionaluse.yaml',
-                     '16_extractedcpcat.yaml','17_extractedlistpresence.yaml']
+                     '15_extractedfunctionaluse.yaml','16_extractedcpcat.yaml',
+                     '17_extractedlistpresence.yaml','18_puc_tag.yaml']
 
 class dotdict(dict):
     """dot.notation access to dictionary attributes"""
@@ -20,6 +20,9 @@ class dotdict(dict):
 def load_model_objects():
     user = User.objects.create_user(username='Karyn',
                                         password='specialP@55word')
+    superuser = User.objects.create_superuser(username='SuperKaryn',
+                                              password='specialP@55word',
+                                              email='me@epa.gov')
     ds = DataSource.objects.create(title='Data Source for Test',
                                         estimated_records=2, state='AT',
                                         priority='HI')
@@ -72,7 +75,7 @@ def load_model_objects():
                                             ingredient = ing)
     dsstox = DSSToxSubstance.objects.create(extracted_chemical=ec,
                                             true_chemname='Test Chem Name')
-    pa = ProductAttribute.objects.create(title="Test Product Attribute")
+    pt = PUCTag.objects.create(name="Test PUC Attribute")
     pd = ProductDocument.objects.create(product=p, document=doc)
     ehp = ExtractedHabitsAndPractices.objects.create(extracted_text=extext,
                                                      product_surveyed='Test Product Surveyed',
@@ -80,6 +83,7 @@ def load_model_objects():
 
 
     return dotdict({'user':user,
+                    'superuser':superuser,
                     'ds':ds,
                     'script':script,
                     'exscript':exscript,
@@ -92,7 +96,7 @@ def load_model_objects():
                     'wft':wft,
                     'ec':ec,
                     'dsstox':dsstox,
-                    'pa':pa,
+                    'pt':pt,
                     'pd':pd,
                     'ing':ing,
                     'dt':dt,

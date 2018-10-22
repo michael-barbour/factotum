@@ -41,7 +41,7 @@ class ModelsTest(TestCase):
         self.assertTrue(isinstance(self.objects.ing, Ingredient))
         self.assertTrue(isinstance(self.objects.p, Product))
         self.assertTrue(isinstance(self.objects.pd, ProductDocument))
-        self.assertTrue(isinstance(self.objects.pa, ProductAttribute))
+        self.assertTrue(isinstance(self.objects.pt, PUCTag))
 
     def test_datagroup(self):
         self.assertTrue(isinstance(self.objects.dg, DataGroup))
@@ -83,10 +83,10 @@ class ModelsTest(TestCase):
                                     str(self.objects.ec))
 
     def test_product_attribute(self):
-        self.assertEqual(ProductToAttribute.objects.count(), 0)
-        p2a = ProductToAttribute.objects.create(product=self.objects.p,
-                                            product_attribute=self.objects.pa)
-        self.assertEqual(ProductToAttribute.objects.count(), 1)
+        self.assertEqual(ProductToTag.objects.count(), 0)
+        p2t = ProductToTag.objects.create(content_object=self.objects.p,
+                                            tag=self.objects.pt)
+        self.assertEqual(ProductToTag.objects.count(), 1)
 
     def test_data_group(self):
         doc = DataDocument.objects.create(data_group=self.objects.dg)

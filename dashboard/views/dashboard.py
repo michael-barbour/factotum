@@ -106,8 +106,6 @@ def download_PUCs(request):
     writer = csv.writer(response)
     writer.writerow(['gen_cat', 'prod_fam', 'prod_type', 'description', 'PUC_type'])
     for puc in PUC.objects.all():
-        attr = puc.attribute if puc.attribute != None else ''
-        writer.writerow([puc.gen_cat, puc.prod_fam, puc.prod_type,
-                                                        puc.description, attr])
+        writer.writerow([puc.gen_cat, puc.prod_fam, puc.prod_type, puc.description])
 
     return response

@@ -1,25 +1,43 @@
-from dal import autocomplete
 from urllib import parse
-from datetime import datetime
 
 from django.urls import resolve
 from django.utils import timezone
 from django.shortcuts import redirect
 from django.db.models import Count, Q
 from django.shortcuts import render, get_object_or_404
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 
+from django.forms import ModelForm
 from dashboard.models import *
-from dashboard.forms import (ProductPUCForm, ProductViewForm, ProductLinkForm,
-                                                                    ProductForm)
+from dashboard.forms import (ProductPUCForm, ProductLinkForm,
+                             ProductForm)
+
+from taggit.forms import TagField
+from taggit_labels.widgets import LabelWidget
+from django.core.paginator import Paginator
+
+class FilteredLabelWidget(LabelWidget):
+    # overriding django-taggit-label function to display subset of tags
+    def tag_list(self, tags):
+        # must set form_instance in form __init__()
+        puc = self.form_instance.instance.get_uber_puc() or None
+        return [(tag.name, 'selected taggit-tag' if tag.name in tags else 'taggit-tag')
+                for tag in self.model.objects.filter(puc = puc)]
+
+class ProductTagForm(ModelForm):
+    tags = TagField(required=False, widget=FilteredLabelWidget(model=PUCTag))
+    class Meta:
+        model = Product
+        fields = ['tags']
+    def __init__(self, *args, **kwargs):
+        super(ProductTagForm, self).__init__(*args, **kwargs)
+        self.fields['tags'].widget.form_instance = self
 
 
 @login_required()
 def product_curation_index(request, template_name='product_curation/product_curation_index.html'):
-    # List of all data groups which have had at least 1 data
+    # List of all data sources which have had at least 1 data
     # document matched to a registered record
-    linked_products = Product.objects.filter(documents__in=DataDocument.objects.all())
     data_sources = DataSource.objects.annotate(uploaded=Count('datagroup__datadocument'))\
         .filter(uploaded__gt=0)
     # A separate queryset of data sources and their related products without PUCs assigned
@@ -27,9 +45,6 @@ def product_curation_index(request, template_name='product_curation/product_cura
     #   we now exclude all products that have a product_id contained in the ProductToPUC object set
     qs_no_puc = Product.objects.values('data_source').exclude(id__in=(ProductToPUC.objects.values_list('product_id', flat=True))).\
         filter(data_source__isnull=False).annotate(no_category=Count('id')).order_by('data_source')
-
-    #qs_no_puc = Product.objects.values('data_source').filter(prod_cat__isnull=True).\
-    #    filter(data_source__isnull=False).annotate(no_category=Count('id')).order_by('data_source')
     # Convert the queryset to a list
     list_no_puc = [ds_no_puc for ds_no_puc in qs_no_puc]
 
@@ -112,22 +127,10 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
     p = Product.objects.get(pk=pk)
     if form.is_valid():
         puc = PUC.objects.get(id=form['puc'].value())
-        # print('Selected PUC: ' + str(puc))
         producttopuc = ProductToPUC.objects.filter(product=p, classification_method='MA')
-        # if product already has a puc, update it with a new puc
         if producttopuc.exists():
-            # print(producttopuc)
-            # print(producttopuc.get())
-            producttopuc_obj = producttopuc.first()
-            producttopuc_obj.PUC = puc # This assignment doesn't appear to be actually happening. . .
-            producttopuc_obj.puc_assigned_time = timezone.now()
-            producttopuc_obj.puc_assigned_usr = request.user
-            # print('Updated ProductToPUC values:')
-            # for i in producttopuc_obj._meta.get_fields():
-            #     print(str(i.name) + ': ' + str(getattr(producttopuc_obj, str(i.name))))
-            producttopuc_obj.save()
-        else:
-            ProductToPUC.objects.create(PUC=puc, product=p, classification_method='MA',
+            producttopuc.delete()
+        ProductToPUC.objects.create(PUC=puc, product=p, classification_method='MA',
                                     puc_assigned_time=timezone.now(), puc_assigned_usr=request.user)
         referer = request.POST.get('referer') if request.POST.get('referer') else 'category_assignment'
         pk = p.id if referer == 'product_detail' else p.data_source.id
@@ -141,14 +144,17 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
 def product_detail(request, pk, template_name=('product_curation/'
                                                 'product_detail.html')):
     p = get_object_or_404(Product, pk=pk, )
-    form = ProductViewForm(request.POST or None, instance=p)
+    tagform = ProductTagForm(request.POST or None, instance=p)
+    tagform['tags'].label = ''
     ptopuc = p.get_uber_product_to_puc()
     puc = p.get_uber_puc()
+    if tagform.is_valid():
+        tagform.save()
     docs = p.datadocument_set.order_by('-created_at')
     return render(request, template_name, {'product': p,
                                             'puc'   : puc,
                                             'ptopuc': ptopuc,
-                                            'form'  : form,
+                                            'tagform'  : tagform,
                                             'docs'  : docs
                                             })
 

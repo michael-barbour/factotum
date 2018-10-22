@@ -4,7 +4,7 @@ from django.test import TestCase, override_settings
 
 from dashboard.models import *
 from dashboard.tests.loader import *
-from dashboard.views.product_curation import ProductForm, ProductViewForm
+from dashboard.views.product_curation import ProductForm, ProductTagForm
 
 
 @override_settings(ALLOWED_HOSTS=['testserver'])

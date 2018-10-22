@@ -82,3 +82,4 @@ class DashboardTest(TestCase):
         response_html = html.fromstring(response)
         num_dss = int(response_html.xpath('//*[@name="dsstox"]')[0].text)
         self.assertEqual(num_dss, 1, 'There should be one DSSToxSubstance')
+

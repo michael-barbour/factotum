@@ -144,7 +144,13 @@ def product_detail(request, pk, template_name=('product_curation/'
     form = ProductViewForm(request.POST or None, instance=p)
     ptopuc = p.get_uber_product_to_puc()
     puc = p.get_uber_puc()
-    return render(request, template_name, {'product': p, 'puc': puc, 'ptopuc': ptopuc, 'form': form})
+    docs = p.datadocument_set.order_by('-created_at')
+    return render(request, template_name, {'product': p,
+                                            'puc'   : puc,
+                                            'ptopuc': ptopuc,
+                                            'form'  : form,
+                                            'docs'  : docs
+                                            })
 
 @login_required()
 def product_update(request, pk, template_name=('product_curation/'

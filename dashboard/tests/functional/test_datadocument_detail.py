@@ -37,6 +37,12 @@ class DataDocumentDetailTest(TestCase):
         dd.refresh_from_db()
         self.assertEqual(dd.document_type_id, 2,
                          'DataDocument 7 should have a final document_type_id of 2')
+    
+    def test_absent_extracted_text(self):
+        resp = self.client.get('/datadocument/155324')
+        self.assertEqual(resp.status_code, 200, 'The page must return a 200 status code')
+
+
 
 class TestDynamicDetailFormsets(TestCase):
     fixtures = fixtures_standard
@@ -72,16 +78,4 @@ class TestDynamicDetailFormsets(TestCase):
             childform_model = child_formset.__dict__.get('queryset').__dict__.get('model')
             self.assertEqual(dd_child_model, childform_model)
 
-            
 
-
-        print('\nprint(some very important test output)')
-        print('|￣￣￣￣￣|')
-        print('|   HI      |')
-        print('|           |' )
-        print('|  RICK     |' )
-        print('|           |')
-        print('|___________|')
-        print('(\__/) || ')
-        print('(•ㅅ•) || ')
-        print('/ 　 づ')

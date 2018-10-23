@@ -71,6 +71,7 @@
     {% endif %}
 
     <div class="col-sm-6">
+    {% if extracted_text_form %}
     <h4>Extracted Text</h4>
     <div class="card-body border">
         {% if extracted_text_form.errors %}
@@ -111,7 +112,8 @@
             <button type="submit" id="save_extracted_text" name="save_extracted_text"
                     class="btn btn-primary chem-control" role="button">Save edits</button>
         </form>
-    </div>
+        </div>
+        {% endif %}
     </div>
     </div>
 

@@ -33,3 +33,12 @@ class PUC(CommonInfo):
 
     def tag_list(self, obj):
         return u", ".join(o.name for o in obj.tags.all())
+
+    def get_the_kids(self):
+        if not self.prod_fam and not self.prod_type:
+            return PUC.objects.filter(gen_cat=self.gen_cat)
+        if self.prod_fam and not self.prod_type:
+            return PUC.objects.filter(gen_cat=self.gen_cat,
+                                        prod_fam=self.prod_fam)
+        if self.prod_fam and self.prod_type:
+            return PUC.objects.filter(pk=self.pk)

@@ -46,16 +46,14 @@
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs pull-right"  id="myTab" role="tablist">
       {% for habit in hnp %}
+        {% if habit.pk == first %}
           <li class="nav-item">
-            <a class="nav-link {{habit.color}}" data-toggle="tab" href="#{{ habit.pk }}" role="tab" aria-controls="home" aria-selected=
-              {% if habit.pk == first %}
-              "false"
-              {% else %}
-              "true"
-              {% endif %}>
-              <b>{{ habit.product_surveyed }}</b>
-            </a>
-         </li>
+          <a class="nav-link active" data-toggle="tab" href="#{{ habit.pk }}" role="tab" aria-controls="home" aria-selected="true"><b>{{ habit.product_surveyed }}</b></a>
+        {% else %}
+          <li class="nav-item">
+          <a class="nav-link" data-toggle="tab" href="#{{ habit.pk }}" role="tab" aria-controls="home" aria-selected="false"><b>{{ habit.product_surveyed }}</b></a>
+        {% endif %}
+       </li>
       {% endfor %}
     </ul>
   </div>
@@ -66,13 +64,16 @@
       {% if habit.pk == first %}
         active
       {% endif %}" id="{{ habit.pk }}" role="tabpanel">
-      <label for=""><b>Data Document:</b></label> <a href="/media/{{ habit.extracted_text.data_document.data_group.get_dg_folder }}/pdf/{{ habit.extracted_text.data_document.filename }}" target="_blank" title="Link to {{ habit.extracted_text.data_document.filename }}"><b>{{ habit.extracted_text.data_document }}</b></a> <br>
-      <label for=""><b>Product Surveyed:</b></label> {{ habit.product_surveyed }} <br>
-      <label for=""><b>Mass:</b></label> {{ habit.mass|floatformat:2|intcomma }} {{ habit.mass_unit }} <br>
-      <label for=""><b>Frequency:</b></label> {{ habit.frequency|floatformat:2|intcomma }} {{ habit.frequency_unit }} <br>
-      <label for=""><b>Duration:</b></label> {{ habit.duration|floatformat:2|intcomma }} {{ habit.duration_unit }} <br>
-      <label for=""><b>Prevalence:</b></label> {{ habit.prevalence }} <br>
-      <label for=""><b>Notes:</b></label> {{ habit.notes }}
+      <label><b>Data Document:</b></label> <a href="/media/{{ habit.extracted_text.data_document.data_group.get_dg_folder }}/pdf/{{ habit.extracted_text.data_document.filename }}" target="_blank" title="Link to {{ habit.extracted_text.data_document.filename }}"><b>{{ habit.extracted_text.data_document }}</b></a> <br>
+      <label><b>Product Surveyed:</b></label> {{ habit.product_surveyed }} <br>
+      <label><b>Mass:</b></label> {{ habit.mass|floatformat:2|intcomma }} {{ habit.mass_unit }} <br>
+      <label><b>Frequency:</b></label> {{ habit.frequency|floatformat:2|intcomma }} {{ habit.frequency_unit }} <br>
+      <label><b>Duration:</b></label> {{ habit.duration|floatformat:2|intcomma }} {{ habit.duration_unit }} <br>
+      <label><b>Prevalence:</b></label> {{ habit.prevalence }} <br>
+      <label><b>Notes:</b></label> {{ habit.notes }} <br>
+      {% for puc in habit.PUCs.all %}
+        <label><b>PUC:</b></label> {{ puc }} <br>
+      {% endfor %}
       </div>
       {% endfor %}
     </div>

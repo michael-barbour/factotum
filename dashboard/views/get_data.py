@@ -25,9 +25,16 @@ def get_data(request, template_name='get_data/get_data.html'):
     if request.method == 'POST':
         form = HabitsPUCForm(request.POST)
         if form.is_valid():
-            puc_id = form['puc'].value()
+            pucs = PUC.objects.filter(pk=form['puc'].value())
+            puc = pucs[0]
+            if not puc.prod_fam and not puc.prod_type:
+                pucs |= PUC.objects.filter(gen_cat=puc.gen_cat)
+            elif puc.prod_fam and not puc.prod_type:
+                pucs |= PUC.objects.filter(gen_cat=puc.gen_cat,
+                                            prod_fam=puc.prod_fam)
+
             links = ExtractedHabitsAndPracticesToPUC.objects.filter(
-                                            PUC_id=puc_id).values_list(
+                                            PUC__in=pucs).values_list(
                                             'extracted_habits_and_practices',
                                             flat=True)
             hnp = ExtractedHabitsAndPractices.objects.filter(pk__in=links)

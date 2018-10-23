@@ -28,7 +28,7 @@ def data_document_detail(request, pk,
     #extracted_text = ExtractedText.objects.get(data_document=doc)
     try:
         extracted_text = ExtractedText.objects.get(data_document=doc)
-        print('ExtractedText object found: %s' % extracted_text )
+        #print('ExtractedText object found: %s' % extracted_text )
         extracted_text = extracted_text.pull_out_cp() #get CP if exists
         extracted_text_form = ParentForm(instance=extracted_text)
         child_formset = ChildForm(instance=extracted_text)
@@ -49,7 +49,7 @@ def data_document_detail(request, pk,
                     form.color = next(color)
 
     except ExtractedText.DoesNotExist:
-        print('No ExtractedText object found for DataDocument: %s' % doc )
+        #print('No ExtractedText object found for DataDocument: %s' % doc )
         extracted_text = None
 
     return render(request, template_name, context)

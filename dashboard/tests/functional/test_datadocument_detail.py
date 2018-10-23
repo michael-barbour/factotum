@@ -39,8 +39,20 @@ class DataDocumentDetailTest(TestCase):
                          'DataDocument 7 should have a final document_type_id of 2')
     
     def test_absent_extracted_text(self):
-        resp = self.client.get('/datadocument/155324')
+        resp = self.client.get('/datadocument/155324/')
         self.assertEqual(resp.status_code, 200, 'The page must return a 200 status code')
+        for dd in DataDocument.objects.all():
+            ddid = dd.id 
+            resp = self.client.get('/datadocument/%s/' % ddid)
+            print('Opening /datadocument/%s/' % ddid)
+            self.assertEqual(resp.status_code, 200, 'The page must return a 200 status code')
+            try:
+                extracted_text = ExtractedText.objects.get(data_document=dd)
+                self.assertContains(resp, '<h4>Extracted Text</h4>')
+            except ExtractedText.DoesNotExist:
+                self.assertNotContains(resp, '<h4>Extracted Text</h4>')
+
+
 
 
 

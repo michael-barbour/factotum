@@ -70,7 +70,7 @@
     </div>
     {% endif %}
 
-    <div class="col-sm-6">
+    <div class="col-sm-6 extracted-text">
     {% if extracted_text_form %}
     <h4>Extracted Text</h4>
     <div class="card-body border">
@@ -117,7 +117,7 @@
     </div>
     </div>
 
-
+{% if extracted_text_form %}
 <form method="post" action="">
     <div class="row col-sm-12">
         <h4>{{ doc.data_group.group_type }} detail</h4>
@@ -159,6 +159,7 @@
         </div>
     </div>
 </form>
+{% endif %}
 {% endblock %}
 <!-- if we need to be more specific with the way cards are layed out.....
 {%  if doc.data_group.is_chemical_presence %}

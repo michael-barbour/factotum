@@ -43,10 +43,11 @@ def data_document_detail(request, pk,
             if child_formset.is_valid() and child_formset.has_changed():
                 child_formset.save()
                 child_formset = ChildForm(instance=extracted_text) # load extra form
-                colors = ['#d6d6a6','#dfcaa9','#d8e5bf'] * 47
-                color = (hex for hex in colors)
-                for form in child_formset.forms:
-                    form.color = next(color)
+                
+        colors = ['#d6d6a6','#dfcaa9','#d8e5bf'] * 47
+        color = (hex for hex in colors)
+        for form in child_formset.forms:
+            form.color = next(color)
 
     except ExtractedText.DoesNotExist:
         #print('No ExtractedText object found for DataDocument: %s' % doc )

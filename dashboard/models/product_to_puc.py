@@ -6,12 +6,12 @@ from .PUC import PUC
 
 
 class ProductToPUC(CommonInfo):
-    MANUAL = 'MA'
-    AUTOMATIC = 'AU'
-    CLASSIFICATION_CHOICES = (
-        (MANUAL, 'Manual'),
-        (AUTOMATIC, 'Automatic'))
 
+    CLASSIFICATION_CHOICES = (  ('MA', 'Manual'),
+                                ('AU', 'Automatic'),
+                                ('RU', 'Rule Based'),
+                                ('MB', 'Manual Batch')
+                             )
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     PUC = models.ForeignKey(PUC, on_delete=models.CASCADE)
     puc_assigned_usr = models.ForeignKey('auth.User',

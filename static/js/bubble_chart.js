@@ -2,7 +2,7 @@ function bubbleChart() {
     var width = 840,
         height = 420,
         maxRadius = 6,
-        columnForColors = "PUC_type",
+        columnForColors = "gen_cat",
         columnForRadius = "num_prods";
 
     function chart(selection) {
@@ -24,19 +24,38 @@ function bubbleChart() {
             .style("width", "400px")
             .text("");
 
-        var scaleRadius = d3.scaleSqrt().domain([d3.min(data, function(d) {
+        var scaleRadius = d3.scaleLinear().domain([d3.min(data, function(d) {
             return +d[columnForRadius];
         }), d3.max(data, function(d) {
             return +d[columnForRadius];
         })]).range([2,10]);
-        var colorCircles = d3.scaleOrdinal(d3.schemeCategory10).domain([2,5]);
+        var colorCircles = d3.scaleOrdinal(d3.schemeCategory10)
+
+
+
+
+        var forceXSeparate = d3.forceX(function (d){
+            if(d.PUC_type === '1'){
+                return 140
+            } else if (d.PUC_type === '2'){
+                return 420
+            } else {
+                return 700
+            }
+        }).strength(0.05)
+
+        var forceXCombine = d3.forceX(width / 2).strength(0.05)
+
+        var forceCollide = d3.forceCollide(function(d){
+            return scaleRadius(d[columnForRadius]) + 1;
+        })
+
         var simulation = d3.forceSimulation(data)
             // .force("charge", d3.forceManyBody().strength([-50]))
-            .force("x", d3.forceX(width / 2).strength(0.05))
+            .force('charge', d3.forceManyBody().strength(-5))
+            .force("x", forceXCombine)
             .force("y", d3.forceY(height / 2).strength(0.05))
-            .force("collide", d3.forceCollide(function(d){
-                return scaleRadius(d[columnForRadius]) + 4;
-            }))
+            .force("collide", forceCollide)
             .on("tick", ticked);
 
         function ticked(e) {
@@ -47,7 +66,19 @@ function bubbleChart() {
                     return d.y;
                 });
         }
+        d3.select("#split").on('click', function(){
+            simulation
+                .force("x", forceXSeparate)
+                .alphaTarget(0.5)
+                .restart()
+        })
 
+        d3.select("#combine").on('click', function(){
+            simulation
+                .force("x", forceXCombine)
+                .alphaTarget(0.5)
+                .restart()
+        })
 
         // var scaleRadius = d3.scaleLinear().domain([d3.min(data, function(d) {
         //     return +d[columnForRadius];
@@ -61,14 +92,14 @@ function bubbleChart() {
             .append("circle")
             .attr('r', function(d) {
                 // alert(d)
-                return scaleRadius(d[columnForRadius]) + 3
+                return scaleRadius(d[columnForRadius])
             })
             .style("fill", function(d) {
                 return colorCircles(d[columnForColors])
             })
             // .attr('transform', 'translate(' + [width / 2, height / 2] + ')')
             .on("mouseover", function(d) {
-                tooltip.html("PUC Level: " + d[columnForColors] + "<br>" + d.gen_cat + "<br>" + d.prod_fam + "<br>" + d.prod_type + "<br>" + "Product Count: " + d[columnForRadius]);
+                tooltip.html("PUC Level: " + d.PUC_type + "<br>" + d.gen_cat + "<br>" + d.prod_fam + "<br>" + d.prod_type + "<br>" + "Product Count: " + d[columnForRadius]);
                 return tooltip.style("visibility", "visible");
             })
             .on("mousemove", function() {

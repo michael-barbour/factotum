@@ -71,9 +71,20 @@
       <label><b>Duration:</b></label> {{ habit.duration|floatformat:2|intcomma }} {{ habit.duration_unit }} <br>
       <label><b>Prevalence:</b></label> {{ habit.prevalence }} <br>
       <label><b>Notes:</b></label> {{ habit.notes }} <br>
+      <p style="text-decoration:underline;"><b>PUC/s</b></p>
+
       {% for puc in habit.PUCs.all %}
-        <label><b>PUC:</b></label> {{ puc }} <br>
+      <p class="btn disabled
+          {% if puc.is_level_one %}
+            btn-outline-success
+          {% elif puc.is_level_two %}
+          btn-outline-warning
+          {% elif puc.is_level_three %}
+          btn-outline-info
+          {% endif %}
+        ">{{ puc }}</p><br>
       {% endfor %}
+
       </div>
       {% endfor %}
     </div>

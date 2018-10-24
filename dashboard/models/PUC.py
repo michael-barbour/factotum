@@ -30,3 +30,7 @@ class PUC(CommonInfo):
 
     def tag_list(self, obj):
         return u", ".join(o.name for o in obj.tags.all())
+
+    def get_level(self):
+        import random
+        return random.randrange(1,4)

@@ -1,0 +1,37 @@
+{% extends 'core/base.html' %}
+{% load staticfiles %}
+
+{% block css %}
+<style media="screen">
+  .chart-example {
+    width:840px;
+    height:420px;
+    border-radius: 25px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<p>I did it!</p>
+<div class="btn-warning col-3-sm chart-example" id="chart"><svg></svg></div>
+<div class="col-9-sm">
+
+</div>
+{% endblock %}
+{% block js %}
+<script src="{% static 'js/d3_rick.min.js' %}"></script>
+<script src="{% static 'js/bubble_chart.js' %}"></script>
+<script>
+
+    d3.csv('{% url "download_PUCs" %}', function(error, data) {
+      if (error) {
+          console.error('Error getting or parsing the data.');
+          throw error;
+      }
+      // selection.datum() returns the bound datum for the first element in the selection and
+      //  doesn't join the specified array of data with the selected elements
+      var chart = bubbleChart().width(840).height(420);
+      d3.select('#chart').datum(data).call(chart);
+    });
+</script>
+{% endblock %}

@@ -98,15 +98,17 @@ def product_with_puc_count_by_month():
                 product_stats.insert(i, {'product_count': '0', 'puc_assigned_month': chart_month})
     return product_stats
 
-
+import random
 def download_PUCs(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="PUCs.csv"'
 
     writer = csv.writer(response)
-    writer.writerow(['gen_cat', 'prod_fam', 'prod_type', 'description', 'PUC_type'])
+    cols = ['gen_cat','prod_fam','prod_type','description','PUC_type','num_prods']
+    writer.writerow(cols)
     for puc in PUC.objects.all():
-        writer.writerow([puc.gen_cat, puc.prod_fam, puc.prod_type, puc.description])
+        row = [puc.gen_cat, puc.prod_fam, puc.prod_type, puc.description, puc.get_level(), random.randrange(0,4)] #puc.producttopuc_set.count()
+        writer.writerow(row)
 
     return response
 

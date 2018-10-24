@@ -76,11 +76,11 @@
       {% for puc in habit.PUCs.all %}
       <p class="btn disabled
           {% if puc.is_level_one %}
-            btn-outline-success
+            puc-level-1
           {% elif puc.is_level_two %}
-          btn-outline-warning
+            puc-level-2
           {% elif puc.is_level_three %}
-          btn-outline-info
+            puc-level-3
           {% endif %}
         ">{{ puc }}</p><br>
       {% endfor %}

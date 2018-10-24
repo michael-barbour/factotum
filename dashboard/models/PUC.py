@@ -34,11 +34,23 @@ class PUC(CommonInfo):
     def tag_list(self, obj):
         return u", ".join(o.name for o in obj.tags.all())
 
+    @property
+    def is_level_one(self): # gen_cat only
+        return self.prod_fam is '' and self.prod_type is ''
+
+    @property
+    def is_level_two(self): # no prod_type
+        return not self.prod_fam is '' and self.prod_type is ''
+
+    @property
+    def is_level_three(self): # most granular PUC
+        return not self.prod_fam is '' and not self.prod_type is ''
+
     def get_the_kids(self):
-        if not self.prod_fam and not self.prod_type:
+        if self.is_level_one:
             return PUC.objects.filter(gen_cat=self.gen_cat)
-        if self.prod_fam and not self.prod_type:
+        if self.is_level_two:
             return PUC.objects.filter(gen_cat=self.gen_cat,
                                         prod_fam=self.prod_fam)
-        if self.prod_fam and self.prod_type:
+        if self.is_level_three:
             return PUC.objects.filter(pk=self.pk)

@@ -90,7 +90,8 @@ urlpatterns = [
     path('upload/dtxsid_csv/', views.upload_dtxsid_csv,
                                             name='upload_dtxsid_csv'),
     path('get_data/get_dsstox_csv_template/', views.get_data_dsstox_csv_template,
-                                            name='get_data_dsstox_csv_template')
+                                            name='get_data_dsstox_csv_template'),
+    path('bubbles/', views.make_bubbles, name='make_bubbles')
 ]
 
 if settings.DEBUG is True:

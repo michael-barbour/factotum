@@ -95,9 +95,16 @@
     <div id="product_with_puc_count_by_month_barchart">
         <svg style="height:350px;width:100%;overflow:visible"></svg>
     </div>
-    <button id="split">PUC Level Split</button>
-    <button id="combine">Combine</button>
-    <div class="btn-warning col-3-sm chart-example" id="chart"><svg></svg></div>
+    <div class="chart-wrap">
+      <div class="wrapper">
+        <button class="btn btn-outline-danger bubbles" id="split">PUC Level Split</button>
+        <div class="divider"/></div>
+        <button class="btn btn-outline-info" id="combine">Combine</button>
+      </div>
+
+      <div class="btn-warning col-3-sm chart-example" id="chart"><svg></svg></div>
+    </div>
+
 
 {% endblock %}
 
@@ -105,11 +112,25 @@
     <!-- NVD3 CSS -->
     <link rel="stylesheet" href="{% static "css/nv.d3.css" %}">
     <style media="screen">
+
       .chart-example {
         width:840px;
         height:500px;
         border-radius: 25px;
       }
+      .chart-wrap {
+        padding-left: 10%;
+        padding-right: 50%;
+      }
+      .wrapper {
+        display: flex;
+        justify-content: center;
+      }
+      .divider{
+        width:5px;
+        height:auto;
+        display:inline-block;
+    }
     </style>
 {% endblock %}
 

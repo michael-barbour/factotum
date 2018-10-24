@@ -111,7 +111,3 @@ def download_PUCs(request):
         writer.writerow(row)
 
     return response
-
-def make_bubbles(request):
-
-    return render(request, 'bubbles.html')

@@ -37,6 +37,20 @@ class DataDocumentDetailTest(TestCase):
         dd.refresh_from_db()
         self.assertEqual(dd.document_type_id, 2,
                          'DataDocument 7 should have a final document_type_id of 2')
+    
+    def test_absent_extracted_text(self):
+        # Check every data document and confirm that its detail page loads,
+        # with or without a detail formset
+        for dd in DataDocument.objects.all():
+            ddid = dd.id 
+            resp = self.client.get('/datadocument/%s/' % ddid)
+            self.assertEqual(resp.status_code, 200, 'The page must return a 200 status code')
+            try:
+                extracted_text = ExtractedText.objects.get(data_document=dd)
+                self.assertContains(resp, '<h4>Extracted Text</h4>')
+            except ExtractedText.DoesNotExist:
+                self.assertNotContains(resp, '<h4>Extracted Text</h4>')
+
 
 class TestDynamicDetailFormsets(TestCase):
     fixtures = fixtures_standard
@@ -72,16 +86,4 @@ class TestDynamicDetailFormsets(TestCase):
             childform_model = child_formset.__dict__.get('queryset').__dict__.get('model')
             self.assertEqual(dd_child_model, childform_model)
 
-            
 
-
-        print('\nprint(some very important test output)')
-        print('|￣￣￣￣￣|')
-        print('|   HI      |')
-        print('|           |' )
-        print('|  RICK     |' )
-        print('|           |')
-        print('|___________|')
-        print('(\__/) || ')
-        print('(•ㅅ•) || ')
-        print('/ 　 づ')

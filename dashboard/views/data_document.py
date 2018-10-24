@@ -14,30 +14,45 @@ from dashboard.models import *
 def data_document_detail(request, pk,
                          template_name='data_document/data_document_detail.html'):
     doc = get_object_or_404(DataDocument, pk=pk, )
-    # TODO: this needs to account for the absence of an ExtractedText object
-    # https://github.com/HumanExposure/factotum/issues/470
-    extracted_text = ExtractedText.objects.get(data_document=doc)
     ParentForm, ChildForm = create_detail_formset(doc.data_group.type, EXTRA)
-    extracted_text = extracted_text.pull_out_cp() #get CP if exists
-    extracted_text_form = ParentForm(instance=extracted_text)
-    child_formset = ChildForm(instance=extracted_text)
+
     document_type_form = DocumentTypeForm(request.POST or None, instance=doc)
     qs = DocumentType.objects.filter(group_type=doc.data_group.group_type)
     document_type_form.fields['document_type'].queryset = qs
-    if request.method== 'POST':
-        child_formset = ChildForm(request.POST, instance=extracted_text)
-        if child_formset.is_valid() and child_formset.has_changed():
-            child_formset.save()
-            child_formset = ChildForm(instance=extracted_text) # load extra form
-    colors = ['#d6d6a6','#dfcaa9','#d8e5bf'] * 47
-    color = (hex for hex in colors)
-    for form in child_formset.forms:
-        form.color = next(color)
+
     context = {'doc': doc,
-            'extracted_text': extracted_text,
-            'extracted_text_form': extracted_text_form,
-            'detail_formset': child_formset,
             'document_type_form': document_type_form}
+
+    # TODO: this needs to account for the absence of an ExtractedText object
+    # https://github.com/HumanExposure/factotum/issues/470
+    #extracted_text = ExtractedText.objects.get(data_document=doc)
+    try:
+        extracted_text = ExtractedText.objects.get(data_document=doc)
+        #print('ExtractedText object found: %s' % extracted_text )
+        extracted_text = extracted_text.pull_out_cp() #get CP if exists
+        extracted_text_form = ParentForm(instance=extracted_text)
+        child_formset = ChildForm(instance=extracted_text)
+
+        context.update(
+            {'extracted_text': extracted_text,
+            'extracted_text_form': extracted_text_form,
+            'detail_formset': child_formset}
+            )
+        if request.method== 'POST':
+            child_formset = ChildForm(request.POST, instance=extracted_text)
+            if child_formset.is_valid() and child_formset.has_changed():
+                child_formset.save()
+                child_formset = ChildForm(instance=extracted_text) # load extra form
+                
+        colors = ['#d6d6a6','#dfcaa9','#d8e5bf'] * 47
+        color = (hex for hex in colors)
+        for form in child_formset.forms:
+            form.color = next(color)
+
+    except ExtractedText.DoesNotExist:
+        #print('No ExtractedText object found for DataDocument: %s' % doc )
+        extracted_text = None
+
     return render(request, template_name, context)
 
 @login_required()

@@ -70,9 +70,10 @@
     </div>
     {% endif %}
 
-    <div class="col-sm-6">
+    <div class="col-sm-6 extracted-text">
     <h4>Extracted Text</h4>
     <div class="card-body border">
+        {% if extracted_text_form %}
         {% if extracted_text_form.errors %}
             <div class="form-group has-error">
                 <span class="help-block">{{ extracted_text_form.errors }}</span>
@@ -111,11 +112,14 @@
             <button type="submit" id="save_extracted_text" name="save_extracted_text"
                     class="btn btn-primary chem-control" role="button">Save edits</button>
         </form>
-    </div>
+        {% else %}
+            No Extracted Text exists for this Data Document
+        {% endif %}
+        </div>
     </div>
     </div>
 
-
+{% if extracted_text_form %}
 <form method="post" action="">
     <div class="row col-sm-12">
         <h4>{{ doc.data_group.group_type }} detail</h4>
@@ -157,14 +161,5 @@
         </div>
     </div>
 </form>
+{% endif %}
 {% endblock %}
-<!-- if we need to be more specific with the way cards are layed out.....
-{%  if doc.data_group.is_chemical_presence %}
-    {% include "data_document/chemical_presence_cards.html" %}
-{%  elif doc.data_group.is_habits_and_practices %}
-    {% include "data_document/habits_and_pra_cards.html" %}
-{%  elif doc.data_group.is_composition %}
-    {% include "data_document/chemical_cards.html" %}
-{%  elif doc.data_group.is_functional_use %}
-    {% include "data_document/functional_use_cards.html" %}
-{% endif %} -->

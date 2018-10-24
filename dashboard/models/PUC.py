@@ -1,7 +1,10 @@
-from django.db import models
-from .common_info import CommonInfo
-from .product import Product
 from taggit.managers import TaggableManager
+
+from django.db import models
+
+from .common_info import CommonInfo
+from .extracted_habits_and_practices_to_puc import ExtractedHabitsAndPracticesToPUC
+from .extracted_habits_and_practices import ExtractedHabitsAndPractices
 
 
 class PUC(CommonInfo):
@@ -10,7 +13,7 @@ class PUC(CommonInfo):
     prod_type = models.CharField(max_length=100, null=True, blank=True)
     description = models.TextField(null=False, blank=False)
     last_edited_by = models.ForeignKey('auth.User', default=1, on_delete=models.CASCADE)
-    products = models.ManyToManyField(Product, through='ProductToPUC')
+    products = models.ManyToManyField('Product', through='ProductToPUC')
     extracted_habits_and_practices = models.ManyToManyField('dashboard.ExtractedHabitsAndPractices',
                                                             through='dashboard.ExtractedHabitsAndPracticesToPUC')
     tags = TaggableManager(through='dashboard.PUCToTag',
@@ -31,6 +34,29 @@ class PUC(CommonInfo):
     def tag_list(self, obj):
         return u", ".join(o.name for o in obj.tags.all())
 
+
     def get_level(self):
         import random
         return random.randrange(1,4)
+
+    @property
+    def is_level_one(self): # gen_cat only
+        return self.prod_fam is '' and self.prod_type is ''
+
+    @property
+    def is_level_two(self): # no prod_type
+        return not self.prod_fam is '' and self.prod_type is ''
+
+    @property
+    def is_level_three(self): # most granular PUC
+        return not self.prod_fam is '' and not self.prod_type is ''
+
+    def get_the_kids(self):
+        if self.is_level_one:
+            return PUC.objects.filter(gen_cat=self.gen_cat)
+        if self.is_level_two:
+            return PUC.objects.filter(gen_cat=self.gen_cat,
+                                        prod_fam=self.prod_fam)
+        if self.is_level_three:
+            return PUC.objects.filter(pk=self.pk)
+            

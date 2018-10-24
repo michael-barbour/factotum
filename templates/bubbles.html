@@ -1,11 +1,12 @@
 {% extends 'core/base.html' %}
 {% load staticfiles %}
 
+{% block title %}bubbles{% endblock %}
 {% block css %}
 <style media="screen">
   .chart-example {
     width:840px;
-    height:420px;
+    height:500px;
     border-radius: 25px;
   }
 </style>
@@ -25,15 +26,16 @@
 <script src="{% static 'js/bubble_chart.js' %}"></script>
 <script>
 
-    d3.csv('{% url "download_PUCs" %}', function(error, data) {
+    d3v4.csv('{% url "download_PUCs" %}', function(error, data) {
       if (error) {
           console.error('Error getting or parsing the data.');
           throw error;
       }
       // selection.datum() returns the bound datum for the first element in the selection and
       //  doesn't join the specified array of data with the selected elements
-      var chart = bubbleChart().width(840).height(420);
-      d3.select('#chart').datum(data).call(chart);
+      var chart = bubbleChart().width(840).height(500);
+      d3v4.select('#chart').datum(data).call(chart);
     });
+
 </script>
 {% endblock %}

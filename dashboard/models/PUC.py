@@ -36,8 +36,13 @@ class PUC(CommonInfo):
 
 
     def get_level(self):
-        import random
-        return random.randrange(1,4)
+        if self.is_level_one:
+            return 1
+        if self.is_level_two:
+            return 2
+        else:
+            return 3
+
 
     @property
     def is_level_one(self): # gen_cat only
@@ -59,4 +64,3 @@ class PUC(CommonInfo):
                                         prod_fam=self.prod_fam)
         if self.is_level_three:
             return PUC.objects.filter(pk=self.pk)
-            

@@ -1,6 +1,6 @@
 function bubbleChart() {
     var width = 840,
-        height = 420,
+        height = 500,
         maxRadius = 6,
         columnForColors = "gen_cat",
         columnForRadius = "num_prods";
@@ -24,37 +24,37 @@ function bubbleChart() {
             .style("width", "400px")
             .text("");
 
-        var scaleRadius = d3.scaleLinear().domain([d3.min(data, function(d) {
+        var scaleRadius = d3v4.scaleLinear().domain([d3v4.min(data, function(d) {
             return +d[columnForRadius];
-        }), d3.max(data, function(d) {
+        }), d3v4.max(data, function(d) {
             return +d[columnForRadius];
         })]).range([2,10]);
-        var colorCircles = d3.scaleOrdinal(d3.schemeCategory10)
+        var colorCircles = d3v4.scaleOrdinal(d3v4.schemeCategory10)
 
 
 
 
-        var forceXSeparate = d3.forceX(function (d){
+        var forceXSeparate = d3v4.forceX(function (d){
             if(d.PUC_type === '1'){
-                return 140
+                return 180
             } else if (d.PUC_type === '2'){
                 return 420
             } else {
-                return 700
+                return 660
             }
-        }).strength(0.05)
+        }).strength(0.08)
 
-        var forceXCombine = d3.forceX(width / 2).strength(0.05)
+        var forceXCombine = d3v4.forceX(width / 2).strength(0.05)
 
-        var forceCollide = d3.forceCollide(function(d){
-            return scaleRadius(d[columnForRadius]) + 1;
+        var forceCollide = d3v4.forceCollide(function(d){
+            return scaleRadius(d[columnForRadius]) + 5;
         })
 
-        var simulation = d3.forceSimulation(data)
-            // .force("charge", d3.forceManyBody().strength([-50]))
-            .force('charge', d3.forceManyBody().strength(-5))
+        var simulation = d3v4.forceSimulation(data)
+            // .force("charge", d3v4.forceManyBody().strength([-50]))
+            .force('charge', d3v4.forceManyBody().strength(-8))
             .force("x", forceXCombine)
-            .force("y", d3.forceY(height / 2).strength(0.05))
+            .force("y", d3v4.forceY(height / 2).strength(0.05))
             .force("collide", forceCollide)
             .on("tick", ticked);
 
@@ -66,23 +66,23 @@ function bubbleChart() {
                     return d.y;
                 });
         }
-        d3.select("#split").on('click', function(){
+        d3v4.select("#split").on('click', function(){
             simulation
                 .force("x", forceXSeparate)
                 .alphaTarget(0.5)
                 .restart()
         })
 
-        d3.select("#combine").on('click', function(){
+        d3v4.select("#combine").on('click', function(){
             simulation
                 .force("x", forceXCombine)
                 .alphaTarget(0.5)
                 .restart()
         })
 
-        // var scaleRadius = d3.scaleLinear().domain([d3.min(data, function(d) {
+        // var scaleRadius = d3v4.scaleLinear().domain([d3v4.min(data, function(d) {
         //     return +d[columnForRadius];
-        // }), d3.max(data, function(d) {
+        // }), d3v4.max(data, function(d) {
         //     return +d[columnForRadius];
         // })]).range([11, 55])
 
@@ -92,23 +92,25 @@ function bubbleChart() {
             .append("circle")
             .attr('r', function(d) {
                 // alert(d)
-                return scaleRadius(d[columnForRadius])
+                return scaleRadius(d[columnForRadius]) + 4
             })
             .style("fill", function(d) {
                 return colorCircles(d[columnForColors])
             })
-            // .attr('transform', 'translate(' + [width / 2, height / 2] + ')')
+
             .on("mouseover", function(d) {
-                tooltip.html("PUC Level: " + d.PUC_type + "<br>" + d.gen_cat + "<br>" + d.prod_fam + "<br>" + d.prod_type + "<br>" + "Product Count: " + d[columnForRadius]);
+                var matrix = this.getScreenCTM()
+                    .translate(+ this.getAttribute("cx"), + this.getAttribute("cy"));
+                tooltip.html("PUC Level: " + d.PUC_type + "<br>" + d.gen_cat + "<br>" + d.prod_fam + "<br>" + d.prod_type + "<br>" + "Product Count: " + d[columnForRadius])
+                    .style("left", (window.pageXOffset + matrix.e + 15) + "px")
+                    .style("top", (window.pageYOffset + matrix.f - 30) + "px");
                 return tooltip.style("visibility", "visible");
-            })
-            .on("mousemove", function() {
-                return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
             })
             .on("mouseout", function() {
                 return tooltip.style("visibility", "hidden");
             });
     }
+
 
     chart.width = function(value) {
         if (!arguments.length) {

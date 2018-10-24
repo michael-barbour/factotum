@@ -107,7 +107,7 @@ def download_PUCs(request):
     cols = ['gen_cat','prod_fam','prod_type','description','PUC_type','num_prods']
     writer.writerow(cols)
     for puc in PUC.objects.all():
-        row = [puc.gen_cat, puc.prod_fam, puc.prod_type, puc.description, puc.get_level(), random.randrange(0,4)] #puc.producttopuc_set.count()
+        row = [puc.gen_cat, puc.prod_fam, puc.prod_type, puc.description, puc.get_level(), puc.producttopuc_set.count()] #puc.producttopuc_set.count()  random.randrange(0,4)
         writer.writerow(row)
 
     return response

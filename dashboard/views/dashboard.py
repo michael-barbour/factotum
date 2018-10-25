@@ -98,7 +98,7 @@ def product_with_puc_count_by_month():
                 product_stats.insert(i, {'product_count': '0', 'puc_assigned_month': chart_month})
     return product_stats
 
-import random
+
 def download_PUCs(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="PUCs.csv"'

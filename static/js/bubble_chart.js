@@ -11,6 +11,32 @@ function bubbleChart() {
             svg = div.selectAll('svg');
         svg.attr('width', width).attr('height', height);
 
+        var one = svg
+            .append("text")
+            .attr('x',80)
+            .attr('y',20)
+            .style('fill','green')
+            .style('font-size','20px')
+            .style("visibility", "hidden")
+            .text("Level 1")
+        var two = svg
+            .append("text")
+            .attr('x',347)
+            .attr('y',20)
+            .style('fill','green')
+            .style('font-size','20px')
+            .style("visibility", "hidden")
+            .text("Level 2")
+
+        var three = svg
+            .append("text")
+            .attr('x',640)
+            .attr('y',20)
+            .style('fill','green')
+            .style('font-size','20px')
+            .style("visibility", "hidden")
+            .text("Level 3")
+
         var tooltip = selection
             .append("div")
             .style("position", "absolute")
@@ -71,6 +97,12 @@ function bubbleChart() {
                 .force("x", forceXSeparate)
                 .alphaTarget(0.5)
                 .restart()
+            one
+                .style("visibility", "visible")
+            two
+                .style("visibility", "visible")
+            three
+                .style("visibility", "visible")
         })
 
         d3v4.select("#combine").on('click', function(){
@@ -78,6 +110,12 @@ function bubbleChart() {
                 .force("x", forceXCombine)
                 .alphaTarget(0.5)
                 .restart()
+            one
+                .style("visibility", "hidden")
+            two
+                .style("visibility", "hidden")
+            three
+                .style("visibility", "hidden")
         })
 
         // var scaleRadius = d3v4.scaleLinear().domain([d3v4.min(data, function(d) {
@@ -97,16 +135,25 @@ function bubbleChart() {
             .style("fill", function(d) {
                 return colorCircles(d[columnForColors])
             })
-
+            .attr('stroke','black')
+            .attr('stroke-width',0)
             .on("mouseover", function(d) {
+                d3v4.select(this)
+                  .transition()
+                  .duration(500)
+                  .attr('stroke-width',1)
                 var matrix = this.getScreenCTM()
                     .translate(+ this.getAttribute("cx"), + this.getAttribute("cy"));
-                tooltip.html("PUC Level: " + d.PUC_type + "<br>" + d.gen_cat + "<br>" + d.prod_fam + "<br>" + d.prod_type + "<br>" + "Product Count: " + d[columnForRadius])
+                tooltip.html("PUC Level: " + d.PUC_type + "<br><b>" + d.gen_cat + "-</b><br><b>-" + d.prod_fam + "-</b><br><b>-" + d.prod_type + "</b><br>" + "Product Count: " + d[columnForRadius])
                     .style("left", (window.pageXOffset + matrix.e + 15) + "px")
                     .style("top", (window.pageYOffset + matrix.f - 30) + "px");
                 return tooltip.style("visibility", "visible");
             })
             .on("mouseout", function() {
+                d3v4.select(this)
+                  .transition()
+                  .duration(1000)
+                  .attr('stroke-width',0)
                 return tooltip.style("visibility", "hidden");
             });
     }

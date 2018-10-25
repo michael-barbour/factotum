@@ -59,7 +59,7 @@ class DashboardTest(TestCase):
         self.assertEqual(response.status_code, 200)
         csv_lines = response.content.decode('ascii').split('\r\n')
         # check header
-        self.assertEqual(csv_lines[0],'gen_cat,prod_fam,prod_type,description,PUC_type')
+        self.assertEqual(csv_lines[0],'gen_cat,prod_fam,prod_type,description,PUC_type,num_prods')
         # check the PUC from loader
         self.assertEqual(csv_lines[1],puc_line)
 
@@ -77,4 +77,3 @@ class DashboardTest(TestCase):
         response_html = html.fromstring(response)
         num_dss = int(response_html.xpath('//*[@name="dsstox"]')[0].text)
         self.assertEqual(num_dss, 1, 'There should be one DSSToxSubstance')
-

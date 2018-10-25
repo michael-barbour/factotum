@@ -11,31 +11,22 @@ function bubbleChart() {
             svg = div.selectAll('svg');
         svg.attr('width', width).attr('height', height);
 
-        var one = svg
-            .append("text")
-            .attr('x',80)
-            .attr('y',20)
-            .style('fill','green')
-            .style('font-size','20px')
-            .style("visibility", "hidden")
-            .text("Level 1")
-        var two = svg
-            .append("text")
-            .attr('x',347)
-            .attr('y',20)
-            .style('fill','green')
-            .style('font-size','20px')
-            .style("visibility", "hidden")
-            .text("Level 2")
+        var ldat = [
+                        {"title":"Level 1","x":80},
+                        {"title":"Level 2","x":347},
+                        {"title":"Level 3","x":640}
+                    ]
 
-        var three = svg
-            .append("text")
-            .attr('x',640)
-            .attr('y',20)
-            .style('fill','green')
-            .style('font-size','20px')
-            .style("visibility", "hidden")
-            .text("Level 3")
+        var labels = svg.selectAll('text')
+                .data(ldat)
+                .enter()
+            .append('text')
+                .attr('y',30)
+                .attr('x', function(d){ return d.x })
+                .style('fill','grey')
+                .style('font-size','20px')
+                .style("visibility", "hidden")
+                .text(function(d){ return d.title })
 
         var tooltip = selection
             .append("div")
@@ -97,11 +88,7 @@ function bubbleChart() {
                 .force("x", forceXSeparate)
                 .alphaTarget(0.5)
                 .restart()
-            one
-                .style("visibility", "visible")
-            two
-                .style("visibility", "visible")
-            three
+            labels
                 .style("visibility", "visible")
         })
 
@@ -110,11 +97,7 @@ function bubbleChart() {
                 .force("x", forceXCombine)
                 .alphaTarget(0.5)
                 .restart()
-            one
-                .style("visibility", "hidden")
-            two
-                .style("visibility", "hidden")
-            three
+            labels
                 .style("visibility", "hidden")
         })
 
@@ -135,12 +118,13 @@ function bubbleChart() {
             .style("fill", function(d) {
                 return colorCircles(d[columnForColors])
             })
-            .attr('stroke','black')
+            .attr('class','bubble')
+            .attr('stroke','#004d4d')
             .attr('stroke-width',0)
             .on("mouseover", function(d) {
                 d3v4.select(this)
                   .transition()
-                  .duration(500)
+                  .duration(347)
                   .attr('stroke-width',1)
                 var matrix = this.getScreenCTM()
                     .translate(+ this.getAttribute("cx"), + this.getAttribute("cy"));
@@ -152,7 +136,7 @@ function bubbleChart() {
             .on("mouseout", function() {
                 d3v4.select(this)
                   .transition()
-                  .duration(1000)
+                  .duration(347)
                   .attr('stroke-width',0)
                 return tooltip.style("visibility", "hidden");
             });

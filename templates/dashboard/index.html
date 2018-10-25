@@ -95,16 +95,18 @@
     <div id="product_with_puc_count_by_month_barchart">
         <svg style="height:350px;width:100%;overflow:visible"></svg>
     </div>
-    <h4>Products Linked to PUC By Month</h4>
-    <div class="chart-wrap">
-      <button class="btn btn-outline-danger" id="split">PUC Level Split</button>
-      <button class="btn btn-outline-info" id="combine">Combine</button>
+    <h4>Products Linked to PUCs</h4>
+    <div class="btn-group" role="group" aria-label="Basic example">
+      <button class="org b1" id="split">PUC Level Split</button>
+      <button class="org b2" id="combine">Combine</button>
+    </div>
+
       <div class="chart-example" id="chart">
         <svg>
-          <button class="btn btn-outline-danger bubbles" id="split">PUC Level Split</button>
+
         </svg>
       </div>
-    </div>
+
     <div class="">
       <svg style="height:35px;width:100%;overflow:visible"></svg>
     </div>
@@ -115,33 +117,41 @@
     <!-- NVD3 CSS -->
     <link rel="stylesheet" href="{% static "css/nv.d3.css" %}">
     <style media="screen">
-      p{
-        display:inline;
-      }
+
       .chart-example {
         width:840px;
         height:500px;
         border-radius: 25px;
-        border:3px solid;
+        border:2px solid;
+        background-color:#d9ffcc;
       }
       .chart-wrap {
         padding-left: 80px;
         padding-right: 50%;
         display:inline;
       }
-      .divider{
-        width:5px;
-        height:auto;
-        display:inline-block;
+      .org {
+        background-color:#ffb84d;
+        /* border: none; */
+        border-radius: 5px;
+        border-color: black;
       }
-      .content {
-          position: relative;
-          left: 180px;
+      .org:hover {
+        background-color:#ffcc80;
       }
-      .content2 {
-          position: relative;
-          /* left: 500px; */
+      .b1 {
+        border-radius: 5px 0px 0px 0px;
+        border-width: 2px 2px 0px 2px;
+        margin-left:100px;
       }
+      .b2 {
+        border-radius: 0px 5px 0px 0px;
+        border-width: 2px 2px 0px 0px;
+      }
+      .org:focus {
+        outline: none;
+      }
+
     </style>
 {% endblock %}
 

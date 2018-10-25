@@ -41,8 +41,15 @@
             <li class="nav-item {% if 'data_source' in request.resolver_match.url_name %}active{% endif %}">
                 <a class="nav-link" href="{% url 'data_source_list' %}">Data Sources</a>
             </li>
-            <li class="nav-item {% if 'product_curation' in request.resolver_match.url_name %}active{% endif %}">
-                <a class="nav-link" href="{% url 'product_curation' %}">Product Curation</a>
+            <li class="nav-item dropdown {% if 'product_curation' in request.resolver_match.url_name %}active{% endif %}">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDataCurationDropdownMenuLink"
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Data Curation
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="{% url 'product_curation' %}">Product Curation</a>
+                    <a class="dropdown-item" href="{% url 'bulk_product_puc' %}">Bulk Assign Products to PUCs</a>
+                </div>
             </li>
             <li class="nav-item {% if 'qa' in request.resolver_match.url_name %}active{% endif %}">
                 <a class="nav-link" href="{% url 'qa' %}">QA</a>

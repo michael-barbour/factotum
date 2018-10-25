@@ -50,6 +50,8 @@ urlpatterns = [
     path('extractionscript/<int:pk>/', views.extraction_script_detail,
                                             name='extraction_script_detail'),
     path('qa/', views.qa_index,            name='qa'),
+    path('bulk_product_puc/', views.bulk_assign_puc_to_product,
+                                            name='bulk_product_puc'),
     path('product_puc/<int:pk>/', views.assign_puc_to_product,
                                             name='product_puc'),
     path('product_puc_delete/<int:pk>/', views.detach_puc_from_product,

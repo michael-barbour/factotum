@@ -187,13 +187,27 @@ class DataGroupDetailTest(TestCase):
         self.assertEqual(response.url, f'/datagroup/{dgpk}/',
                                          "Should go to detail page.")
 
+class DataGroupDetailTestWithFixtures(TestCase):
+    fixtures = fixtures_standard
+
+    def setUp(self):
+        self.client.login(username='Karyn', password='specialP@55word')
+
     def test_download_raw_comp_data(self):
         # Ability to download, by data group, a csv file of raw extracted chemical composition data.
 
         # Only applies for data group type Composition. (group_type = 2)
+        # Unidentified? 
+        # Try all data groups with ExtractedChemicals
+        dg_ids = DataDocument.objects.filter(
+            id__in=ExtractedChemical.objects.all().values('extracted_text_id')
+            ).order_by().values_list('data_group_id',flat=True).distinct()
         
-        response = self.client.get(f'/datagroup/6/')
-
+        for dg_id in dg_ids:
+            #response = self.client.get(f'/datagroup/%s/' % dg_id)
+            resp = self.client.get(f'/datagroup/raw_extracted_records/%s/' % dg_id)
+            self.assertEqual(resp.status_code, 200)
+            #self.assertContains(resp.streaming_content.first(), 'extracted_text_id,id')
 
         # Download button would appear on data group detail page, 
         # Download button would appear if any data documents have extracted text.

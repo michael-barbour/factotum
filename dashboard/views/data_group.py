@@ -42,7 +42,8 @@ def data_group_detail(request, pk,
     paginator = Paginator(docs, 50) # TODO: make this dynamic someday in its own ticket
     store = settings.MEDIA_URL + str(dg.fs_id)
     ext = ExtractedText.objects.filter(data_document_id__in=docs).first()
-    ext = ext.pull_out_cp()
+    if ext:
+        ext = ext.pull_out_cp()
     context = { 'datagroup'      : dg,
                 'documents'      : paginator.page(1 if page is None else page),
                 'all_documents'  : docs, # this used for template download
@@ -329,7 +330,7 @@ def habitsandpractices(request, pk,
 
 @login_required
 def dg_raw_extracted_records(request, pk):
-    columnlist = ['extracted_text_id','id','raw_cas','raw_chem_name','raw_min_comp','raw_central_comp','raw_max_comp','unit_type']
+    columnlist = ['extracted_text_id','id','raw_cas','raw_chem_name','raw_min_comp','raw_central_comp','raw_max_comp','unit_type__title']
     dg = DataGroup.objects.get(pk=pk)
     et = ExtractedText.objects.filter(data_document__data_group = dg).first()
     if et:

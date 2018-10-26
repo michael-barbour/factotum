@@ -23,6 +23,8 @@ urlpatterns = [
                                             name='dg_dd_csv_view'),
     path('datagroup/pdfs_zipped/<int:pk>/', views.dg_pdfs_zip_view,
                                             name='dg_pdfs_zip_view'),
+    path('datagroup/raw_extracted_records/<int:pk>/', views.dg_raw_extracted_records,
+                                            name='dg_raw_extracted_records'),
     path('datasource/<int:pk>/datagroup_new/', views.data_group_create,
                                             name='data_group_new'),
     path('datagroup/<int:pk>/registered_records.csv', views.data_group_registered_records_csv,

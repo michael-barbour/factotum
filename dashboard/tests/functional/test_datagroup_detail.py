@@ -186,3 +186,20 @@ class DataGroupDetailTest(TestCase):
                                          "User is redirected to detail page.")
         self.assertEqual(response.url, f'/datagroup/{dgpk}/',
                                          "Should go to detail page.")
+
+    def test_download_raw_comp_data(self):
+        # Ability to download, by data group, a csv file of raw extracted chemical composition data.
+
+        # Only applies for data group type Composition. (group_type = 2)
+        
+        response = self.client.get(f'/datagroup/6/')
+
+
+        # Download button would appear on data group detail page, 
+        # Download button would appear if any data documents have extracted text.
+
+        
+        # Download file would only include records which have extracted data.
+
+        # File downloaded must include [specified fields]
+

@@ -47,10 +47,11 @@ class DataDocumentDetailTest(TestCase):
             self.assertEqual(resp.status_code, 200, 'The page must return a 200 status code')
             try:
                 extracted_text = ExtractedText.objects.get(data_document=dd)
-                self.assertContains(resp, '<h4>Extracted Text</h4>')
             except ExtractedText.DoesNotExist:
-                print(dd.id)
-                self.assertNotContains(resp, '<h4>Extracted Text</h4>')
+                #print(dd.id)
+                self.assertContains(resp, 'No Extracted Text exists for this Data Document')
+            else:
+                self.assertContains(resp, '<h4>Extracted Text</h4>')
 
 
 class TestDynamicDetailFormsets(TestCase):

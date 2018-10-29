@@ -1,12 +1,11 @@
 from urllib import parse
 
 from django.urls import resolve
-from django.utils import timezone
+from django.utils import timezone, safestring
 from django.shortcuts import redirect
 from django.db.models import Count, Q
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-
 from django.forms import ModelForm
 from dashboard.models import *
 from dashboard.forms import (ProductPUCForm, ProductLinkForm,
@@ -120,9 +119,16 @@ def detach_puc_from_product(request, pk):
     return redirect('product_detail', pk=p.pk)
 
 @login_required()
-def bulk_assign_puc_to_product(request, pk, template_name=('product_curation/'
+def bulk_assign_puc_to_product(request, template_name=('product_curation/'
                                                       'bulk_product_puc.html')):
-    return render(request, template_name)
+    q = safestring.mark_safe(request.GET.get('q', ''))
+    p = (Product.objects.exclude(id__in=(ProductToPUC.objects.values_list('product_id', flat=True))).
+                filter(title__icontains=q)|
+                Product.objects.exclude(id__in=(ProductToPUC.objects.values_list('product_id', flat=True))).
+                filter(brand_name__icontains=q))[:50]
+    form = ProductPUCForm(request.POST or None)
+    form["puc"].label = 'Assign Selected Products to PUC'
+    return render(request, template_name, {'products': p, 'q': q, 'form': form})
 
 @login_required()
 def assign_puc_to_product(request, pk, template_name=('product_curation/'

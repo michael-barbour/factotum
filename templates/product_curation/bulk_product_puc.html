@@ -20,6 +20,7 @@
 <form action='' method="post" >
 {% csrf_token %}
 
+{% if products.all %}
 <table class="table table-striped table-bordered dataTable no-footer table-sm" id="products">
   <thead class="table-primary">
       <tr>
@@ -41,9 +42,18 @@
   </tbody>
 </table>
 <br><br>
-{{ form.as_p }}
+    {{ form.as_p }}
     <input type="hidden" id=="id_pks" name="id_pks" value="">
     <button type="submit" id="btn-assign-puc" class="btn btn-primary">Submit</button>
+{% elif q > '' %}
+    <br><br>
+    <br><br>
+    All products matching "{{ q }}"" are already associated with a PUC.
+{% else %}
+    <br><br>
+    <br><br>
+    Locate products to associate with PUCs using the Search bar above.
+{% endif %}
 </form>
 
 {% endblock %}

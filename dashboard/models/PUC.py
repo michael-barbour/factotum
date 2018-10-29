@@ -34,6 +34,16 @@ class PUC(CommonInfo):
     def tag_list(self, obj):
         return u", ".join(o.name for o in obj.tags.all())
 
+
+    def get_level(self):
+        if self.is_level_one:
+            return 1
+        if self.is_level_two:
+            return 2
+        else:
+            return 3
+
+
     @property
     def is_level_one(self): # gen_cat only
         return self.prod_fam is '' and self.prod_type is ''

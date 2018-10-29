@@ -201,12 +201,10 @@ class DataGroupDetailTestWithFixtures(TestCase):
         # Unidentified is excluded as of issue #502
         dg_co = DataGroup.objects.filter(group_type__code = 'CO').first()
         resp = self.client.get(f'/datagroup/%s/' % dg_co.id)
-        print('Checking CO example /datagroup/%s/' % dg_co.id)
         self.assertIn(b'Download Raw', resp.content)
 
         dg_un = DataGroup.objects.filter(group_type__code = 'UN').first()
         resp = self.client.get(f'/datagroup/%s/' % dg_un.id)
-        print('Checking UN example /datagroup/%s/' % dg_un.id)
         self.assertNotIn(b'Download Raw', resp.content)
         
         # Test download on all data groups with ExtractedChemicals, whether

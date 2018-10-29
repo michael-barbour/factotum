@@ -41,8 +41,9 @@ def data_group_detail(request, pk,
     page = request.GET.get('page')
     paginator = Paginator(docs, 50) # TODO: make this dynamic someday in its own ticket
     store = settings.MEDIA_URL + str(dg.fs_id)
-    # TODO: test to see if this handles DoesNotExist
     ext = ExtractedText.objects.filter(data_document_id__in=docs).first()
+    if ext:
+        ext = ext.pull_out_cp()
     context = { 'datagroup'      : dg,
                 'documents'      : paginator.page(1 if page is None else page),
                 'all_documents'  : docs, # this used for template download
@@ -326,3 +327,21 @@ def habitsandpractices(request, pk,
                       'hp_formset'  : hp_formset,
                       }
     return render(request, template_name, context)
+
+@login_required
+def dg_raw_extracted_records(request, pk):
+    columnlist = ['extracted_text_id','id','raw_cas','raw_chem_name','raw_min_comp','raw_central_comp','raw_max_comp','unit_type__title']
+    dg = DataGroup.objects.get(pk=pk)
+    et = ExtractedText.objects.filter(data_document__data_group = dg).first()
+    if et:
+        dg_name = dg.get_name_as_slug()
+        qs = ExtractedChemical.objects.filter(extracted_text__data_document__data_group_id=pk).values(*columnlist)
+        #print('Writing %s records to csv' % len(qs) )
+        return render_to_csv_response(qs, filename=(dg_name +
+                                                    "_raw_extracted_records.csv"),
+                                  field_header_map={"id": "ExtractedChemical_id"},
+                                  use_verbose_names=False)
+    else:
+        qs = ExtractedChemical.objects.filter(extracted_text__data_document__id=pk).values(*columnlist)
+        return render_to_csv_response(qs, filename='raw_extracted_records.csv' ,
+                                        use_verbose_names=False)

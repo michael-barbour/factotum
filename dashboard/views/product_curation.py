@@ -121,14 +121,17 @@ def detach_puc_from_product(request, pk):
 @login_required()
 def bulk_assign_puc_to_product(request, template_name=('product_curation/'
                                                       'bulk_product_puc.html')):
-    q = safestring.mark_safe(request.GET.get('q', ''))
+    max_products_returned = 50
+    q = safestring.mark_safe(request.GET.get('q', '')).lstrip()
     if q > '':
-        p = (Product.objects.exclude(id__in=(ProductToPUC.objects.values_list('product_id', flat=True))).
-                filter(title__icontains=q)|
-                Product.objects.exclude(id__in=(ProductToPUC.objects.values_list('product_id', flat=True))).
-                filter(brand_name__icontains=q))[:50]
+        p = (Product.objects
+            .filter( Q(title__icontains=q) | Q(brand_name__icontains=q) )
+            .exclude(id__in=(ProductToPUC.objects.values_list('product_id', flat=True))
+            )[:max_products_returned])
+        full_p_count = Product.objects.filter( Q(title__icontains=q) | Q(brand_name__icontains=q) ).count()
     else:
         p = {}
+        full_p_count = 0
     form = ProductPUCForm(request.POST or None)
     if form.is_valid():
         puc = PUC.objects.get(id=form['puc'].value())
@@ -142,7 +145,7 @@ def bulk_assign_puc_to_product(request, template_name=('product_curation/'
                                     puc_assigned_time=timezone.now(), puc_assigned_usr=request.user)
     form = ProductPUCForm(None)
     form["puc"].label = 'PUC to Assign to Selected Products'
-    return render(request, template_name, {'products': p, 'q': q, 'form': form})
+    return render(request, template_name, {'products': p, 'q': q, 'form': form, 'full_p_count': full_p_count})
 
 @login_required()
 def assign_puc_to_product(request, pk, template_name=('product_curation/'

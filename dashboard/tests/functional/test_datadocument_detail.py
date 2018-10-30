@@ -53,6 +53,11 @@ class DataDocumentDetailTest(TestCase):
             else:
                 self.assertContains(resp, '<h4>Extracted Text</h4>')
 
+    def test_script_links(self):
+        doc = DataDocument.objects.first()
+        response = self.client.get(f'/datadocument/{doc.pk}/')
+        self.assertIn('Download Script',response.content.decode('utf-8'))
+        self.assertIn('Extraction Script',response.content.decode('utf-8'))
 
 class TestDynamicDetailFormsets(TestCase):
     fixtures = fixtures_standard

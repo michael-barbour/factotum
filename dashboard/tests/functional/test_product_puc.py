@@ -72,7 +72,7 @@ class TestProductPuc(TestCase):
                       'The form should not display without search criteria')
         product_response = self.client.get(product_response_url + '?q=ewedwefwefds')
         product_response_html = html.fromstring(product_response.content.decode('utf8'))
-        self.assertIn('All products matching ewedwefwefds are already associated with a PUC.',
+        self.assertIn('Locate products to associate with PUCs using the Search bar above.',
                       product_response_html.xpath('string(/)'),
                       'The form should not display if no products are returned')
         product_response = self.client.get(product_response_url + '?q=bayer')
@@ -86,7 +86,18 @@ class TestProductPuc(TestCase):
         response = self.client.post(product_response_url,
                                     {'puc': '1',
                                      'id_pks': '11,150,151,152'})
+        # Note that product 11 already has PUC 1 linked to it in the seed data. Including it in this
+        # test set is a test against the edge case wherein a product with a manually assigned PUC
+        # somehow makes it into the batch assignment process
         product = Product.objects.get(pk=11)
         puc = PUC.objects.get(pk=1)
+        pucs  = product.producttopuc_set
         self.assertEqual(product.get_uber_puc(), puc, "Product 11 should now be assigned to PUC 1" )
+
+    def test_bulk_product_puc_post_without_products(self):
+        product_response_url = reverse('bulk_product_puc')
+        response = self.client.post(product_response_url,
+                                    {'puc': '1'})
+        self.assertEqual(response.status_code, 200, 
+            "The request should return a valid response even without any Products" )
 

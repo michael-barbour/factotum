@@ -49,7 +49,7 @@ class DataDocumentDetailTest(TestCase):
                 extracted_text = ExtractedText.objects.get(data_document=dd)
                 self.assertContains(resp, '<h4>Extracted Text</h4>')
             except ExtractedText.DoesNotExist:
-                self.assertNotContains(resp, '<h4>Extracted Text</h4>')
+                self.assertContains(resp, 'No Extracted Text exists for this Data Document')
 
 
 class TestDynamicDetailFormsets(TestCase):

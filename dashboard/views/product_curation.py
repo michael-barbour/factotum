@@ -155,6 +155,9 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
     p = Product.objects.get(pk=pk)
     if form.is_valid():
         puc = PUC.objects.get(id=form['puc'].value())
+        producttopuc = ProductToPUC.objects.filter(product=p, classification_method='MA')
+        if producttopuc.exists():
+            producttopuc.delete()
         ProductToPUC.objects.create(PUC=puc, product=p, classification_method='MA',
                                     puc_assigned_time=timezone.now(), puc_assigned_usr=request.user)
         referer = request.POST.get('referer') if request.POST.get('referer') else 'category_assignment'

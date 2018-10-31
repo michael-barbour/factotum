@@ -138,9 +138,9 @@ def bulk_assign_puc_to_product(request, template_name=('product_curation/'
         product_ids = safestring.mark_safe(request.POST.get('id_pks', '')).split(",")
         for id in product_ids:
             product = Product.objects.get(id=id)
-            producttopuc = ProductToPUC.objects.filter(product=product, classification_method='MA')
-            if producttopuc.exists():
-                producttopuc.delete()
+            # producttopuc = ProductToPUC.objects.filter(product=product, classification_method='MA')
+            # if producttopuc.exists():
+            #     producttopuc.delete()
             ProductToPUC.objects.create(PUC=puc, product=product, classification_method='MA',
                                     puc_assigned_time=timezone.now(), puc_assigned_usr=request.user)
     form = ProductPUCForm(None)

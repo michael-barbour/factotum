@@ -8,8 +8,7 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.forms import ModelForm
 from dashboard.models import *
-from dashboard.forms import (ProductPUCForm, ProductLinkForm,
-                             ProductForm)
+from dashboard.forms import (ProductPUCForm, ProductLinkForm, BulkProductPUCForm, ProductForm)
 
 from taggit.forms import TagField
 from taggit_labels.widgets import LabelWidget
@@ -132,18 +131,14 @@ def bulk_assign_puc_to_product(request, template_name=('product_curation/'
     else:
         p = {}
         full_p_count = 0
-    form = ProductPUCForm(request.POST or None)
+    form = BulkProductPUCForm(request.POST or None)
     if form.is_valid():
         puc = PUC.objects.get(id=form['puc'].value())
-        product_ids = safestring.mark_safe(request.POST.get('id_pks', '')).split(",")
+        product_ids = form['id_pks'].value().split(",")
         for id in product_ids:
             product = Product.objects.get(id=id)
-            # producttopuc = ProductToPUC.objects.filter(product=product, classification_method='MA')
-            # if producttopuc.exists():
-            #     producttopuc.delete()
             ProductToPUC.objects.create(PUC=puc, product=product, classification_method='MA',
                                     puc_assigned_time=timezone.now(), puc_assigned_usr=request.user)
-    form = ProductPUCForm(None)
     form["puc"].label = 'PUC to Assign to Selected Products'
     return render(request, template_name, {'products': p, 'q': q, 'form': form, 'full_p_count': full_p_count})
 

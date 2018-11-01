@@ -39,6 +39,7 @@ class DataGroupDetailTest(TestCase):
         self.assertIsInstance(response.context['extract_form'],
                                             ExtractionScriptForm,
                     ('ExtractForm should be included in the page!'))
+        self.assertIn('<td>MS</td>',response.content.decode('utf-8'))
         self.objects.doc.extracted = True
         self.objects.doc.save()
         response = self.client.get(f'/datagroup/{pk}/')
@@ -195,7 +196,7 @@ class DataGroupDetailTestWithFixtures(TestCase):
 
     def test_download_raw_comp_data(self):
         # Ability to download, by data group, a csv file of raw extracted chemical composition data.
-        # Download button would appear on data group detail page, 
+        # Download button would appear on data group detail page,
         # Download button would appear if any data documents have extracted text.
         # Only applies for data group type Composition. (group_type = 2)
         # Unidentified is excluded as of issue #502
@@ -206,13 +207,13 @@ class DataGroupDetailTestWithFixtures(TestCase):
         dg_un = DataGroup.objects.filter(group_type__code = 'UN').first()
         resp = self.client.get(f'/datagroup/%s/' % dg_un.id)
         self.assertNotIn(b'Download Raw', resp.content)
-        
+
         # Test download on all data groups with ExtractedChemicals, whether
         # they are CO or UN
         dg_ids = DataDocument.objects.filter(
             id__in=ExtractedChemical.objects.all().values('extracted_text_id')
             ).order_by().values_list('data_group_id',flat=True).distinct()
-        
+
         for dg_id in dg_ids:
             #resp = self.client.get(f'/datagroup/%s/' % dg_id)
             resp = self.client.get(f'/datagroup/raw_extracted_records/%s/' % dg_id)
@@ -223,5 +224,3 @@ class DataGroupDetailTestWithFixtures(TestCase):
         field_list = 'ExtractedChemical_id,raw_cas,raw_chem_name,raw_min_comp,raw_central_comp,raw_max_comp,unit_type'
         content = list(i.decode('utf-8') for i in resp.streaming_content)
         self.assertIn(field_list, content[1])
-            
-

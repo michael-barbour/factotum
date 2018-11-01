@@ -103,16 +103,42 @@
             <a class="btn btn-secondary" data-toggle="collapse" id="btn_extract_text_form" href="#extract_form">
               <span class="oi oi-data-transfer-upload"></span>&nbsp;Upload Extracted Text
             </a>
-            <div id="extract_form" class="col-md-12 border rounded {% if extract_form.collapsed %}collapse{% endif %}">
-                <form method="post" enctype="multipart/form-data" novalidate>
-                    {% csrf_token %}
-                    {% include 'core/bs4_form.html' with form=extract_form %}
-                    <input type="submit" class="btn btn-primary" name="extract_button" value="Submit" disabled>
-                    <a id="xx" href="" class="btn btn-secondary"
-                       {% if not doc.matched %}disabled{% endif %}><span class="oi oi-spreadsheet"></span>&nbsp;Download Extracted Text CSV Template
-                    </a>
-                </form>
+            <div id="extract_form" class="container collapse rounded border">
+              <div class="row" >
+                <div class="col-md-4">
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        {% include 'core/bs4_form.html' with form=extract_form %}
+                        <input type="submit" class="btn btn-primary" name="extract_button" value="Submit" disabled>
+                        <br>
+                        <br>
+                        <a id="xx" href="" class="btn btn-secondary"
+                           {% if not doc.matched %}disabled{% endif %}><span class="oi oi-spreadsheet"></span>&nbsp;Download Extracted Text CSV Template
+                        </a>
+                    </form>
+                </div>
+                <div class="col-md-4 bg-light">
+                </div>
+                <div class="col-md-4 text-center">
+                  <table class="table table-sm table-striped table-bordered text-center">
+                    <thead class="bg-light">
+                      <th class="text-center">code</th>
+                      <th class="text-center">title</th>
+                    </thead>
+                    <tbody>
+                      {% for doc_type in datagroup.doc_types %}
+                      <tr>
+                        <td>{{doc_type.code}}</td>
+                        <td>{{doc_type.title}}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  <h4 class='text-secondary'><i>be sure to use code for document_type column</i></h4>
+                </div>
+              </div>
             </div>
+
             <table class="table" id="extract" style="display:none;">
               <thead class="table-primary">
               {% for field in extract_fields %}

@@ -19,6 +19,11 @@ class FacetedSearchTest(TestCase):
         self.assertNotContains(response, 'Extracted Chemical')
         self.assertNotContains(response, 'DSSTox Substance')
 
+    def test_faceted_search_returns_upc(self):
+        response = self.c.get('/find/?q=avcat')
+        self.assertContains(response, 'stub_1845')
+
+
     def test_group_type_facet(self):
         response = self.c.get('/find/?q=diatom')
         self.assertContains(response, 'Filter by Group Type')

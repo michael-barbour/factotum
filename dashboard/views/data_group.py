@@ -208,12 +208,12 @@ def data_group_create(request, pk,
                     errors.append([count,
                                     "'document_type' field can't be empty"])
                     continue
-                if DocumentType.objects.filter(code=code).exists():
-                    doc_type = DocumentType.objects.get(code=code)
-                    if doc_type.group_type != datagroup.group_type:
-                        errors.append([count,"Group Type doesn't match"])
+                if DocumentType.objects.filter(group_type=datagroup.group_type,
+                                                            code=code).exists():
+                    doc_type = DocumentType.objects.get(
+                                    group_type=datagroup.group_type,code=code)
                 else:
-                    errors.append([count,"GroupType code doesn't exist."])
+                    errors.append([count,"DocumentType code doesn't exist."])
 
                 filenames.append(line['filename'])
                 doc=DataDocument(filename=line['filename'],
@@ -246,8 +246,12 @@ def data_group_create(request, pk,
             datagroup.save()
             return redirect('data_group_detail', pk=datagroup.id)
     else:
+        groups = GroupType.objects.all()
+        for group in groups:
+            group.codes = DocumentType.objects.filter(group_type=group)
         form = DataGroupForm(user=request.user, initial=initial_values)
-    context = {'form': form, 'header': header, 'datasource': datasource}
+    context = {'form': form, 'header': header,
+                'datasource': datasource, 'groups' : groups}
     return render(request, template_name, context)
 
 

@@ -39,7 +39,6 @@ class DataGroupDetailTest(TestCase):
         self.assertIsInstance(response.context['extract_form'],
                                             ExtractionScriptForm,
                     ('ExtractForm should be included in the page!'))
-        self.assertIn('<td>MS</td>',response.content.decode('utf-8'))
         self.objects.doc.extracted = True
         self.objects.doc.save()
         response = self.client.get(f'/datagroup/{pk}/')

@@ -144,6 +144,14 @@ class ProductPUCForm(BasePUCForm):
         model = ProductToPUC
         fields = ['puc']
 
+class BulkProductPUCForm(BasePUCForm):
+    id_pks = forms.CharField(label='Product Titles',
+                             widget=forms.HiddenInput(),
+                             required=True)
+    class Meta:
+        model = ProductToPUC
+        fields = ['puc', 'id_pks']
+
 class HabitsPUCForm(BasePUCForm):
     class Meta:
         model = ExtractedHabitsAndPracticesToPUC

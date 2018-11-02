@@ -31,6 +31,14 @@
     filename: 42.pdf, title: MSDS - Home Depot, url: 'http://www.homedepot.com/catalog/pdfImages/34/34185649-1857-4622-a06a-eca836ff4352.pdf',
     raw_category: '', data_group: 8, matched: true, extracted: false, document_type: null,
     organization: ''}
+
+- model: dashboard.datadocument
+  pk: 500
+  fields: {created_at: !!timestamp '2018-08-21 13:16:47.965719', updated_at: !!timestamp '2018-10-18
+      02:46:36.855219', filename: test_functional_use_1.pdf, title: Test Functional
+      Use Doc 2, url: '', raw_category: '', data_group: 50, matched: true, extracted: false,
+    document_type: 9, organization: ''}
+
 - model: dashboard.datadocument
   pk: 121576
   fields: {created_at: !!timestamp '2017-08-09 11:30:00.090909', updated_at: !!timestamp '2018-06-20

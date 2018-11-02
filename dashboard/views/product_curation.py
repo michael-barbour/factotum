@@ -120,6 +120,11 @@ def detach_puc_from_product(request, pk):
     return redirect('product_detail', pk=p.pk)
 
 @login_required()
+def bulk_assign_puc_to_product(request, pk, template_name=('product_curation/'
+                                                      'bulk_product_puc.html')):
+    return render(request, template_name)
+
+@login_required()
 def assign_puc_to_product(request, pk, template_name=('product_curation/'
                                                       'product_puc.html')):
     """Assign a PUC to a single product"""

@@ -9,7 +9,7 @@
   fields: {created_at: !!timestamp '2018-03-09 11:32:00.391711', updated_at: !!timestamp '2018-10-16
       04:08:02.564253', filename: 11165872.pdf, title: Avgas 100LL (<0.1% Benzene),
     url: 'https://airbpmsds.bp.com/ussds/amersdsf.nsf/AllFiles_AIR_BP_FUELS/89C50579C812749A8025806F0057F0C0/$File/11165872.pdf',
-    raw_category: '', data_group: 6, matched: true, extracted: false, document_type: 2,
+    raw_category: '', data_group: 6, matched: true, extracted: true, document_type: 2,
     organization: ''}
 - model: dashboard.datadocument
   pk: 8

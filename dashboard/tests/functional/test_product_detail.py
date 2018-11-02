@@ -94,3 +94,12 @@ class TestProductDetail(TestCase):
         newer_doc_index = response.content.decode('utf8').index(t2)
         self.assertTrue(older_doc_index > newer_doc_index,('Most recent doc'
                                             ' should be on top of the table!'))
+
+    def test_puc_not_specified(self):
+        '''Product 1840 is associated with a PUC that has no prod_fam or
+        prod_type specified.
+        '''
+        response = self.client.get('/product/1840/')
+        count = response.content.decode('utf-8').count('not specified')
+        self.assertEqual(count,2, ('Both prod_fam and prod_type should'
+                                    'not be specified.'))

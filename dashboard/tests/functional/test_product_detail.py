@@ -53,23 +53,22 @@ class TestProductDetail(TestCase):
 
         self.assertNotIn('Currently assigned PUC:', response,
                                 'Assigned PUC should not be visible')
-
+        # Assign PUC 96
         self.client.post(f'/product_puc/{str(p.pk)}/', {'puc': '96' })
         response = self.client.get(f'/product_puc/{str(p.pk)}/')
 
         self.assertIn(b'Currently assigned PUC:', response.content,
                                 'Assigned PUC should be visible')
+
         # PUC is assigned....check that an edit will updated the record
-        link = ProductToPUC.objects.get(PUC_id=96)
-        # print(link.product_id)
-        self.assertEqual(link.product_id, p.pk,
+        self.assertTrue(ProductToPUC.objects.filter(PUC_id=96, product_id=p.pk).exists(), 
                             "PUC link should exist in table")
+
+        # Assign PUC 47, check that it replaces 96
         self.client.post(f'/product_puc/{str(p.pk)}/', {'puc': '47' })
-        link = ProductToPUC.objects.get(product=p)
-        self.assertEqual(link.PUC_id, 47,
+        self.assertTrue(ProductToPUC.objects.filter(product=p).filter(PUC_id=47).exists(),
                             "PUC link should be updated in table")
         p.refresh_from_db()
-
         self.assertTrue(p.get_uber_puc() != None,
                         'Product should now have an assigned PUC')
 

@@ -179,7 +179,6 @@
                 </ul>
                 {% endfor %}
             </div>
-            </div>
 
             {% if is_paginated %}
                 <ul class="pagination justify-content-center">
@@ -212,6 +211,9 @@
                     {% endif %}
                 </ul>
             {% endif %}
+            </div>
+
+            
 
         {% else %}
 	    <p> Sorry, no result found for the search term  <strong>{{query}} </strong></p>

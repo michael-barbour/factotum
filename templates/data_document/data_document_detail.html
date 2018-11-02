@@ -43,8 +43,18 @@
                 {{ detail_formset.management_form }}
             </form>
         </dd>
+        <dt class="col-lg-3">Download Script</dt>
+        <dd class="col-lg-9">
+          {% if doc.data_group.download_script %}
+          <a title="Data Group"
+              href="{{ doc.data_group.download_script.url }}"> {{ doc.data_group.download_script }}
+          </a>
+          {% else %}
+          None
+          {% endif %}
+        </dd>
         {% if doc.organization %}
-        <dt class="col-lg-3">Organization/dt>
+        <dt class="col-lg-3">Organization</dt>
         <dd class="col-lg-9">
             {{ doc.organization }}
         </dd>
@@ -76,7 +86,7 @@
                 <dd  class="col-lg-6">{{ extracted_text_form.doc_date }}</dd>
                 <dt class="col-lg-6">Rev Num</dt>
                 <dd  class="col-lg-6">{{ extracted_text_form.rev_num }}</dd>
-                <dt class="col-lg-6">Script</dt>
+                <dt class="col-lg-6">Extraction Script</dt>
                 <dd  class="col-lg-6">
                     <a href="{{ extracted_text.extraction_script.url| default_if_none:'' }}" target="_blank">
                         {{ extracted_text.extraction_script.title }}

@@ -42,9 +42,13 @@ class Product(CommonInfo):
 
     def get_uber_product_to_puc(self):
         pucs = self.producttopuc_set
-        if pucs.filter(classification_method='MA').count() == 1:
+        if pucs.filter(classification_method='MA').exists():
             return pucs.filter(classification_method='MA').first()
-        elif pucs.filter(classification_method='AU').count() == 1:
+        elif pucs.filter(classification_method='MB').exists():
+            return pucs.filter(classification_method='MB').first()
+        elif pucs.filter(classification_method='RU').exists():
+            return pucs.filter(classification_method='RU').first()
+        elif pucs.filter(classification_method='AU').exists():
             return pucs.filter(classification_method='AU').first()
         else:
             return None
@@ -69,4 +73,3 @@ class Product(CommonInfo):
 
     class Meta:
           ordering = ['-created_at']
-

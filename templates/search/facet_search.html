@@ -125,9 +125,9 @@
                 {% for result in page_obj.object_list %}
                   <div class="search-result-main">
 
-                    <a class="h5 text-left" title="Link to {{ result.object.title }}"
+                    <a class="text-left" title="Link to {{ result.object.title }}"
                     href="{{ result.object.get_absolute_url }}">
-                            {{ result.object.title }}
+                            <b>{{ result.object.title }}</b>
                     </a>
                     
                         {% if result.upc %}

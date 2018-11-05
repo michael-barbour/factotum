@@ -53,6 +53,20 @@ class DataDocumentDetailTest(TestCase):
             else:
                 self.assertContains(resp, '<h4>Extracted Text</h4>')
 
+    def test_script_links(self):
+        doc = DataDocument.objects.first()
+        response = self.client.get(f'/datadocument/{doc.pk}/')
+        self.assertIn('Download Script',response.content.decode('utf-8'))
+        self.assertIn('Extraction Script',response.content.decode('utf-8'))
+
+    def test_product_card_location(self):
+        response = self.client.get('/datadocument/179486/')
+        html = response.content.decode('utf-8')
+        e_idx = html.index('<h4>Extracted Text</h4>')
+        p_idx = html.index('<h4>Products</h4>')
+        self.assertTrue(p_idx > e_idx, ('Product card should come after ' 
+                                        'Extracted Text card'))
+
 
 class TestDynamicDetailFormsets(TestCase):
     fixtures = fixtures_standard

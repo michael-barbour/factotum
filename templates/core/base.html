@@ -58,6 +58,7 @@
             <li class="nav-item {% if 'qa' in request.resolver_match.url_name %}active{% endif %}">
                 <a class="nav-link" href="{% url 'qa' %}">QA</a>
             </li>
+            {% block nav %}{% endblock %}
         </ul>
         <ul class="nav navbar-nav navbar-right ml-auto">
             <li class="nav-item dropdown">

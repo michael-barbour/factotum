@@ -72,7 +72,7 @@
                 <span class="help-block">{{ extracted_text_form.errors }}</span>
             </div>
         {% endif %}
-        <form method="post" action="{% url 'save_ext_form' doc.pk %}">
+        <!-- <form method="post" action="{% url 'save_ext_form' doc.pk %}"> -->
             {% csrf_token %}
             {{ form.id.as_hidden }}
             <dl class="row col-lg-12">
@@ -102,9 +102,7 @@
                     {% endif %}
                 </dd>
             </dl>
-            <button type="submit" id="save_extracted_text" name="save_extracted_text"
-                    class="btn btn-primary chem-control" role="button">Save edits</button>
-        </form>
+        <!-- </form> -->
         {% else %}
             No Extracted Text exists for this Data Document
         {% endif %}
@@ -128,12 +126,10 @@
     </div>
 <br>
 {% if extracted_text_form %}
-<form method="post" action="">
+<!-- <form method="post" action=""> -->
     <div class="row col-lg-12">
         <h4>{{ doc.data_group.group_type }} detail</h4>
     </div>
-    <button type="submit" id="save_extracted_detail" name="save_extracted_detail"
-    class="btn btn-primary detail-control" role="button">Save {{ doc.data_group.group_type }} edits</button>
     <div class="card-body">
         {% csrf_token %}
         <div class="row">
@@ -141,12 +137,6 @@
         <div class="col-lg-6 col-md-6" style="padding-top: 30px;" >
             <div class="card" style="background-color:{{ form.color }};" >
                 <div class="card-body">
-                    {% if not form.instance.pk %}
-                    <div class="text-center">
-                      <small><b>Add New {{ doc.data_group.group_type }}</b></small><br>
-                    </div>
-                    {% else %}
-                    {% endif %}
                     {% if form.errors %}
                         <div class="form-group alert alert-danger" role="alert">
                             <span class="alert-danger">{{ form.errors }}</span>
@@ -168,6 +158,6 @@
         {% endfor %}
         </div>
     </div>
-</form>
+<!-- </form> -->
 {% endif %}
 {% endblock %}

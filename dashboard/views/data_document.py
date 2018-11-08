@@ -36,6 +36,9 @@ def data_document_detail(request, pk,
         extracted_text_form = ParentForm(instance=extracted_text)
         child_formset = ChildForm(instance=extracted_text)
         # The fields should be read-only in this view
+        for f in extracted_text_form.fields:
+            extracted_text_form.fields[f].disabled = True
+
         for form in child_formset.forms:
             for field in form.fields:
                 form.fields[field].widget.attrs['disabled'] = True

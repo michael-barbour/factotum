@@ -151,7 +151,8 @@ def extracted_text_qa(request, pk,
         }
 
     if request.method == 'POST' and 'save' in request.POST:
-        # print('---saving')
+        print('---saving')
+        #print(request.__dict__)
         parent_model, detail_model = get_extracted_models(doc.data_group.type)
         DetailFormSet = inlineformset_factory(parent_model=parent_model,
                                             model=detail_model,
@@ -177,9 +178,12 @@ def extracted_text_qa(request, pk,
                 ext_form.save()
                 extext.qa_edited = True
                 extext.save()
+        # rebuild the formset after saving it
+        detail_formset = ChildForm( instance=extext)
         context['detail_formset'] = detail_formset
         context['ext_form'] = ext_form
         context.update({'notesform' : notesform}) # calls the clean method? y?
+
     elif request.method == 'POST' and 'approve' in request.POST: # APPROVAL
         notesform =  QANotesForm(request.POST, instance=note)
         context['notesform'] = notesform
@@ -199,4 +203,5 @@ def extracted_text_qa(request, pk,
             elif nextpk == 0:
                 return HttpResponseRedirect(
                             reverse('qa'))
+                            
     return render(request, template_name, context)

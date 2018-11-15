@@ -117,12 +117,6 @@ def extracted_text_qa(request, pk,
     # Create the formset factory for the extracted records
     # The model used for the formset depends on whether the
     # extracted text object matches a data document()
-    parent_model, detail_model = get_extracted_models(doc.data_group.type)
-    DetailFormSet = inlineformset_factory(parent_model=parent_model,
-                                        model=detail_model,
-                                        formset=BaseExtractedDetailFormSet,
-                                        fields=detail_model.detail_fields(),
-                                                extra=1)
     
     ParentForm, ChildForm = create_detail_formset(doc.data_group.type, EXTRA)
     extext = extext.pull_out_cp() #get CP if exists
@@ -153,13 +147,7 @@ def extracted_text_qa(request, pk,
     if request.method == 'POST' and 'save' in request.POST:
         print('---saving')
         #print(request.__dict__)
-        parent_model, detail_model = get_extracted_models(doc.data_group.type)
-        DetailFormSet = inlineformset_factory(parent_model=parent_model,
-                                            model=detail_model,
-                                            formset=BaseExtractedDetailFormSet,
-                                            fields=detail_model.detail_fields(),
-                                                    extra=1)
-        
+       
         ParentForm, ChildForm = create_detail_formset(doc.data_group.type, EXTRA)
         extext = extext.pull_out_cp() #get CP if exists
         ext_form = ParentForm(request.POST, instance=extext)

@@ -164,12 +164,6 @@ def extracted_text_qa(request, pk,
         extext = extext.pull_out_cp() #get CP if exists
         ext_form = ParentForm(request.POST, instance=extext)
         detail_formset = ChildForm(request.POST, instance=extext)
-        # Add CSS selector classes to each form
-        for form in detail_formset:
-            for field in form.fields:
-                form.fields[field].widget.attrs.update(
-                    {'class': f'detail-control form-control %s' % doc.data_group.type}
-                    )
 
         notesform = QANotesForm(request.POST, instance=note)
         if detail_formset.has_changed() or ext_form.has_changed():
@@ -183,6 +177,12 @@ def extracted_text_qa(request, pk,
         context['detail_formset'] = detail_formset
         context['ext_form'] = ext_form
         context.update({'notesform' : notesform}) # calls the clean method? y?
+        # Add CSS selector classes to each form
+        for form in detail_formset:
+            for field in form.fields:
+                form.fields[field].widget.attrs.update(
+                    {'class': f'detail-control form-control %s' % doc.data_group.type}
+                    )
 
     elif request.method == 'POST' and 'approve' in request.POST: # APPROVAL
         notesform =  QANotesForm(request.POST, instance=note)
@@ -203,5 +203,5 @@ def extracted_text_qa(request, pk,
             elif nextpk == 0:
                 return HttpResponseRedirect(
                             reverse('qa'))
-                            
+    print('--about to render %s' % template_name)
     return render(request, template_name, context)

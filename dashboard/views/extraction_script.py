@@ -145,7 +145,6 @@ def extracted_text_qa(request, pk,
         }
 
     if request.method == 'POST' and 'save' in request.POST:
-        print('---saving')
         #print(request.__dict__)
        
         ParentForm, ChildForm = create_detail_formset(doc.data_group.type, EXTRA)
@@ -191,5 +190,4 @@ def extracted_text_qa(request, pk,
             elif nextpk == 0:
                 return HttpResponseRedirect(
                             reverse('qa'))
-    print('--about to render %s' % template_name)
     return render(request, template_name, context)

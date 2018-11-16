@@ -35,9 +35,7 @@ def data_document_detail(request, pk,
         extracted_text = extracted_text.pull_out_cp() #get CP if exists
         extracted_text_form = ParentForm(instance=extracted_text)
         child_formset = ChildForm(instance=extracted_text)
-        # The fields should be read-only in this view
-        for f in extracted_text_form.fields:
-            extracted_text_form.fields[f].disabled = True
+
 
         for form in child_formset.forms:
             for field in form.fields:
@@ -45,7 +43,6 @@ def data_document_detail(request, pk,
 
         context.update(
             {'extracted_text': extracted_text,
-            'extracted_text_form': extracted_text_form,
             'detail_formset': child_formset}
             )
                 

@@ -66,46 +66,46 @@
     <div class="col-lg-6 col-md-6 extracted-text">
     <h4>Extracted Text</h4>
     <div class="card-body border container">
-        {% if extracted_text_form %}
-        {% if extracted_text_form.errors %}
-            <div class="form-group has-error">
-                <span class="help-block">{{ extracted_text_form.errors }}</span>
-            </div>
-        {% endif %}
-        <!-- <form method="post" action="{% url 'save_ext_form' doc.pk %}"> -->
-            {% csrf_token %}
-            {{ form.id.as_hidden }}
-            <dl class="row col-lg-12">
-                {% if extracted_text_form.cat_code %}
-                <dt class="col-lg-6">CPCat Code</dt>
-                <dd  class="col-lg-6">{{ extracted_text_form.cat_code }}</dd>
-                {% endif %}
-                <dt class="col-lg-6">Product Name</dt>
-                <dd  class="col-lg-6">{{ extracted_text_form.prod_name }}</dd>
-                <dt class="col-lg-6">Doc Date</dt>
-                <dd  class="col-lg-6">{{ extracted_text_form.doc_date }}</dd>
-                <dt class="col-lg-6">Rev Num</dt>
-                <dd  class="col-lg-6">{{ extracted_text_form.rev_num }}</dd>
-                <dt class="col-lg-6">Extraction Script</dt>
-                <dd  class="col-lg-6">
+        {% if extracted_text %}
+        <dl>
+            <dt >Product Name</dt>
+            <dd class="col-lg-9">
+                {{ extracted_text.prod_name }}
+            </dd>
+
+            <dt>Doc date</dt>
+            <dd class="col-lg-9">
+                {{ extracted_text.doc_date }}
+            </dd>
+
+            <dt>Rev num</dt>
+            <dd class="col-lg-9">
+                {{ extracted_text.rev_num }}
+            </dd>
+
+            <dt >Extraction script</dt>
+            <dd class="col-lg-9">
                     <a href="{{ extracted_text.extraction_script.url| default_if_none:'' }}" target="_blank">
-                        {{ extracted_text.extraction_script.title }}
-                    </a>
-                </dd>
-                <dt class="col-lg-6">QA Approved</dt>
-                <dd  class="col-lg-6">{{ extracted_text.qa_checked | yesno | capfirst}}
-                    {% if not extracted_text.qa_checked %}
-                        <div class="btn-group float-lg-right" role="group">
-                        <a class="btn btn-primary btn-sm" role="button" title="QA"
-                           href="{% url "data_document_extracted_text_qa" extracted_text.pk %}">QA</a>
-                        </div>
-                    {% endif %}
-                </dd>
-            </dl>
-        <!-- </form> -->
+                            {{ extracted_text.extraction_script.title }}
+                        </a>
+            </dd>
+            <dt >QA Approved</dt>
+            <dd  class="col-lg-6">{{ extracted_text.qa_checked | yesno | capfirst}}
+                {% if not extracted_text.qa_checked %}
+                    <div class="btn-group float-lg-right" role="group">
+                    <a class="btn btn-primary btn-sm" role="button" title="QA"
+                       href="{% url "data_document_extracted_text_qa" extracted_text.pk %}">QA</a>
+                    </div>
+                {% endif %}
+            </dd>
+        </dl>
+
         {% else %}
-            No Extracted Text exists for this Data Document
-        {% endif %}
+        No Extracted Text exists for this Data Document
+    {% endif %}
+
+        
+
         </div>
     </div>
         {%  if not doc.data_group.is_habits_and_practices %}
@@ -125,7 +125,7 @@
         {% endif %}
     </div>
 <br>
-{% if extracted_text_form %}
+{% if detail_formset %}
 <!-- <form method="post" action=""> -->
     <div class="row col-lg-12">
         <h4>{{ doc.data_group.group_type }} detail</h4>

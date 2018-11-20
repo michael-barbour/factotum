@@ -41,11 +41,11 @@ function bubbleChart() {
             .style("width", "400px")
             .text("");
 
-        var scaleRadius = d3v4.scaleLinear().domain([d3v4.min(data, function(d) {
+        var scaleRadius = d3v4.scaleSqrt().domain([d3v4.min(data, function(d) {
             return +d[columnForRadius];
         }), d3v4.max(data, function(d) {
             return +d[columnForRadius];
-        })]).range([2,10]);
+        })]).range([2,20]);
         var colorCircles = d3v4.scaleOrdinal(d3v4.schemeCategory10)
 
 

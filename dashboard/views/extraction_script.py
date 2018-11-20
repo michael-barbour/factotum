@@ -1,6 +1,4 @@
 import os
-import math
-from random import shuffle
 from urllib import parse
 
 from django.conf import settings
@@ -12,6 +10,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 
 from factotum.settings import EXTRA
 from dashboard.models import *
@@ -30,9 +29,9 @@ def extraction_script_list(request, template_name='qa/extraction_script_list.htm
     """
     # TODO: the user is supposed to be able to click the filter button at the top of the table
     # and toggle between seeing all scripts and seeing only the ones with incomplete QA
-    extractionscript = Script.objects.filter(script_type='EX')
+    extractionscripts = Script.objects.filter(script_type='EX')
     data = {}
-    data['object_list'] = extractionscript
+    data['object_list'] = extractionscripts
     return render(request, template_name, data)
 
 
@@ -43,35 +42,39 @@ def extraction_script_qa(request, pk,
     The user reviews the extracted text and checks whether it was properly converted to data
     """
     es = get_object_or_404(Script, pk=pk)
+    # Check whether QA has begun for the script
     if es.qa_begun:
-        # has qa begun and not complete? if both T, return group to be finished
-        if QAGroup.objects.filter(extraction_script=es,
-                                  qa_complete=False).exists():
-            # return docs that are in extracted texts QA group
-            group = QAGroup.objects.get(extraction_script=es,
+        # if the QA process has begun, there should already be one QA Group
+        # associated with the Script. 
+        print('The ExtractionScript QA process has begun' )
+        try:
+            # get the QA Group
+            qa_group = QAGroup.objects.get(extraction_script=es,
                                         qa_complete=False)
-            texts = ExtractedText.objects.filter(qa_group=group,
-                                                 qa_checked=False)
-            return render(request, template_name, {'extractionscript': es,
-                                                   'extractedtexts': texts,
-                                                   'qagroup': group})
-    # pks of text and docs are the same!
-    doc_text_ids = list(ExtractedText.objects.filter(extraction_script=es,
-                                                     qa_checked=False
-                                                     ).values_list('pk',
-                                                                   flat=True))
-    qa_group = QAGroup.objects.create(extraction_script=es)
-    if len(doc_text_ids) < 100:
-        texts = ExtractedText.objects.filter(pk__in=doc_text_ids)
+        except MultipleObjectsReturned:
+            print('More than one QA Group was found, choosing first')
+            qa_group = QAGroup.objects.filter(extraction_script=es,
+                                        qa_complete=False).first()
+        except ObjectDoesNotExist:
+            print('No QA Group was found matching Extraction Script %s' % es.pk)
+        
+        print('QA Group was found')
+
+        texts = ExtractedText.objects.filter(qa_group=qa_group,
+                                                qa_checked=False)
+        print('extracted text object count: %s' % texts.count())
+        
+        return render(request, template_name, {'extractionscript': es,
+                                                'extractedtexts': texts,
+                                                'qagroup': qa_group})
     else:
-        random_20 = math.ceil(len(doc_text_ids)/5)
-        shuffle(doc_text_ids)  # this is used to make random selection of texts
-        texts = ExtractedText.objects.filter(pk__in=doc_text_ids[:random_20])
-    for text in texts:
-        text.qa_group = qa_group
-        text.save()
-    es.qa_begun = True
-    es.save()
+        qa_group = es.create_qa_group() 
+        es.qa_begun = True  
+        es.save()
+    # Collect all the ExtractedText objects in the QA Group
+    texts = ExtractedText.objects.filter(qa_group=qa_group)
+    print('ExtractedText objects found with qa_group %s: %s' % (texts.count(), qa_group ))
+    
     return render(request, template_name, {'extractionscript': es,
                                            'extractedtexts': texts,
                                            'qagroup': qa_group})

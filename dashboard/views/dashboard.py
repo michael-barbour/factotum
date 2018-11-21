@@ -112,7 +112,7 @@ def download_PUCs(request):
                 puc.prod_type, 
                 puc.description, 
                 puc.get_level(), 
-                puc.get_the_kids().count()] #puc.producttopuc_set.count()  random.randrange(0,4)
+                puc.get_the_kids().count()]
         writer.writerow(row)
 
     return response

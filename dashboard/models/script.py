@@ -104,13 +104,14 @@ class Script(CommonInfo):
             texts = None
 
         # Set the qa_group attribute of each ExtractedText record to the new QA Group    
-        for text in texts:
-            text.qa_group = qa_group
-            text.save()
+        if texts is not None:
+            for text in texts:
+                text.qa_group = qa_group
+                text.save()
 
         # If the force_doc_id argument was populated, make sure it gets assigned 
         # to the new QA Group
-        if force_doc_id is not None and ExtractedText.objects.get(pk=force_doc_id).exists():
+        if force_doc_id is not None and ExtractedText.objects.filter(pk=force_doc_id).exists():
             text = ExtractedText.objects.get(pk=force_doc_id)
             text.qa_group = qa_group
             text.save()

@@ -42,28 +42,26 @@ def extraction_script_qa(request, pk,
     The user reviews the extracted text and checks whether it was properly converted to data
     """
     es = get_object_or_404(Script, pk=pk)
+    # If the Script has no related ExtractedText objects, redirect back to the QA index
+    if ExtractedText.objects.filter(extraction_script = es).count() == 0 :
+        return redirect('/qa/')
     # Check whether QA has begun for the script
     if es.qa_begun:
         # if the QA process has begun, there should already be one QA Group
         # associated with the Script. 
-        print('The ExtractionScript QA process has begun' )
         try:
             # get the QA Group
             qa_group = QAGroup.objects.get(extraction_script=es,
                                         qa_complete=False)
         except MultipleObjectsReturned:
-            print('More than one QA Group was found, choosing first')
             qa_group = QAGroup.objects.filter(extraction_script=es,
                                         qa_complete=False).first()
         except ObjectDoesNotExist:
             print('No QA Group was found matching Extraction Script %s' % es.pk)
         
-        print('QA Group was found')
 
         texts = ExtractedText.objects.filter(qa_group=qa_group,
-                                                qa_checked=False)
-        print('extracted text object count: %s' % texts.count())
-        
+                                                qa_checked=False)        
         return render(request, template_name, {'extractionscript': es,
                                                 'extractedtexts': texts,
                                                 'qagroup': qa_group})
@@ -73,7 +71,6 @@ def extraction_script_qa(request, pk,
         es.save()
     # Collect all the ExtractedText objects in the QA Group
     texts = ExtractedText.objects.filter(qa_group=qa_group)
-    print('ExtractedText objects found with qa_group %s: %s' % (texts.count(), qa_group ))
     
     return render(request, template_name, {'extractionscript': es,
                                            'extractedtexts': texts,
@@ -102,7 +99,13 @@ def extracted_text_qa(request, pk,
     exscript = extext.extraction_script
     # when not coming from extraction_script page, we don't necessarily have a qa_group created
     if not extext.qa_group:
-        extext.qa_group = QAGroup.objects.create(extraction_script=exscript)
+        # create the qa group with the optional ExtractedText pk argument 
+        # so that the ExtractedText gets added to the QA group even if the
+        # group uses a random sample
+        qa_group = exscript.create_qa_group( pk)
+        exscript.qa_begun = True
+        exscript.save()
+        extext.qa_group = qa_group
         extext.save()
     # get the next unapproved Extracted Text object
     # Its ID will populate the URL for the "Skip" button

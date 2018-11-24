@@ -139,14 +139,32 @@ def data_group_detail(request, pk,
                                                     'uploaded successfully.')
                 context['extract_form'] = include_extract_form(dg)
     if request.method == 'POST' and 'bulk' in request.POST:
+        # get the set of documents that have not been matched
         a = set(docs.values_list('pk',flat=True))
         b = set(prod_link.values_list('document_id',flat=True))
         # DataDocs to make products for...
         docs_needing_products = DataDocument.objects.filter(pk__in=list(a-b))
         stub = Product.objects.all().count() + 1
         for doc in docs_needing_products:
+            # Try to name the new product from the ExtractedText record's prod_name
+            try:
+                ext = ExtractedText.objects.get(data_document_id=doc.id)
+                if ext:
+                    ext = ext.pull_out_cp()
+                    if ext.prod_name:
+                        new_prod_title = ext.prod_name
+                    else:
+                        new_prod_title = None
+            except ExtractedText.DoesNotExist:
+                new_prod_title = None
+            # If the ExtractedText record can't provide a title, use the DataDocument's title
+            if not new_prod_title:
+                if doc.title:
+                    new_prod_title = '%s stub' % doc.title
+                else:
+                    new_prod_title = 'unknown'
             product = Product.objects.create(
-                                    title='unknown',
+                                    title=new_prod_title,
                                     upc=f'stub_{stub}',
                                     data_source_id=doc.data_group.data_source_id
                                     )

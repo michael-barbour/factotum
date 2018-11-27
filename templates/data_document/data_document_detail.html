@@ -78,12 +78,12 @@
                 {{ extracted_text.doc_date }}
             </dd>
 
-            <dt>Rev num</dt>
+            <dt>Rev Num</dt>
             <dd class="col-lg-9">
                 {{ extracted_text.rev_num }}
             </dd>
 
-            <dt >Extraction script</dt>
+            <dt >Extraction Script</dt>
             <dd class="col-lg-9">
                     <a href="{{ extracted_text.extraction_script.url| default_if_none:'' }}" target="_blank">
                             {{ extracted_text.extraction_script.title }}
@@ -126,9 +126,8 @@
     </div>
 <br>
 {% if detail_formset %}
-<!-- <form method="post" action=""> -->
     <div class="row col-lg-12">
-        <h4>{{ doc.data_group.group_type }} detail</h4>
+        <h4>{{ doc.data_group.group_type }} Detail</h4>
     </div>
     <div class="card-body">
         {% csrf_token %}
@@ -158,6 +157,5 @@
         {% endfor %}
         </div>
     </div>
-<!-- </form> -->
 {% endif %}
 {% endblock %}

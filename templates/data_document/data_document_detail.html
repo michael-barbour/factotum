@@ -63,13 +63,13 @@
 
     <div class="row col-lg-12">
 
-    <div class="col-lg-6 col-md-6 extracted-text">
-      <div class="card-header">
+      <div class="col-lg-6 col-md-6 extracted-text">
+        <div class="card-header">
           <h4>Extracted Text</h4>
-      </div>
-    <div class="card-body border container">
-        {% if extracted_text %}
-        <dl>
+        </div>
+      <div class="card-body border container">
+          {% if extracted_text %}
+          <dl>
             <dt >Product Name</dt>
             <dd class="col-lg-9">
                 {{ extracted_text.prod_name }}
@@ -96,27 +96,22 @@
                 {% if not extracted_text.qa_checked %}
                     <div class="btn-group float-lg-right" role="group">
                     <a class="btn btn-primary btn-sm" role="button" title="QA"
-                       href="{% url "data_document_extracted_text_qa" extracted_text.pk %}">QA</a>
+                      href="{% url "data_document_extracted_text_qa" extracted_text.pk %}">QA</a>
                     </div>
                 {% endif %}
             </dd>
-        </dl>
-
-        {% else %}
-        No Extracted Text exists for this Data Document
-    {% endif %}
-
-        
-
-        </div>
+          </dl>
+          {% else %}
+            No Extracted Text exists for this Data Document
+          {% endif %}
+      </div>
     </div>
         {%  if not doc.data_group.is_habits_and_practices %}
         <!-- add products -->
         <div class="col-lg-6 col-md-6">
           <div class="card-header">
-            <h4>Products
-              <a class="btn btn-md btn-warning float-right" href="{% url 'link_product_form' doc.pk %}" role="button">Create New Product</a>
-            </h4>
+            <h4 class="d-inline">Products</h4>
+            <a class="btn btn-md btn-warning float-right d-inline" href="{% url 'link_product_form' doc.pk %}" role="button">Create New Product</a>
           </div>
           <div class="card-body border container">
             <ol>

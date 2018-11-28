@@ -206,7 +206,7 @@ def include_extract_form(dg):
         return False
 
 
-def create_detail_formset(group_type, extra=0):
+def create_detail_formset(group_type, extra=0, can_delete=True):
     '''Returns the pair of formsets that will be needed based on group_type.
     .                       ('CO'),('CP'),('FU'),('HP')
     .
@@ -217,7 +217,8 @@ def create_detail_formset(group_type, extra=0):
         return forms.inlineformset_factory(parent_model=parent_model,
                                             model=model,
                                             fields=fields,
-                                            extra=extra)
+                                            extra=extra,
+                                            can_delete=can_delete)
 
     def one(): # for chemicals
         ChemicalFormSet = make_formset(parent,child,child.detail_fields())

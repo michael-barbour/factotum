@@ -84,12 +84,11 @@ def link_product_form(request, pk, template_name=('product_curation/'
     ds_id = doc.data_group.data_source_id
     initial = {   'upc': ('stub_' + str(Product.objects.all().count() + 1)),
         'document_type': doc.document_type,
-        'return_url'   : request.META.get('HTTP_REFERER', None)}
+           'return_url': request.META.get('HTTP_REFERER')}
     form = ProductLinkForm(initial=initial)
     # limit document type options to those matching parent datagroup group_type
     queryset = DocumentType.objects.filter(group_type=doc.data_group.group_type)
     form.fields['document_type'].queryset = queryset
-    doc.referer = request.META.get('HTTP_REFERER', None)
     if request.method == 'POST':
         form = ProductLinkForm(request.POST or None)
         if form.is_valid():

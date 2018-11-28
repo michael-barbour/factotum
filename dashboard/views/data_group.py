@@ -261,13 +261,19 @@ def data_group_update(request, pk, template_name='data_group/datagroup_form.html
     #  in the case the "Register Records CSV file" is updated.
     datagroup = get_object_or_404(DataGroup, pk=pk)
     form = DataGroupForm(request.POST or None, instance=datagroup)
-    header = 'Update Data Group for Data Source "' + str(datagroup.data_source) + '"'
+    header = f'Update Data Group for Data Source "{datagroup.data_source}"'
     if form.is_valid():
         if form.has_changed():
             form.save()
         return redirect('data_group_detail', pk=datagroup.id)
     form.referer = request.META.get('HTTP_REFERER', None)
-    return render(request, template_name, {'datagroup': datagroup, 'form': form, 'header': header})
+    groups = GroupType.objects.all()
+    for group in groups:
+            group.codes = DocumentType.objects.filter(group_type=group)
+    return render(request, template_name, {'datagroup': datagroup, 
+                                            'form': form,
+                                            'header': header,
+                                            'groups': groups})
 
 @login_required()
 def data_group_delete(request, pk, template_name='data_source/datasource_confirm_delete.html'):

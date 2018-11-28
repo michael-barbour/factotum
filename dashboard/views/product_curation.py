@@ -82,11 +82,14 @@ def link_product_form(request, pk, template_name=('product_curation/'
                                                     'link_product_form.html')):
     doc = DataDocument.objects.get(pk=pk)
     ds_id = doc.data_group.data_source_id
-    upc_stub = ('stub_' + str(Product.objects.all().count() + 1))
-    form = ProductLinkForm(initial={'upc': upc_stub, 'document_type': doc.document_type})
+    initial = {   'upc': ('stub_' + str(Product.objects.all().count() + 1)),
+        'document_type': doc.document_type}
+    form = ProductLinkForm(initial=initial)
     # limit document type options to those matching parent datagroup group_type
-    form.fields['document_type'].queryset =\
-        form.fields['document_type'].queryset.filter(group_type_id = doc.data_group.group_type_id)
+    queryset = DocumentType.objects.filter(group_type=doc.data_group.group_type)
+    form.fields['document_type'].queryset = queryset
+    doc.referer = request.META.get('HTTP_REFERER', None)
+    print('datadocument' in doc.referer)
     if request.method == 'POST':
         form = ProductLinkForm(request.POST or None)
         if form.is_valid():
@@ -100,14 +103,18 @@ def link_product_form(request, pk, template_name=('product_curation/'
                 product.size = form['size'].value()
                 product.color = form['color'].value()
                 product.save()
-            if not ProductDocument.objects.filter(document=doc).exists():
+            if not ProductDocument.objects.filter(document=doc,
+                                                    product=product).exists():
                 p = ProductDocument(product=product, document=doc)
                 p.save()
             document_type = form['document_type'].value()
-            if document_type != doc.document_type:
+            if document_type != doc.document_type: # update if user changes
                 doc.document_type = DocumentType.objects.get(pk=document_type)
                 doc.save()
-            return redirect('link_product_list', pk=doc.data_group.pk)
+            if 'datadocument' in doc.referer:
+                return redirect('data_document', pk=doc.pk)
+            else:
+                return redirect('link_product_list', pk=doc.data_group.pk)
     return render(request, template_name,{'document': doc, 'form': form})
 
 @login_required()

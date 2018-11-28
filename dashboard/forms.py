@@ -113,10 +113,15 @@ class ProductLinkForm(forms.ModelForm):
         queryset=DocumentType.objects.all(),
         label="Data Document Type",
         required=True)
+    return_url = forms.CharField()
 
     class Meta:
         model = Product
         fields = ['title', 'manufacturer', 'brand_name', 'upc', 'size', 'color']
+        
+    def __init__(self, *args, **kwargs):
+        super(ProductLinkForm, self).__init__(*args, **kwargs)
+        self.fields['return_url'].widget = forms.HiddenInput()
 
 class ProductForm(forms.ModelForm):
     required_css_class = 'required' # adds to label tag

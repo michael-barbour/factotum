@@ -7,7 +7,7 @@
   pk: 2
   fields: {created_at: !!timestamp '2018-08-30 18:38:10.868539', updated_at: !!timestamp '2018-08-30
       18:38:10.868561', product: 878, PUC: 245, puc_assigned_usr: null, puc_assigned_script: null,
-     classification_method: MA,
+    classification_method: MA,
     classification_confidence: '1.000'}
 - model: dashboard.producttopuc
   pk: 3

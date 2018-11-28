@@ -23,12 +23,6 @@ class ExtractedQaTest(TestCase):
         ext = ExtractedText.objects.get(qa_group=qa_group)
         self.assertIsNotNone(ext.qa_group)
         response = self.client.get(f'/qa/extractedtext/{ext.pk}/')
-        # The extracted text object's QA page should include an "Exit" link
-        # that goes to the extraction script's QA page
-        self.assertInHTML(
-            '<a class="btn btn-secondary btn-lg btn-block" href="/qa/extractionscript/%s/" role="button">Exit</a>' % self.objects.extext.extraction_script.pk,
-            str(response.content)
-            )
 
     def test_qa_approval_redirect(self):
         # first need to create a QAGroup w/ this get request.

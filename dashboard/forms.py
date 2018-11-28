@@ -88,24 +88,6 @@ class ExtractedTextQAForm(forms.ModelForm):
         model = ExtractedText
         fields = ['prod_name', 'data_document', 'qa_checked']
 
-class BaseExtractedDetailFormSet(forms.BaseInlineFormSet):
-    """
-    Base class for the form in which users edit the chemical composition or
-    functional use data
-    """
-    required_css_class = 'required'  # adds to label tag
-
-    class Meta:
-        model = ExtractedChemical
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
-        super(BaseExtractedDetailFormSet, self).__init__(*args, **kwargs)
-
-        for form in self.forms:
-            for field in form.fields:
-                form.fields[field].widget.attrs.update(
-                                        {'class': 'detail-control form-control'})
 
 class ProductLinkForm(forms.ModelForm):
     required_css_class = 'required' # adds to label tag

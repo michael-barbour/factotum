@@ -2,9 +2,12 @@ from dal import autocomplete
 from bootstrap_datepicker_plus import DatePickerInput
 
 from django import forms
+from django.forms import BaseInlineFormSet
+
 from django.utils.translation import ugettext_lazy as _
 
 from dashboard.models import *
+from django.db.models import F
 from dashboard.utils import get_extracted_models
 
 class DataGroupForm(forms.ModelForm):
@@ -183,6 +186,18 @@ def include_extract_form(dg):
         return False
 
 
+class ExtractedChemicalFormSet(BaseInlineFormSet):
+    def __init__(self, *args, **kwargs):
+        print('adding @property-based fields')
+        super().__init__(*args, **kwargs)
+        #self.queryset = ExtractedChemical.objects.filter(extracted_text=self.instance).annotate(true_cas=F('curated_chemical__true_cas'))
+        print(self.queryset)
+
+class ExtractedChemicalForm(forms.ModelForm):
+    class Meta:
+        model = ExtractedChemical
+        exclude = ['']
+
 def create_detail_formset(group_type, extra=0):
     '''Returns the pair of formsets that will be needed based on group_type.
     .                       ('CO'),('CP'),('FU'),('HP')
@@ -196,8 +211,21 @@ def create_detail_formset(group_type, extra=0):
                                             fields=fields,
                                             extra=extra)
 
+    def make_custom_formset(parent_model,model,fields,formset):
+        return forms.inlineformset_factory(parent_model=parent_model,
+                                            model=model,
+                                            fields=fields,
+                                            formset=formset,
+                                            extra=extra)
+
     def one(): # for chemicals
-        ChemicalFormSet = make_formset(parent,child,child.detail_fields())
+        ChemicalFormSet = make_custom_formset(
+            parent_model=parent,
+            model=child,
+            fields=child.detail_fields(),
+            formset=ExtractedChemicalFormSet
+            )
+
         return (ExtractedTextForm, ChemicalFormSet)
 
     def two(): # for functional_use

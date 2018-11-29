@@ -75,10 +75,15 @@ class Script(CommonInfo):
         from .qa_group import QAGroup
         from .extracted_text import ExtractedText
         es = self
-        # Confirm that there's no existing QA Group for this Script
-        if QAGroup.objects.filter(extraction_script = es).count() >= 1:
-            print('QA Group already found for %s Script' % es )
+        # Handle cases where a QA group already exists for the script
+        if QAGroup.objects.filter(extraction_script = es).count() == 1:
+            # This is a valid state
             return QAGroup.objects.get(extraction_script = es)
+        elif QAGroup.objects.filter(extraction_script = es).count() > 1:
+            # this is a failure mode induced by the system's allowing
+            # duplicate QA Groups to be created for a single script
+            return QAGroup.objects.filter(extraction_script = es).first()
+
         
         # Create a new QA Group for the ExtractionScript es
         qa_group = QAGroup.objects.create(extraction_script=es)

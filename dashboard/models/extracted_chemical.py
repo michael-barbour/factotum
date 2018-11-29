@@ -54,3 +54,11 @@ class ExtractedChemical(CommonInfo):
 
     def get_extractedtext(self):
         return self.extracted_text
+
+    @property
+    def true_cas(self):
+        return self.curated_chemical.true_cas
+
+    @property
+    def true_chem_name(self):
+        return self.curated_chemical.true_chem_name

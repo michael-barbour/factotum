@@ -190,7 +190,7 @@ class ExtractedChemicalFormSet(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
         print('adding @property-based fields')
         super().__init__(*args, **kwargs)
-        #self.queryset = ExtractedChemical.objects.filter(extracted_text=self.instance).annotate(true_cas=F('curated_chemical__true_cas'))
+        self.queryset = ExtractedChemical.objects.filter(extracted_text=self.instance).annotate(true_cas=F('curated_chemical__true_cas'))
         print(self.queryset)
 
 class ExtractedChemicalForm(forms.ModelForm):
@@ -198,7 +198,7 @@ class ExtractedChemicalForm(forms.ModelForm):
         model = ExtractedChemical
         exclude = ['']
 
-def create_detail_formset(group_type, extra=0):
+def create_detail_formset(group_type, extra=0, can_delete=False):
     '''Returns the pair of formsets that will be needed based on group_type.
     .                       ('CO'),('CP'),('FU'),('HP')
     .
@@ -209,14 +209,16 @@ def create_detail_formset(group_type, extra=0):
         return forms.inlineformset_factory(parent_model=parent_model,
                                             model=model,
                                             fields=fields,
-                                            extra=extra)
+                                            extra=extra,
+                                            can_delete=False)
 
     def make_custom_formset(parent_model,model,fields,formset):
         return forms.inlineformset_factory(parent_model=parent_model,
                                             model=model,
                                             fields=fields,
-                                            formset=formset,
-                                            extra=extra)
+                                            formset=formset, #this specifies a custom formset
+                                            extra=extra,
+                                            can_delete=False)
 
     def one(): # for chemicals
         ChemicalFormSet = make_custom_formset(

@@ -79,10 +79,13 @@ class TestDynamicDetailFormsets(TestCase):
             self.assertEqual(dd_child_model, childform_model)
 
     def test_curated_chemical(self):
-        ''''Loop through all the ExtractedText objects and confirm that the new
-        create_detail_formset method returns forms based on the correct models
+        ''''Confirm that if an ExtractedChemical record has been matched to DSSToxSubstance, the 
+            DSSToxSubstance fields are displayed in the card
+            http://127.0.0.1:8000/datadocument/173824/ Composition, has DSSToxSubstance data
+            http://127.0.0.1:8000/datadocument/5/ Functional Use, has no DSSToxSubstance data
+            http://127.0.0.1:8000/datadocument/7/ Functional Use, has no DSSToxSubstance data
         '''
-        et=ExtractedText.objects.get(pk=127870)
+        et=ExtractedText.objects.get(pk=127870) # this one 
         dd = et.data_document
         ParentForm, ChildForm = create_detail_formset(dd.data_group.type, EXTRA)
         extracted_text = et.pull_out_cp() #get CP if exists

@@ -188,15 +188,25 @@ def include_extract_form(dg):
 
 class ExtractedChemicalFormSet(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
-        print('adding @property-based fields')
         super().__init__(*args, **kwargs)
-        self.queryset = ExtractedChemical.objects.filter(extracted_text=self.instance).annotate(true_cas=F('curated_chemical__true_cas'))
-        print(self.queryset)
 
 class ExtractedChemicalForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ExtractedChemicalForm, self).__init__(*args, **kwargs)
+        print(self.instance.__dict__)
+
+        # the non-field properties need to be explicitly added
+        if hasattr(self.instance, 'curated_chemical') and self.instance.curated_chemical is not None:
+            self.fields['true_cas'] = forms.CharField(max_length=200)
+            self.fields['true_cas'].initial = self.instance.true_cas
+            self.fields['true_chemname'] = forms.CharField(max_length=400)
+            self.fields['true_chemname'].initial = self.instance.true_chemname
     class Meta:
         model = ExtractedChemical
         exclude = ['']
+
+
+
 
 def create_detail_formset(group_type, extra=0, can_delete=False):
     '''Returns the pair of formsets that will be needed based on group_type.
@@ -212,11 +222,12 @@ def create_detail_formset(group_type, extra=0, can_delete=False):
                                             extra=extra,
                                             can_delete=False)
 
-    def make_custom_formset(parent_model,model,fields,formset):
+    def make_custom_formset(parent_model,model,fields,formset,form):
         return forms.inlineformset_factory(parent_model=parent_model,
                                             model=model,
                                             fields=fields,
                                             formset=formset, #this specifies a custom formset
+                                            form=form,
                                             extra=extra,
                                             can_delete=False)
 
@@ -225,7 +236,8 @@ def create_detail_formset(group_type, extra=0, can_delete=False):
             parent_model=parent,
             model=child,
             fields=child.detail_fields(),
-            formset=ExtractedChemicalFormSet
+            formset=ExtractedChemicalFormSet,
+            form=ExtractedChemicalForm
             )
 
         return (ExtractedTextForm, ChemicalFormSet)

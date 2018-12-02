@@ -10,7 +10,8 @@ class Script(CommonInfo):
 
     TYPE_CHOICES = (('DL', 'download'),
                     ('EX', 'extraction'),
-                    ('PC', 'product categorization'))
+                    ('PC', 'product categorization'),
+                    ('DC', 'data cleaning'))
 
     # Specify the share of a script's ExtractedText objects that must be
     # approved in order for the script's QA sat

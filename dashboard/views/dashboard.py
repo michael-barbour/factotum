@@ -13,7 +13,7 @@ from dashboard.models import *
 from dashboard.models import *
 
 current_date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d')
-chart_start_datetime = datetime.datetime(datetime.datetime.now().year - 1, datetime.datetime.now().month + 1, 1)
+chart_start_datetime = datetime.datetime(datetime.datetime.now().year - 1, min(12,datetime.datetime.now().month + 1), 1)
 
 
 def index(request):

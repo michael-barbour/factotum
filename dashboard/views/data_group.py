@@ -204,8 +204,6 @@ def data_group_detail(request, pk,
             if not context['clean_comp_err']:  # no saving until all errors are removed
                 for ingredient in good_records:
                     ingredient.save()
-                fs = FileSystemStorage(store)
-                fs.save(str(dg)+'_clean_comp_data.csv', csv_file)
                 context['msg'] = (f'{len(good_records)} clean composition data records '
                                                     'uploaded successfully.')
                 context['clean_comp_data_form'] = include_clean_comp_data_form(dg)

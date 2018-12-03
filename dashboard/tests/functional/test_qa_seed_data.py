@@ -114,6 +114,11 @@ class TestQaPage(TestCase):
 
 
 
+    def test_dd_link(self):
+        # Open the Script page to create a QA Group
+        response = self.client.get('/qa/extractedtext/5', follow=True)
+        self.assertIn(b'/datadocument/5', response.content)
+
     def test_approval(self):
         # Open the Script page to create a QA Group
         response = self.client.get('/qa/extractionscript/5', follow=True)

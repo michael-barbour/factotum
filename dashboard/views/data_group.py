@@ -151,14 +151,22 @@ def data_group_detail(request, pk,
         stub = Product.objects.all().count() + 1
         for doc in docs_needing_products:
             # Try to name the new product from the ExtractedText record's prod_name
-
-            if doc.extracted and doc.extractedtext.prod_name:
-                new_prod_title = doc.extractedtext.prod_name
-            elif doc.title:
-                new_prod_title = '%s stub' % doc.title
-            else:
-                new_prod_title = 'unknown'
-
+            try:
+                ext = ExtractedText.objects.get(data_document_id=doc.id)
+                if ext:
+                    ext = ext.pull_out_cp()
+                    if ext.prod_name:
+                        new_prod_title = ext.prod_name
+                    else:
+                        new_prod_title = None
+            except ExtractedText.DoesNotExist:
+                new_prod_title = None
+            # If the ExtractedText record can't provide a title, use the DataDocument's title
+            if not new_prod_title:
+                if doc.title:
+                    new_prod_title = '%s stub' % doc.title
+                else:
+                    new_prod_title = 'unknown'
             product = Product.objects.create(
                                     title=new_prod_title,
                                     upc=f'stub_{stub}',

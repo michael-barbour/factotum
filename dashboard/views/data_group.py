@@ -111,6 +111,10 @@ def data_group_detail(request, pk,
                     row['ingredient_rank'] = None if rank == '' else rank
                 ext, created = ext_parent.objects.get_or_create(data_document=d,
                                                     extraction_script=script)
+                if not created and ext.prod_name != row['prod_name']:
+                    # check that there is a 1:1 relation w/ prod_name
+                    err_msg = ['must be 1:1 with "data_document_id".']
+                    context['ext_err'][i+1] = {'prod_name': err_msg}
                 if created:
                     update_fields(row, ext)
                 row['extracted_text'] = ext

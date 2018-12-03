@@ -185,7 +185,6 @@ def include_extract_form(dg):
     else:
         return False
 
-
 class ExtractedChemicalFormSet(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -193,7 +192,6 @@ class ExtractedChemicalFormSet(BaseInlineFormSet):
 class ExtractedChemicalForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ExtractedChemicalForm, self).__init__(*args, **kwargs)
-        print(self.instance.__dict__)
 
         # the non-field properties need to be explicitly added
         if hasattr(self.instance, 'curated_chemical') and self.instance.curated_chemical is not None:
@@ -231,7 +229,7 @@ def create_detail_formset(group_type, extra=0, can_delete=False):
                                             extra=extra,
                                             can_delete=False)
 
-    def one(): # for chemicals
+    def one(): # for chemicals or unknown
         ChemicalFormSet = make_custom_formset(
             parent_model=parent,
             model=child,
@@ -239,7 +237,6 @@ def create_detail_formset(group_type, extra=0, can_delete=False):
             formset=ExtractedChemicalFormSet,
             form=ExtractedChemicalForm
             )
-
         return (ExtractedTextForm, ChemicalFormSet)
 
     def two(): # for functional_use

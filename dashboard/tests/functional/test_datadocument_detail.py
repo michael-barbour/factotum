@@ -81,18 +81,20 @@ class TestDynamicDetailFormsets(TestCase):
     def test_curated_chemical(self):
         ''''Confirm that if an ExtractedChemical record has been matched to DSSToxSubstance, the 
             DSSToxSubstance fields are displayed in the card
-            http://127.0.0.1:8000/datadocument/173824/ Composition, has DSSToxSubstance data
-            http://127.0.0.1:8000/datadocument/5/ Functional Use, has no DSSToxSubstance data
-            http://127.0.0.1:8000/datadocument/7/ Functional Use, has no DSSToxSubstance data
+            This checks every data document.
         '''
-        et=ExtractedText.objects.get(pk=127870) # this one 
-        dd = et.data_document
-        ParentForm, ChildForm = create_detail_formset(dd.data_group.type, EXTRA)
-        extracted_text = et.pull_out_cp() #get CP if exists
-        extracted_text_form = ParentForm(instance=extracted_text)
-        child_formset = ChildForm(instance=extracted_text)
-        # Compare the model of the child formset's QuerySet to the model
-        # of the ExtractedText object's child objects
-        dd_child_model  = get_extracted_models(dd.data_group.group_type.code)[1]
-        childform_model = child_formset.__dict__.get('queryset').__dict__.get('model')
-        self.assertEqual(dd_child_model, childform_model)
+        for et in ExtractedText.objects.all():
+            dd = et.data_document
+            ParentForm, ChildForm = create_detail_formset(dd.data_group.type)
+            child_formset = ChildForm(instance=et)
+            #print('Data doc %s , Group Type: %s ' % (dd.id, dd.data_group.type ))
+            for form in child_formset.forms:
+                if dd.data_group.type in ['CO','UN']:
+                    ec = form.instance
+                    if ec.true_cas is not None:
+                        self.assertTrue( 'true_cas' in form.fields )
+                    else:
+                        self.assertFalse( 'true_cas' in form.fields )
+                else:
+                    self.assertFalse( 'true_cas' in form.fields )
+            

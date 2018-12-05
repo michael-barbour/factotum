@@ -80,20 +80,7 @@
                 {{ datagroup.download_script }}
             </a>
         </dd>
-        <dt class="col-sm-3">
-            <abbr title="extract script">Extraction Script URL</abbr>
-        </dt>
-        <dd class="col-sm-9">
-            {% with all_documents|first as document %}
-                {% if document.extracted %}
-                <a href="{{ document.extractedtext.extraction_script.url }}" target="_blank">
-                    {{ document.extractedtext.extraction_script }}
-                </a>
-                {% else %}
-                No extraction script associated.
-                {% endif %}
-            {% endwith %}
-        </dd>
+
         {% if datagroup.updated_at %}
             <dt class="col-sm-3">Last updated</dt>
             <dd class="col-sm-9">{{ datagroup.updated_at }}</dd>

@@ -26,7 +26,8 @@ class TestProductLinkage(TestCase):
                                      'upc': 'none',
                                      'size': '',
                                      'color': '',
-                                     'document_type': 2})
+                                     'document_type': 2,
+                                     'return_url': 'required'})
         dd.refresh_from_db()
         self.assertEqual(dd.document_type_id, 2,
                          'DataDocument 155324 should have a final document_type_id of 2')

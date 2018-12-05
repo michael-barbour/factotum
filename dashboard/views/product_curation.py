@@ -143,7 +143,7 @@ def bulk_assign_puc_to_product(request, template_name=('product_curation/'
         product_ids = form['id_pks'].value().split(",")
         for id in product_ids:
             product = Product.objects.get(id=id)
-            ProductToPUC.objects.create(PUC=puc, product=product, classification_method='MA',
+            ProductToPUC.objects.create(PUC=puc, product=product, classification_method='MB',
                                     puc_assigned_usr=request.user)
     form["puc"].label = 'PUC to Assign to Selected Products'
     return render(request, template_name, {'products': p, 'q': q, 'form': form, 'full_p_count': full_p_count})

@@ -92,7 +92,10 @@
             <span class="oi oi-spreadsheet"></span>&nbsp;Download Registered Records CSV</a>
         <a href = "{%url 'dg_pdfs_zip_view' datagroup.pk %}" class="btn btn-secondary
               {% if datagroup.matched_docs == 0 %}disabled{% endif %}">
-          <span class="oi oi-data-transfer-download"></span> Download All PDF Documents
+          <span class="oi oi-data-transfer-download"></span> Download All PDF Documents 
+                <br/>get_zip_url:  {{  datagroup.get_zip_url }} 
+                <br/>get_name_as_slug: {{datagroup.get_name_as_slug}}
+                <br/>get_dg_folder: {{datagroup.get_dg_folder}}
         </a>
         {% if datagroup.group_type.code in "CO" %}
             <a href="{% url 'dg_raw_extracted_records' datagroup.pk  %}" class="btn btn-secondary">

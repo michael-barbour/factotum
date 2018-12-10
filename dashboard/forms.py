@@ -218,6 +218,8 @@ class ExtractedChemicalForm(forms.ModelForm):
             self.fields['true_cas'].initial = self.instance.true_cas
             self.fields['true_chemname'] = forms.CharField(max_length=400)
             self.fields['true_chemname'].initial = self.instance.true_chemname
+            self.fields['DTXSID'] = forms.CharField(max_length=50)
+            self.fields['DTXSID'].initial = self.instance.sid
     class Meta:
         model = ExtractedChemical
         exclude = ['']

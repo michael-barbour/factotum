@@ -107,6 +107,10 @@ class TestDynamicDetailFormsets(TestCase):
                         self.assertTrue( 'true_cas' in form.fields )
                     else:
                         self.assertFalse( 'true_cas' in form.fields )
+                    if ec.sid is not None:
+                        self.assertTrue( 'DTXSID' in form.fields )
+                    else:
+                        self.assertFalse( 'DTXSID' in form.fields )
                 else:
                     self.assertFalse( 'true_cas' in form.fields )
             

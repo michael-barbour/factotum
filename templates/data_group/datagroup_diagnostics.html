@@ -1,0 +1,35 @@
+{% extends 'core/base.html' %}
+{% block title %}Data Group Diagnostic Report{% endblock %}
+{% block content %}
+
+    <h1>
+        <span>Data Group Diagnostic Report</span>
+    </h1>
+
+    <table class="table table-sm table-bordered table-striped">
+        <thead class="table-primary">
+        <th>ID</th>
+        <th>Name</th>
+        <th>fs_id</th>
+        <th>get_zip_url()</th>
+        <th>get_dg_folder()</th>
+        <th></th>
+        </thead>
+        <tbody>
+        {% for data_group in datagroups %}
+            <tr>
+                <td>{{ data_group.id }}</td>
+                <td>{{ data_group.name }}</td>
+                <td>{{ data_group.fs_id}}</td>
+                <td>{{ data_group.get_zip_url }}</td>
+                <td>{{ data_group.get_dg_folder}}</td>
+
+                <td class="float-sm-right">
+
+                    </td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+{% endblock %}

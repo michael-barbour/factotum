@@ -195,3 +195,12 @@ class PUCModelTest(TestCase):
         puc = PUC.objects.get(pk=126) # PUC w/ ALL values
         self.assertEqual(len(puc.get_the_kids()),1, ('PUC should only have '
                                                         'itself associated'))
+
+    def test_puc_category_defaults(self):
+        '''Assert that the prod_fam and prod_type are nulled w/ an
+        empty string and not NULL.
+        '''
+        k = User.objects.get(username='Karyn')
+        puc = PUC.objects.create(last_edited_by=k)
+        self.assertTrue(puc.prod_fam == '')
+        self.assertTrue(puc.prod_type == '')

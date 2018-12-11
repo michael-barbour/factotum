@@ -15,7 +15,7 @@ from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from factotum.settings import EXTRA
 from dashboard.models import *
 from dashboard.utils import get_extracted_models
-from dashboard.forms import (BaseExtractedDetailFormSet, ExtractedTextForm,
+from dashboard.forms import (ExtractedTextForm,
                             create_detail_formset,   QANotesForm)
 
 

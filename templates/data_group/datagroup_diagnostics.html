@@ -10,12 +10,12 @@
         <thead class="table-primary">
         <th>ID</th>
         <th>Name</th>
-        <th>fs_id</th>
+        <th><code>fs_id</code></th>
+        <th>Resolved <code>dg_folder</code></th>
         <th>Resolved <code>csv_url</code></th>
-        <th><code>zip_url</code></th>
-        <th>get_dg_folder()</th>
+        <th>Resolved <code>zip_url</code></th>
         
-        
+
         </thead>
         <tbody>
         {% for data_group in datagroups %}
@@ -24,6 +24,15 @@
                 <td>{{ data_group.name }}</td>
                 <td>{{ data_group.fs_id}}</td>
                 <td>
+                    {% if data_group.dg_folder %}
+                        {{ data_group.dg_folder}} 
+                    {% else %}
+                        No folder found at &ldquo;{{data_group.get_name_as_slug}}&rdquo; 
+                        or &ldquo;{{data_group.fs_id}}&rdquo;.</span>
+                    {% endif %}
+                
+                </td>
+                <td>
                         {% if data_group.csv_url %}
                     <a href=/{{data_group.csv_url}} >{{ data_group.csv_url}} </a> 
                         {% else %}
@@ -31,8 +40,16 @@
                         {% endif %}
                 
                 </td>
-                <td>{{ data_group.zip_url }}</td>
-                <td>{{ data_group.get_dg_folder}}</td>
+                <td>
+                        {% if data_group.zip_url %}
+                    <a href=/{{data_group.zip_url}} >{{ data_group.zip_url}} </a> 
+                        {% else %}
+                        No zip file found in &ldquo;{{data_group.get_name_as_slug}}&rdquo; 
+                        or &ldquo;{{data_group.fs_id}}&rdquo;.</span>
+                        {% endif %}
+                
+                </td>
+                
 
 
             </tr>

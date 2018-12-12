@@ -39,9 +39,21 @@ class DataDocumentDetailTest(TestCase):
         response = self.client.get('/datadocument/179486/')
         html = response.content.decode('utf-8')
         e_idx = html.index('<h4>Extracted Text</h4>')
-        p_idx = html.index('<h4>Products</h4>')
+        p_idx = html.index('<h4 class="d-inline">Products</h4>')
         self.assertTrue(p_idx > e_idx, ('Product card should come after ' 
                                         'Extracted Text card'))
+
+    def test_product_create_link(self):
+        response = self.client.get('/datadocument/167497/')
+        self.assertContains(response, '/link_product_form/167497/')
+        data = {'title'        : ['New Product'],
+                'upc'          : ['stub_1860'],
+                'document_type': [1],
+                'return_url'   : ['/datadocument/167497/']}
+        response = self.client.post('/link_product_form/167497/', data=data)
+        self.assertRedirects(response,'/datadocument/167497/')
+        response = self.client.get(response.url)
+        self.assertContains(response, 'New Product')
 
 
 class TestDynamicDetailFormsets(TestCase):
@@ -77,3 +89,28 @@ class TestDynamicDetailFormsets(TestCase):
             dd_child_model  = get_extracted_models(dd.data_group.group_type.code)[1]
             childform_model = child_formset.__dict__.get('queryset').__dict__.get('model')
             self.assertEqual(dd_child_model, childform_model)
+
+    def test_curated_chemical(self):
+        ''''Confirm that if an ExtractedChemical record has been matched to DSSToxSubstance, the 
+            DSSToxSubstance fields are displayed in the card
+            This checks every data document.
+        '''
+        for et in ExtractedText.objects.all():
+            dd = et.data_document
+            ParentForm, ChildForm = create_detail_formset(dd.data_group.type)
+            child_formset = ChildForm(instance=et)
+            #print('Data doc %s , Group Type: %s ' % (dd.id, dd.data_group.type ))
+            for form in child_formset.forms:
+                if dd.data_group.type in ['CO','UN']:
+                    ec = form.instance
+                    if ec.true_cas is not None:
+                        self.assertTrue( 'true_cas' in form.fields )
+                    else:
+                        self.assertFalse( 'true_cas' in form.fields )
+                    if ec.sid is not None:
+                        self.assertTrue( 'DTXSID' in form.fields )
+                    else:
+                        self.assertFalse( 'DTXSID' in form.fields )
+                else:
+                    self.assertFalse( 'true_cas' in form.fields )
+            

@@ -19,10 +19,12 @@ urlpatterns = [
                                             name='data_group_list'),
     path('datagroup/<int:pk>/', views.data_group_detail,
                                             name='data_group_detail'),
-    path('datagroup/docs_csv/<int:pk>/', views.dg_dd_csv_view, 
+    path('datagroup/docs_csv/<int:pk>/', views.dg_dd_csv_view,
                                             name='dg_dd_csv_view'),
-    path('datagroup/pdfs_zipped/<int:pk>/', views.dg_pdfs_zip_view, 
+    path('datagroup/pdfs_zipped/<int:pk>/', views.dg_pdfs_zip_view,
                                             name='dg_pdfs_zip_view'),
+    path('datagroup/raw_extracted_records/<int:pk>/', views.dg_raw_extracted_records,
+                                            name='dg_raw_extracted_records'),
     path('datasource/<int:pk>/datagroup_new/', views.data_group_create,
                                             name='data_group_new'),
     path('datagroup/<int:pk>/registered_records.csv', views.data_group_registered_records_csv,
@@ -50,6 +52,8 @@ urlpatterns = [
     path('extractionscript/<int:pk>/', views.extraction_script_detail,
                                             name='extraction_script_detail'),
     path('qa/', views.qa_index,            name='qa'),
+    path('bulk_product_puc/', views.bulk_assign_puc_to_product,
+                                            name='bulk_product_puc'),
     path('product_puc/<int:pk>/', views.assign_puc_to_product,
                                             name='product_puc'),
     path('product_puc_delete/<int:pk>/', views.detach_puc_from_product,
@@ -65,6 +69,10 @@ urlpatterns = [
     path('products/', views.product_list,  name='product_list'),
     path('datadocument/<int:pk>/', views.data_document_detail,
                                             name='data_document'),
+    path('save_type/<int:pk>/', views.save_doc_form,
+                                            name='save_doc_form'),
+    path('save_ext/<int:pk>/', views.save_ext_form,
+                                            name='save_ext_form'),
     path('search/', include('haystack.urls')),
     path('find/', views.search.FacetedSearchView.as_view(),
                                             name='haystack_search'),
@@ -86,7 +94,7 @@ urlpatterns = [
     path('upload/dtxsid_csv/', views.upload_dtxsid_csv,
                                             name='upload_dtxsid_csv'),
     path('get_data/get_dsstox_csv_template/', views.get_data_dsstox_csv_template,
-                                            name='get_data_dsstox_csv_template')
+                                            name='get_data_dsstox_csv_template'),
 ]
 
 if settings.DEBUG is True:

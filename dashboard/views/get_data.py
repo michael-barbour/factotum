@@ -25,9 +25,10 @@ def get_data(request, template_name='get_data/get_data.html'):
     if request.method == 'POST':
         form = HabitsPUCForm(request.POST)
         if form.is_valid():
-            puc_id = form['puc'].value()
-            links = ExtractedHabitsAndPracticesToPUC.objects.filter(
-                                            PUC_id=puc_id).values_list(
+            puc = PUC.objects.get(pk=form['puc'].value())
+            pucs = puc.get_the_kids()
+            link_table = ExtractedHabitsAndPracticesToPUC
+            links = link_table.objects.filter(PUC__in=pucs).values_list(
                                             'extracted_habits_and_practices',
                                             flat=True)
             hnp = ExtractedHabitsAndPractices.objects.filter(pk__in=links)
@@ -53,8 +54,8 @@ def stats_by_dtxsids(dtxs):
     "The number of products the chemical appears in, where a product is defined as a
     product entry in Factotum."
     """
-    print('List of DTXSIDs provided:')
-    print(dtxs)
+    # print('List of DTXSIDs provided:')
+    # print(dtxs)
 
 
     # The number of unique PUCs (product categories) the chemical is associated with
@@ -63,14 +64,14 @@ def stats_by_dtxsids(dtxs):
     #print('pucs_n:')
     #print(pucs_n)
 
-    # "The number of data documents (e.g.  MSDS, SDS, ingredient list, product label) 
+    # "The number of data documents (e.g.  MSDS, SDS, ingredient list, product label)
     # the chemical appears in
     dds_n = DSSToxSubstance.objects.filter(sid__in=dtxs).values('sid').\
         annotate(dds_n=Count('extracted_chemical__extracted_text__data_document')).values('sid','dds_n')
     #print('dds_n:')
     #print(dds_n)
 
-    # The number of data documents with associated weight fraction data 
+    # The number of data documents with associated weight fraction data
     # that the chemical appears in (weight fraction data may be reported or predicted data,
     # i.e., predicted from an ingredient list)
     dds_wf_n = DSSToxSubstance.objects\
@@ -122,7 +123,7 @@ def stats_by_dtxsids(dtxs):
             dds_wf_n[row[0]] = row[1]
 
 
-    # The number of products the chemical appears in, where a product is defined as a 
+    # The number of products the chemical appears in, where a product is defined as a
     # product entry in Factotum.
     products_n = DSSToxSubstance.objects.filter(sid__in=dtxs).values('sid').\
        annotate(products_n=Count('extracted_chemical__extracted_text__data_document__product')).values('sid', 'products_n')

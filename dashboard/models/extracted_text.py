@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django import forms
 from .data_document import DataDocument
 from .script import Script
-
+from itertools import chain
 
 class ExtractedText(CommonInfo):
     data_document = models.OneToOneField(DataDocument,on_delete=models.CASCADE,
@@ -13,15 +13,18 @@ class ExtractedText(CommonInfo):
     prod_name = models.CharField(max_length=500, null=True, blank=True)
     doc_date = models.CharField(max_length=25, null=True, blank=True)
     rev_num = models.CharField(max_length=50, null=True, blank=True)
-    extraction_script = models.ForeignKey(
-        Script, on_delete=models.CASCADE, limit_choices_to={'script_type': 'EX'}, )
+    extraction_script = models.ForeignKey(Script, on_delete=models.CASCADE,
+                                        limit_choices_to={'script_type': 'EX'})
     qa_checked = models.BooleanField(default=False, verbose_name="QA approved")
     qa_edited = models.BooleanField(default=False, verbose_name="QA edited")
-    qa_approved_date = models.DateTimeField(null=True, blank=True, verbose_name="QA approval date")
-    qa_approved_by = models.ForeignKey(
-        'auth.User', null=True, blank=True, on_delete=models.SET_NULL, verbose_name = "QA approved by")
-    qa_group = models.ForeignKey('QAGroup', null=True, blank=True, verbose_name="QA group",
-                                 on_delete=models.SET_NULL)
+    qa_approved_date = models.DateTimeField(null=True, blank=True,
+                                                verbose_name="QA approval date")
+    qa_approved_by = models.ForeignKey('auth.User', on_delete=models.SET_NULL,
+                                                verbose_name = "QA approved by",
+                                                null=True, blank=True,)
+    qa_group = models.ForeignKey('QAGroup', verbose_name="QA group",
+                                                     on_delete=models.SET_NULL,
+                                                     null=True, blank=True)
 
     def __str__(self):
         return str(self.prod_name)
@@ -37,12 +40,33 @@ class ExtractedText(CommonInfo):
             nextid = 0
         return nextid
 
-    def clean(self):
-        # print('cleaning ExtractedText object in the model')
-        if self.doc_date:
-            if len(self.doc_date) > 25:
-                raise ValidationError(
-                            {'doc_date': "Date format is the wrong length."})
+    def fetch_extracted_records(self):
+        '''Collect the related objects in all the Extracted... models
+        '''
+        # Start with the known children of the base Model: ExtractedText
+        full_chain = chain(self.practices.all(),
+                    self.chemicals.all(),
+                    self.uses.all()
+                    )
+        # Try to get all the child objects of derived (inherited) models
+
+        # ExtractedCPCat has related ExtractedListPresence objects connected
+        # by the .presence relation
+        if hasattr(self, 'extractedcpcat'):
+            presence_chain = self.extractedcpcat.presence.all()
+            full_chain = chain(full_chain, presence_chain)
+
+        return full_chain
+
+    def pull_out_cp(self):
+        if hasattr(self, 'extractedcpcat'):
+            return self.extractedcpcat
+        else:
+            return self
+
+
+
+
 
 
 

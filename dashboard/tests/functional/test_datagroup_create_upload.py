@@ -25,13 +25,14 @@ class RegisterRecordsTest(TestCase):
 
     def tearDown(self):
         # clean up the file system by deleting the data group object
-        dg = DataGroup.objects.get(name='Walmart MSDS Test Group')
-        dg.delete()
+        if DataGroup.objects.filter(name='Walmart MSDS Test Group').exists():
+            DataGroup.objects.get(name='Walmart MSDS Test Group').delete()
 
     def test_datagroup_create(self):
+        long_fn = 'a filename that is too long ' * 10
         csv_string = ("filename,title,document_type,url,organization\n"
-                "0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf,NUTRA NAIL,1,, \n"
-                "0c68ab16-2065-4d9b-a8f2-e428eb192465.pdf,Body Cream,1,, \n")
+                "0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf,NUTRA NAIL,UN,, \n"
+                f"{long_fn},Body Cream,1,, \n")
         data = io.StringIO(csv_string)
         sample_csv = InMemoryUploadedFile(data,
                                             field_name='csv',
@@ -46,6 +47,30 @@ class RegisterRecordsTest(TestCase):
                     'downloaded_at': ['08/02/2018'],
                     'download_script': ['1'],
                     'data_source': ['10']}
+        request = self.factory.post(path='/datagroup/new/', data=form_data)
+        request.FILES['csv'] = sample_csv
+        request.user = User.objects.get(username='Karyn')
+        request.session={}
+        request.session['datasource_title'] = 'Walmart'
+        request.session['datasource_pk'] = 10
+        resp = views.data_group_create(request=request, pk=10)
+        # print(resp.content)
+        dg_exists = DataGroup.objects.filter(
+                                        name='Walmart MSDS Test Group').exists()
+        self.assertContains(resp,'Filename too long')
+        self.assertFalse(dg_exists,)
+        # print(dg.__dict__)
+
+        csv_string = ("filename,title,document_type,url,organization\n"
+                "0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf,NUTRA NAIL,UN,, \n"
+                "0c68ab16-2065-4d9b-a8f2-e428eb192465.pdf,Body Cream,UN,, \n")
+        data = io.StringIO(csv_string)
+        sample_csv = InMemoryUploadedFile(data,
+                                            field_name='csv',
+                                            name='register_records.csv',
+                                            content_type='text/csv',
+                                            size=len(csv_string),
+                                            charset='utf-8')
         request = self.factory.post(path='/datagroup/new', data=form_data)
         request.FILES['csv'] = sample_csv
         request.user = User.objects.get(username='Karyn')
@@ -53,13 +78,13 @@ class RegisterRecordsTest(TestCase):
         request.session['datasource_title'] = 'Walmart'
         request.session['datasource_pk'] = 10
         resp = views.data_group_create(request=request, pk=10)
-        dg = DataGroup.objects.get(name='Walmart MSDS Test Group')
-        print(dg.__dict__)
+
 
         self.assertEqual(resp.status_code,302,
                         "Should be redirecting")
 
-        
+        dg = DataGroup.objects.get(name='Walmart MSDS Test Group')
+
 
         self.assertEqual(f'/datagroup/{dg.pk}/', resp.url,
                         "Should be redirecting to the proper URL")
@@ -97,14 +122,12 @@ class RegisterRecordsTest(TestCase):
         dd_csv_href = f'/datagroup/docs_csv/{dg.pk}/'  # this is an interpreted django URL
         resp_dd_csv = self.client.get(dd_csv_href)
         for csv_row in resp_dd_csv.streaming_content:
-            #print(csv_row)
             if doc_fn in str(csv_row):
                 docfound = 'found'
         self.assertEqual(docfound, 'found', "the document file name should appear in the data documents csv")
 
 
         # test whether the "Download All PDF Documents" link works
-        #print('dg.get_zip_url(): %s' % dg.get_zip_url())
         dg_zip_href = f'/datagroup/pdfs_zipped/{dg.pk}/' # this is the django-interpreted URL
         self.assertIn(dg_zip_href, str(resp._container),
                         "The data group detail page must contain the right zip download link")
@@ -128,3 +151,30 @@ class RegisterRecordsTest(TestCase):
                             "the stored file should be in MEDIA_ROOT/dg.fs_id")
         f.close()
 
+    def test_datagroup_create_dupe_filename(self):
+        csv_string = ("filename,title,document_type,url,organization\n"
+                "0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf,NUTRA NAIL,1,, \n"
+                "0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf,Body Cream,1,, \n")
+        data = io.StringIO(csv_string)
+        sample_csv = InMemoryUploadedFile(data,
+                                            field_name='csv',
+                                            name='register_records.csv',
+                                            content_type='text/csv',
+                                            size=len(csv_string),
+                                            charset='utf-8')
+        form_data= {'name': ['Walmart MSDS Test Group'],
+                    'description': ['test data group'],
+                    'group_type': ['1'],
+                    'downloaded_by': [str(User.objects.get(username='Karyn').pk)],
+                    'downloaded_at': ['08/02/2018'],
+                    'download_script': ['1'],
+                    'data_source': ['10']}
+        request = self.factory.post(path='/datagroup/new/', data=form_data)
+        request.FILES['csv'] = sample_csv
+        request.user = User.objects.get(username='Karyn')
+        request.session={}
+        request.session['datasource_title'] = 'Walmart'
+        request.session['datasource_pk'] = 10
+        resp = views.data_group_create(request=request, pk=10)
+
+        self.assertContains(resp, 'Duplicate filename found')

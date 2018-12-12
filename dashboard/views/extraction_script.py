@@ -1,78 +1,25 @@
 import os
-import math
-from random import shuffle
 from urllib import parse
-from django.conf import settings
-from django.shortcuts import render, redirect, get_object_or_404
-from django.forms import (ModelForm, Form, BaseInlineFormSet,
-                            inlineformset_factory, TextInput, CharField,
-                            Textarea, HiddenInput, ValidationError)
 
+from django.conf import settings
 from django.urls import reverse, resolve
-from django.utils import timezone
-from django.core.files import File
 from django.http import HttpResponseRedirect
-from django.utils.translation import ugettext_lazy as _
+from django.forms import inlineformset_factory
+from django.utils import timezone
+from django.shortcuts import render, redirect, get_object_or_404
+from django.core.files import File
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 
-from dashboard.models import (DataGroup, DataDocument, DataSource, QANotes,
-                              ExtractedText, Script, QAGroup, ExtractedChemical, ExtractedFunctionalUse)
-
-
-class ExtractionScriptForm(ModelForm):
-    required_css_class = 'required'  # adds to label tag
-
-    class Meta:
-        model = Script
-        fields = ['title', 'url', 'qa_begun']
-        labels = {
-            'qa_begun': _('QA has begun'),
-        }
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
-        super(ExtractionScriptForm, self).__init__(*args, **kwargs)
-
-class ExtractedTextForm(ModelForm):
-
-    class Meta:
-        model = ExtractedText
-        fields = ['prod_name', 'doc_date', 'rev_num']
-
-class QANotesForm(ModelForm):
-
-    class Meta:
-        model = QANotes
-        fields = ['qa_notes']
-        widgets = {
-            'qa_notes' : Textarea,
-        }
-        labels = {
-            'qa_notes': _('QA Notes (required if approving edited records)'),
-        }
+from factotum.settings import EXTRA
+from dashboard.models import *
+from dashboard.utils import get_extracted_models
+from dashboard.forms import (BaseExtractedDetailFormSet, ExtractedTextForm,
+                            create_detail_formset,   QANotesForm)
 
 
-
-
-class BaseExtractedDetailFormSet(BaseInlineFormSet):
-    """
-    Base class for the form in which users edit the chemical composition or functional use data
-    """
-    required_css_class = 'required'  # adds to label tag
-
-    class Meta:
-        model = ExtractedChemical
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
-        super(BaseExtractedDetailFormSet, self).__init__(*args, **kwargs)
-
-        for form in self.forms:
-            for field in form.fields:
-                form.fields[field].widget.attrs.update(
-                                        {'class': 'chem-control form-control'})
-
+from factotum.settings import EXTRA # if this goes to 0, tests will fail because of what num form we search for
 
 
 @login_required()
@@ -82,9 +29,9 @@ def extraction_script_list(request, template_name='qa/extraction_script_list.htm
     """
     # TODO: the user is supposed to be able to click the filter button at the top of the table
     # and toggle between seeing all scripts and seeing only the ones with incomplete QA
-    extractionscript = Script.objects.filter(script_type='EX')
+    extractionscripts = Script.objects.filter(script_type='EX')
     data = {}
-    data['object_list'] = extractionscript
+    data['object_list'] = extractionscripts
     return render(request, template_name, data)
 
 
@@ -95,39 +42,39 @@ def extraction_script_qa(request, pk,
     The user reviews the extracted text and checks whether it was properly converted to data
     """
     es = get_object_or_404(Script, pk=pk)
+    # If the Script has no related ExtractedText objects, redirect back to the QA index
+    if ExtractedText.objects.filter(extraction_script = es).count() == 0 :
+        return redirect('/qa/')
+    # Check whether QA has begun for the script
     if es.qa_begun:
-        # has qa begun and not complete? if both T, return group to be finished
-        if QAGroup.objects.filter(extraction_script=es,
-                                  qa_complete=False).exists():
-            # return docs that are in extracted texts QA group
-            group = QAGroup.objects.get(extraction_script=es,
+        # if the QA process has begun, there should already be one QA Group
+        # associated with the Script. 
+        try:
+            # get the QA Group
+            qa_group = QAGroup.objects.get(extraction_script=es,
                                         qa_complete=False)
-            texts = ExtractedText.objects.filter(qa_group=group,
-                                                 qa_checked=False)
-            return render(request, template_name, {'extractionscript': es,
-                                                   'extractedtexts': texts,
-                                                   'qagroup': group})
-    # pks of text and docs are the same!
-    doc_text_ids = list(ExtractedText.objects.filter(extraction_script=es,
-                                                     qa_checked=False
-                                                     ).values_list('pk',
-                                                                   flat=True))
-    qa_group = QAGroup.objects.create(extraction_script=es)
-    if len(doc_text_ids) < 100:
-        texts = ExtractedText.objects.filter(pk__in=doc_text_ids)
+        except MultipleObjectsReturned:
+            qa_group = QAGroup.objects.filter(extraction_script=es,
+                                        qa_complete=False).first()
+        except ObjectDoesNotExist:
+            print('No QA Group was found matching Extraction Script %s' % es.pk)
+        
+
+        texts = ExtractedText.objects.filter(qa_group=qa_group,
+                                                qa_checked=False)        
+        return render(request, template_name, {'extractionscript': es,
+                                                'extractedtexts': texts,
+                                                'qagroup': qa_group})
     else:
-        random_20 = math.ceil(len(doc_text_ids)/5)
-        shuffle(doc_text_ids)  # this is used to make random selection of texts
-        texts = ExtractedText.objects.filter(pk__in=doc_text_ids[:random_20])
-    for text in texts:
-        text.qa_group = qa_group
-        text.save()
-    es.qa_begun = True
-    es.save()
+        qa_group = es.create_qa_group() 
+        es.qa_begun = True  
+        es.save()
+    # Collect all the ExtractedText objects in the QA Group
+    texts = ExtractedText.objects.filter(qa_group=qa_group)
+    
     return render(request, template_name, {'extractionscript': es,
                                            'extractedtexts': texts,
                                            'qagroup': qa_group})
-
 
 @login_required()
 def extraction_script_detail(request, pk,
@@ -136,15 +83,6 @@ def extraction_script_detail(request, pk,
     data = {}
     data['object_list'] = extractionscript
     return render(request, template_name, data)
-
-
-class ExtractedTextQAForm(ModelForm):
-    required_css_class = 'required'  # adds to label tag
-
-    class Meta:
-        model = ExtractedText
-        fields = ['prod_name', 'data_document', 'qa_checked']
-
 
 
 @login_required()
@@ -157,11 +95,17 @@ def extracted_text_qa(request, pk,
     """
     extext = get_object_or_404(ExtractedText, pk=pk)
     # The related DataDocument has the same pk as the ExtractedText object
-    datadoc = DataDocument.objects.get(pk=pk)
+    doc = DataDocument.objects.get(pk=pk)
     exscript = extext.extraction_script
     # when not coming from extraction_script page, we don't necessarily have a qa_group created
     if not extext.qa_group:
-        extext.qa_group = QAGroup.objects.create(extraction_script=exscript)
+        # create the qa group with the optional ExtractedText pk argument 
+        # so that the ExtractedText gets added to the QA group even if the
+        # group uses a random sample
+        qa_group = exscript.create_qa_group( pk)
+        exscript.qa_begun = True
+        exscript.save()
+        extext.qa_group = qa_group
         extext.save()
     # get the next unapproved Extracted Text object
     # Its ID will populate the URL for the "Skip" button
@@ -177,36 +121,26 @@ def extracted_text_qa(request, pk,
     referer = 'data_document' if 'datadocument' in request.path else 'extraction_script_qa'
 
     # Create the formset factory for the extracted records
-    # The model used for the formset depends on whether the 
-    # extracted text object matches a data document 
-    dg_type = datadoc.data_group.group_type.title
-    if (dg_type == 'Functional use'): 
-        detail_model = ExtractedFunctionalUse
-        detail_fields = ['extracted_text','raw_cas',
-                        'raw_chem_name', 
-                        'report_funcuse'
-                        ]
-    else:
-        detail_model = ExtractedChemical
-        detail_fields = ['extracted_text','raw_cas',
-                        'raw_chem_name', 'raw_min_comp',
-                        'raw_max_comp', 'unit_type',
-                        'report_funcuse',
-                        'ingredient_rank',
-                        'raw_central_comp']
+    # The model used for the formset depends on whether the
+    # extracted text object matches a data document()
+    
+    ParentForm, ChildForm = create_detail_formset(doc.data_group.type, EXTRA)
+    extext = extext.pull_out_cp() #get CP if exists
+    ext_form = ParentForm(instance=extext)
+    detail_formset = ChildForm(instance=extext)
+    # Add CSS selector classes to each form
+    for form in detail_formset:
+        for field in form.fields:
+            form.fields[field].widget.attrs.update(
+                {'class': f'detail-control form-control %s' % doc.data_group.type}
+                )
 
-    DetailFormSet = inlineformset_factory(parent_model=ExtractedText,
-                                        model=detail_model,
-                                        formset=BaseExtractedDetailFormSet,
-                                        fields=detail_fields,
-                                                extra=1)
-    ext_form =  ExtractedTextForm(instance=extext)
     note, created = QANotes.objects.get_or_create(extracted_text=extext)
     notesform =  QANotesForm(instance=note)
-    detail_formset = DetailFormSet(instance=extext, prefix='details')
+
     context = {
         'extracted_text': extext,
-        'doc': datadoc,
+        'doc': doc,
         'script': exscript,
         'stats': stats,
         'nextid': nextid,
@@ -217,21 +151,32 @@ def extracted_text_qa(request, pk,
         }
 
     if request.method == 'POST' and 'save' in request.POST:
-        print('---saving')
-        detail_formset = DetailFormSet(request.POST, instance=extext,
-                                                        prefix='details')
-        ext_form =  ExtractedTextForm(request.POST, instance=extext)
+        #print(request.__dict__)
+       
+        ParentForm, ChildForm = create_detail_formset(doc.data_group.type, EXTRA)
+        extext = extext.pull_out_cp() #get CP if exists
+        ext_form = ParentForm(request.POST, instance=extext)
+        detail_formset = ChildForm(request.POST, instance=extext)
+
         notesform = QANotesForm(request.POST, instance=note)
         if detail_formset.has_changed() or ext_form.has_changed():
-            print(str(extext.qa_edited))
             if detail_formset.is_valid() and ext_form.is_valid():
                 detail_formset.save()
                 ext_form.save()
                 extext.qa_edited = True
                 extext.save()
+        # rebuild the formset after saving it
+        detail_formset = ChildForm( instance=extext)
         context['detail_formset'] = detail_formset
         context['ext_form'] = ext_form
         context.update({'notesform' : notesform}) # calls the clean method? y?
+        # Add CSS selector classes to each form
+        for form in detail_formset:
+            for field in form.fields:
+                form.fields[field].widget.attrs.update(
+                    {'class': f'detail-control form-control %s' % doc.data_group.type}
+                    )
+
     elif request.method == 'POST' and 'approve' in request.POST: # APPROVAL
         notesform =  QANotesForm(request.POST, instance=note)
         context['notesform'] = notesform

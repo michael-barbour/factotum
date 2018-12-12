@@ -2,20 +2,21 @@ from django.db import models
 from .common_info import CommonInfo
 from .data_source import DataSource
 from .source_category import SourceCategory
-#from .product_to_puc import ProductToPUC
-#from .PUC import PUC
 from django.urls import reverse
-
+from taggit.managers import TaggableManager
 
 class Product(CommonInfo):
     data_source = models.ForeignKey(DataSource, related_name='source',
                                     on_delete=models.CASCADE)
     documents = models.ManyToManyField(through='dashboard.ProductDocument',
                                        to='dashboard.DataDocument')
-    attributes = models.ManyToManyField(through='dashboard.ProductToAttribute',
-                                        to='dashboard.ProductAttribute')
+    tags = TaggableManager(through='dashboard.ProductToTag',
+                           to='dashboard.PUCTag',
+                           help_text=('A set of PUC Tags applicable '
+                                                            'to this Product'))
     source_category = models.ForeignKey(SourceCategory,
-                                        on_delete=models.CASCADE, null=True, blank=True)
+                                                on_delete=models.CASCADE,
+                                                null=True, blank=True)
     title = models.CharField(max_length=255)
     manufacturer = models.CharField(db_index=True, max_length=250,
                             null=True, blank=True, default = '')
@@ -43,9 +44,13 @@ class Product(CommonInfo):
 
     def get_uber_product_to_puc(self):
         pucs = self.producttopuc_set
-        if pucs.filter(classification_method='MA').count() == 1:
+        if pucs.filter(classification_method='MA').exists():
             return pucs.filter(classification_method='MA').first()
-        elif pucs.filter(classification_method='AU').count() == 1:
+        elif pucs.filter(classification_method='MB').exists():
+            return pucs.filter(classification_method='MB').first()
+        elif pucs.filter(classification_method='RU').exists():
+            return pucs.filter(classification_method='RU').first()
+        elif pucs.filter(classification_method='AU').exists():
             return pucs.filter(classification_method='AU').first()
         else:
             return None
@@ -56,6 +61,18 @@ class Product(CommonInfo):
             return thispuc.PUC
         else:
             return None
+
+    def get_tag_list(self):
+        return u", ".join(o.name for o in self.tags.all())
+
+    # returns list of valid puc_tags
+    def get_puc_tag_list(self):
+        all_uber_tags = self.get_uber_product_to_puc().PUC.tags.all()
+        return u", ".join(o.name for o in all_uber_tags)
+
+    # returns set of valid puc_tags
+    def get_puc_tags(self):
+        return self.get_uber_product_to_puc().PUC.tags.all()
 
     class Meta:
           ordering = ['-created_at']

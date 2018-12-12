@@ -13,11 +13,11 @@ class DashboardTest(TestCase):
 
     def setUp(self):
         self.objects = load_model_objects()
-        self.test_start = time.time()
+        # self.test_start = time.time()
 
-    def tearDown(self):
-        self.test_elapsed = time.time() - self.test_start
-        print('\nFinished with ' + self._testMethodName + ' in {:.2f}s'.format(self.test_elapsed))
+    # def tearDown(self):
+    #     self.test_elapsed = time.time() - self.test_start
+    #     print('\nFinished with ' + self._testMethodName + ' in {:.2f}s'.format(self.test_elapsed))
 
     def test_public_navbar(self):
         self.client.logout()
@@ -52,19 +52,16 @@ class DashboardTest(TestCase):
         self.assertEqual('100%', extracted_doc_count)
 
     def test_PUC_download(self):
-        # assign an attribute to PUC
-        puc_a = PUCAttribute.objects.create(name='test_puc_attribute')
-        self.objects.puc.attribute = puc_a
-        self.objects.puc.save()
-        self.objects.puc.attribute.save()
         p = self.objects.puc
-        puc_line = (p.gen_cat+','+p.prod_fam+','+p.prod_type+','+p.description+','+str(p.attribute))
+        puc_line = (p.gen_cat+','+p.prod_fam+','+p.prod_type+','+p.description+
+                    ','+str(p.get_level())+','+str(p.get_the_kids().count()))
         # get csv
         response = self.client.get('/dl_pucs/')
         self.assertEqual(response.status_code, 200)
         csv_lines = response.content.decode('ascii').split('\r\n')
         # check header
-        self.assertEqual(csv_lines[0],'gen_cat,prod_fam,prod_type,description,PUC_type')
+        self.assertEqual(csv_lines[0],('gen_cat,prod_fam,prod_type,description,'
+                                                        'PUC_type,num_prods'))
         # check the PUC from loader
         self.assertEqual(csv_lines[1],puc_line)
 
@@ -74,3 +71,11 @@ class DashboardTest(TestCase):
         response_html = html.fromstring(response)
         self.assertTrue(response_html.xpath('//*[@id="chemical_search"]'),
                       'The chemical search input should appear on the dashboard')
+
+    def test_chemical_card(self): #this can be joined w/ the one being merged in
+        response = self.client.get('/').content.decode('utf8')
+        self.assertIn('DSS Tox Chemicals', response,
+                                    'Where is the DSS Tox Chemicals card???')
+        response_html = html.fromstring(response)
+        num_dss = int(response_html.xpath('//*[@name="dsstox"]')[0].text)
+        self.assertEqual(num_dss, 1, 'There should be one DSSToxSubstance')

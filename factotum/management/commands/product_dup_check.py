@@ -1,7 +1,7 @@
 import django
 import os
-import yaml
 import warnings
+import csv
 
 # Ignore this specific warning.  It is not crucial to use the Levenshtein library for this script.
 warnings.filterwarnings("ignore", message="Using slow pure-python SequenceMatcher. Install python-Levenshtein to remove this warning")
@@ -18,8 +18,7 @@ from dashboard.models import Product
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 
-# Import the ruamel.yaml package.  This is a YAML loader/dumper package for Python.
-from ruamel.yaml import YAML
+from pathlib import Path
 
 class Command(BaseCommand):
 
@@ -41,14 +40,15 @@ class Command(BaseCommand):
             pk_product = norm_product.pk
             list_upc_pks.append(pk_product)
 
-        # Get current working directory
-        pathname = os.getcwd()
+        # Set up pathnames for output files.
+        top_match_pathname = Path.cwd().joinpath('top_match.csv')
+        multi_match_pathname = Path.cwd().joinpath('multi_matches.csv')
 
         # Open file that will contain the top match for each stub product
-        file_top_yaml = open(pathname + "\\top_match.yaml", 'w')
+        top_match_csv = Path.open(top_match_pathname, mode="w", newline='')
 
         # Open file that will contain matching scores for the process.extract method
-        file_multi_yaml = open(pathname + "\\multi_matches.yaml", "w")
+        multi_match_csv = Path.open(multi_match_pathname, mode="w", newline='')
 
         # Set the number of matches ordered by scores.  By default this number is 5.
         num_matches = 3
@@ -58,76 +58,83 @@ class Command(BaseCommand):
         # a default value of 0 if not set by the user.  Matching scores below this value will not appear in the results.
         cutoff = 80
 
-        # YAML related variables.
-        yaml_top = YAML()
-        yaml_multi = YAML()
-        list_yaml = []
-        list_multi_yaml = []
+        # Build CSV headers.  Attach indices to headers to make them unique.
+        top_match_headers = ['stub product', 'pk_stub', 'upc product', 'pk_upc', 'score']
+        multi_match_headers = ['stub product', 'pk_stub']
+        for i in range(num_matches):
+            str1 = 'upc product' + str(i+1)
+            str2 = 'pk_upc' + str(i+1)
+            str3 = 'score' + str(i+1)
+            multi_match_headers.extend((str1, str2, str3))
+
+        # Create writer objects that will map dictionaries to onto output rows.
+        top_match_writer = csv.DictWriter(top_match_csv, top_match_headers)
+        multi_match_writer = csv.DictWriter(multi_match_csv, multi_match_headers)
+
+        # Write headers
+        top_match_writer.writeheader()
+        multi_match_writer.writeheader()
 
         # Loop through stubs
         for stub_product in stub_products:
-            ## Find title and compare it to every non-stub product.
+            # Find title and compare it to every non-stub product.
             stub_prod1 = stub_product.title.lower()
-            stub_prod = stub_prod1.replace(":", "").replace("\t", "")
+            stub_prod = stub_prod1.replace(":", "").replace("\t", "").replace(",", "")
             stub_prod_pk = stub_product.pk
 
             # Initialize stub product string that will be used for the YAML strings below.
-            stub_str = "stub product: " + stub_prod + "\npk_stub: " + str(stub_prod_pk)
+            top_match_dict = {'stub product': stub_prod, 'pk_stub': stub_prod_pk}
+            multi_match_dict = {'stub product': stub_prod, 'pk_stub': stub_prod_pk}
 
             # Get a list of matches ordered by scores, using the fuzz.token_set_ratio matching , to get all num_matches.
             # Note:  there are 4 popular types of fuzzy matching logic supported by the fuzzywuzzy package.  They are:
             # ratio, partial ratio, token sort ratio, and token set ratio.  Opted to use the token set ratio because it
             # gives me the best scores and matches.  That said, the user can set the scorer to any other matching method
             # if wished.
-            list_multi = process.extract(stub_prod, list_upc_names, scorer=fuzz.token_set_ratio, limit=num_matches)
+            multi_match_list = process.extract(stub_prod, list_upc_names, scorer=fuzz.token_set_ratio, limit=num_matches)
 
             # Convert list to a dictionary.
-            multi_dict = dict(list_multi)
+            multi_dict = dict(multi_match_list)
 
-            # Set counter of upc products to zero.
-            upc_counter = 0
-            # Initialize YAML string to stub product string.
-            yaml_str = stub_str
-            # Loop over items in dictionary and build YAML string for output.  Note that we are not duplicating keys:
-            # we are attaching an index to the upc products's names and pks.  Duplication of keys can be allowed by
-            # setting yaml.allow_duplicate_keys to TRUE.
+            # Set counter of upc products to minus one.
+            j = -1
+
+            # Loop over items in dictionary and build dictionary for output.
             for key, value in multi_dict.items():
                 i_upc = list_upc_names.index(key)                     # Locate upc name in original list.
-                upc_counter += 1                                      # Use counter as index for the matched UPCs.
-                new_key = key.replace(":", "").replace("\t", "")      # Remove colons and tabs from titles.
-                yaml_str = yaml_str + "\nupc product" + str(upc_counter) + ": " + new_key + \
-                           "\npk_upc" + str(upc_counter) + ": " + str(list_upc_pks[i_upc]) + \
-                           "\nscore" + str(upc_counter) + ": " + str(value)
+                j = j + 3
+                new_key = key.replace(":", "").replace("\t", "").replace(",", "")
+                multi_match_dict[multi_match_headers[j]] = new_key
+                multi_match_dict[multi_match_headers[j+1]] = list_upc_pks[i_upc]
+                multi_match_dict[multi_match_headers[j+2]] = value
 
-            data1 = yaml_multi.load(yaml_str)                     # Load data into YAML object.
-            list_multi_yaml.append(data1)                         # Append dictionary/data to list.
+            # Write row of data.
+            multi_match_writer.writerow(multi_match_dict)
 
             # Get the top one match, using the fuzz.token_set_ratio matching and a threshold value.
-            list_one = process.extractOne(stub_prod, list_upc_names, scorer=fuzz.token_set_ratio, score_cutoff=cutoff)
+            top_match_list = process.extractOne(stub_prod, list_upc_names, scorer=fuzz.token_set_ratio, score_cutoff=cutoff)
 
             # Check whether a match was found.  If a match is not found, print appropriate message to output.
-            # If match is found, build YAML string using stub and upc products' names and pks.
-            if list_one is None:
-                yaml_str = stub_str + "\nupc product: " + "no matches found"
+            # If match is found, add upc product name, pk id, and score to dictionary.
+            if top_match_list is None:
+                top_match_dict[top_match_headers[2]] = 'No match was found.'
+                top_match_dict[top_match_headers[3]] = 'NA'
+                top_match_dict[top_match_headers[4]] = 'NA'
             else:
-                i_upc = list_upc_names.index(list_one[0])
-                yaml_str = stub_str + "\nupc product: " + list_one[0] + "\npk_upc: " + str(list_upc_pks[i_upc]) + \
-                           "\nscore: " + str(list_one[1])
+                i_upc = list_upc_names.index(top_match_list[0])
+                top_match_dict[top_match_headers[2]] = top_match_list[0]
+                top_match_dict[top_match_headers[3]] = list_upc_pks[i_upc]
+                top_match_dict[top_match_headers[4]] = str(top_match_list[1])
 
-            # Load data into YAML object.
-            data2 = yaml_top.load(yaml_str)
-
-            # Append data/dictionary to list.
-            list_yaml.append(data2)
+            # Write row of data.
+            top_match_writer.writerow(top_match_dict)
 
         # Write top match results to output file.
-        yaml_top.dump(list_yaml, file_top_yaml)
-        print("Top match results were output to " + file_top_yaml.name)
+        print("Top match results were output to " + top_match_csv.name)
 
         # Write multiple matches results to output file.
-        yaml_multi.dump(list_multi_yaml, file_multi_yaml)
-        print("Multiple results were output to " + file_multi_yaml.name)
+        print("Multiple results were output to " + multi_match_csv.name)
 
         # Close files
-        file_top_yaml.close()
-        file_multi_yaml.close()
+        top_match_csv.close()
+        multi_match_csv.close()

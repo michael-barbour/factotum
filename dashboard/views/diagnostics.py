@@ -1,4 +1,4 @@
-
+import os
 from django.core.management.base import BaseCommand, CommandError
 from dashboard.models import *
 from factotum import settings
@@ -20,7 +20,9 @@ def data_group_diagnostics(request, pk=None):
         dgmod = DataGroup.objects.get(pk=dg['id'])
         dg['get_zip_url'] = dgmod.get_zip_url()
         dg['get_dg_folder'] = dgmod.get_dg_folder()
-    
+        dg['csv_name'] = dgmod.csv.name
+        dg['get_csv_url'] = dgmod.get_csv_url()
+
     context = {   'datagroups'         : dgs
                       }
     template_name = 'data_group/datagroup_diagnostics.html'

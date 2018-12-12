@@ -13,7 +13,8 @@
         <th>fs_id</th>
         <th>get_zip_url()</th>
         <th>get_dg_folder()</th>
-        <th></th>
+        <th>get_csv_url</th>
+        
         </thead>
         <tbody>
         {% for data_group in datagroups %}
@@ -23,10 +24,15 @@
                 <td>{{ data_group.fs_id}}</td>
                 <td>{{ data_group.get_zip_url }}</td>
                 <td>{{ data_group.get_dg_folder}}</td>
+                <td>
+                        {% if data_group.get_csv_url %}
+                    <a href=/{{data_group.get_csv_url}} >{{ data_group.get_csv_url}} </a> 
+                        {% else %}
+                        No file found.</span>
+                        {% endif %}
+                
+                </td>
 
-                <td class="float-sm-right">
-
-                    </td>
             </tr>
         {% endfor %}
 

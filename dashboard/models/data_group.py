@@ -122,7 +122,8 @@ class DataGroup(CommonInfo):
     def get_name_as_slug(self):
         return self.name.replace(' ', '_')
 
-    def get_csv_url(self):
+    @property
+    def csv_url(self):
         try:
             self.csv.size
             csv_url = self.csv.url
@@ -132,6 +133,13 @@ class DataGroup(CommonInfo):
             csv_url = False
         return csv_url
 
+    @property
+    def zip_url(self):
+        if self.get_zip_url()!='no_path_found':
+            return(self.get_zip_url)
+        else:
+            return False
+        
 
     def get_zip_url(self):
         # the path if the data group's folder was built from a UUID:

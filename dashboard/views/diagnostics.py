@@ -21,7 +21,9 @@ def data_group_diagnostics(request, pk=None):
         dg['get_zip_url'] = dgmod.get_zip_url()
         dg['get_dg_folder'] = dgmod.get_dg_folder()
         dg['csv_name'] = dgmod.csv.name
-        dg['get_csv_url'] = dgmod.get_csv_url()
+        dg['csv_url'] = dgmod.csv_url
+        dg['csv'] = dgmod.csv
+        dg['get_dg_folder'] = dgmod.get_dg_folder()
 
     context = {   'datagroups'         : dgs
                       }

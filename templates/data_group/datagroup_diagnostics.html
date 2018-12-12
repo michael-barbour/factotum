@@ -12,7 +12,6 @@
         <th>Name</th>
         <th><code>fs_id</code></th>
         <th>Resolved <code>dg_folder</code></th>
-        <th>Resolved <code>csv_url</code></th>
         <th>Resolved <code>zip_url</code></th>
         
 
@@ -32,14 +31,7 @@
                     {% endif %}
                 
                 </td>
-                <td>
-                        {% if data_group.csv_url %}
-                    <a href=/{{data_group.csv_url}} >{{ data_group.csv_url}} </a> 
-                        {% else %}
-                        No file found at &ldquo;{{data_group.csv.name}}&rdquo;.</span>
-                        {% endif %}
-                
-                </td>
+
                 <td>
                         {% if data_group.zip_url %}
                     <a href=/{{data_group.zip_url}} >{{ data_group.zip_url}} </a> 

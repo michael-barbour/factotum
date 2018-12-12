@@ -203,20 +203,17 @@ class DataGroupFilesTest(TestCase):
     def test_filefield_properties(self):
         dg5 = DataGroup.objects.get(pk=5) # this datagroup has no csv value
         dg6 = DataGroup.objects.get(pk=6) # this one has a csv value, but no file
-        dg50 = DataGroup.objects.get(pk=50) # this one has a csv correctly stored in the /media/ folder
+        dg50 = DataGroup.objects.get(pk=50) # this one has a /media/ folder
 
         # All of the falsy properties should return False rather than errors
         self.assertFalse(dg5.dg_folder)
-        self.assertFalse(dg5.csv_url)
         self.assertFalse(dg5.zip_url)
 
         self.assertFalse(dg6.dg_folder)
-        self.assertFalse(dg6.csv_url)
         self.assertFalse(dg6.zip_url)
 
         # 50 is the only datagroup that has a linked file in the /media folder
         self.assertTrue(dg50.dg_folder == dg50.get_dg_folder())
-        self.assertTrue(dg50.csv_url == dg50.csv.url)
         self.assertFalse(dg50.zip_url)
 
 

@@ -2,6 +2,8 @@ import csv
 
 from django.utils import timezone
 from django.test import TestCase
+from django.db.models import Count
+
 
 from dashboard.models import *
 from dashboard.tests.loader import *
@@ -195,3 +197,11 @@ class PUCModelTest(TestCase):
         puc = PUC.objects.get(pk=126) # PUC w/ ALL values
         self.assertEqual(len(puc.get_the_kids()),1, ('PUC should only have '
                                                         'itself associated'))
+    
+    def test_product_counts(self):
+        '''Make sure the product_count property
+        returns the same thing as the num_products annotation'''
+        pucs = PUC.objects.all().annotate(num_products=Count('products'))
+        # pucs 1-3 have products associated with them
+        self.assertEqual(pucs.get(pk=1).num_products , PUC.objects.get(pk=1).product_count) 
+

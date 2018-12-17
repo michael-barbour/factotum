@@ -16,7 +16,7 @@ class TestProductPuc(TestCase):
         response_url = reverse('admin:dashboard_puc_changelist')
         response = self.client.get(response_url)
         response_html = html.fromstring(response.content.decode('utf8'))
-        self.assertIn('Tag list', response_html.xpath('string(/html/body/div[1]/div[3]/div/div/form/div[2]/table/thead/tr/th[3]/div[1])'),
+        self.assertIn('Tag List', response_html.xpath('string(/html/body/div[1]/div[3]/div/div/form/div[2]/table/thead/tr/th[3]/div[1])'),
                       'The column Tag List should exist on the PUC admin table')
         self.assertIn('aerosol', response_html.xpath('string(/html/body/div[1]/div[3]/div/div/form/div[2]/table/tbody/tr[2]/td[2])'),
                       'The tag aerosol should exist in the tag list column for PUC 1')

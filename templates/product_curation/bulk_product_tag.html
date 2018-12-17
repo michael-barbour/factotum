@@ -18,6 +18,11 @@
             {% endfor %}
         </ul>
     {% endif %}
+    {% if msg %}
+    <div class="user-msg alert-info">
+      {{ msg }}
+    </div>
+    {% endif %}
 {%  endblock %}
 
 {% block content %}

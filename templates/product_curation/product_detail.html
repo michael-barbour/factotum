@@ -48,7 +48,7 @@
         </div>
         {% if puc.id %}
             <h4>
-                <span name="PUCTags" class="disabled">PUC Tags</span>
+                <span name="PUCTags" class="disabled">PUC Attributes</span>
             </h4>
             <div class="form-group ">
                 {% if product.get_puc_tag_list|length > 1 %}
@@ -60,7 +60,7 @@
                         </div>
                     </form>
                 {%  else %}
-                    No tags are associated with this PUC
+                    No attributes are associated with this PUC
                 {% endif %}
             </div>
         {%  endif %}

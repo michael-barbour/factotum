@@ -127,6 +127,7 @@ def detach_puc_from_product(request, pk):
 def bulk_assign_tag_to_products(request, template_name=('product_curation/'
                                                       'bulk_product_tag.html')):
     form = BulkProductTagForm(request.POST or None)
+    msg = ''
     if form['puc'].value():
         puc = PUC.objects.get(pk = form['puc'].value())
         form.fields['tag'].queryset = PUCTag.objects.filter(id__in=(PUCToTag.objects.
@@ -145,15 +146,9 @@ def bulk_assign_tag_to_products(request, template_name=('product_curation/'
                 product = Product.objects.get(id=id)
                 ProductToTag.objects.update_or_create(tag=tag, content_object=product)
                 form = BulkProductTagForm(None)
-    return render(request, template_name, {'products': products, 'form': form})
-
-
-
-
-
-
-
-
+            msg = f'The "{tag.name}" Attribute was assigned to {len(product_ids)} Product(s)'
+            products = {}
+    return render(request, template_name, {'products': products, 'form': form, 'msg': msg})
 
 @login_required()
 def bulk_assign_puc_to_product(request, template_name=('product_curation/'

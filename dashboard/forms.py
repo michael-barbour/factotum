@@ -140,7 +140,7 @@ class ProductViewForm(ProductForm):
             self.fields[f].disabled = True
 
 class BasePUCForm(forms.ModelForm):
-    puc = forms.ModelChoiceField(
+    PUC = forms.ModelChoiceField(
         queryset=PUC.objects.all(),
         label='Category',
         widget=autocomplete.ModelSelect2(
@@ -174,12 +174,12 @@ class BulkProductTagForm(BasePUCForm):
                              widget=forms.HiddenInput())
     class Meta:
         model = ProductToPUC
-        fields = ['puc', 'tag', 'id_pks']
+        fields = ['PUC', 'tag', 'id_pks']
     def __init__(self, *args, **kwargs):
         super(BulkProductTagForm, self).__init__(*args, **kwargs)
-        self.fields['puc'].label = 'Select PUC for Attribute to Assign to Selected Products'
+        self.fields['PUC'].label = 'Select PUC for Attribute to Assign to Selected Products'
         self.fields['tag'].label = 'Select Attribute to Assign to Selected Products'
-        self.fields['puc'].widget.attrs['onchange'] = 'form.submit();'
+        self.fields['PUC'].widget.attrs['onchange'] = 'form.submit();'
 
 class ExtractedTextForm(forms.ModelForm):
     class Meta:

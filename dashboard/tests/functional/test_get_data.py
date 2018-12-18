@@ -146,7 +146,7 @@ class TestGetData(TestCase):
 
 
     def test_habits_and_practices_cards(self):
-        data = {'puc':['2']}
+        data = {'PUC':['2']}
         response = self.client.post('/get_data/',data=data)
         for hnp in [b'ball bearings',
                     b'motorcycle',

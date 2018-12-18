@@ -128,12 +128,11 @@ def bulk_assign_tag_to_products(request, template_name=('product_curation/'
                                                       'bulk_product_tag.html')):
     form = BulkProductTagForm(request.POST or None)
     msg = ''
-    if form['puc'].value():
-        puc = PUC.objects.get(pk = form['puc'].value())
+    if form['PUC'].value():
+        puc = PUC.objects.get(pk = form['PUC'].value())
         form.fields['tag'].queryset = PUCTag.objects.filter(id__in=(PUCToTag.objects.
                            filter(content_object=puc).
                            values_list('tag', flat=True)))
-        print(form['tag'])
         products = (Product.objects.
                     filter(id__in=(ProductToPUC.objects.filter(PUC = puc).values_list('product_id', flat=True))))
     else:
@@ -166,13 +165,13 @@ def bulk_assign_puc_to_product(request, template_name=('product_curation/'
         full_p_count = 0
     form = BulkProductPUCForm(request.POST or None)
     if form.is_valid():
-        puc = PUC.objects.get(id=form['puc'].value())
+        puc = PUC.objects.get(id=form['PUC'].value())
         product_ids = form['id_pks'].value().split(",")
         for id in product_ids:
             product = Product.objects.get(id=id)
             ProductToPUC.objects.create(PUC=puc, product=product, classification_method='MB',
                                     puc_assigned_usr=request.user)
-    form["puc"].label = 'PUC to Assign to Selected Products'
+    form["PUC"].label = 'PUC to Assign to Selected Products'
     return render(request, template_name, {'products': p, 'q': q, 'form': form, 'full_p_count': full_p_count})
 
 @login_required()
@@ -182,7 +181,7 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
     form = ProductPUCForm(request.POST or None)
     p = Product.objects.get(pk=pk)
     if form.is_valid():
-        puc = PUC.objects.get(id=form['puc'].value())
+        puc = PUC.objects.get(id=form['PUC'].value())
         producttopuc = ProductToPUC.objects.filter(product=p, classification_method='MA')
         if producttopuc.exists():
             producttopuc.delete()

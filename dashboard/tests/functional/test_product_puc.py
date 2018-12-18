@@ -16,7 +16,7 @@ class TestProductPuc(TestCase):
         response_url = reverse('admin:dashboard_puc_changelist')
         response = self.client.get(response_url)
         response_html = html.fromstring(response.content.decode('utf8'))
-        self.assertIn('Tag List', response_html.xpath('string(/html/body/div[1]/div[3]/div/div/form/div[2]/table/thead/tr/th[3]/div[1])'),
+        self.assertIn('Tag list', response_html.xpath('string(/html/body/div[1]/div[3]/div/div/form/div[2]/table/thead/tr/th[3]/div[1])'),
                       'The column Tag List should exist on the PUC admin table')
         self.assertIn('aerosol', response_html.xpath('string(/html/body/div[1]/div[3]/div/div/form/div[2]/table/tbody/tr[2]/td[2])'),
                       'The tag aerosol should exist in the tag list column for PUC 1')
@@ -84,7 +84,7 @@ class TestProductPuc(TestCase):
     def test_bulk_product_puc_post(self):
         product_response_url = reverse('bulk_product_puc')
         response = self.client.post(product_response_url,
-                                    {'puc': '1',
+                                    {'PUC': '1',
                                      'id_pks': '11,150,151,152'})
         # Note that product 11 already has PUC 1 linked to it in the seed data. Including it in this
         # test set is a test against the edge case wherein a product with a manually assigned PUC
@@ -97,7 +97,29 @@ class TestProductPuc(TestCase):
     def test_bulk_product_puc_post_without_products(self):
         product_response_url = reverse('bulk_product_puc')
         response = self.client.post(product_response_url,
-                                    {'puc': '1'})
+                                    {'PUC': '1'})
         self.assertEqual(response.status_code, 200, 
             "The request should return a valid response even without any Products" )
 
+    def test_bulk_product_tag_post(self):
+        product_response_url = reverse('bulk_product_tag')
+        response = self.client.post(product_response_url,
+                                    {'PUC': 1,
+                                     'tag': '4',
+                                     'id_pks': '11,1845',
+                                     'save':'save'})
+
+        self.assertIn('The &quot;gel&quot; Attribute was assigned to 2 Product(s)', response.content.decode('utf-8'),
+                      'The "aerosol" tag message should be displayed in the response')
+
+        product = Product.objects.get(pk=11)
+        tag = PUCTag.objects.get(pk=1)
+        tag_count  = product.producttotag_set.count()
+        self.assertEqual(tag_count, 4, "Product 11 should now be assigned to 4 Tags" )
+
+    def test_bulk_product_tag_post_without_products(self):
+        product_response_url = reverse('bulk_product_tag')
+        response = self.client.post(product_response_url,
+                                    {'PUC': 1, 'tag': '1'})
+        self.assertEqual(response.status_code, 200,
+            "The request should return a valid response even without any Products" )

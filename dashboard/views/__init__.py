@@ -14,3 +14,4 @@ from .dsstox_substance import *
 from .habits_n_practices import *
 from .get_data import *
 from .puc import *
+from .diagnostics import *

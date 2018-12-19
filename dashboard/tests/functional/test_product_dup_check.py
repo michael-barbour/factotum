@@ -20,6 +20,9 @@ from fuzzywuzzy import process
 class TestProductDupCheck(TestCase):
 
     def setUp(self):
+        # Create a variable that will have all products that have non-stub UPCs.
+        norm_products = Product.objects.exclude(upc__contains="stub")
+
         # Build list of UPC product names
         list_upc_names = []
         list_upc_pks = []
@@ -29,8 +32,6 @@ class TestProductDupCheck(TestCase):
             pk_product = norm_product.pk
             list_upc_pks.append(pk_product)
 
-        # Create a variable that will have all products that have non-stub UPCs.
-        norm_products = Product.objects.exclude(upc__contains="stub")
 
     def test_top_match(self):
         stub_product = "fastset anchoring epoxy, high strength anchoring epoxy, dot anchoring"

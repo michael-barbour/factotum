@@ -198,7 +198,6 @@ class PUCModelTest(TestCase):
         self.assertEqual(len(puc.get_the_kids()),1, ('PUC should only have '
                                                         'itself associated'))
 
-<<<<<<< HEAD
     def test_puc_category_defaults(self):
         '''Assert that the prod_fam and prod_type are nulled w/ an
         empty string and not NULL.
@@ -207,7 +206,6 @@ class PUCModelTest(TestCase):
         puc = PUC.objects.create(last_edited_by=k)
         self.assertTrue(puc.prod_fam == '')
         self.assertTrue(puc.prod_type == '')
-=======
     def test_product_counts(self):
         '''Make sure the product_count property
         returns the same thing as the num_products annotation'''
@@ -238,4 +236,3 @@ class DataGroupFilesTest(TestCase):
 
 
 
->>>>>>> dev

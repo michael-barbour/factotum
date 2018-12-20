@@ -238,7 +238,7 @@ def include_clean_comp_data_form(dg):
 
 
 
-def create_detail_formset(group_type, extra=0, can_delete=False):
+def create_detail_formset(group_type, extra=1, can_delete=False):
     '''Returns the pair of formsets that will be needed based on group_type.
     .                       ('CO'),('CP'),('FU'),('HP')
     .

@@ -13,6 +13,9 @@ class ExtractedFunctionalUse(CommonInfo):
     report_funcuse = models.CharField("Reported functional use",
                                         max_length=100, null=True, blank=True)
 
+    rawchem_ptr_temp = models.ForeignKey(blank=True, null=True, 
+            on_delete=models.SET_NULL, to='dashboard.RawChem')
+
     def __str__(self):
         return self.raw_chem_name
 

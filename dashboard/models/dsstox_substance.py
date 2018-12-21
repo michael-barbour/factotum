@@ -18,6 +18,8 @@ class DSSToxSubstance(CommonInfo):
     true_chemname = models.CharField(max_length=500, null=True, blank=True)
     rid = models.CharField(max_length=50, null=True, blank=True)
     sid = models.CharField(max_length=50, null=True, blank=True)
+    rawchem_ptr_temp = models.ForeignKey(blank=True, null=True, 
+        on_delete=models.SET_NULL, to='dashboard.RawChem')
 
     def __str__(self):
         return self.true_chemname

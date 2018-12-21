@@ -27,6 +27,9 @@ class Ingredient(CommonInfo):
                                                     null=True, blank=True)
     script = models.ForeignKey(to=Script, on_delete=models.CASCADE,
                                                     null=True, blank=True)
+                                                    
+    rawchem_ptr_temp = models.ForeignKey(blank=True, null=True, 
+        on_delete=models.SET_NULL, to='dashboard.RawChem')
 
     def __str__(self):
         return str(self.id)

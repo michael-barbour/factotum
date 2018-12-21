@@ -10,6 +10,9 @@ class ExtractedListPresence(CommonInfo):
                                         null=True, blank=True)
     raw_chem_name = models.CharField("Raw chemical name", max_length=500,
                                         null=True, blank=True)
+                                        
+    rawchem_ptr_temp = models.ForeignKey(blank=True, null=True, 
+            on_delete=models.SET_NULL, to='dashboard.RawChem')
 
     # Use a property to simulate the extracted_text attribute so that that
     # the child of an ExtractedCPCat object behaves like the child of an

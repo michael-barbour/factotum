@@ -4,13 +4,14 @@ from django.core.exceptions import ValidationError
 from .extracted_text import ExtractedText
 from .unit_type import UnitType
 from .weight_fraction_type import WeightFractionType
+from .raw_chem import RawChem
 
 def validate_ingredient_rank(value):
     if value < 1 or value > 999:
         raise ValidationError(
             (f'Quantity {value} is not allowed'), params={'value': value},)
 
-class ExtractedChemical(CommonInfo):
+class ExtractedChemical(CommonInfo, RawChem):
     extracted_text = models.ForeignKey(ExtractedText, on_delete=models.CASCADE,
                                                     related_name='chemicals')
     raw_cas_old = models.CharField("Raw CAS", max_length=100, null=True, blank=True)
@@ -29,8 +30,9 @@ class ExtractedChemical(CommonInfo):
                                         validators=[validate_ingredient_rank])
     raw_central_comp = models.CharField(max_length=100, null=True, blank=True)
 
-    rawchem_ptr_temp = models.ForeignKey(blank=True, null=True, 
-            on_delete=models.SET_NULL, to='dashboard.RawChem')
+    rawchem_ptr_temp = models.OneToOneField(blank=False, null=False,
+            related_name='extracted_chemicals', parent_link=True ,
+            on_delete=models.CASCADE, to='dashboard.RawChem')
 
     def __str__(self):
         return self.raw_chem_name

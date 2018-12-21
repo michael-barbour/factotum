@@ -2,9 +2,9 @@ from django.db import models
 from .common_info import CommonInfo
 from django.core.exceptions import ValidationError
 from .extracted_text import ExtractedText
+from .raw_chem import RawChem
 
-
-class ExtractedFunctionalUse(CommonInfo):
+class ExtractedFunctionalUse(CommonInfo, RawChem):
     extracted_text = models.ForeignKey(ExtractedText, on_delete=models.CASCADE,
                                     related_name='uses')
     raw_cas_old = models.CharField("Raw CAS", max_length=50, null=True, blank=True)
@@ -13,8 +13,9 @@ class ExtractedFunctionalUse(CommonInfo):
     report_funcuse = models.CharField("Reported functional use",
                                         max_length=100, null=True, blank=True)
 
-    rawchem_ptr_temp = models.ForeignKey(blank=True, null=True, 
-            on_delete=models.SET_NULL, to='dashboard.RawChem')
+    rawchem_ptr_temp = models.OneToOneField(blank=False, null=False, 
+            related_name='extracted_functionaluses', parent_link=True ,
+            on_delete=models.CASCADE, to='dashboard.RawChem')
 
     def __str__(self):
         return self.raw_chem_name

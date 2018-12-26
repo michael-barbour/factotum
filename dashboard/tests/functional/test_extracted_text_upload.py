@@ -8,13 +8,13 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 
 from dashboard import views
 from dashboard.models import *
+from dashboard.tests.loader import fixtures_standard
+
 
 
 
 class UploadExtractedFileTest(TestCase):
-    fixtures = ['00_superuser.yaml', '01_lookups.yaml',
-                '02_datasource.yaml', '03_datagroup.yaml', '04_PUC.yaml',
-                '05_product.yaml', '06_datadocument.yaml', '07_script.yaml']
+    fixtures = fixtures_standard
 
     def setUp(self):
         self.c = Client()

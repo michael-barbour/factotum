@@ -31,7 +31,7 @@ class ExtractedChemical(CommonInfo, RawChem):
     raw_central_comp = models.CharField(max_length=100, null=True, blank=True)
 
     rawchem_ptr_temp = models.OneToOneField(blank=False, null=False,
-            related_name='extracted_chemicals', parent_link=True ,
+            related_name='extracted_chemical', parent_link=True ,
             on_delete=models.CASCADE, to='dashboard.RawChem')
 
     def __str__(self):

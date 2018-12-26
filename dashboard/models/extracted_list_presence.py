@@ -13,7 +13,7 @@ class ExtractedListPresence(CommonInfo, RawChem):
                                         null=True, blank=True)
                                         
     rawchem_ptr_temp = models.OneToOneField(blank=False, null=False, 
-            related_name='extracted_listpresences',parent_link=True ,
+            related_name='extracted_listpresence',parent_link=True ,
             on_delete=models.CASCADE, to='dashboard.RawChem')
 
     # Use a property to simulate the extracted_text attribute so that that

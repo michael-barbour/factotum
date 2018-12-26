@@ -14,7 +14,7 @@ class ExtractedFunctionalUse(CommonInfo, RawChem):
                                         max_length=100, null=True, blank=True)
 
     rawchem_ptr_temp = models.OneToOneField(blank=False, null=False, 
-            related_name='extracted_functionaluses', parent_link=True ,
+            related_name='extracted_functionaluse', parent_link=True ,
             on_delete=models.CASCADE, to='dashboard.RawChem')
 
     def __str__(self):

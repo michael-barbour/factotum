@@ -35,7 +35,7 @@ class ExtractedChemical(CommonInfo, RawChem):
             on_delete=models.CASCADE, to='dashboard.RawChem')
 
     def __str__(self):
-        return self.raw_chem_name
+        return str(self.raw_chem_name) if self.raw_chem_name else ''
 
     @classmethod
     def detail_fields(cls):

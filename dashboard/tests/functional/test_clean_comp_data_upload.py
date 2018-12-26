@@ -13,7 +13,7 @@ from dashboard.tests.loader import fixtures_standard
 
 
 class UploadExtractedFileTest(TestCase):
-    fixtures = standard_fixtures
+    fixtures = fixtures_standard
 
     def setUp(self):
         self.c = Client()

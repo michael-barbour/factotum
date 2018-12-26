@@ -37,10 +37,7 @@ class DDTestModel(TestCase):
 
 class DDTestUpload(TestCase):
 
-    fixtures = ['00_superuser.yaml', '01_lookups.yaml',
-            '02_datasource.yaml', '03_datagroup.yaml', '04_PUC.yaml',
-            '05_product.yaml', '06_datadocument.yaml','07_script.yaml',
-            ]
+    fixtures = fixtures_standard
 
     def setUp(self):
         self.factory = RequestFactory()

@@ -65,17 +65,19 @@ def load_model_objects():
                                     )
     ut = UnitType.objects.create(title='percent composition')
     wft = WeightFractionType.objects.create(title= 'reported', description= 'reported')
-    rc = RawChem.objects.create(raw_chem_name= 'Test Chem Name',raw_cas='test_cas')
+    ec = ExtractedChemical.objects.create(extracted_text=extext,
+                                        unit_type=ut,
+                                        weight_fraction_type = wft,
+                                        raw_chem_name= 'Test Chem Name',
+                                        raw_cas='test_cas'
+                                        )
+    rc = ec.rawchem_ptr_temp
     ing = Ingredient.objects.create(lower_wf_analysis = 0.123456789012345,
                                     central_wf_analysis = 0.2,
                                     upper_wf_analysis = 1,
                                     script = script,
                                     rawchem_ptr_temp = rc)
-    ec = ExtractedChemical.objects.create(extracted_text=extext,
-                                            unit_type=ut,
-                                            weight_fraction_type = wft,
-                                            rawchem_ptr_temp = rc
-                                            )
+    
     dsstox = DSSToxSubstance.objects.create(rawchem_ptr_temp = rc,
                                             true_chemname='Test Chem Name')
     pt = PUCTag.objects.create(name="Test PUC Attribute")

@@ -24,7 +24,7 @@ class UploadExtractedFileTest(TestCase):
         csv_string = (
             "id,lower_wf_analysis,central_wf_analysis,upper_wf_analysis"
             "\n"
-            "5,0.7777,.99999999,1.0"
+            "73,0.7777,.99999999,1.0"
             "\n"
             "8,.44,.23,.88")
         return csv_string
@@ -33,7 +33,7 @@ class UploadExtractedFileTest(TestCase):
         csv_string = (
             "id,lower_wf_analysis,central_wf_analysis,upper_wf_analysis"
             "\n"
-            "5,1.7777,.99999999,1.0"
+            "73,1.7777,.99999999,1.0"
             "\n"
             "8,.44,.23,.88"
             "\n"
@@ -44,7 +44,7 @@ class UploadExtractedFileTest(TestCase):
         csv_string = (
             "id,bad_header1,bad_header2"
             "\n"
-            "5,1.7777,.99999999"
+            "73,1.7777,.99999999"
             "\n"
             "8,.44,.23")
         return csv_string

@@ -12,7 +12,7 @@ class ExtractedListPresence(CommonInfo, RawChem):
     raw_chem_name_old = models.CharField("Raw chemical name", max_length=500,
                                         null=True, blank=True)
                                         
-    rawchem_ptr_temp = models.OneToOneField(blank=False, null=False, 
+    rawchem_ptr = models.OneToOneField(blank=False, null=False, 
             related_name='extracted_listpresence',parent_link=True ,
             on_delete=models.CASCADE, to='dashboard.RawChem')
 

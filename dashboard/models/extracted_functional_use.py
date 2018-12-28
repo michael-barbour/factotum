@@ -13,7 +13,7 @@ class ExtractedFunctionalUse(CommonInfo, RawChem):
     report_funcuse = models.CharField("Reported functional use",
                                         max_length=100, null=True, blank=True)
 
-    rawchem_ptr_temp = models.OneToOneField(blank=False, null=False, 
+    rawchem_ptr = models.OneToOneField(blank=False, null=False, 
             related_name='extracted_functionaluse', parent_link=True ,
             on_delete=models.CASCADE, to='dashboard.RawChem')
 

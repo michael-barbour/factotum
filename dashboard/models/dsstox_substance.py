@@ -13,7 +13,7 @@ class DSSToxSubstance(CommonInfo):
     rid = models.CharField(max_length=50, null=True, blank=True)
     sid = models.CharField(max_length=50, null=True, blank=True)
 
-    rawchem_ptr_temp = models.OneToOneField(related_name='curated_chemical', 
+    rawchem_ptr = models.OneToOneField(related_name='curated_chemical', 
         on_delete=models.CASCADE, to='dashboard.RawChem')
 
     def __str__(self):
@@ -48,15 +48,15 @@ class DSSToxSubstance(CommonInfo):
 
     @property
     def extracted_chemical(self):
-        return self.rawchem_ptr_temp.extracted_chemical
+        return self.rawchem_ptr.extracted_chemical
     
     @property
     def raw_cas(self):
-        return self.rawchem_ptr_temp.raw_cas
+        return self.rawchem_ptr.raw_cas
 
     @property
     def raw_chem_name(self):
-        return self.rawchem_ptr_temp.raw_chem_name
+        return self.rawchem_ptr.raw_chem_name
     
     def get_extractedtext(self):
         return self.extracted_chemical.get_extractedtext

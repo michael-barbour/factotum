@@ -71,14 +71,14 @@ def load_model_objects():
                                         raw_chem_name= 'Test Chem Name',
                                         raw_cas='test_cas'
                                         )
-    rc = ec.rawchem_ptr_temp
+    rc = ec.rawchem_ptr
     ing = Ingredient.objects.create(lower_wf_analysis = 0.123456789012345,
                                     central_wf_analysis = 0.2,
                                     upper_wf_analysis = 1,
                                     script = script,
-                                    rawchem_ptr_temp = rc)
+                                    rawchem_ptr = rc)
     
-    dsstox = DSSToxSubstance.objects.create(rawchem_ptr_temp = rc,
+    dsstox = DSSToxSubstance.objects.create(rawchem_ptr = rc,
                                             true_chemname='Test Chem Name')
     pt = PUCTag.objects.create(name="Test PUC Attribute")
     pd = ProductDocument.objects.create(product=p, document=doc)

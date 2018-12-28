@@ -37,7 +37,7 @@ class TestGetData(TestCase):
         self.client.login(username='Karyn', password='specialP@55word')
         # get the associated documents for linking to products
         dds = DataDocument.objects.filter(pk__in=DSSToxSubstance.objects.filter(sid='DTXSID9022528').\
-        values('rawchem_ptr_temp__extracted_chemical__extracted_text__data_document'))
+        values('rawchem_ptr__extracted_chemical__extracted_text__data_document'))
         dd = dds[0]
 
         ds = dd.data_group.data_source
@@ -74,7 +74,7 @@ class TestGetData(TestCase):
         self.client.login(username='Karyn', password='specialP@55word')
         # get the associated documents for linking to products
         dds = DataDocument.objects.filter(pk__in=DSSToxSubstance.objects.filter(sid='DTXSID9022528').\
-            values('rawchem_ptr_temp__extracted_chemical__extracted_text__data_document'))
+            values('rawchem_ptr__extracted_chemical__extracted_text__data_document'))
         dd = dds[0]
         dd.delete()
 
@@ -96,7 +96,7 @@ class TestGetData(TestCase):
         self.assertEqual(1, ethylparaben_stats['dds_wf_n'], 'There should be 1 extracted chemical \
         with weight fraction data associated with ethylaraben')
         # add weight fraction data to a different extractedchemical
-        ec = ExtractedChemical.objects.get(rawchem_ptr_temp_id = 73)
+        ec = ExtractedChemical.objects.get(rawchem_ptr_id = 73)
         ec.raw_min_comp=0.1
         ec.save()
         stats = stats_by_dtxsids(dtxs)
@@ -122,7 +122,7 @@ class TestGetData(TestCase):
         self.client.login(username='Karyn', password='specialP@55word')
         # get the associated documents for linking to products
         dds = DataDocument.objects.filter(pk__in=DSSToxSubstance.objects.filter(sid='DTXSID9022528').\
-        values('rawchem_ptr_temp__extracted_chemical__extracted_text__data_document'))
+        values('rawchem_ptr__extracted_chemical__extracted_text__data_document'))
         dd = dds[0]
 
 

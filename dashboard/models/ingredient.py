@@ -26,7 +26,7 @@ class Ingredient(CommonInfo):
     script = models.ForeignKey(to=Script, on_delete=models.CASCADE,
                                                     null=True, blank=True)
                                                     
-    rawchem_ptr_temp = models.OneToOneField(related_name='ingredient', parent_link=True,
+    rawchem_ptr = models.OneToOneField(related_name='ingredient', parent_link=True,
         on_delete=models.CASCADE, to='dashboard.RawChem')
 
     def __str__(self):

@@ -140,7 +140,7 @@ class ProductViewForm(ProductForm):
             self.fields[f].disabled = True
 
 class BasePUCForm(forms.ModelForm):
-    PUC = forms.ModelChoiceField(
+    puc = forms.ModelChoiceField(
         queryset=PUC.objects.all(),
         label='Category',
         widget=autocomplete.ModelSelect2(
@@ -151,12 +151,12 @@ class BasePUCForm(forms.ModelForm):
 class ProductPUCForm(BasePUCForm):
     class Meta:
         model = ProductToPUC
-        fields = ['PUC']
+        fields = ['puc']
 
 class HabitsPUCForm(BasePUCForm):
     class Meta:
         model = ExtractedHabitsAndPracticesToPUC
-        fields = ['PUC']
+        fields = ['puc']
 
 class BulkProductPUCForm(forms.ModelForm):
     id_pks = forms.CharField(label='Product Titles',
@@ -164,7 +164,7 @@ class BulkProductPUCForm(forms.ModelForm):
                              required=True)
     class Meta:
         model = ProductToPUC
-        fields = ['PUC', 'id_pks']
+        fields = ['puc', 'id_pks']
 
 class BulkProductTagForm(BasePUCForm):
     required_css_class = 'required' # adds to label tag
@@ -174,12 +174,12 @@ class BulkProductTagForm(BasePUCForm):
                              widget=forms.HiddenInput())
     class Meta:
         model = ProductToPUC
-        fields = ['PUC', 'tag', 'id_pks']
+        fields = ['puc', 'tag', 'id_pks']
     def __init__(self, *args, **kwargs):
         super(BulkProductTagForm, self).__init__(*args, **kwargs)
-        self.fields['PUC'].label = 'Select PUC for Attribute to Assign to Selected Products'
+        self.fields['puc'].label = 'Select PUC for Attribute to Assign to Selected Products'
         self.fields['tag'].label = 'Select Attribute to Assign to Selected Products'
-        self.fields['PUC'].widget.attrs['onchange'] = 'form.submit();'
+        self.fields['puc'].widget.attrs['onchange'] = 'form.submit();'
 
 class ExtractedTextForm(forms.ModelForm):
     class Meta:

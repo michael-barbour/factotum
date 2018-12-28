@@ -84,7 +84,7 @@ class TestProductPuc(TestCase):
     def test_bulk_product_puc_post(self):
         product_response_url = reverse('bulk_product_puc')
         response = self.client.post(product_response_url,
-                                    {'PUC': '1',
+                                    {'puc': '1',
                                      'id_pks': '11,150,151,152'})
         # Note that product 11 already has PUC 1 linked to it in the seed data. Including it in this
         # test set is a test against the edge case wherein a product with a manually assigned PUC
@@ -97,14 +97,14 @@ class TestProductPuc(TestCase):
     def test_bulk_product_puc_post_without_products(self):
         product_response_url = reverse('bulk_product_puc')
         response = self.client.post(product_response_url,
-                                    {'PUC': '1'})
+                                    {'puc': '1'})
         self.assertEqual(response.status_code, 200, 
             "The request should return a valid response even without any Products" )
 
     def test_bulk_product_tag_post(self):
         product_response_url = reverse('bulk_product_tag')
         response = self.client.post(product_response_url,
-                                    {'PUC': 1,
+                                    {'puc': 1,
                                      'tag': '4',
                                      'id_pks': '11,1845',
                                      'save':'save'})
@@ -120,6 +120,6 @@ class TestProductPuc(TestCase):
     def test_bulk_product_tag_post_without_products(self):
         product_response_url = reverse('bulk_product_tag')
         response = self.client.post(product_response_url,
-                                    {'PUC': 1, 'tag': '1'})
+                                    {'puc': 1, 'tag': '1'})
         self.assertEqual(response.status_code, 200,
             "The request should return a valid response even without any Products" )

@@ -128,13 +128,13 @@ def bulk_assign_tag_to_products(request, template_name=('product_curation/'
                                                       'bulk_product_tag.html')):
     form = BulkProductTagForm(request.POST or None)
     msg = ''
-    if form['PUC'].value():
-        puc = PUC.objects.get(pk = form['PUC'].value())
+    if form['puc'].value():
+        puc = PUC.objects.get(pk = form['puc'].value())
         form.fields['tag'].queryset = PUCTag.objects.filter(id__in=(PUCToTag.objects.
                            filter(content_object=puc).
                            values_list('tag', flat=True)))
         products = (Product.objects.
-                    filter(id__in=(ProductToPUC.objects.filter(PUC = puc).values_list('product_id', flat=True))))
+                    filter(id__in=(ProductToPUC.objects.filter(puc = puc).values_list('product_id', flat=True))))
     else:
         products = {}
     if request.method == 'POST' and 'save' in request.POST:
@@ -165,13 +165,13 @@ def bulk_assign_puc_to_product(request, template_name=('product_curation/'
         full_p_count = 0
     form = BulkProductPUCForm(request.POST or None)
     if form.is_valid():
-        puc = PUC.objects.get(id=form['PUC'].value())
+        puc = PUC.objects.get(id=form['puc'].value())
         product_ids = form['id_pks'].value().split(",")
         for id in product_ids:
             product = Product.objects.get(id=id)
-            ProductToPUC.objects.create(PUC=puc, product=product, classification_method='MB',
+            ProductToPUC.objects.create(puc=puc, product=product, classification_method='MB',
                                     puc_assigned_usr=request.user)
-    form["PUC"].label = 'PUC to Assign to Selected Products'
+    form['puc'].label = 'PUC to Assign to Selected Products'
     return render(request, template_name, {'products': p, 'q': q, 'form': form, 'full_p_count': full_p_count})
 
 @login_required()
@@ -181,11 +181,11 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
     form = ProductPUCForm(request.POST or None)
     p = Product.objects.get(pk=pk)
     if form.is_valid():
-        puc = PUC.objects.get(id=form['PUC'].value())
+        puc = PUC.objects.get(id=form['puc'].value())
         producttopuc = ProductToPUC.objects.filter(product=p, classification_method='MA')
         if producttopuc.exists():
             producttopuc.delete()
-        ProductToPUC.objects.create(PUC=puc, product=p, classification_method='MA',
+        ProductToPUC.objects.create(puc=puc, product=p, classification_method='MA',
                                     puc_assigned_usr=request.user)
         referer = request.POST.get('referer') if request.POST.get('referer') else 'category_assignment'
         pk = p.id if referer == 'product_detail' else p.data_source.id

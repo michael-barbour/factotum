@@ -6,7 +6,8 @@ from dashboard.models import *
 fixtures_standard = ['00_superuser.yaml','01_lookups.yaml','02_datasource.yaml','03_datagroup.yaml',
                     '04_PUC.yaml','05_product.yaml','06_datadocument.yaml','07_script.yaml',
                     '08_extractedtext.yaml','09_productdocument.yaml', '065_rawchem_etc.yaml',
-                     '11_dsstoxsubstance.yaml', '12_habits_and_practices.yaml',
+                     # '11_dsstoxsubstance.yaml', 
+                     '12_habits_and_practices.yaml',
                      '13_habits_and_practices_to_puc.yaml','14_product_to_puc.yaml',
                      '16_extractedcpcat.yaml',
                      '18_puc_tag.yaml']

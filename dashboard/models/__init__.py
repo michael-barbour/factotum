@@ -16,6 +16,7 @@ from .extracted_habits_and_practices import ExtractedHabitsAndPractices
 from .extracted_list_presence import ExtractedListPresence
 from .script import Script
 from .dsstox_substance import DSSToxSubstance
+from .dsstox_lookup import DSSToxLookup
 from .qa_group import QAGroup
 from .unit_type import UnitType
 from .weight_fraction_type import WeightFractionType

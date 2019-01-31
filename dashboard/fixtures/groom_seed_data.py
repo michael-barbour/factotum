@@ -55,7 +55,7 @@ DataDocument.objects.exclude(id__in=ExtractedChemical.objects.all().values('extr
 ######## At the command prompt:
 
 """ 
-python manage.py dumpdata dashboard.grouptype dashboard.documenttype dashboard.unittype dashboard.weightfractiontype dashboard.pucattribute --format=yaml > ./dashboard/fixtures/01_lookups.yaml
+python manage.py dumpdata dashboard.grouptype dashboard.dsstoxlookup dashboard.documenttype dashboard.unittype dashboard.weightfractiontype dashboard.puctag --format=yaml > ./dashboard/fixtures/01_lookups.yaml
 python manage.py dumpdata dashboard.datasource --format=yaml > ./dashboard/fixtures/02_datasource.yaml
 python manage.py dumpdata dashboard.datagroup --format=yaml > ./dashboard/fixtures/03_datagroup.yaml
 python manage.py dumpdata dashboard.PUC --format=yaml > ./dashboard/fixtures/04_PUC.yaml

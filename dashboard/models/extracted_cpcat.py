@@ -14,3 +14,7 @@ class ExtractedCPCat(ExtractedText):
 
     def __str__(self):
         return str(self.prod_name)
+    
+    @property
+    def data_document(self):
+        return self.data_document

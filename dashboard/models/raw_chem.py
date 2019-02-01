@@ -1,7 +1,10 @@
 from django.db import models
 from .dsstox_lookup import DSSToxLookup
+from model_utils.managers import InheritanceManager
+
 
 class RawChem(models.Model):
+
     raw_cas = models.CharField("Raw CAS", max_length=100, null=True, blank=True)
     raw_chem_name = models.CharField("Raw chemical name", max_length=500,
                                                         null=True, blank=True)
@@ -12,6 +15,8 @@ class RawChem(models.Model):
 
     dsstox = models.ForeignKey(DSSToxLookup, related_name = 'curated_chemical', on_delete=models.PROTECT,
                                                     null=True, blank=True)
+
+    objects = InheritanceManager()
 
     def __str__(self):
         return self.raw_chem_name
@@ -25,7 +30,5 @@ class RawChem(models.Model):
         except AttributeError:
             return False
 
-
-    
 
 

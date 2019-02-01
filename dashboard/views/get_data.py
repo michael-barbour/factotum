@@ -59,23 +59,24 @@ def stats_by_dtxsids(dtxs):
 
 
     # The number of unique PUCs (product categories) the chemical is associated with
-    pucs_n = DSSToxSubstance.objects.filter(sid__in=dtxs).\
-        values('sid').annotate(pucs_n=Count('rawchem_ptr__extracted_chemical__extracted_text__data_document__product__puc')).values('sid','pucs_n')
+    pucs_n = RawChem.objects.filter(dsstox__sid__in=dtxs).\
+        annotate(pucs_n=Count('data_document__product__puc')).values('sid','pucs_n')
     #print('pucs_n:')
     #print(pucs_n)
 
     # "The number of data documents (e.g.  MSDS, SDS, ingredient list, product label)
     # the chemical appears in
-    dds_n = DSSToxSubstance.objects.filter(sid__in=dtxs).values('sid').\
-        annotate(dds_n=Count('rawchem_ptr__extracted_chemical__extracted_text__data_document')).values('sid','dds_n')
+    print(RawChem.objects.filter(dsstox__sid__in=dtxs))
+    dds_n = RawChem.objects.filter(dsstox__sid__in=dtxs).\
+        annotate(dds_n=Count('data_document')).values('sid','dds_n')
     #print('dds_n:')
     #print(dds_n)
 
     # The number of data documents with associated weight fraction data
     # that the chemical appears in (weight fraction data may be reported or predicted data,
     # i.e., predicted from an ingredient list)
-    dds_wf_n = DSSToxSubstance.objects\
-    .filter(sid__in=dtxs).values('sid')\
+    dds_wf_n = RawChem.objects\
+    .filter(dsstox__sid__in=dtxs).values('sid')\
     .annotate(
         dds_wf_n = Subquery(
             ExtractedChemical
@@ -86,7 +87,7 @@ def stats_by_dtxsids(dtxs):
                 Q(raw_min_comp__isnull=False) |
                 Q(raw_central_comp__isnull=False)
             )
-            .values('rawchem_ptr__extracted_chemical__extracted_text_id')
+            .values('extracted_text_id')
             .annotate(dds_wf_n=Count('extracted_text_id') )
             .values('dds_wf_n')
         )
@@ -125,8 +126,8 @@ def stats_by_dtxsids(dtxs):
 
     # The number of products the chemical appears in, where a product is defined as a
     # product entry in Factotum.
-    products_n = DSSToxSubstance.objects.filter(sid__in=dtxs).values('sid').\
-       annotate(products_n=Count('rawchem_ptr__extracted_chemical__extracted_text__data_document__product')).values('sid', 'products_n')
+    products_n = RawChem.objects.filter(sid__in=dtxs).values('sid').\
+       annotate(products_n=Count('extracted_text__data_document__product')).values('sid', 'products_n')
 
 
     stats = pucs_n\

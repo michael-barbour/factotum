@@ -18,3 +18,4 @@ lxml>=4.2.2
 django-taggit>=0.23.0
 -e git+https://github.com/bennylope/django-taggit-labels.git#egg=django_taggit_labels
 fuzzywuzzy>=0.17.0
+django-model-utils>=3.1

@@ -37,5 +37,5 @@ class ExtractedListPresence(CommonInfo, RawChem):
         return self.extracted_cpcat.extractedtext_ptr
 
     @property
-    def datadocument(self):
+    def data_document(self):
         return self.extracted_cpcat.extractedtext_ptr.data_document

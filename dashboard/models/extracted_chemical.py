@@ -41,7 +41,7 @@ class ExtractedChemical(CommonInfo, RawChem):
     def detail_fields(cls):
         return ['extracted_text','raw_cas','raw_chem_name','raw_min_comp',
             'raw_max_comp', 'unit_type','weight_fraction_type','report_funcuse',
-            'ingredient_rank','raw_central_comp']
+            'ingredient_rank','raw_central_comp','rawchem_ptr']
 
     def get_datadocument_url(self):
         return self.extracted_text.data_document.get_absolute_url()

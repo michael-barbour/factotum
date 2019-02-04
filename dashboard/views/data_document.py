@@ -32,7 +32,6 @@ def data_document_detail(request, pk,
 
     else:
         #print('ExtractedText object found: %s' % extracted_text )
-        extracted_text = extracted_text.pull_out_cp() #get CP if exists
         extracted_text_form = ParentForm(instance=extracted_text)
         child_formset = ChildForm(instance=extracted_text)
 
@@ -64,7 +63,9 @@ def save_doc_form(request, pk):
 def save_ext_form(request, pk):
     doc = get_object_or_404(DataDocument, pk=pk)
     ExtractedTextForm, _ = create_detail_formset(doc.data_group.type)
-    extracted_text = doc.extractedtext.pull_out_cp()
+    extracted_text = doc.extractedtext.get_subclass()
+    print('Saving extracted text form')
+    print(type(extracted_text))
     ext_text_form = ExtractedTextForm(request.POST, instance=extracted_text)
     if ext_text_form.is_valid() and ext_text_form.has_changed():
         ext_text_form.save()

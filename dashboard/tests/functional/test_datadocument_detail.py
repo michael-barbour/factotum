@@ -90,7 +90,7 @@ class TestDynamicDetailFormsets(TestCase):
                 else:
                     self.assertEqual(type(extsub) , ExtractedText)
             except ObjectDoesNotExist:
-                print('No extracted text for data document %s' % doc.id)
+                # print('No extracted text for data document %s' % doc.id)
 
 
 
@@ -101,9 +101,8 @@ class TestDynamicDetailFormsets(TestCase):
         for et in ExtractedText.objects.all():
             dd = et.data_document
             ParentForm, ChildForm = create_detail_formset(dd.data_group.type, EXTRA)
-            extracted_text = et.pull_out_cp() #get CP if exists
-            extracted_text_form = ParentForm(instance=extracted_text)
-            child_formset = ChildForm(instance=extracted_text)
+            extracted_text_form = ParentForm(instance=et)
+            child_formset = ChildForm(instance=et)
             # Compare the model of the child formset's QuerySet to the model
             # of the ExtractedText object's child objects
             dd_child_model  = get_extracted_models(dd.data_group.group_type.code)[1]

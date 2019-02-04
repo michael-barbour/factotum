@@ -5,6 +5,7 @@ from dashboard.tests.loader import *
 from dashboard.forms import *
 from lxml import html
 from factotum.settings import EXTRA
+from django.core.exceptions import ObjectDoesNotExist
 
 
 @override_settings(ALLOWED_HOSTS=['testserver'])
@@ -73,6 +74,25 @@ class TestDynamicDetailFormsets(TestCase):
                 #print('    %s: %s' % (ex_child.__class__.__name__ , ex_child ))
                 self.assertEqual(et.pk , child_model.objects.get(pk=ex_child.pk).extracted_text.pk,
                     'The ExtractedChemical object with the returned child pk should have the correct extracted_text parent')
+
+    def test_extractedsubclasses(self):
+        ''' Confirm that the inheritance manager is returning ExtractedCPCat
+            subclass objects and ExtractedText base class objects correctly
+         '''
+        for doc in DataDocument.objects.all():
+            try:
+                extsub = ExtractedText.objects.get_subclass(data_document=doc)
+                # A document with the CP data group type should be linked to 
+                # ExtractedCPCat objects
+                if doc.data_group.group_type.code=='CP':
+                    #print(f'%s %s %s' % (doc.id, extsub, type(extsub)))
+                    self.assertEqual(type(extsub) , ExtractedCPCat)
+                else:
+                    self.assertEqual(type(extsub) , ExtractedText)
+            except ObjectDoesNotExist:
+                print('No extracted text for data document %s' % doc.id)
+
+
 
     def test_every_extractedtext(self):
         ''''Loop through all the ExtractedText objects and confirm that the new

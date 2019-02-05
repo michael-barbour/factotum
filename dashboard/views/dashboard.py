@@ -27,7 +27,7 @@ def index(request):
     stats['datadocument_count_by_date'] = datadocument_count_by_date()
     stats['datadocument_count_by_month'] = datadocument_count_by_month()
     stats['product_count'] = Product.objects.count()
-    stats['dss_tox_count'] = DSSToxSubstance.objects.count()
+    stats['dss_tox_count'] = RawChem.objects.filter(dsstox__isnull=False).count()
     stats['chemical_count'] = ExtractedChemical.objects.count()
     #TODO: This may need to be updated later to handle both manual and automatically assigned PUCs
     stats['product_with_puc_count'] = ProductToPUC.objects.filter(classification_method='MA').count()

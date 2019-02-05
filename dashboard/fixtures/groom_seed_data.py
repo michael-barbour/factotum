@@ -42,8 +42,8 @@ DataDocument.objects.filter(id__in=random_list).delete()
 # Delete the corresponding ExtractedText objects
 ExtractedText.objects.filter(data_document_id__in=random_list).delete()
 
-# delete a lot of  extracted chemical records that don't link to the dsstoxsubstance records
-exchem_list = ExtractedChemical.objects.exclude(id__in=DSSToxSubstance.objects.all()).values_list('extracted_text', flat=True)
+# 
+exchem_list = ExtractedChemical.objects.all().values_list('extracted_text', flat=True)
 random_list = sample(exchem_list, min(len(exchem_list), 8000))
 ExtractedChemical.objects.filter(id__in=random_list).delete()
 
@@ -66,7 +66,6 @@ python manage.py dumpdata dashboard.script --format=yaml > ./dashboard/fixtures/
 python manage.py dumpdata dashboard.extractedtext --format=yaml > ./dashboard/fixtures/08_extractedtext.yaml
 python manage.py dumpdata dashboard.productdocument --format=yaml > ./dashboard/fixtures/09_productdocument.yaml
 # python manage.py dumpdata dashboard.extractedchemical --format=yaml > ./dashboard/fixtures/10_extractedchemical.yaml
-python manage.py dumpdata dashboard.dsstoxsubstance --format=yaml > ./dashboard/fixtures/11_dsstoxsubstance.yaml
 python manage.py dumpdata dashboard.extractedhabitsandpractices --format=yaml > ./dashboard/fixtures/12_habits_and_practices.yaml
 python manage.py dumpdata dashboard.extractedhabitsandpracticestopuc --format=yaml > ./dashboard/fixtures/13_habits_and_practices_to_puc.yaml
 python manage.py dumpdata dashboard.producttopuc --format=yaml > ./dashboard/fixtures/14_product_to_puc.yaml

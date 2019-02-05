@@ -3034,6 +3034,7 @@
   pk: 759
   fields: {raw_cas: 0000064-17-5, raw_chem_name: sd alcohol 40-b (ethanol), temp_id: 2,
     temp_obj_name: ExtractedListPresence, rid: null, dsstox: null}
+    
 - model: dashboard.extractedchemical
   pk: 2
   fields: {created_at: null, updated_at: null, extracted_text: 156051, raw_cas_old: 120-47-8,

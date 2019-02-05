@@ -167,7 +167,7 @@ def download_chem_stats(stats):
 
 def get_data_dsstox_csv_template(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="dsstox_substance_template.csv"'
+    response['Content-Disposition'] = 'attachment; filename="dsstox_lookup_template.csv"'
     writer = csv.writer(response)
     writer.writerow(['DTXSID'])
     return response
@@ -195,7 +195,7 @@ def upload_dtxsid_csv(request):
         dtxsids = []
         for line in lines:
             #print(line)
-            if DSSToxSubstance.objects.filter(sid=str.strip(line)).count() > 0:
+            if DSSToxLookup.objects.filter(sid=str.strip(line)).count() > 0:
                 dtxsids.append(str.strip(line)) # only add DTXSIDs that appear in the database
 
     except Exception as e:

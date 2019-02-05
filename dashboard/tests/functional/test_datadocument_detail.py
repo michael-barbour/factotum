@@ -90,8 +90,8 @@ class TestDynamicDetailFormsets(TestCase):
                 else:
                     self.assertEqual(type(extsub) , ExtractedText)
             except ObjectDoesNotExist:
-                # print('No extracted text for data document %s' % doc.id)
-
+                pass
+                #print('No extracted text for data document %s' % doc.id)
 
 
     def test_every_extractedtext(self):
@@ -110,8 +110,8 @@ class TestDynamicDetailFormsets(TestCase):
             self.assertEqual(dd_child_model, childform_model)
 
     def test_curated_chemical(self):
-        ''''Confirm that if an ExtractedChemical record has been matched to DSSToxSubstance, the 
-            DSSToxSubstance fields are displayed in the card
+        ''''Confirm that if an ExtractedChemical record has been matched to DSSToxLookup, the 
+            DSSToxLookup fields are displayed in the card
             This checks every data document.
         '''
         for et in ExtractedText.objects.all():

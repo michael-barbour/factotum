@@ -13,7 +13,7 @@ class DSSToxLookup(CommonInfo):
         return self.true_chemname
 
     def get_absolute_url(self):
-        return reverse('dsstox_substance', kwargs={'pk': self.pk})
+        return reverse('dsstox_lookup', kwargs={'pk': self.pk})
 
 
 

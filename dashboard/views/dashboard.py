@@ -30,7 +30,7 @@ def index(request):
     stats['dss_tox_count'] = DSSToxSubstance.objects.count()
     stats['chemical_count'] = ExtractedChemical.objects.count()
     #TODO: This may need to be updated later to handle both manual and automatically assigned PUCs
-    stats['product_with_puc_count'] = ProductToPUC.objects.filter(classification_method='MA').count()
+    stats['product_with_puc_count'] = ProductToPUC.objects.values('product_id').distinct().count()
     stats['product_with_puc_count_by_month'] = product_with_puc_count_by_month()
     return render(request, 'dashboard/index.html', stats)
 
@@ -84,12 +84,15 @@ def datadocument_count_by_month():
 def product_with_puc_count_by_month():
     # GROUP BY issue solved with https://stackoverflow.com/questions/8746014/django-group-by-date-day-month-year
     # TODO: currently just grabs manually assigned PUCs, logic to be updated for handling Auto assigned PUCS
-    product_stats = list(ProductToPUC.objects.filter(classification_method__exact='MA').filter(created_at__gte=chart_start_datetime) \
-        .annotate(puc_assigned_month = (Trunc('created_at', 'month', output_field=DateField()))) \
-        .values('puc_assigned_month') \
-        .annotate(product_count = (Count('id'))) \
-        .values('product_count', 'puc_assigned_month') \
-        .order_by('puc_assigned_month'))
+
+    product_stats = list(ProductToPUC.objects
+        .annotate(
+            puc_assigned_month = (Trunc('created_at', 'month', output_field=DateField()))
+        )
+        .values('puc_assigned_month')
+        .annotate(product_count=Count('product', distinct=True))
+        .order_by('puc_assigned_month')
+        )
 
     if len(product_stats) < 12:
         for i in range(0, 12):

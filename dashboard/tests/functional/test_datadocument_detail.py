@@ -122,14 +122,12 @@ class TestDynamicDetailFormsets(TestCase):
             for form in child_formset.forms:
                 if dd.data_group.type in ['CO','UN']:
                     ec = form.instance
-                    if ec.true_cas is not None:
+                    if ec.dsstox is not None:
                         self.assertTrue( 'true_cas' in form.fields )
+                        self.assertTrue( 'SID' in form.fields )
                     else:
                         self.assertFalse( 'true_cas' in form.fields )
-                    if ec.sid is not None:
-                        self.assertTrue( 'DTXSID' in form.fields )
-                    else:
-                        self.assertFalse( 'DTXSID' in form.fields )
+                        self.assertFalse( 'SID' in form.fields )
                 else:
                     self.assertFalse( 'true_cas' in form.fields )
             

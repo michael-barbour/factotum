@@ -19,10 +19,12 @@ class Migration(migrations.Migration):
         migrations.RunSQL(
             """
             UPDATE dashboard_rawchem rc 
-            INNER JOIN  
-            dashboard_dsstoxlookup dss on 
-            rc.raw_chem_name = dss.true_chemname  
-            SET rc.dsstox_id = dss.id
-            """
+            inner join dashboard_dsstoxsubstance sub on 
+            rc.id = sub.rawchem_ptr_id
+            inner join dashboard_dsstoxlookup dss
+            on dss.sid = sub.sid 
+            SET dsstox_id = dss.id
+            """,
+        reverse_sql="UPDATE dashboard_rawchem SET dsstox_id = NULL"
         )
     ]

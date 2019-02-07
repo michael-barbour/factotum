@@ -35,4 +35,22 @@ class Migration(migrations.Migration):
             name='dsstox',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='curated_chemical', to='dashboard.DSSToxLookup'),
         ),
+        # Generate the new lookup table by selecting unique combinations of 
+        # sid, true_cas, and true_chemname from dashboard_dsstoxsubstance
+        migrations.RunSQL(
+        """
+        INSERT INTO dashboard_dsstoxlookup (sid, true_cas, true_chemname, created_at)
+        SELECT
+        DISTINCT sid, true_cas, true_chemname , NOW() as created_at
+        from dashboard_dsstoxsubstance
+        WHERE NOT sid in('DTXSID1020194',
+        'DTXSID4020749',
+        'DTXSID4028460',
+        'DTXSID6023232',
+        'DTXSID8020676',
+        'DTXSID9023126',
+        'DTXSID9023203')
+        """,
+        reverse_sql="DELETE FROM dashboard_dsstoxlookup"
+        )
     ]

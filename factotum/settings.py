@@ -32,14 +32,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'dashboard.apps.DashboardConfig',
+    'django_elasticsearch_dsl',
     'api.apps.ApiConfig',
     'bootstrap_datepicker_plus',
     'widget_tweaks',
     'django.contrib.humanize',
     'factotum',
     'debug_toolbar',
-    'haystack',
-    'haystack_elasticsearch',
     'taggit',
     'taggit_labels'
 ]
@@ -125,8 +124,12 @@ LOGIN_URL = 'login'
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
-HAYSTACK_CONN = 'default'
-
 TAGGIT_CASE_INSENSITIVE = True
 
 EXTRA = 1
+
+ELASTICSEARCH_DSL={
+    'default': {
+        'hosts': 'localhost:9200'
+    },
+}

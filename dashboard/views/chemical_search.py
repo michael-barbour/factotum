@@ -1,11 +1,8 @@
-from haystack import connections
 
 from django.conf import settings
 from django.http import JsonResponse
-from haystack.inputs import Exact
 from django.shortcuts import render
 from django.db.models import Q
-from haystack.query import SearchQuerySet
 
 from dashboard.models import DataDocument, ExtractedChemical, DSSToxLookup, RawChem
 

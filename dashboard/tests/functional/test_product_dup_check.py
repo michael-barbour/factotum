@@ -24,14 +24,13 @@ class TestProductDupCheck(TestCase):
         norm_products = Product.objects.exclude(upc__contains="stub")
 
         # Build list of UPC product names
-        list_upc_names = []
-        list_upc_pks = []
+        self.list_upc_names = []
+        self.list_upc_pks = []
         for norm_product in norm_products:
             norm_prod = norm_product.title.lower()
-            list_upc_names.append(norm_prod)
+            self.list_upc_names.append(norm_prod)
             pk_product = norm_product.pk
-            list_upc_pks.append(pk_product)
-
+            self.list_upc_pks.append(pk_product)
 
     def test_top_match(self):
         stub_product = "fastset anchoring epoxy, high strength anchoring epoxy, dot anchoring"
@@ -39,7 +38,7 @@ class TestProductDupCheck(TestCase):
         cutoff = 80
 
         # Get the top one match, using the fuzz.token_set_ratio matching and a threshold value.
-        list_one = process.extractOne(stub_product, list_upc_names, scorer=fuzz.token_set_ratio, score_cutoff=cutoff)
+        list_one = process.extractOne(stub_product, self.list_upc_names, scorer=fuzz.token_set_ratio, score_cutoff=cutoff)
         upc_prod_match = list_one[0]
         self.assertEqual(upc_prod_match, upc_product)
 
@@ -53,7 +52,7 @@ class TestProductDupCheck(TestCase):
         num_matches = 3
 
         # Get a list of matches ordered by scores, using the fuzz.token_set_ratio matching , to get all num_matches.
-        list_multi = process.extract(stub_product, list_upc_names, scorer=fuzz.token_set_ratio, limit=num_matches)
+        list_multi = process.extract(stub_product, self.list_upc_names, scorer=fuzz.token_set_ratio, limit=num_matches)
 
         for i in range(num_matches):
             upc_prod_match = list_multi[i][0]

@@ -5,13 +5,14 @@ pyyaml>=4.2b1
 wincertstore==0.2
 django-autocomplete-light==3.3.2
 django-debug-toolbar==1.9.1
-django-haystack>=2.7.0
-django-haystack-elasticsearch>=0.1.0
+# django-haystack>=2.7.0
+# django-haystack-elasticsearch>=0.1.0
 django-widget-tweaks>=1.4.1
 django-queryset-csv>=1.0.0
 docutils>=0.12
-elasticsearch-dsl>=2.0.0,<3.0.0
-elasticsearch>=2.0.0,<3.0.0
+elasticsearch-dsl>=6.0.0,<7.0.0
+django-elasticsearch-dsl
+elasticsearch>=6.0.0,<7.0.0
 django-bootstrap-datepicker-plus==3.0.5
 selenium>=3.11.0
 lxml>=4.2.2

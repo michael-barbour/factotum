@@ -4,7 +4,7 @@ pytz==2018.9
 pyyaml>=4.2b1
 wincertstore==0.2
 django-autocomplete-light==3.3.2
-django-debug-toolbar==1.9.1
+django-debug-toolbar==1.11
 django-haystack>=2.7.0
 django-haystack-elasticsearch>=0.1.0
 django-widget-tweaks>=1.4.1

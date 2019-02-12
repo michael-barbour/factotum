@@ -4,7 +4,7 @@ import warnings
 warnings.filterwarnings("ignore",
                         message="Using slow pure-python SequenceMatcher. Install python-Levenshtein to remove this warning")
 
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from dashboard.tests.loader import *
 
 # Import the fuzzywuzzy package/libraries.
@@ -14,7 +14,6 @@ from fuzzywuzzy import process
 # To run test enter the following from the terminal window:
 # python manage.py test dashboard.tests.functional.test_product_dup_check
 
-@override_settings(ALLOWED_HOSTS=['testserver'])
 class TestProductDupCheck(TestCase):
     fixtures = fixtures_standard
 
@@ -30,8 +29,6 @@ class TestProductDupCheck(TestCase):
         for norm_product in norm_products:
             norm_prod = norm_product.title.lower()
             self.list_upc_names.append(norm_prod)
-            pk_product = norm_product.pk
-            self.list_upc_pks.append(pk_product)
 
     def test_top_match(self):
         stub_product = "fastset anchoring epoxy, high strength anchoring epoxy, dot anchoring"

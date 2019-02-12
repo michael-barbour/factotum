@@ -1,9 +1,12 @@
 from django.db import models
 from .dsstox_lookup import DSSToxLookup
+from .extracted_text import ExtractedText
 from model_utils.managers import InheritanceManager
 from django.apps import apps
 
 class RawChem(models.Model):
+    extracted_text_new = models.ForeignKey(ExtractedText, related_name = 'extracted_chemical', 
+        on_delete=models.CASCADE, null=True, blank = True)
 
     raw_cas = models.CharField("Raw CAS", max_length=100, null=True, blank=True)
     raw_chem_name = models.CharField("Raw chemical name", max_length=500,

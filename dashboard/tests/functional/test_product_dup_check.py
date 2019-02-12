@@ -1,25 +1,26 @@
-import django
-import os
 import warnings
 
 # Ignore this specific warning.  It is not crucial to use the Levenshtein library for this test.
-warnings.filterwarnings("ignore",message="Using slow pure-python SequenceMatcher. Install python-Levenshtein to remove this warning")
+warnings.filterwarnings("ignore",
+                        message="Using slow pure-python SequenceMatcher. Install python-Levenshtein to remove this warning")
 
-# settings need setup before calling any Django code
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "factotum.settings")
-django.setup()
-
-from django.test import TestCase
-from dashboard.models import Product
+from django.test import TestCase, override_settings
+from dashboard.tests.loader import *
 
 # Import the fuzzywuzzy package/libraries.
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 
+# To run test enter the following from the terminal window:
+# python manage.py test dashboard.tests.functional.test_product_dup_check
 
+@override_settings(ALLOWED_HOSTS=['testserver'])
 class TestProductDupCheck(TestCase):
+    fixtures = fixtures_standard
 
     def setUp(self):
+        # Login credentials.
+        self.client.login(username='Karyn', password='specialP@55word')
         # Create a variable that will have all products that have non-stub UPCs.
         norm_products = Product.objects.exclude(upc__contains="stub")
 
@@ -38,7 +39,8 @@ class TestProductDupCheck(TestCase):
         cutoff = 80
 
         # Get the top one match, using the fuzz.token_set_ratio matching and a threshold value.
-        list_one = process.extractOne(stub_product, self.list_upc_names, scorer=fuzz.token_set_ratio, score_cutoff=cutoff)
+        list_one = process.extractOne(stub_product, self.list_upc_names, scorer=fuzz.token_set_ratio,
+                                      score_cutoff=cutoff)
         upc_prod_match = list_one[0]
         self.assertEqual(upc_prod_match, upc_product)
 

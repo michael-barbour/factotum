@@ -5,7 +5,7 @@ from model_utils.managers import InheritanceManager
 from django.apps import apps
 
 class RawChem(models.Model):
-    extracted_text_new = models.ForeignKey(ExtractedText, related_name = 'extracted_chemical', 
+    extracted_text = models.ForeignKey(ExtractedText, related_name = 'extracted_chemical', 
         on_delete=models.CASCADE, null=True, blank = True)
 
     raw_cas = models.CharField("Raw CAS", max_length=100, null=True, blank=True)

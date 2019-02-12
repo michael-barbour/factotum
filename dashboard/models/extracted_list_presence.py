@@ -4,9 +4,7 @@ from dashboard.models import CommonInfo
 from .raw_chem import RawChem
 
 class ExtractedListPresence(CommonInfo, RawChem):
-    extracted_cpcat = models.ForeignKey('ExtractedCPCat',
-                                        on_delete=models.CASCADE,
-                                        related_name='presence')
+
     raw_cas_old = models.CharField("Raw CAS", max_length=100,
                                         null=True, blank=True)
     raw_chem_name_old = models.CharField("Raw chemical name", max_length=500,

@@ -5,6 +5,7 @@ from dashboard.tests.loader import *
 from dashboard.forms import *
 from lxml import html
 from factotum.settings import EXTRA
+from django.core.exceptions import ObjectDoesNotExist
 
 
 @override_settings(ALLOWED_HOSTS=['testserver'])
@@ -74,6 +75,25 @@ class TestDynamicDetailFormsets(TestCase):
                 self.assertEqual(et.pk , child_model.objects.get(pk=ex_child.pk).extracted_text.pk,
                     'The ExtractedChemical object with the returned child pk should have the correct extracted_text parent')
 
+    def test_extractedsubclasses(self):
+        ''' Confirm that the inheritance manager is returning ExtractedCPCat
+            subclass objects and ExtractedText base class objects correctly
+         '''
+        for doc in DataDocument.objects.all():
+            try:
+                extsub = ExtractedText.objects.get_subclass(data_document=doc)
+                # A document with the CP data group type should be linked to 
+                # ExtractedCPCat objects
+                if doc.data_group.group_type.code=='CP':
+                    #print(f'%s %s %s' % (doc.id, extsub, type(extsub)))
+                    self.assertEqual(type(extsub) , ExtractedCPCat)
+                else:
+                    self.assertEqual(type(extsub) , ExtractedText)
+            except ObjectDoesNotExist:
+                pass
+                #print('No extracted text for data document %s' % doc.id)
+
+
     def test_every_extractedtext(self):
         ''''Loop through all the ExtractedText objects and confirm that the new
         create_detail_formset method returns forms based on the correct models
@@ -81,9 +101,8 @@ class TestDynamicDetailFormsets(TestCase):
         for et in ExtractedText.objects.all():
             dd = et.data_document
             ParentForm, ChildForm = create_detail_formset(dd.data_group.type, EXTRA)
-            extracted_text = et.pull_out_cp() #get CP if exists
-            extracted_text_form = ParentForm(instance=extracted_text)
-            child_formset = ChildForm(instance=extracted_text)
+            extracted_text_form = ParentForm(instance=et)
+            child_formset = ChildForm(instance=et)
             # Compare the model of the child formset's QuerySet to the model
             # of the ExtractedText object's child objects
             dd_child_model  = get_extracted_models(dd.data_group.group_type.code)[1]
@@ -91,8 +110,8 @@ class TestDynamicDetailFormsets(TestCase):
             self.assertEqual(dd_child_model, childform_model)
 
     def test_curated_chemical(self):
-        ''''Confirm that if an ExtractedChemical record has been matched to DSSToxSubstance, the 
-            DSSToxSubstance fields are displayed in the card
+        ''''Confirm that if an ExtractedChemical record has been matched to DSSToxLookup, the 
+            DSSToxLookup fields are displayed in the card
             This checks every data document.
         '''
         for et in ExtractedText.objects.all():

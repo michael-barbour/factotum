@@ -14,3 +14,5 @@ class ExtractedCPCat(ExtractedText):
 
     def __str__(self):
         return str(self.prod_name)
+    
+

@@ -5,7 +5,7 @@ from lxml import html
 from django.urls import resolve
 from django.test import TestCase
 
-from dashboard.tests.loader import load_model_objects
+from dashboard.tests.loader import load_model_objects, fixtures_standard
 from dashboard import views
 from dashboard.models import *
 
@@ -72,10 +72,13 @@ class DashboardTest(TestCase):
         self.assertTrue(response_html.xpath('//*[@id="chemical_search"]'),
                       'The chemical search input should appear on the dashboard')
 
-    def test_chemical_card(self): #this can be joined w/ the one being merged in
+class DashboardTestWithFixtures(TestCase):
+    fixtures = fixtures_standard
+
+    def test_chemical_card(self):
         response = self.client.get('/').content.decode('utf8')
         self.assertIn('DSS Tox Chemicals', response,
                                     'Where is the DSS Tox Chemicals card???')
         response_html = html.fromstring(response)
         num_dss = int(response_html.xpath('//*[@name="dsstox"]')[0].text)
-        self.assertEqual(num_dss, 1, 'There should be one DSSToxSubstance')
+        self.assertEqual(num_dss, 31, 'There should be 31 curated chemical records')

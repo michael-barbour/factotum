@@ -6,6 +6,8 @@ from django import forms
 from .data_document import DataDocument
 from .script import Script
 from itertools import chain
+from model_utils.managers import InheritanceManager
+
 
 class ExtractedText(CommonInfo):
     data_document = models.OneToOneField(DataDocument,on_delete=models.CASCADE,
@@ -25,6 +27,9 @@ class ExtractedText(CommonInfo):
     qa_group = models.ForeignKey('QAGroup', verbose_name="QA group",
                                                      on_delete=models.SET_NULL,
                                                      null=True, blank=True)
+
+    objects = InheritanceManager()
+
 
     def __str__(self):
         return str(self.prod_name)

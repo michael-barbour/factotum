@@ -72,13 +72,16 @@ class DashboardTest(TestCase):
         self.assertTrue(response_html.xpath('//*[@id="chemical_search"]'),
                       'The chemical search input should appear on the dashboard')
 
-    def test_chemical_card(self): #this can be joined w/ the one being merged in
+class DashboardTestWithFixtures(TestCase):
+    fixtures = fixtures_standard
+
+    def test_chemical_card(self):
         response = self.client.get('/').content.decode('utf8')
         self.assertIn('DSS Tox Chemicals', response,
                                     'Where is the DSS Tox Chemicals card???')
         response_html = html.fromstring(response)
         num_dss = int(response_html.xpath('//*[@name="dsstox"]')[0].text)
-        self.assertEqual(num_dss, 1, 'There should be one DSSToxSubstance')
+        self.assertEqual(num_dss, 31, 'There should be 31 curated chemical records')
 
 class DashboardTestWithFixtures(TestCase):
     fixtures = fixtures_standard
@@ -93,7 +96,7 @@ class DashboardTestWithFixtures(TestCase):
         orm_prod_puc_count = ProductToPUC.objects.values('product_id').distinct().count()
         self.assertEqual(num_prods, orm_prod_puc_count, 'The page should show %s Products linked to PUCs' % orm_prod_puc_count)
 
-        # Assign an already-assigned product to a different PUC with a different method 
+        # Assign an already-assigned product to a different PUC with a different method
         # and confirm that the count has not changed
         p2puc = ProductToPUC.objects.first()
         p2puc.id = None
@@ -106,7 +109,7 @@ class DashboardTestWithFixtures(TestCase):
         num_prods = int(response_html.xpath('//*[@name="product_with_puc_count"]')[0].text)
         self.assertEqual(num_prods, orm_prod_puc_count, 'The page should show %s Products linked to PUCs' % orm_prod_puc_count)
 
-        # Assign a previously unassigned product to a different PUC with a different method 
+        # Assign a previously unassigned product to a different PUC with a different method
         # and confirm that the count has gone up
         assigned_prods = ProductToPUC.objects.values_list('product_id')
         print(assigned_prods)
@@ -118,6 +121,6 @@ class DashboardTestWithFixtures(TestCase):
         response = self.client.get('/').content.decode('utf8')
         response_html = html.fromstring(response)
         num_prods = int(response_html.xpath('//*[@name="product_with_puc_count"]')[0].text)
-        self.assertEqual(num_prods, orm_prod_puc_count + 1, 
+        self.assertEqual(num_prods, orm_prod_puc_count + 1,
         'The page should show %s Products linked to PUCs' % str(orm_prod_puc_count + 1 ))
 

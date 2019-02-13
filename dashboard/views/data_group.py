@@ -46,8 +46,6 @@ def data_group_detail(request, pk,
     paginator = Paginator(docs, 50) # TODO: make this dynamic someday in its own ticket
     store = settings.MEDIA_URL + str(dg.fs_id)
     ext = ExtractedText.objects.filter(data_document_id__in=docs).first()
-    if ext:
-        ext = ext.pull_out_cp()
     context = { 'datagroup'      : dg,
                 'documents'      : paginator.page(1 if page is None else page),
                 'all_documents'  : docs, # this used for template download
@@ -159,7 +157,6 @@ def data_group_detail(request, pk,
             try:
                 ext = ExtractedText.objects.get(data_document_id=doc.id)
                 if ext:
-                    ext = ext.pull_out_cp()
                     if ext.prod_name:
                         new_prod_title = ext.prod_name
                     else:

@@ -1,11 +1,12 @@
 - model: dashboard.grouptype
   pk: 1
   fields: {created_at: !!timestamp '2018-06-20 12:16:49.051019', updated_at: !!timestamp '2018-06-20
-      12:16:49.051035', title: Unidentified, description: Unidentified Group Type,  code: UN}
+      12:16:49.051035', title: Unidentified, description: Unidentified Group Type,
+    code: UN}
 - model: dashboard.grouptype
   pk: 2
   fields: {created_at: !!timestamp '2018-07-12 10:49:27.780577', updated_at: !!timestamp '2018-07-12
-      10:49:27.780596', title: Composition, description: '',  code: CO}
+      10:49:27.780596', title: Composition, description: '', code: CO}
 - model: dashboard.grouptype
   pk: 3
   fields: {created_at: !!timestamp '2018-07-12 10:49:39.992614', updated_at: !!timestamp '2018-07-12
@@ -18,11 +19,34 @@
   pk: 5
   fields: {created_at: !!timestamp '2018-07-12 10:51:29.240851', updated_at: !!timestamp '2018-07-12
       10:51:29.240872', title: Supplemental documents, description: '', code: SU}
-
 - model: dashboard.grouptype
   pk: 6
   fields: {created_at: !!timestamp '2018-09-17 23:46:47.762560', updated_at: !!timestamp '2018-09-17
-      23:46:47.762583', title: Chemical presence list, description: '', code: 'CP'}
+      23:46:47.762583', title: Chemical presence list, description: '', code: CP}
+- model: dashboard.dsstoxlookup
+  pk: 8
+  fields: {created_at: null, updated_at: null, sid: DTXSID6026296, true_cas: 7732-18-5,
+    true_chemname: water}
+- model: dashboard.dsstoxlookup
+  pk: 9
+  fields: {created_at: null, updated_at: null, sid: DTXSID1020273, true_cas: 7782-50-5,
+    true_chemname: chlorine}
+- model: dashboard.dsstoxlookup
+  pk: 10
+  fields: {created_at: null, updated_at: null, sid: DTXSID9020584, true_cas: 64-17-5,
+    true_chemname: ethanol}
+- model: dashboard.dsstoxlookup
+  pk: 11
+  fields: {created_at: null, updated_at: null, sid: DTXSID2021781, true_cas: 84-74-2,
+    true_chemname: dibutyl phthalate}
+- model: dashboard.dsstoxlookup
+  pk: 12
+  fields: {created_at: null, updated_at: null, sid: DTXSID9022528, true_cas: 120-47-8,
+    true_chemname: ethylparaben}
+- model: dashboard.dsstoxlookup
+  pk: 13
+  fields: {created_at: null, updated_at: null, sid: DTXSID7020182, true_cas: 80-05-7,
+    true_chemname: bisphenol a}
 - model: dashboard.documenttype
   pk: 1
   fields: {created_at: !!timestamp '2018-06-20 12:16:49.070487', updated_at: !!timestamp '2018-10-31
@@ -82,7 +106,6 @@
   pk: 14
   fields: {created_at: !!timestamp '2018-07-12 10:51:46.155168', updated_at: !!timestamp '2018-10-31
       21:39:49.837264', title: other survey/study, description: '', code: OT, group_type: 4}
-
 - model: dashboard.unittype
   pk: 1
   fields: {created_at: !!timestamp '2018-05-07 16:29:57', updated_at: null, title: weight
@@ -137,3 +160,60 @@
   pk: 1
   fields: {created_at: !!timestamp '2018-05-07 15:25:02', updated_at: null, title: reported,
     description: 'i.e., from an MSDS sheet, as reported by the manufacturer'}
+- model: dashboard.puctag
+  pk: 1
+  fields: {created_at: null, updated_at: null, name: aerosol, slug: aerosol}
+- model: dashboard.puctag
+  pk: 2
+  fields: {created_at: null, updated_at: null, name: liquid, slug: liquid}
+- model: dashboard.puctag
+  pk: 3
+  fields: {created_at: null, updated_at: null, name: solid, slug: solid}
+- model: dashboard.puctag
+  pk: 4
+  fields: {created_at: null, updated_at: null, name: gel, slug: gel}
+- model: dashboard.puctag
+  pk: 5
+  fields: {created_at: null, updated_at: null, name: wipes, slug: wipes}
+- model: dashboard.puctag
+  pk: 6
+  fields: {created_at: null, updated_at: null, name: powder, slug: powder}
+- model: dashboard.puctag
+  pk: 7
+  fields: {created_at: null, updated_at: null, name: impregnatedsheets, slug: impregnatedsheets}
+- model: dashboard.puctag
+  pk: 8
+  fields: {created_at: null, updated_at: null, name: pumpspray, slug: pumpspray}
+- model: dashboard.puctag
+  pk: 9
+  fields: {created_at: null, updated_at: null, name: paste, slug: paste}
+- model: dashboard.puctag
+  pk: 10
+  fields: {created_at: null, updated_at: null, name: cartridge, slug: cartridge}
+- model: dashboard.puctag
+  pk: 11
+  fields: {created_at: null, updated_at: null, name: foamspray, slug: foamspray}
+- model: dashboard.puctag
+  pk: 12
+  fields: {created_at: null, updated_at: null, name: gas, slug: gas}
+- model: dashboard.puctag
+  pk: 13
+  fields: {created_at: null, updated_at: null, name: foam, slug: foam}
+- model: dashboard.puctag
+  pk: 14
+  fields: {created_at: null, updated_at: null, name: trap, slug: trap}
+- model: dashboard.puctag
+  pk: 15
+  fields: {created_at: null, updated_at: null, name: powder|spray, slug: powderspray}
+- model: dashboard.puctag
+  pk: 16
+  fields: {created_at: null, updated_at: null, name: pods, slug: pods}
+- model: dashboard.puctag
+  pk: 17
+  fields: {created_at: null, updated_at: null, name: hotmelt, slug: hotmelt}
+- model: dashboard.puctag
+  pk: 18
+  fields: {created_at: null, updated_at: null, name: twocomponent, slug: twocomponent}
+- model: dashboard.puctag
+  pk: 19
+  fields: {created_at: null, updated_at: null, name: hosespray, slug: hosespray}

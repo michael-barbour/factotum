@@ -139,7 +139,7 @@ class UploadExtractedFileTest(TestCase):
 
         self.assertEqual(len(ExtractedCPCat.objects.all()),0,
                             "Empty before upload.")
-        # Now get the response
+        # Now get the response to the POST request
         resp = views.data_group_detail(request=req, pk=49)
         self.assertContains(resp,'2 extracted records uploaded successfully.')
 

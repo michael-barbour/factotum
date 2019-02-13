@@ -35,3 +35,11 @@ class ExtractedListPresence(CommonInfo, RawChem):
 
     def get_extractedtext(self):
         return self.extracted_cpcat.extractedtext_ptr
+    
+    @property
+    def extractedtext(self):
+        return self.extracted_cpcat.extractedtext_ptr
+
+    @property
+    def data_document(self):
+        return self.extracted_cpcat.extractedtext_ptr.data_document

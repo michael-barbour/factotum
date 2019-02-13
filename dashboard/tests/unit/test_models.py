@@ -66,7 +66,6 @@ class ModelsTest(TestCase):
         self.assertTrue(isinstance(self.objects.script, Script))
         self.assertTrue(isinstance(self.objects.extext, ExtractedText))
         self.assertTrue(isinstance(self.objects.ec, ExtractedChemical))
-        self.assertTrue(isinstance(self.objects.dsstox, DSSToxSubstance))
         self.assertTrue(isinstance(self.objects.ing, Ingredient))
         self.assertTrue(isinstance(self.objects.p, Product))
         self.assertTrue(isinstance(self.objects.pd, ProductDocument))
@@ -109,9 +108,6 @@ class ModelsTest(TestCase):
         self.assertEqual(str(self.objects.rc), 'Test Chem Name')
         # ExtractedChemical
         self.assertEqual(str(self.objects.ec), 'Test Chem Name')
-        # DSSToxSubstance
-        self.assertEqual(str(self.objects.dsstox),
-                                    str(self.objects.ec))
 
     def test_product_attribute(self):
         self.assertEqual(ProductToTag.objects.count(), 0)

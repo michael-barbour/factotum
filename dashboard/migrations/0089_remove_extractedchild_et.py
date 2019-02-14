@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dashboard', '0087_rawchem_extracted_text_new'),
+        ('dashboard', '0088_rawchem_extracted_text_new'),
     ]
 
     operations = [

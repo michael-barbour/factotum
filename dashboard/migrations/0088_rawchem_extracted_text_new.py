@@ -36,7 +36,7 @@ def remove_extractedtext(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dashboard', '0086_puc_name_change'),
+        ('dashboard', '0087_auto_20190213_1733'),
     ]
 
     operations = [

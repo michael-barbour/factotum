@@ -6,7 +6,7 @@ from django.apps import apps
 
 class RawChem(models.Model):
     extracted_text = models.ForeignKey(ExtractedText, related_name = 'rawchem', 
-        on_delete=models.CASCADE, null=True, blank = True)
+        on_delete=models.CASCADE, null=False, blank = False)
 
     raw_cas = models.CharField("Raw CAS", max_length=100, null=True, blank=True)
     raw_chem_name = models.CharField("Raw chemical name", max_length=500,

@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dashboard', '0088_remove_extractedchild_et'),
+        ('dashboard', '0089_remove_extractedchild_et'),
     ]
 
     operations = [

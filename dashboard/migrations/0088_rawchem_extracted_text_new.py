@@ -46,4 +46,26 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='extracted_chemical', to='dashboard.ExtractedText'),
         ),
         migrations.RunPython(set_extractedtext,reverse_code=remove_extractedtext),
+        migrations.RemoveField(
+            model_name='extractedchemical',
+            name='extracted_text',
+        ),
+        migrations.RemoveField(
+            model_name='extractedfunctionaluse',
+            name='extracted_text',
+        ),
+        migrations.RemoveField(
+            model_name='extractedlistpresence',
+            name='extracted_cpcat',
+        ),
+        migrations.RenameField(
+            model_name='rawchem',
+            old_name='extracted_text_new',
+            new_name='extracted_text',
+        ),
+        migrations.AlterField(
+            model_name='rawchem',
+            name='extracted_text',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='rawchem', to='dashboard.ExtractedText'),
+        ),
     ]

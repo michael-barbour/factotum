@@ -1,4 +1,3 @@
-
 - model: dashboard.rawchem
   pk: 2
   fields: {extracted_text: 156051, raw_cas: 120-47-8, raw_chem_name: ethylparaben,

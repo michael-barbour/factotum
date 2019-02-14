@@ -14,19 +14,12 @@ class ExtractedListPresence(CommonInfo, RawChem):
             related_name='extracted_listpresence',parent_link=True ,
             on_delete=models.CASCADE, to='dashboard.RawChem')
 
-    # Use a property to simulate the extracted_text attribute so that that
-    # the child of an ExtractedCPCat object behaves like the child of an
-    # ExtractedText object
-    @property
-    def extracted_text(self):
-        return self.extracted_cpcat.extractedtext_ptr
-
     @classmethod
     def detail_fields(cls):
         return ['raw_cas','raw_chem_name']
 
     def __str__(self):
-        return self.raw_chem_name
+        return str(self.raw_chem_name) if self.raw_chem_name else ''
 
     def get_datadocument_url(self):
         return self.extracted_cpcat.data_document.get_absolute_url()
@@ -34,10 +27,6 @@ class ExtractedListPresence(CommonInfo, RawChem):
     def get_extractedtext(self):
         return self.extracted_cpcat.extractedtext_ptr
     
-    @property
-    def extractedtext(self):
-        return self.extracted_cpcat.extractedtext_ptr
-
     @property
     def data_document(self):
         return self.rawchem_ptr.extracted_text.data_document

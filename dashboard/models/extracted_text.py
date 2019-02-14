@@ -54,8 +54,16 @@ class ExtractedText(CommonInfo):
         else:
             return self
 
-
-
+    def one_to_one_check(self, odict):
+        '''
+        Used in the upload of extracted text in the data_group_detail view, this
+        returns a boolean to assure that there is a 1:1 relationship w/
+        the Extracted{parent}, i.e. (Text/CPCat), and the DataDocument
+        '''
+        if hasattr(self, 'cat_code'):
+            return self.cat_code != odict['cat_code']
+        else:
+            return self.prod_name != odict['prod_name']
 
 
 

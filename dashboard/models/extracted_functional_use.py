@@ -26,3 +26,7 @@ class ExtractedFunctionalUse(CommonInfo, RawChem):
 
     def get_extractedtext(self):
         return self.extracted_text
+
+    @property
+    def data_document(self):
+        return self.extracted_text.data_document

@@ -14,6 +14,8 @@ from .extracted_chemical import ExtractedChemical
 from .extracted_functional_use import ExtractedFunctionalUse
 from .extracted_habits_and_practices import ExtractedHabitsAndPractices
 from .extracted_list_presence import ExtractedListPresence
+from .extracted_hhdoc import ExtractedHHDoc
+from .extracted_hhrec import ExtractedHHRec
 from .script import Script
 from .dsstox_lookup import DSSToxLookup
 from .qa_group import QAGroup

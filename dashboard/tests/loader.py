@@ -32,7 +32,7 @@ def load_model_objects():
     exscript = Script.objects.create(title='Test Extraction Script',
                                    url='http://www.epa.gov/',
                                    qa_begun=False, script_type='EX')
-    gt = GroupType.objects.create(id=2, title='Composition', code='CO')
+    gt = GroupType.objects.create(title='Composition', code='CO')
     dg = DataGroup.objects.create(name='Data Group for Test',
                                         description='Testing...',
                                         data_source = ds,

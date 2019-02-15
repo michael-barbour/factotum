@@ -11,15 +11,24 @@ def add_hh_grouptype(apps, schema_editor):
     for HHE Reports
     '''
     GroupType = apps.get_model('dashboard', 'GroupType')
-    GroupType.objects.get_or_create(title='HHE Report',code='HH')
+    DocumentType = apps.get_model('dashboard', 'DocumentType')
+    gt, gt_created = GroupType.objects.get_or_create(title='HHE Report',code='HH')
+    if not DocumentType.objects.filter(code='HH').exists:
+        print('creating new DocumentType in migration')
+        DocumentType.objects.create(title='HHE Report',code='HH', group_type=gt)
 
 def remove_hh_grouptype(apps, schema_editor):
     '''
-    Remove the HHE Reports grouptype
+    Remove the HHE Reports grouptype and document types
     '''
     GroupType = apps.get_model('dashboard', 'GroupType')
+    DocumentType = apps.get_model('dashboard', 'DocumentType')
+
     if GroupType.objects.filter(code='HH').exists:
         GroupType.objects.filter(code='HH').delete()
+
+    if DocumentType.objects.filter(code='HH').exists:
+        DocumentType.objects.filter(code='HH').delete()
 
 class Migration(migrations.Migration):
 

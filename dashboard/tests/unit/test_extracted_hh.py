@@ -15,7 +15,7 @@ class HHTest(TestCase):
         hhds = DataSource.objects.create(title='HH Data Source for Test',
                                     estimated_records=2, state='AT',
                                     priority='HI')
-        hhgt = GroupType.objects.create(title='HHE Report', code='HH')
+        hhgt = GroupType.objects.get(code='HH')
         hhdlscript = Script.objects.create(title='Dummy HHE Download Script',
                                         url='http://www.epa.gov/',
                                         qa_begun=False, script_type='DL')

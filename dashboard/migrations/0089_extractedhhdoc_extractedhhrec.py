@@ -13,8 +13,7 @@ def add_hh_grouptype(apps, schema_editor):
     GroupType = apps.get_model('dashboard', 'GroupType')
     DocumentType = apps.get_model('dashboard', 'DocumentType')
     gt, gt_created = GroupType.objects.get_or_create(title='HHE Report',code='HH')
-    if not DocumentType.objects.filter(code='HH').exists:
-        print('creating new DocumentType in migration')
+    if not DocumentType.objects.filter(code='HH').exists():
         DocumentType.objects.create(title='HHE Report',code='HH', group_type=gt)
 
 def remove_hh_grouptype(apps, schema_editor):

@@ -29,4 +29,4 @@ class ExtractedListPresence(CommonInfo, RawChem):
     
     @property
     def data_document(self):
-        return self.rawchem_ptr.extracted_text.data_document
+        return self.extracted_text.data_document

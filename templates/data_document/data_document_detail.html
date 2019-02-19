@@ -129,8 +129,8 @@
 {% if detail_formset %}
     <div class="row col-lg-12 card-header">
         <h4>{{ doc.data_group.group_type }} detail</h4>
-        <button type="submit" id="save_extracted_detail" name="save_extracted_detail"
-        class="btn btn-primary detail-control ml-auto" role="button">Save {{ doc.data_group.group_type }} edits</button>    
+        <!-- <button type="submit" id="save_extracted_detail" name="save_extracted_detail"
+        class="btn btn-primary detail-control ml-auto" role="button">Save {{ doc.data_group.group_type }} edits</button>     -->
     </div>
     <div class="card-body">
         {% csrf_token %}

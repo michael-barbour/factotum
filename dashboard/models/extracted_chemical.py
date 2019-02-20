@@ -12,8 +12,7 @@ def validate_ingredient_rank(value):
             (f'Quantity {value} is not allowed'), params={'value': value},)
 
 class ExtractedChemical(CommonInfo, RawChem):
-    extracted_text = models.ForeignKey(ExtractedText, on_delete=models.CASCADE,
-                                                    related_name='chemicals')
+
     raw_cas_old = models.CharField("Raw CAS", max_length=100, null=True, blank=True)
     raw_chem_name_old = models.CharField("Raw chemical name", max_length=500,
                                                         null=True, blank=True)

@@ -10,7 +10,7 @@ def set_extractedtext(apps, schema_editor):
     RawChem = apps.get_model('dashboard', 'RawChem')
     for rawchem in RawChem.objects.all():
         id=rawchem.id
-        print(f'RawChem %s : %s' % (id, rawchem))
+        #print(f'RawChem %s : %s' % (id, rawchem))
         try:
             et = apps.get_model('dashboard.ExtractedChemical').objects.get(rawchem_ptr=id).extracted_text
         except apps.get_model('dashboard.ExtractedChemical').DoesNotExist:

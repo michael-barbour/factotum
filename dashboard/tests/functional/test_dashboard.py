@@ -54,7 +54,7 @@ class DashboardTest(TestCase):
     def test_PUC_download(self):
         p = self.objects.puc
         puc_line = (p.gen_cat+','+p.prod_fam+','+p.prod_type+','+p.description+
-                    ','+str(p.get_level())+','+str(p.get_the_kids().count()))
+                    ','+str(p.get_level())+','+str(p.product_count))
         # get csv
         response = self.client.get('/dl_pucs/')
         self.assertEqual(response.status_code, 200)

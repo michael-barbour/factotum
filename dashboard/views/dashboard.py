@@ -114,7 +114,8 @@ def download_PUCs(request):
                 puc.prod_type, 
                 puc.description, 
                 puc.get_level(), 
-                puc.get_the_kids().count()]
+                puc.product_count
+                ]
         writer.writerow(row)
 
     return response

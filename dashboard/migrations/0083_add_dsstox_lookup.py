@@ -44,6 +44,7 @@ class Migration(migrations.Migration):
         DISTINCT sid, true_cas, true_chemname , NOW() as created_at
         from dashboard_dsstoxsubstance
         WHERE NOT sid in('DTXSID1020194',
+        'DTXSID9022528',
         'DTXSID4020749',
         'DTXSID4028460',
         'DTXSID6023232',

@@ -93,9 +93,8 @@ class TestGetData(TestCase):
         for e in stats:
             if e['sid'] == 'DTXSID9022528':
                ethylparaben_stats = e
-
         self.assertEqual(1, ethylparaben_stats['dds_wf_n'], 'There should be 1 extracted chemical \
-        with weight fraction data associated with ethylaraben')
+        with weight fraction data associated with ethylparaben')
         # add weight fraction data to a different extractedchemical
         ec = ExtractedChemical.objects.get(rawchem_ptr_id = 73)
         ec.raw_min_comp=0.1
@@ -105,8 +104,8 @@ class TestGetData(TestCase):
             if e['sid'] == 'DTXSID9022528':
                ethylparaben_stats = e
 
-        self.assertEqual(1, ethylparaben_stats['dds_wf_n'], 'There should be 2 extracted chemicals \
-        with weight fraction data associated with ethylaraben')
+        self.assertEqual(2, ethylparaben_stats['dds_wf_n'], 'There should be 2 extracted chemicals \
+        with weight fraction data associated with ethylparaben')
 
 
     def test_dtxsid_products_n(self):

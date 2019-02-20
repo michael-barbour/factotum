@@ -122,7 +122,7 @@ def data_group_detail(request, pk,
                     update_fields(row, ext)
                 row['extracted_text'] = ext
                 if (ext_child == ExtractedListPresence):
-                    row['extracted_cpcat'] = ext
+                    row['extracted_cpcat'] = ext.extractedtext_ptr
                 row = clean_dict(row, ext_child)
                 try:
                     ext.full_clean()

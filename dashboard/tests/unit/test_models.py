@@ -1,13 +1,11 @@
 import csv
-
 from django.utils import timezone
 from django.test import TestCase
 from django.db.models import Count
-
-
 from dashboard.models import *
 from dashboard.tests.loader import *
 from django.db.models import Q
+
 
 def create_data_documents(data_group, source_type, pdfs):
     '''Used to imitate the creation of new DataDocuments from CSV'''
@@ -30,6 +28,7 @@ def create_data_documents(data_group, source_type, pdfs):
             dds.append(dd)
         return dds
 
+
 def create_data_documents_with_txt(data_group, source_type, pdf_txt):
     '''Used to imitate the creation of new DataDocuments from CSV'''
     dds = []
@@ -50,6 +49,7 @@ def create_data_documents_with_txt(data_group, source_type, pdf_txt):
             dd.save()
             dds.append(dd)
         return dds
+
 
 class ModelsTest(TestCase):
 
@@ -76,7 +76,6 @@ class ModelsTest(TestCase):
 
         self.assertEqual(str(self.objects.dg), self.objects.dg.name)
         self.assertEqual('https://www.epa.gov', self.objects.dg.url)
-
 
     def test_object_properties(self):
         # Test properties of objects
@@ -204,12 +203,14 @@ class PUCModelTest(TestCase):
         puc = PUC.objects.create(last_edited_by=k)
         self.assertTrue(puc.prod_fam == '')
         self.assertTrue(puc.prod_type == '')
+
     def test_product_counts(self):
         '''Make sure the product_count property
         returns the same thing as the num_products annotation'''
         pucs = PUC.objects.all().annotate(num_products=Count('products'))
         # pucs 1-3 have products associated with them
         self.assertEqual(pucs.get(pk=1).num_products , PUC.objects.get(pk=1).product_count)
+
 
 class DataGroupFilesTest(TestCase):
 
@@ -231,9 +232,13 @@ class DataGroupFilesTest(TestCase):
         self.assertTrue(dg50.dg_folder == dg50.get_dg_folder())
         self.assertFalse(dg50.zip_url)
 
+
 class DataDocumentTest(TestCase):
 
+    fixtures = fixtures_standard
+
     def test_datadocument_note(self):
+
         datadocument = DataDocument(filename="MyFile.pdf",
                                     title="My Title",
                                     data_group=DataGroup.objects.first(),

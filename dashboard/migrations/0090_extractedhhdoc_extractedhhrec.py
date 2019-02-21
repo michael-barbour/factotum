@@ -32,7 +32,7 @@ def remove_hh_grouptype(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dashboard', '0088_rawchem_extracted_text_new'),
+        ('dashboard', '0089_puc_fields'),
     ]
 
     operations = [

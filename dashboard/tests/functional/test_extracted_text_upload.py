@@ -28,7 +28,7 @@ def make_upload_csv(filename):
 class UploadExtractedFileTest(TestCase):
     fixtures = ['00_superuser.yaml', '01_lookups.yaml',
                 '02_datasource.yaml', '03_datagroup.yaml', '04_PUC.yaml',
-                '05_product.yaml', '06_datadocument.yaml', '07_script.yaml']
+                '05_product.yaml', '06_datadocument.yaml', '08_script.yaml']
 
             
 

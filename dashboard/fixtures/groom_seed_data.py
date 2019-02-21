@@ -60,8 +60,8 @@ python manage.py dumpdata dashboard.datasource --format=yaml > ./dashboard/fixtu
 python manage.py dumpdata dashboard.datagroup --format=yaml > ./dashboard/fixtures/03_datagroup.yaml
 python manage.py dumpdata dashboard.PUC --format=yaml > ./dashboard/fixtures/04_PUC.yaml
 python manage.py dumpdata dashboard.product --format=yaml > ./dashboard/fixtures/05_product.yaml
-python manage.py dumpdata dashboard.datadocument dashboard.extractedtext dashboard.extractedcpcat --format=yaml > ./dashboard/fixtures/06_datadocument.yaml
-python manage.py dumpdata dashboard.rawchem dashboard.extractedchemical dashboard.extractedfunctionaluse dashboard.extractedlistpresence --format=yaml > ./dashboard/fixtures/07_rawchem_etc.yaml
+python manage.py dumpdata dashboard.datadocument  --format=yaml > ./dashboard/fixtures/06_datadocument.yaml
+python manage.py dumpdata dashboard.extractedtext dashboard.extractedcpcat dashboard.rawchem dashboard.extractedchemical dashboard.extractedfunctionaluse dashboard.extractedlistpresence --format=yaml > ./dashboard/fixtures/07_rawchem_etc.yaml
 python manage.py dumpdata dashboard.script --format=yaml > ./dashboard/fixtures/08_script.yaml
 python manage.py dumpdata dashboard.productdocument --format=yaml > ./dashboard/fixtures/09_productdocument.yaml
 

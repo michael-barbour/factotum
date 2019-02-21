@@ -231,6 +231,18 @@ class DataGroupFilesTest(TestCase):
         self.assertTrue(dg50.dg_folder == dg50.get_dg_folder())
         self.assertFalse(dg50.zip_url)
 
+class DataDocumentTest(TestCase):
+
+    def test_datadocument_note(self):
+        datadocument = DataDocument(filename="MyFile.pdf",
+                                    title="My Title",
+                                    data_group=DataGroup.objects.first(),
+                                    note="Some long note.")
+        datadocument.save()
+        self.assertTrue(datadocument.note, "Some long note.")
+
+
+
 
 
 

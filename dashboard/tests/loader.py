@@ -3,13 +3,21 @@ from django.contrib.auth.models import User
 
 from dashboard.models import *
 
-fixtures_standard = ['00_superuser.yaml','01_lookups.yaml','02_datasource.yaml','03_datagroup.yaml',
-                    '04_PUC.yaml','05_product.yaml','06_datadocument.yaml','07_script.yaml',
-                    '08_extractedtext.yaml','09_productdocument.yaml', '065_rawchem_etc.yaml',
-                     '12_habits_and_practices.yaml',
-                     '13_habits_and_practices_to_puc.yaml','14_product_to_puc.yaml',
-                     '16_extractedcpcat.yaml',
-                     '18_puc_tag.yaml']
+fixtures_standard = [ '00_superuser',
+                      '01_lookups',
+                      '02_datasource',
+                      '03_datagroup',
+                      '04_PUC', 
+                      '05_product',
+                      '06_datadocument',
+                      '07_rawchem_etc',
+                       '08_script',
+                    '09_productdocument',  
+                    '10_habits_and_practices',
+                     '11_habits_and_practices_to_puc',
+                      '12_product_to_puc',
+                        '13_puc_tag'
+                        ]
 
 class dotdict(dict):
     """dot.notation access to dictionary attributes"""
@@ -42,7 +50,7 @@ def load_model_objects():
                                         group_type=gt,
                                         csv='register_records_matching.csv',
                                         url='https://www.epa.gov')
-    dt = DocumentType.objects.create(id=2, title='MSDS',
+    dt = DocumentType.objects.create(title='MSDS',
                                     code='MS', group_type=gt)
 
     doc = DataDocument.objects.create(title='test document',

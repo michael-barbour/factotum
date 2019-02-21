@@ -23,11 +23,13 @@ def remove_hh_grouptype(apps, schema_editor):
     GroupType = apps.get_model('dashboard', 'GroupType')
     DocumentType = apps.get_model('dashboard', 'DocumentType')
 
+    if DocumentType.objects.filter(code='HH').exists:
+        DocumentType.objects.filter(code='HH').delete()
+
     if GroupType.objects.filter(code='HH').exists:
         GroupType.objects.filter(code='HH').delete()
 
-    if DocumentType.objects.filter(code='HH').exists:
-        DocumentType.objects.filter(code='HH').delete()
+    
 
 class Migration(migrations.Migration):
 

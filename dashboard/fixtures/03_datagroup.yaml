@@ -142,3 +142,10 @@
       11:31:35', download_script: null, data_source: 6, fs_id: f6ef84dd-e176-477c-814b-c1b4cfc6e714,
     csv: f6ef84dd-e176-477c-814b-c1b4cfc6e714/Functional Use Example Group 2_extracted.csv,
     zip_file: media/test_func_use/test_func_use.zip, group_type: 3, url: 'http://factotum.epa.gov'}
+- model: dashboard.datagroup
+  pk: 51
+  fields: {created_at: ! '2019-02-21 13:59:12.678199', updated_at: ! '2019-02-21 13:59:12.840600',
+    name: HHE Reports DG 1, description: '', downloaded_by: 1, downloaded_at: ! '2019-02-20
+      00:00:00', download_script: null, data_source: 30, fs_id: 6e69891a-0893-4b88-aff8-94e579b53d7f,
+    csv: 6e69891a-0893-4b88-aff8-94e579b53d7f/HHE_registered_datadocs.csv, zip_file: media/6e69891a-0893-4b88-aff8-94e579b53d7f/6e69891a-0893-4b88-aff8-94e579b53d7f.zip,
+    group_type: 7, url: ''}

@@ -2,11 +2,9 @@ from django.db import models
 
 from model_utils.models import TimeStampedModel
 from .raw_chem import RawChem
+from .extracted_text import ExtractedText
 
 class ExtractedHHRec(TimeStampedModel, RawChem):
-    extracted_hhdoc = models.ForeignKey('ExtractedHHDoc',
-                                        on_delete=models.CASCADE,
-                                        related_name='hhrecord')
     media = models.CharField("Media", max_length=30,
                                         null=True, blank=True)
     sampling_method = models.TextField("Sampling Method", 
@@ -36,3 +34,7 @@ class ExtractedHHRec(TimeStampedModel, RawChem):
     @property
     def data_document(self):
         return self.extractedtext_ptr.data_document
+
+    @property
+    def extracted_hhdoc(self):
+        return ExtractedText.objects.get_subclass(pk=self.extracted_text.data_document_id)

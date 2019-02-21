@@ -1,4 +1,14 @@
 - model: dashboard.extractedtext
+  pk: 354783
+  fields: {created_at: ! '2019-02-21 11:24:00', updated_at: ! '2019-02-21 11:25:00',
+    prod_name: null, doc_date: null, rev_num: null, extraction_script: 13, qa_checked: false,
+    qa_edited: false, qa_approved_date: null, qa_approved_by: null, qa_group: null}
+- model: dashboard.extractedtext
+  pk: 354782
+  fields: {created_at: ! '2019-02-21 11:22:00', updated_at: ! '2019-02-21 11:23:00',
+    prod_name: null, doc_date: null, rev_num: null, extraction_script: 13, qa_checked: false,
+    qa_edited: false, qa_approved_date: null, qa_approved_by: null, qa_group: null}
+- model: dashboard.extractedtext
   pk: 254781
   fields: {created_at: ! '2018-09-27 22:49:26.999437', updated_at: ! '2018-09-27 22:49:26.999467',
     prod_name: CPCAT Example Product 2, doc_date: '2018-09-27', rev_num: null, extraction_script: 11,
@@ -2729,6 +2739,19 @@
   pk: 254781
   fields: {cat_code: CPCat code 2, description_cpcat: CPCat-specific description,
     cpcat_code: cpcat_code, cpcat_sourcetype: free}
+- model: dashboard.extractedhhdoc
+  pk: 354782
+  fields: {hhe_report_number: 2017-0006-3319, study_location: Massachusetts, naics_code: '621111',
+    sampling_date: 'Dec-16, Feb-17, July-17', population_gender: null, population_age: null,
+    population_other: null, occupation: dermatologist, facility: Hospital dermatology
+      center}
+- model: dashboard.extractedhhdoc
+  pk: 354783
+  fields: {hhe_report_number: 2016-0090-3317, study_location: Minnesota, naics_code: '111419',
+    sampling_date: "\_August 2016 and April 2017", population_gender: Both, population_age: 'average
+      age 38, age range 24-55', population_other: 'employment: average 1 year and
+      2 months, range 2 months - 1 year 10 months', occupation: employees, facility: Medical
+      Cannabis Manufacturing}
 - model: dashboard.rawchem
   pk: 2
   fields: {extracted_text: 156051, raw_cas: 120-47-8, raw_chem_name: ethylparaben,
@@ -5774,6 +5797,174 @@
   fields: {extracted_text: 254781, raw_cas: 0000064-17-5, raw_chem_name: sd alcohol
       40-b (ethanol), temp_id: 2, temp_obj_name: ExtractedListPresence, rid: null,
     dsstox: null}
+- model: dashboard.rawchem
+  pk: 760
+  fields: {extracted_text: 354782, raw_cas: null, raw_chem_name: benzene, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 761
+  fields: {extracted_text: 354782, raw_cas: null, raw_chem_name: carbon disulfide,
+    temp_id: null, temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 762
+  fields: {extracted_text: 354782, raw_cas: null, raw_chem_name: chloromethane, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 763
+  fields: {extracted_text: 354782, raw_cas: null, raw_chem_name: dichlorodifluoromethane,
+    temp_id: null, temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 764
+  fields: {extracted_text: 354782, raw_cas: null, raw_chem_name: Ethyl acetate, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 765
+  fields: {extracted_text: 354782, raw_cas: null, raw_chem_name: Ethylbenzene, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 766
+  fields: {extracted_text: 354782, raw_cas: null, raw_chem_name: Heptane, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 767
+  fields: {extracted_text: 354782, raw_cas: null, raw_chem_name: Hexane, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 768
+  fields: {extracted_text: 354782, raw_cas: null, raw_chem_name: "\_Isopropyl alcohol",
+    temp_id: null, temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 769
+  fields: {extracted_text: 354782, raw_cas: null, raw_chem_name: m & p-Xylene, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 770
+  fields: {extracted_text: 354782, raw_cas: null, raw_chem_name: Methylene chloride,
+    temp_id: null, temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 771
+  fields: {extracted_text: 354782, raw_cas: null, raw_chem_name: "\_o-Xylene", temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 772
+  fields: {extracted_text: 354782, raw_cas: null, raw_chem_name: Propene, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 773
+  fields: {extracted_text: 354782, raw_cas: null, raw_chem_name: Toluene, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 774
+  fields: {extracted_text: 354782, raw_cas: null, raw_chem_name: Trichlorofluoromethane,
+    temp_id: null, temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 775
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: '"delta-9 tetrahydrocannabinol"',
+    temp_id: null, temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 776
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: cannabidiol, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 777
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: cannabinol, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 778
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: diacetyl, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 779
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: '2,3-pentanedione',
+    temp_id: null, temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 780
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: '2,3-hexanedione',
+    temp_id: null, temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 781
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: acetone, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 782
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: benzene, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 783
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: acetonitrile, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 784
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: d-limonene, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 785
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: ethanol, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 786
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: ethylbenzene, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 787
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: isopropyl alcohol,
+    temp_id: null, temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 788
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: 'm,p-xylene', temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 789
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: methyl methacrylate,
+    temp_id: null, temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 790
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: toluene, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 791
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: propane, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 792
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: acetaldehyde, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 793
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: decamethylcylcopentasiloxane,
+    temp_id: null, temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 794
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: n-hexane, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 795
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: Ozone, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 796
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: terpenes, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 797
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: beta-pinene, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 798
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: limonene, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 799
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: endotoxins, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 800
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: fungus, temp_id: null,
+    temp_obj_name: null, rid: null, dsstox: null}
+- model: dashboard.rawchem
+  pk: 801
+  fields: {extracted_text: 354783, raw_cas: null, raw_chem_name: particulate matter,
+    temp_id: null, temp_obj_name: null, rid: null, dsstox: null}
 - model: dashboard.extractedchemical
   pk: 2
   fields: {created_at: null, updated_at: null, raw_cas_old: 120-47-8, raw_chem_name_old: ethylparaben,
@@ -10311,3 +10502,203 @@
   pk: 759
   fields: {created_at: ! '2018-10-03 10:07:24.422541', updated_at: ! '2018-10-03 10:07:24.422571',
     raw_cas_old: 0000064-17-5, raw_chem_name_old: sd alcohol 40-b (ethanol)}
+- model: dashboard.extractedhhrec
+  pk: 760
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: Air, sampling_method: 1.4 liter evacuated canisters, analytical_method: EPA
+      method TO-15, num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 761
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: Air, sampling_method: 1.4 liter evacuated canisters, analytical_method: EPA
+      method TO-15, num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 762
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: Air, sampling_method: 1.4 liter evacuated canisters, analytical_method: EPA
+      method TO-15, num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 763
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: Air, sampling_method: 1.4 liter evacuated canisters, analytical_method: EPA
+      method TO-15, num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 764
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: Air, sampling_method: 1.4 liter evacuated canisters, analytical_method: EPA
+      method TO-15, num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 765
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: Air, sampling_method: 1.4 liter evacuated canisters, analytical_method: EPA
+      method TO-15, num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 766
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: Air, sampling_method: 1.4 liter evacuated canisters, analytical_method: EPA
+      method TO-15, num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 767
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: Air, sampling_method: 1.4 liter evacuated canisters, analytical_method: EPA
+      method TO-15, num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 768
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: Air, sampling_method: 1.4 liter evacuated canisters, analytical_method: EPA
+      method TO-15, num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 769
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: Air, sampling_method: 1.4 liter evacuated canisters, analytical_method: EPA
+      method TO-15, num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 770
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: Air, sampling_method: 1.4 liter evacuated canisters, analytical_method: EPA
+      method TO-15, num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 771
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: Air, sampling_method: 1.4 liter evacuated canisters, analytical_method: EPA
+      method TO-15, num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 772
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: Air, sampling_method: 1.4 liter evacuated canisters, analytical_method: EPA
+      method TO-15, num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 773
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: Air, sampling_method: 1.4 liter evacuated canisters, analytical_method: EPA
+      method TO-15, num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 774
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: Air, sampling_method: 1.4 liter evacuated canisters, analytical_method: EPA
+      method TO-15, num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 775
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: Surface Wipe, sampling_method: 100-square-centimeter (100 cm2) template,
+    analytical_method: liquid chromatography and high performance liquid chromatography,
+    num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 776
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: Surface Wipe, sampling_method: '', analytical_method: liquid chromatography
+      and high performance liquid chromatography, num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 777
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: Surface Wipe, sampling_method: '', analytical_method: liquid chromatography
+      and high performance liquid chromatography, num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 778
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: air, sampling_method: 'August 2016 - area, task-based, and instantaneous
+      air samples using evacuated canisters; April 2017 - area air samples using thermal
+      desorption tubes', analytical_method: August 2016- GC/MS modifications made;  April
+      2017- (NIOSH) Method 2549, num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 779
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: air, sampling_method: 'August 2016 - area, task-based, and instantaneous
+      air samples using evacuated canisters; April 2017 - area air samples using thermal
+      desorption tubes', analytical_method: August 2016- GC/MS modifications made;  April
+      2017- (NIOSH) Method 2549, num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 780
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: air, sampling_method: '', analytical_method: '', num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 781
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: air, sampling_method: '', analytical_method: '', num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 782
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: air, sampling_method: '', analytical_method: '', num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 783
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: air, sampling_method: '', analytical_method: '', num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 784
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: air, sampling_method: '', analytical_method: '', num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 785
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: air, sampling_method: '', analytical_method: '', num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 786
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: air, sampling_method: '', analytical_method: '', num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 787
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: air, sampling_method: '', analytical_method: '', num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 788
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: air, sampling_method: '', analytical_method: '', num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 789
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: air, sampling_method: '', analytical_method: '', num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 790
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: air, sampling_method: '', analytical_method: '', num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 791
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: air, sampling_method: '', analytical_method: '', num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 792
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: air, sampling_method: '', analytical_method: '', num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 793
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: air, sampling_method: '', analytical_method: '', num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 794
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: air, sampling_method: '', analytical_method: '', num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 795
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: air, sampling_method: area sample, analytical_method: 'derivatization technique,
+      An Aeroqual Series 500 portable air monitor with an ozone sensor', num_measure: null,
+    num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 796
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: air, sampling_method: area sample, analytical_method: derivatization technique,
+    num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 797
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: air, sampling_method: '', analytical_method: '', num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 798
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: air, sampling_method: '', analytical_method: '', num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 799
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: air, sampling_method: closed-face cassettes with endotoxinfree polycarbonate
+      filters, analytical_method: ' kinetic-chromogenic procedure using the limulus
+      amebocyte lysate assay [Cambrex 2005]', num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 800
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: '', sampling_method: '', analytical_method: '', num_measure: null, num_nondetect: null}
+- model: dashboard.extractedhhrec
+  pk: 801
+  fields: {created: ! '2019-02-21 07:00:37.838615', modified: ! '2019-02-21 07:00:37.838615',
+    media: air, sampling_method: " TSI DustTrak\u2122 DRX 8533 Aerosol Monitor\"",
+    analytical_method: " TSI DustTrak\u2122 DRX 8533 Aerosol Monitor\"", num_measure: null,
+    num_nondetect: null}

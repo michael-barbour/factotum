@@ -61,7 +61,7 @@ python manage.py dumpdata dashboard.datagroup --format=yaml > ./dashboard/fixtur
 python manage.py dumpdata dashboard.PUC --format=yaml > ./dashboard/fixtures/04_PUC.yaml
 python manage.py dumpdata dashboard.product --format=yaml > ./dashboard/fixtures/05_product.yaml
 python manage.py dumpdata dashboard.datadocument  --format=yaml > ./dashboard/fixtures/06_datadocument.yaml
-python manage.py dumpdata dashboard.extractedtext dashboard.extractedcpcat dashboard.rawchem dashboard.extractedchemical dashboard.extractedfunctionaluse dashboard.extractedlistpresence --format=yaml > ./dashboard/fixtures/07_rawchem_etc.yaml
+python manage.py dumpdata dashboard.extractedtext dashboard.extractedcpcat dashboard.extractedhhdoc dashboard.rawchem dashboard.extractedchemical dashboard.extractedfunctionaluse dashboard.extractedlistpresence dashboard.extractedhhrec --format=yaml > ./dashboard/fixtures/07_rawchem_etc.yaml
 python manage.py dumpdata dashboard.script --format=yaml > ./dashboard/fixtures/08_script.yaml
 python manage.py dumpdata dashboard.productdocument --format=yaml > ./dashboard/fixtures/09_productdocument.yaml
 

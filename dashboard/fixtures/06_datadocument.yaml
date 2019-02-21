@@ -3475,3 +3475,17 @@
     filename: 0c68ab16-2065-4d9b-a8f2-e428eb192465.pdf, title: HH Doc 2, url: 'https://www.epa.gov',
     raw_category: null, data_group: 37, matched: true, extracted: true, document_type: 10,
     organization: ''}
+- model: dashboard.datadocument
+  pk: 354782
+  fields: {created_at: ! '2019-02-21 13:59:12.751315', updated_at: ! '2019-02-21 13:59:12.751338',
+    filename: HHE_3.pdf, title: '"Characterizing Exposures During Laser Tattoo Removal
+      in a Hospital Dermatology Center"', url: 'https://github.com/HumanExposure/factotum/files/2861896/HHE_3.pdf',
+    raw_category: null, data_group: 51, matched: false, extracted: false, document_type: 15,
+    organization: EPA}
+- model: dashboard.datadocument
+  pk: 354783
+  fields: {created_at: ! '2019-02-21 13:59:12.784011', updated_at: ! '2019-02-21 13:59:12.784036',
+    filename: HHE_0.pdf, title: '"Evaluation of a Medicinal Cannabis Manufacturing
+      Facility with an Indoor and Outdoor Grow Operation"', url: 'https://github.com/HumanExposure/factotum/files/2861896/HHE_1.pdf',
+    raw_category: null, data_group: 51, matched: false, extracted: false, document_type: 15,
+    organization: EPA}

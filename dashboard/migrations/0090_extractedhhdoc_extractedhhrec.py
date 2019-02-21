@@ -70,7 +70,6 @@ class Migration(migrations.Migration):
                 ('num_measure', models.CharField(blank=True, max_length=50, null=True, verbose_name='Numeric Measure')),
                 ('num_nondetect', models.CharField(blank=True, max_length=50, null=True, verbose_name='Numeric Nondetect')),
                 ('rawchem_ptr', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, related_name='hhrecord', serialize=False, to='dashboard.RawChem')),
-                ('extracted_hhdoc', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='hhrecord', to='dashboard.ExtractedHHDoc')),
             ],
             options={
                 'abstract': False,

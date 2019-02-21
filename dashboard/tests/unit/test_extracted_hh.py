@@ -49,18 +49,19 @@ class HHTest(TestCase):
         self.assertEqual(exhhdoc.__str__(), exhhdoc.hhe_report_number)
 
         # Add extracted records to the document
-        hhrec1 = ExtractedHHRec.objects.create(extracted_hhdoc=exhhdoc, extracted_text = exhhdoc,
+        hhrec1 = ExtractedHHRec.objects.create(extracted_text = exhhdoc,
             media= 'Air', sampling_method='1.4 liter evacuated canisters, analytical_method: EPA method TO-15',
             raw_chem_name='carbon disulfide')
-        hhrec2 = ExtractedHHRec.objects.create(extracted_hhdoc=exhhdoc, extracted_text = exhhdoc,
+        hhrec2 = ExtractedHHRec.objects.create(extracted_text = exhhdoc,
             media= 'Air', sampling_method='1.4 liter evacuated canisters, analytical_method: EPA method TO-15',
             raw_chem_name='chloromethane')
 
-        # Test fetching all the records for a given report number    
-        recs = ExtractedHHRec.objects.filter(extracted_hhdoc__hhe_report_number='2017-0006-3319')
-        self.assertTrue(hhrec1 in recs, 'The fetched queryset should contain one of the HHRecs')
+        # Test fetching all the records for a given report number
+        hhdocs = ExtractedHHDoc.objects.filter(hhe_report_number='2017-0006-3319')    
+        hhrecs = ExtractedHHRec.objects.filter(extracted_text__in=hhdocs)
+        self.assertTrue(hhrec1 in hhrecs, 'The fetched queryset should contain one of the HHRecs')
 
         # The same records should be retrievable from the RawChem model by the report number
-        recs = RawChem.objects.select_subclasses().filter(hhrecord__extracted_hhdoc__hhe_report_number='2017-0006-3319')
-        self.assertTrue(hhrec1 in recs, 'The fetched queryset should contain one of the HHRecs')
+        rcs = RawChem.objects.select_subclasses().filter(extracted_text__in=ExtractedHHDoc.objects.filter(hhe_report_number='2017-0006-3319'))
+        self.assertTrue(hhrec1 in rcs, 'The fetched queryset should contain one of the HHRecs')
 

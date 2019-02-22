@@ -249,19 +249,18 @@ class ExtractedChemicalFormSet(BaseInlineFormSet):
 class ExtractedChemicalForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ExtractedChemicalForm, self).__init__(*args, **kwargs)
-
         # the non-field properties need to be explicitly added
-        if hasattr(self.instance, 'curated_chemical') and self.instance.curated_chemical is not None:
+        if hasattr(self.instance, 'dsstox') and self.instance.dsstox is not None:
             self.fields['true_cas'] = forms.CharField(max_length=200)
-            self.fields['true_cas'].initial = self.instance.true_cas
+            self.fields['true_cas'].initial = self.instance.dsstox.true_cas
             self.fields['true_chemname'] = forms.CharField(max_length=400)
             self.fields['true_chemname'].initial = self.instance.true_chemname
             self.fields['DTXSID'] = forms.CharField(max_length=50)
             self.fields['DTXSID'].initial = self.instance.sid
 
     class Meta:
-        model = ExtractedChemical
-        exclude = ['']
+        model = RawChem
+        fields = '__all__'
 
 
 def include_clean_comp_data_form(dg):

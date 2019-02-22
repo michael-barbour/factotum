@@ -59,15 +59,15 @@
             {{ doc.organization }}
         </dd>
         {% endif %}
-        <dt class="col-lg-3">Note <a class="btn btn-success btn-sm" role="button" title="edit" data-toggle="modal"
+        <dt class="col-lg-3">Note <a class="btn btn-success btn-sm float-right" role="button" title="edit" data-toggle="modal"
                                      data-target="#noteModal">
           <span class="oi oi-pencil"></span> </a>
             <!-- Modal -->
-            <div class="modal fade" id="noteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog" role="document">
+            <div class="modal fade" id="noteModal" tabindex="-1" role="dialog" aria-labelledby="noteModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Add or Edit Note</h5>
+                    <h5 class="modal-title" id="noteModalLabel">Add or Edit Note</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
@@ -81,7 +81,7 @@
                   </div>
                 </div>
               </div>
-</div>
+            </div>
         </dt>
 
         <dd class="col-lg-9">

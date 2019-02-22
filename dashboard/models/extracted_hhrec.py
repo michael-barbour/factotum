@@ -1,10 +1,9 @@
 from django.db import models
-
-from model_utils.models import TimeStampedModel
+from .common_info import CommonInfo
 from .raw_chem import RawChem
 from .extracted_text import ExtractedText
 
-class ExtractedHHRec(TimeStampedModel, RawChem):
+class ExtractedHHRec(CommonInfo, RawChem):
     media = models.CharField("Media", max_length=30,
                                         null=True, blank=True)
     sampling_method = models.TextField("Sampling Method", 

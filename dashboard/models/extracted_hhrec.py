@@ -16,10 +16,6 @@ class ExtractedHHRec(TimeStampedModel, RawChem):
     num_nondetect = models.CharField("Numeric Nondetect", max_length=50,
                                         null=True, blank=True)                                    
 
-    rawchem_ptr = models.OneToOneField(blank=False, null=False, 
-            related_name='hhrecord',parent_link=True ,
-            on_delete=models.CASCADE, to='dashboard.RawChem')
-
 
     @classmethod
     def detail_fields(cls):

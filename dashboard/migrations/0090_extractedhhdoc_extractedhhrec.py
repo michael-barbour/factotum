@@ -69,7 +69,6 @@ class Migration(migrations.Migration):
                 ('analytical_method', models.TextField(blank=True, null=True, verbose_name='Analytical Method')),
                 ('num_measure', models.CharField(blank=True, max_length=50, null=True, verbose_name='Numeric Measure')),
                 ('num_nondetect', models.CharField(blank=True, max_length=50, null=True, verbose_name='Numeric Nondetect')),
-                ('rawchem_ptr', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, related_name='hhrecord', serialize=False, to='dashboard.RawChem')),
             ],
             options={
                 'abstract': False,

@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dashboard', '0089_puc_fields'),
+        ('dashboard', '0090_extractedhh_doc_and_rec'),
     ]
 
     operations = [

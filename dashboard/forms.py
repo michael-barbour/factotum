@@ -131,12 +131,12 @@ class ProductLinkForm(forms.ModelForm):
 
 
 class ProductForm(forms.ModelForm):
-    required_css_class = 'required' # adds to label tag
+    required_css_class = 'required'  # adds to label tag
 
     class Meta:
         model = Product
-        fields = ['title','manufacturer','brand_name','size','color',
-                    'model_number','short_description','long_description']
+        fields = ['title', 'manufacturer', 'brand_name', 'size', 'color',
+                  'model_number', 'short_description', 'long_description']
 
 
 class ProductViewForm(ProductForm):
@@ -330,3 +330,4 @@ def create_detail_formset(group_type, extra=1, can_delete=False):
     }
     func = dg_types.get(group_type, lambda: None)
     return func()
+

@@ -196,6 +196,13 @@ class ExtractedCPCatForm(ExtractedTextForm):
         model = ExtractedCPCat
         fields = ['doc_date','cat_code', 'description_cpcat','cpcat_sourcetype']
 
+
+class ExtractedHHDocForm(ExtractedTextForm):
+    class Meta:
+        model = ExtractedHHDoc
+        fields = ['hhe_report_number','study_location', 'naics_code','sampling_date','population_gender',
+        'population_age','population_other','occupation','facility']
+
 class DocumentTypeForm(forms.ModelForm):
     class Meta:
         model = DataDocument
@@ -254,7 +261,7 @@ def include_clean_comp_data_form(dg):
 
 def create_detail_formset(group_type, extra=1, can_delete=False):
     '''Returns the pair of formsets that will be needed based on group_type.
-    .                       ('CO'),('CP'),('FU'),('HP')
+    .                       ('CO'),('CP'),('FU'),('HP'),('HH')
     .
 
     '''
@@ -296,12 +303,17 @@ def create_detail_formset(group_type, extra=1, can_delete=False):
     def four(): # for extracted_list_presence
         ListPresenceFormSet = make_formset(parent,child,child.detail_fields())
         return (ExtractedCPCatForm, ListPresenceFormSet)
+
+    def five(): # for extracted_hh_rec
+        HHFormSet = make_formset(parent,child,child.detail_fields())
+        return (ExtractedHHDocForm, HHFormSet)
     dg_types = {
         'CO': one,
         'UN': one,
         'FU': two,
         'HP': three,
         'CP': four,
+        'HH': five,
     }
     func = dg_types.get(group_type, lambda: None)
     return func()

@@ -32,7 +32,8 @@ class DataDocumentDetailTest(TestCase):
 
     def test_script_links(self):
         doc = DataDocument.objects.first()
-        response = self.client.get(f'/datadocument/{doc.pk}/')
+        #response = self.client.get(f'/datadocument/{doc.pk}/')
+        response = self.client.get(f'/datadocument/179486/')
         self.assertIn('Download Script',response.content.decode('utf-8'))
         self.assertIn('Extraction Script',response.content.decode('utf-8'))
 
@@ -76,8 +77,8 @@ class TestDynamicDetailFormsets(TestCase):
                     'The ExtractedChemical object with the returned child pk should have the correct extracted_text parent')
 
     def test_extractedsubclasses(self):
-        ''' Confirm that the inheritance manager is returning ExtractedCPCat
-            subclass objects and ExtractedText base class objects correctly
+        ''' Confirm that the inheritance manager is returning appropriate
+            subclass objects and ExtractedText base class objects 
          '''
         for doc in DataDocument.objects.all():
             try:
@@ -87,6 +88,8 @@ class TestDynamicDetailFormsets(TestCase):
                 if doc.data_group.group_type.code=='CP':
                     #print(f'%s %s %s' % (doc.id, extsub, type(extsub)))
                     self.assertEqual(type(extsub) , ExtractedCPCat)
+                elif doc.data_group.group_type.code=='HH':
+                    self.assertEqual(type(extsub) , ExtractedHHDoc)
                 else:
                     self.assertEqual(type(extsub) , ExtractedText)
             except ObjectDoesNotExist:

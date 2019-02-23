@@ -13,13 +13,11 @@ class RawChem(models.Model):
     extracted_text = models.ForeignKey(ExtractedText, related_name = 'rawchem', 
         on_delete=models.CASCADE, null=False, blank = False)
 
-    raw_cas = models.CharField("Raw CAS", max_length=100, null=True, blank=True)
-    raw_chem_name = models.CharField("Raw chemical name", max_length=500,
+    raw_cas = models.CharField(verbose_name="Raw CAS", max_length=100, null=True, blank=True)
+    raw_chem_name = models.CharField(verbose_name="Raw chemical name", max_length=500,
                                                         null=True, blank=True)
-    temp_id = models.IntegerField(default=0, null=True, blank=True)
-    temp_obj_name = models.CharField(max_length=255, null=True, blank=True)
 
-    rid = models.CharField(max_length=50, null=True, blank=True)
+    rid = models.CharField(max_length=50, null=True, blank=True, verbose_name='RID')
 
     dsstox = models.ForeignKey(DSSToxLookup, related_name = 'curated_chemical', on_delete=models.PROTECT,
                                                     null=True, blank=True)

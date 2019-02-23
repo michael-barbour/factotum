@@ -69,38 +69,14 @@
         </div>
       <div class="card-body border container">
           {% if extracted_text %}
-          <dl>
-            <dt >Product Name</dt>
-            <dd class="col-lg-9">
-                {{ extracted_text.prod_name }}
-            </dd>
-
-            <dt>Doc date</dt>
-            <dd class="col-lg-9">
-                {{ extracted_text.doc_date }}
-            </dd>
-
-            <dt>Rev Num</dt>
-            <dd class="col-lg-9">
-                {{ extracted_text.rev_num }}
-            </dd>
-
-            <dt >Extraction Script</dt>
-            <dd class="col-lg-9">
-                    <a href="{{ extracted_text.extraction_script.url| default_if_none:'' }}" target="_blank">
-                            {{ extracted_text.extraction_script.title }}
-                        </a>
-            </dd>
-            <dt >QA Approved</dt>
-            <dd  class="col-lg-6">{{ extracted_text.qa_checked | yesno | capfirst}}
-                {% if not extracted_text.qa_checked %}
-                    <div class="btn-group float-lg-right" role="group">
-                    <a class="btn btn-primary btn-sm" role="button" title="QA"
-                      href="{% url "data_document_extracted_text_qa" extracted_text.pk %}">QA</a>
-                    </div>
-                {% endif %}
-            </dd>
-          </dl>
+          <dl class="row col-lg-12">
+            {% for field in extracted_text_form.visible_fields %}
+                <dt class="col-lg-6">{{ field.label_tag }}</dt>
+                <dd  class="col-lg-6 small form-group {%if field.errors %}alert-danger{%endif%}" style="max-width: 100%;max-height: 100%;">
+                    {{ field}}
+                </dd>
+            {% endfor %}
+            </dl>
           {% else %}
             No Extracted Text exists for this Data Document
           {% endif %}

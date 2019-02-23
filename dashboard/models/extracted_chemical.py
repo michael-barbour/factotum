@@ -20,13 +20,13 @@ class ExtractedChemical(CommonInfo, RawChem):
                                                         null=True, blank=True)
     raw_max_comp = models.CharField("Raw maximum composition", max_length=100,
                                                         null=True, blank=True)
-    unit_type = models.ForeignKey(UnitType, on_delete=models.PROTECT)
+    unit_type = models.ForeignKey(UnitType, on_delete=models.PROTECT, verbose_name='Unit type')
     report_funcuse = models.CharField("Reported functional use", max_length=100,
                                                         null=True, blank=True)
     weight_fraction_type = models.ForeignKey(WeightFractionType,
-                            on_delete=models.PROTECT, null=True, default='1')
+                            on_delete=models.PROTECT, null=True, default='1', verbose_name='Weight fraction type')
     ingredient_rank = models.PositiveIntegerField(null=True, blank=True,
-                                        validators=[validate_ingredient_rank])
+                                        validators=[validate_ingredient_rank], verbose_name='Ingredient rank')
     raw_central_comp = models.CharField(max_length=100, null=True, blank=True)
 
     rawchem_ptr = models.OneToOneField(blank=False, null=False,

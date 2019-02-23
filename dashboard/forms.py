@@ -184,24 +184,23 @@ class BulkProductTagForm(BasePUCForm):
 class ExtractedTextForm(forms.ModelForm):
     class Meta:
         model = ExtractedText
-        fields = ['prod_name', 'rev_num', 'doc_date']
+        fields = ['prod_name', 'rev_num', 'doc_date','extraction_script']
 
         widgets = {
             'data_document': forms.HiddenInput(),
-            'extraction_script': forms.HiddenInput(),
+            #'extraction_script': forms.HiddenInput(),
         }
 
 class ExtractedCPCatForm(ExtractedTextForm):
     class Meta:
         model = ExtractedCPCat
-        fields = ['doc_date','cat_code', 'description_cpcat','cpcat_sourcetype']
+        exclude=['data_document']
 
 
 class ExtractedHHDocForm(ExtractedTextForm):
     class Meta:
         model = ExtractedHHDoc
-        fields = ['hhe_report_number','study_location', 'naics_code','sampling_date','population_gender',
-        'population_age','population_other','occupation','facility']
+        exclude=['data_document']
 
 class DocumentTypeForm(forms.ModelForm):
     class Meta:
@@ -233,17 +232,42 @@ class ExtractedChemicalFormSet(BaseInlineFormSet):
 class ExtractedChemicalForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ExtractedChemicalForm, self).__init__(*args, **kwargs)
-        # the non-field properties need to be explicitly added
+        # the subclass properties need to be explicitly added
+        for subclassfield in type(self.instance)._meta.get_fields():
+            # but we are overriding the exclude list, so re-exclude them
+            if not subclassfield.name in self._meta.exclude:
+                # Add each field, determining the type as best as possible
+                if subclassfield.is_relation:           # relation fields use ModelChoiceField widgets
+                                                        # for editable input forms, links for others?
+                    self.fields[subclassfield.name] = forms.ModelChoiceField(
+                        # queryset=subclassfield.model.objects.filter(id=subclassfield.value_from_object(self.instance)),
+                        queryset=subclassfield.remote_field.model.objects.all(),
+                        label=subclassfield.verbose_name
+                        )
+                elif subclassfield.get_internal_type() in ['PositiveIntegerField','BigIntegerField']:
+                    self.fields[subclassfield.name] = forms.IntegerField(label=subclassfield.verbose_name)
+                elif subclassfield.get_internal_type() in ['DecimalField','FloatField']:
+                    self.fields[subclassfield.name] = forms.DecimalField(label=subclassfield.verbose_name)
+                elif subclassfield.get_internal_type() in ['DateField','DateTimeField']:
+                    self.fields[subclassfield.name] = forms.DateTimeField( label=subclassfield.verbose_name)
+                else:   
+                    self.fields[subclassfield.name] = forms.CharField(max_length=200, label=subclassfield.verbose_name)
+                
+                self.fields[subclassfield.name].initial = subclassfield.value_from_object(self.instance)
+        # For curated chemicals, add each of the related properties from DSSToxLookup 
         if hasattr(self.instance, 'dsstox') and self.instance.dsstox is not None:
-            self.fields['true_cas'] = forms.CharField(max_length=200)
-            self.fields['true_cas'].initial = self.instance.dsstox.true_cas
-            self.fields['true_chemname'] = forms.CharField(max_length=400)
-            self.fields['true_chemname'].initial = self.instance.dsstox.true_chemname
-            self.fields['SID'] = forms.CharField(max_length=50)
-            self.fields['SID'].initial = self.instance.dsstox.sid
+            for curatedfield in type(self.instance.dsstox)._meta.get_fields():
+                if curatedfield.name in ['sid','true_chemname','true_cas']:
+                    self.fields[curatedfield.name] = forms.CharField(
+                        max_length=200, 
+                        label = curatedfield.verbose_name
+                        )
+                    self.fields[curatedfield.name].initial = curatedfield.value_from_object(self.instance.dsstox)
+                    self.fields[curatedfield.name].widget.attrs.update({'class' : 'curated'})
+
     class Meta:
         model = RawChem
-        fields = '__all__'
+        exclude = ('data_document','created_at','updated_at','dsstox','id')
 
 def include_clean_comp_data_form(dg):
     '''Returns the CleanCompDataForm based on conditions of DataGroup
@@ -301,12 +325,26 @@ def create_detail_formset(group_type, extra=1, can_delete=False):
         return (ExtractedTextForm, HnPFormSet)
 
     def four(): # for extracted_list_presence
-        ListPresenceFormSet = make_formset(parent,child,child.detail_fields())
+        ListPresenceFormSet = make_custom_formset(
+            parent_model=parent,
+            model=child,
+            fields=child.detail_fields(),
+            formset=ExtractedChemicalFormSet,
+            form=ExtractedChemicalForm
+            )
         return (ExtractedCPCatForm, ListPresenceFormSet)
 
     def five(): # for extracted_hh_rec
-        HHFormSet = make_formset(parent,child,child.detail_fields())
+        #HHFormSet = make_formset(parent,child,child.detail_fields())
+        HHFormSet = make_custom_formset(
+        parent_model=parent,
+        model=child,
+        fields=child.detail_fields(),
+        formset=ExtractedChemicalFormSet,
+        form=ExtractedChemicalForm
+        )
         return (ExtractedHHDocForm, HHFormSet)
+
     dg_types = {
         'CO': one,
         'UN': one,

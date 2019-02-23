@@ -5,9 +5,9 @@ from django.urls import reverse
 
 class DSSToxLookup(CommonInfo):
 
-    sid = models.CharField(max_length=50, null=False, blank=False, unique=True)
-    true_cas = models.CharField(max_length=50, null=True, blank=True)
-    true_chemname = models.CharField(max_length=500, null=True, blank=True)
+    sid = models.CharField(verbose_name='DTXSID',max_length=50, null=False, blank=False, unique=True)
+    true_cas = models.CharField(verbose_name='True CAS',max_length=50, null=True, blank=True)
+    true_chemname = models.CharField(verbose_name='True chemical name', max_length=500, null=True, blank=True)
 
     def __str__(self):
         return self.true_chemname

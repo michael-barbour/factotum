@@ -9,4 +9,6 @@ div.search-result-main{
     content: " | ";
 }
 
-
+.curated{
+    background-color: yellow;
+}

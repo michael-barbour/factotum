@@ -123,14 +123,16 @@ class TestDynamicDetailFormsets(TestCase):
             child_formset = ChildForm(instance=et)
             #print('Data doc %s , Group Type: %s ' % (dd.id, dd.data_group.type ))
             for form in child_formset.forms:
-                if dd.data_group.type in ['CO','UN']:
-                    ec = form.instance
+                ec = form.instance
+                try:
                     if ec.dsstox is not None:
                         self.assertTrue( 'true_cas' in form.fields )
-                        self.assertTrue( 'SID' in form.fields )
+                        self.assertTrue( 'sid' in form.fields )
                     else:
                         self.assertFalse( 'true_cas' in form.fields )
-                        self.assertFalse( 'SID' in form.fields )
-                else:
-                    self.assertFalse( 'true_cas' in form.fields )
+                        self.assertFalse( 'sid' in form.fields )
+                except AttributeError:
+                    # this is where you end up if the object has no dsstox relation
+                    pass
+
             

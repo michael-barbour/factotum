@@ -42,6 +42,7 @@ def data_document_detail(request, pk,
 
         context.update(
             {'extracted_text': extracted_text,
+            'extracted_text_form': extracted_text_form,
             'detail_formset': child_formset}
             )
                 

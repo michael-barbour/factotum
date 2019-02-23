@@ -6,13 +6,13 @@ from .extracted_text import ExtractedText
 class ExtractedHHRec(CommonInfo, RawChem):
     media = models.CharField("Media", max_length=30,
                                         null=True, blank=True)
-    sampling_method = models.TextField("Sampling Method", 
+    sampling_method = models.TextField("Sampling method", 
                                         null=True, blank=True)
-    analytical_method = models.TextField("Analytical Method", 
+    analytical_method = models.TextField("Analytical method", 
                                         null=True, blank=True)
-    num_measure = models.CharField("Numeric Measure", max_length=50,
+    num_measure = models.CharField("Numeric measure", max_length=50,
                                         null=True, blank=True)
-    num_nondetect = models.CharField("Numeric Nondetect", max_length=50,
+    num_nondetect = models.CharField("Numeric nondetect", max_length=50,
                                         null=True, blank=True)                                    
 
 

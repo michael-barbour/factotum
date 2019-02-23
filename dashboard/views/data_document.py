@@ -59,6 +59,16 @@ def save_doc_form(request, pk):
         document_type_form.save()
     return redirect('data_document', pk=pk)
 
+
+@login_required()
+def data_document_note(request, pk):
+    doc = get_object_or_404(DataDocument, pk=pk)
+    doc_note = request.POST['dd_note']
+    doc.note = doc_note
+    doc.save()
+    return redirect('data_document', pk=pk)
+
+
 @login_required()
 def save_ext_form(request, pk):
     doc = get_object_or_404(DataDocument, pk=pk)

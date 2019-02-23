@@ -122,23 +122,6 @@
           {% endif %}
       </div>
     </div>
-        {%  if not doc.data_group.is_habits_and_practices %}
-        <!-- add products -->
-        <div class="col-lg-6 col-md-6">
-          <div class="card-header">
-            <h4 class="d-inline">Products</h4>
-            <a class="btn btn-md btn-warning float-right d-inline" href="{% url 'link_product_form' doc.pk %}" role="button">Create New Product</a>
-          </div>
-          <div class="card-body border container">
-            <ol>
-            {%  for product in doc.products.all %}
-            <li>
-              <a href="{% url "product_detail" product.pk %}">{{ product }}</a><br>
-            </li>
-            {% endfor %}
-            </ol>
-          </div>
-        </div>
         {% if not doc.data_group.is_habits_and_practices %}
             <!-- add products -->
             <div class="col-lg-6 col-md-6">

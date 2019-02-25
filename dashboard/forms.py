@@ -199,12 +199,7 @@ class BulkProductTagForm(forms.ModelForm):
 
     class Meta:
         model = ProductToPUC
-<<<<<<< HEAD
         fields = ['tag', 'id_pks']
-=======
-        fields = ['puc', 'tag', 'id_pks']
-
->>>>>>> dev
     def __init__(self, *args, **kwargs):
         super(BulkProductTagForm, self).__init__(*args, **kwargs)
         lbl = 'Select Attribute to Assign to Selected Products'

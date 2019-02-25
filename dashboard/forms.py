@@ -180,7 +180,6 @@ class BulkProductPUCForm(forms.ModelForm):
         model = ProductToPUC
         fields = ['puc', 'id_pks']
 
-<<<<<<< HEAD
 class BulkPUCForm(BasePUCForm):
     class Meta:
         model = ProductToPUC
@@ -192,10 +191,6 @@ class BulkPUCForm(BasePUCForm):
         self.fields['puc'].widget.attrs['onchange'] = 'form.submit();'
 
 class BulkProductTagForm(forms.ModelForm):
-=======
-
-class BulkProductTagForm(BasePUCForm):
->>>>>>> dev
     required_css_class = 'required' # adds to label tag
     tag = forms.ModelChoiceField(queryset=PUCTag.objects.none(),
                                  label='Attribute')

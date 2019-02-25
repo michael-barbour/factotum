@@ -48,7 +48,15 @@
         </div>
         {% if puc.id %}
             <h4>
-                <span name="PUCTags" class="disabled">PUC Attributes</span>
+                <span>Assumed Attributes</span>
+            </h4>
+            <div class="d-flex justify-content-around">
+                {% for assumed in assumed_tags %}
+                <button type="button" class="assumed btn btn-primary" disabled>{{assumed.name}}</button>
+                {% endfor %}
+            </div>
+            <h4>
+                <span>Product Attributes</span>
             </h4>
             <div class="form-group ">
                 {% if product.get_puc_tag_list|length > 1 %}
@@ -61,6 +69,7 @@
                     </form>
                 {%  else %}
                     No attributes are associated with this PUC
+                    <a href={{ puc.admin_url }}>(edit)</a>
                 {% endif %}
             </div>
         {%  endif %}
@@ -141,6 +150,10 @@
             background-color: #0071bc;
             color: #FFFFFF;
             border-color: #0071bc;
+        }
+        .assumed {
+            display: flex;
+            justify-content: space-around;
         }
     </style>
 {% endblock %}

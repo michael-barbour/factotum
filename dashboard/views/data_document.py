@@ -14,7 +14,12 @@ from dashboard.models import *
 def data_document_detail(request, pk,
                          template_name='data_document/data_document_detail.html'):
     doc = get_object_or_404(DataDocument, pk=pk, )
-    ParentForm, ChildForm = create_detail_formset(doc.data_group.type, extra=0, can_delete=False)
+    # A datadocument of type HHE should allow the creation of new records on the page
+    if doc.manual_entry:
+        extra = 1
+    else:
+        extra = 0
+    ParentForm, ChildForm = create_detail_formset(doc.data_group.type, extra=extra, can_delete=False)
 
     document_type_form = DocumentTypeForm(request.POST or None, instance=doc)
     qs = DocumentType.objects.filter(group_type=doc.data_group.group_type)

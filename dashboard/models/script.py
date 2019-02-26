@@ -39,11 +39,11 @@ class Script(CommonInfo):
 
     def get_datadocument_count(self):
         return DataDocument.objects.filter(
-                extractedtext__extraction_script=self.pk).count()
+                extracted_text__extraction_script=self.pk).count()
 
     def get_qa_complete_extractedtext_count(self):
-        return DataDocument.objects.filter(extractedtext__qa_checked=True,
-                            extractedtext__extraction_script=self.pk).count()
+        return DataDocument.objects.filter(extracted_text__qa_checked=True,
+                            extracted_text__extraction_script=self.pk).count()
 
     def get_pct_checked(self):
         count = self.get_datadocument_count()

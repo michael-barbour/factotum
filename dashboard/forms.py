@@ -286,6 +286,13 @@ class ExtractedChemicalForm(forms.ModelForm):
                         )
                     self.fields[curatedfield.name].initial = curatedfield.value_from_object(self.instance.dsstox)
                     self.fields[curatedfield.name].widget.attrs.update({'class' : 'curated'})
+        # Add CSS selector classes to each form
+        # unless the form is for a new record
+        if self.instance.pk is not None:
+            for field in self.fields:
+                self.fields[field].widget.attrs.update(
+                    {'class': f'detail-control form-control %s' % self.instance.data_document.data_group.type}
+                    )
 
     class Meta:
         model = RawChem

@@ -11,7 +11,7 @@ from model_utils.managers import InheritanceManager
 
 class ExtractedText(CommonInfo):
     data_document = models.OneToOneField(DataDocument,on_delete=models.CASCADE,
-                                                            primary_key=True)
+                                                            primary_key=True, related_name='extracted_text')
     prod_name = models.CharField('Product name', max_length=500, null=True, blank=True)
     doc_date = models.CharField('Document date', max_length=25, null=True, blank=True)
     rev_num = models.CharField('Revision number' , max_length=50, null=True, blank=True)

@@ -2718,12 +2718,12 @@
     qa_edited: false, qa_approved_date: null, qa_approved_by: null, qa_group: null}
 - model: dashboard.extractedtext
   pk: 8
-  fields: {created_at: null, updated_at: ! '2018-07-02 22:57:45.760331', prod_name: AVCAT
+  fields: {created_at: null, updated_at: ! '2019-02-25 09:25:55.374026', prod_name: AVCAT
       Gas, doc_date: '2018-04-13', rev_num: '666', extraction_script: 5, qa_checked: false,
     qa_edited: false, qa_approved_date: null, qa_approved_by: null, qa_group: null}
 - model: dashboard.extractedtext
   pk: 7
-  fields: {created_at: null, updated_at: ! '2018-07-02 22:58:59.310189', prod_name: AV
+  fields: {created_at: null, updated_at: ! '2019-02-25 09:25:55.447998', prod_name: AV
       Gas, doc_date: '2018-04-13', rev_num: '666', extraction_script: 5, qa_checked: false,
     qa_edited: false, qa_approved_date: null, qa_approved_by: null, qa_group: null}
 - model: dashboard.extractedtext
@@ -9725,11 +9725,11 @@
 - model: dashboard.extractedfunctionaluse
   pk: 756
   fields: {created_at: ! '2018-09-06 07:16:07', updated_at: ! '2018-09-06 07:16:07',
-    raw_cas_old: 520-45-6, raw_chem_name_old: Functional Use Chem1, report_funcuse: surfactant}
+    report_funcuse: surfactant}
 - model: dashboard.extractedfunctionaluse
   pk: 757
   fields: {created_at: ! '2018-09-06 07:16:07', updated_at: ! '2018-09-06 07:16:07',
-    raw_cas_old: 520-45-6, raw_chem_name_old: Functional Use Chem2, report_funcuse: fragrance}
+    report_funcuse: fragrance}
 - model: dashboard.extractedlistpresence
   pk: 758
   fields: {created_at: ! '2018-10-03 10:07:24.393352', updated_at: ! '2018-10-03 10:07:24.393382'}

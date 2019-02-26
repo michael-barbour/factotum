@@ -52,7 +52,7 @@ def chem_search_results(chemical):
 
     # Get a list of the Data Document IDs for the results
     for chem in sqs_chem:
-        dd = chem.object.get_data_document()
+        dd = chem.object.extracted_text.data_document
         if dd:
             probable_doc_ids.append(dd.id)
         # print(exchem.id)

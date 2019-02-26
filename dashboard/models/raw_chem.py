@@ -39,23 +39,6 @@ class RawChem(models.Model):
             return False
 
 
-    def get_data_document(self):
-        '''Find the child object by trying each of the classes, then return the 
-            datadocument id from it
-            NOTE: this will be obsolete once we move the data_document 
-            foreign key into RawChem in ticket 654
-         '''
-        id=self.id
-        try:
-            return apps.get_model('dashboard.ExtractedChemical').objects.get(rawchem_ptr=id).data_document
-        except apps.get_model('dashboard.ExtractedChemical').DoesNotExist:
-            try: 
-                return apps.get_model('dashboard.ExtractedFunctionalUse').objects.get(rawchem_ptr=id).data_document
-            except apps.get_model('dashboard.ExtractedFunctionalUse').DoesNotExist:
-                try: 
-                    return apps.get_model('dashboard.ExtractedListPresence').objects.get(rawchem_ptr=id).data_document
-                except apps.get_model('dashboard.ExtractedListPresence').DoesNotExist: 
-                    return False
 
     @staticmethod
     def pre_save(sender, **kwargs):

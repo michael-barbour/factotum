@@ -39,11 +39,11 @@
         <div class="form-group border bg-light">
           <dl>
               <dt>General Category:</dt>
-              <dd class="text-center">{{  puc.gen_cat|default:"PUC not yet assigned" }} -</dd>
+              <dd class="text-center">{{  puc.gen_cat|default:"PUC not yet assigned" }}</dd>
               <dt>Product Family:</dt>
-              <dd class="text-center">- {{  puc.prod_fam|default:"not specified" }} -</dd>
+              <dd class="text-center">{{  puc.prod_fam|default:"not specified" }}</dd>
               <dt>Product Type:</dt>
-              <dd class="text-center">- {{  puc.prod_type|default:"not specified" }}</dd>
+              <dd class="text-center">{{  puc.prod_type|default:"not specified" }}</dd>
           </dl>
         </div>
         {% if puc.id %}

@@ -341,6 +341,8 @@ def data_group_update(request, pk, template_name='data_group/datagroup_form.html
             form.save()
         return redirect('data_group_detail', pk=datagroup.id)
     form.referer = request.META.get('HTTP_REFERER', None)
+    if datagroup.extracted_docs():
+        form.fields['group_type'].disabled = True
     groups = GroupType.objects.all()
     for group in groups:
             group.codes = DocumentType.objects.filter(group_type=group)

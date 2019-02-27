@@ -42,15 +42,10 @@ class Migration(migrations.Migration):
         INSERT INTO dashboard_dsstoxlookup (sid, true_cas, true_chemname, created_at)
         SELECT
         DISTINCT sid, true_cas, true_chemname , NOW() as created_at
-        from dashboard_dsstoxsubstance
-        WHERE NOT sid in('DTXSID1020194',
-        'DTXSID9022528',
-        'DTXSID4020749',
-        'DTXSID4028460',
-        'DTXSID6023232',
-        'DTXSID8020676',
-        'DTXSID9023126',
-        'DTXSID9023203')
+        FROM dashboard_dsstoxsubstance
+        WHERE NOT sid in(SELECT distinct_lookup.sid from (SELECT DISTINCT sid, true_cas, true_chemname 
+        FROM dashboard_dsstoxsubstance) distinct_lookup
+        GROUP BY SID HAVING COUNT(*) > 1)
         """,
         reverse_sql="DELETE FROM dashboard_dsstoxlookup"
         )

@@ -27,7 +27,7 @@ class RawChemIndex(indexes.SearchIndex, indexes.Indexable):
         return RawChem
 
     def prepare_data_document_id(self, obj):
-        dd = obj.get_data_document()
+        dd = obj.extracted_text.data_document
         if dd:
             return dd.id
         else:

@@ -43,13 +43,17 @@ class TestRawChemSubclasses(TestCase):
          '''
         for ec in ExtractedChemical.objects.all():
             rc=ec.rawchem_ptr
-            self.assertEqual(ec.data_document , rc.get_data_document(),
-                    'The ExtractedChemical object and RawChem object should hae the same datadocument')
+            self.assertEqual(ec.data_document , rc.extracted_text.data_document,
+                    'The ExtractedChemical object and RawChem object should return the same datadocument')
         for efu in ExtractedFunctionalUse.objects.all():
             rc=efu.rawchem_ptr
-            self.assertEqual(efu.data_document , rc.get_data_document(),
-                    'The ExtractedFunctionalUse object and RawChem object should hae the same datadocument')
+            self.assertEqual(efu.data_document , rc.extracted_text.data_document,
+                    'The ExtractedFunctionalUse object and RawChem object should return the same datadocument')
         for elp in ExtractedListPresence.objects.all():
             rc=elp.rawchem_ptr
-            self.assertEqual(elp.data_document , rc.get_data_document(),
-                    'The ExtractedListPresence object and RawChem object should hae the same datadocument')
+            self.assertEqual(elp.data_document , rc.extracted_text.data_document,
+                    'The ExtractedListPresence object and RawChem object should return the same datadocument')
+        for ehh in ExtractedHHRec.objects.all():
+            rc=ehh.rawchem_ptr
+            self.assertEqual(ehh.data_document , rc.extracted_text.data_document,
+                    'The ExtractedHHRec object and RawChem object should return the same datadocument')

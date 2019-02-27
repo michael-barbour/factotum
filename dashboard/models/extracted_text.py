@@ -11,10 +11,10 @@ from model_utils.managers import InheritanceManager
 
 class ExtractedText(CommonInfo):
     data_document = models.OneToOneField(DataDocument,on_delete=models.CASCADE,
-                                                            primary_key=True)
-    prod_name = models.CharField(max_length=500, null=True, blank=True)
-    doc_date = models.CharField(max_length=25, null=True, blank=True)
-    rev_num = models.CharField(max_length=50, null=True, blank=True)
+                                                            primary_key=True, related_name='extracted_text')
+    prod_name = models.CharField('Product name', max_length=500, null=True, blank=True)
+    doc_date = models.CharField('Document date', max_length=25, null=True, blank=True)
+    rev_num = models.CharField('Revision number' , max_length=50, null=True, blank=True)
     extraction_script = models.ForeignKey(Script, on_delete=models.CASCADE,
                                         limit_choices_to={'script_type': 'EX'})
     qa_checked = models.BooleanField(default=False, verbose_name="QA approved")

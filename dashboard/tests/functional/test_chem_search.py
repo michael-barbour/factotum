@@ -42,7 +42,7 @@ class ChemSearchTest(TestCase):
     def test_chem_search(self):
         response = self.c.get('/chem_search/?chemical=dibutyl')
         self.assertContains(response, '"matchedDataDocuments": 2')
-        self.assertContains(response, '"probableDataDocumentMatches": 54')
+        self.assertContains(response, '"probableDataDocumentMatches": 56')
         self.assertNotContains(response, 'Sun_INDS_89')
 
         response = self.c.get('/chem_search/?chemical=ethylparaben')

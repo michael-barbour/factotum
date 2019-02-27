@@ -35,6 +35,8 @@ urlpatterns = [
                                             name='data_group_delete'),
     path('datadocument/delete/<int:pk>/', views.data_document_delete,
                                             name='data_document_delete'),
+    path('datadocument/note/<int:pk>/', views.data_document_note,
+                                            name='data_document_note'),
     path('product_curation/', views.product_curation_index,
                                             name='product_curation'),
     path('category_assignment/<int:pk>/', views.category_assignment,

@@ -120,7 +120,7 @@
             pk_data = product_table.rows( {selected:true} );
             pk = '';
             for (i=0; i < pk_data.count(); i++) {
-                pk += pk_data.data()[i][3] + ',';
+                pk += pk_data.data()[i][4] + ',';
             }
             pk = pk.replace(/,$/g,'');
             $('input[name="id_pks"]').val(pk);

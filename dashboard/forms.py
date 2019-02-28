@@ -257,12 +257,13 @@ class ExtractedChemicalForm(forms.ModelForm):
         super(ExtractedChemicalForm, self).__init__(*args, **kwargs)
         # the non-field properties need to be explicitly added
         if hasattr(self.instance, 'dsstox') and self.instance.dsstox is not None:
-            self.fields['true_cas'] = forms.CharField(max_length=200)
-            self.fields['true_cas'].initial = self.instance.dsstox.true_cas
-            self.fields['true_chemname'] = forms.CharField(max_length=400)
-            self.fields['true_chemname'].initial = self.instance.true_chemname
-            self.fields['DTXSID'] = forms.CharField(max_length=50)
-            self.fields['DTXSID'].initial = self.instance.sid
+            print('dsstox being omitted')
+            # self.fields['true_cas'] = forms.CharField(max_length=200)
+            # self.fields['true_cas'].initial = self.instance.dsstox.true_cas
+            # self.fields['true_chemname'] = forms.CharField(max_length=400)
+            # self.fields['true_chemname'].initial = self.instance.true_chemname
+            # self.fields['DTXSID'] = forms.CharField(max_length=50)
+            # self.fields['DTXSID'].initial = self.instance.sid
 
     class Meta:
         model = RawChem

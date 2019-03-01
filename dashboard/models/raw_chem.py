@@ -3,11 +3,11 @@ from .dsstox_lookup import DSSToxLookup
 from .extracted_text import ExtractedText
 from model_utils.managers import InheritanceManager
 from django.apps import apps
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
 
 from model_utils import FieldTracker
 
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 class RawChem(models.Model):
     extracted_text = models.ForeignKey(ExtractedText, related_name = 'rawchem', 
@@ -39,17 +39,3 @@ class RawChem(models.Model):
             return self.curated_chemical.sid
         except AttributeError:
             return False
-
-
-
-    @staticmethod
-    def pre_save(sender, **kwargs):
-        instance = kwargs.get('instance')
-        previous_raw_cas = instance.tracker.previous('raw_cas')
-        previous_raw_chem_name = instance.tracker.previous('raw_chem_name')
-       
-        if instance.tracker.has_changed('raw_cas') or \
-        instance.tracker.has_changed('raw_chem_name'):
-            instance.dsstox = None
-
-pre_save.connect(RawChem.pre_save, sender=RawChem)

@@ -1,24 +1,8 @@
 from lxml import html
 
 from django.test import TestCase
-from dashboard.tests.loader import load_model_objects
+from dashboard.tests.loader import load_model_objects, fixtures_standard
 
-from dashboard.models import *
-
-# class DataSourceTest(TestCase):
-#
-#     def setUp(self):
-#         self.objects = load_model_objects()
-#         self.client.login(username='Karyn', password='specialP@55word')
-#
-#         for i in range(27):
-#             DataSource.objects.create(title=f'Test_DS_{i}')
-#         response = self.client.get(f'/datasources/').content.decode('utf8')
-#         print(response)
-
-
-
-###############################################################################
 import os
 import csv
 import time
@@ -130,3 +114,4 @@ class TestIntegration(StaticLiveServerTestCase):
         self.browser.find_element_by_name('cancel').click()
         self.assertIn('/datagroups/', self.browser.current_url,
                         "User should always return to detail page after submit")
+

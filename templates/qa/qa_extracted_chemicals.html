@@ -53,6 +53,9 @@
                         {% endif %}
                     </div>
                     {% endfor %}
+                    {% if form.instance.dsstox %}
+                    {{ form.instance.dsstox.true_cas }}
+                    {{ form.instance.dsstox.true_chem_name }}
 
                 </div>
             </div>

@@ -1,7 +1,7 @@
 import time
 from django.test import TestCase
-from dashboard.tests.loader import load_model_objects
-from dashboard.models import DataDocument, Script, ExtractedText
+from dashboard.tests.loader import load_model_objects, fixtures_standard
+from dashboard.models import DataDocument, Script, ExtractedText, RawChem
 from lxml import html
 
 class QATest(TestCase):

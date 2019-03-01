@@ -48,14 +48,3 @@ class DataDocument(CommonInfo):
         if not self.document_type in doc_types:
             raise ValidationError(('The document type must be allowed by '
                                                     'the parent data group.'))
-    
-    @property
-    def manual_entry(self):
-        ''' If the document should allow manual entry on the /datadocument/x page,
-        return True here
-        '''
-        if self.document_type is not None and \
-        self.document_type in DocumentType.objects.filter(code__in=["HH","CP"]):
-            return True
-        else:
-            return False

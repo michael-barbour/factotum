@@ -47,9 +47,9 @@
           </dl>
         </div>
         {% if puc.id %}
-            
+
             <div class="form-group ">
-                
+
                 <form method="post" enctype="multipart/form-data" novalidate>
                     {% csrf_token %}
                     <h5 class="d-flex">
@@ -138,39 +138,9 @@
 
 {% block css %}
     {{ tagform.media.css }}
-    <style>
-        .taggit-labels.taggit-list .taggit-tag.selected {
-            background-color: #0071bc;
-            color: #FFFFFF;
-            border-color: #0071bc;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard/product.css' %}">
 {% endblock %}
 {% block js %}
-    <script type="text/javascript">
-        $('#id_tags').addClass('taggit-labels taggit-list')
-
-        $(document).ready(function($) {
-            var inputs = $(this).find(".taggit-labels + input")[0]
-            var tagList = inputs.value.split(", ")
-            tagList.indexOf("") === -1 ? tagList.push("") : tagList
-            $("#tag_submit").attr('disabled', 'disabled');
-            $(".taggit-tag").click(function(){
-                var tag = $(this).text()
-                var curList = $('.taggit-labels + input')[0].value.split(", ")
-                curList.indexOf("") === -1 ? curList.push("") : curList
-                if (curList.includes(tag)){
-                    curList = curList.filter(function(e) { return e !== tag })
-                }else {
-                    curList.push($(this).text())
-                }
-                if (curList.sort().join(',') === tagList.sort().join(',')){
-                    $("#tag_submit").attr('disabled', 'disabled');
-                }else{ 
-                    $("#tag_submit").removeAttr("disabled");
-                }
-            })
-        });        
-    </script>
+    <script src="{% static 'js/dashboard/product.js' %}"></script>
     {{ tagform.media.js }}
 {% endblock %}

@@ -86,21 +86,23 @@ class PUC(CommonInfo):
         qs = PUCToTag.objects.filter(content_object=self, assumed=True)
         return PUCTag.objects.filter(dashboard_puctotag_items__in=qs)
 
-class PUCToTag(TaggedItemBase, CommonInfo):
-	content_object = models.ForeignKey(PUC, on_delete=models.CASCADE)
-	tag = models.ForeignKey('PUCTag', on_delete=models.CASCADE,
-							related_name="%(app_label)s_%(class)s_items")
-	assumed = models.BooleanField(default=False)
 
-	def __str__(self):
-		return str(self.content_object)
+class PUCToTag(TaggedItemBase, CommonInfo):
+    content_object = models.ForeignKey(PUC, on_delete=models.CASCADE)
+    tag = models.ForeignKey('PUCTag', on_delete=models.CASCADE,
+                            related_name="%(app_label)s_%(class)s_items")
+    assumed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.content_object)
+
 
 class PUCTag(TagBase, CommonInfo):
 
-	class Meta:
-		verbose_name = _("PUC Attribute")
-		verbose_name_plural = _("PUC Attributes")
-		ordering = ('name',)
+    class Meta:
+        verbose_name = _("PUC Attribute")
+        verbose_name_plural = _("PUC Attributes")
+        ordering = ('name',)
 
-	def __str__(self):
-		return self.name
+    def __str__(self):
+        return self.name

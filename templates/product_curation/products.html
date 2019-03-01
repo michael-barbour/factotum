@@ -18,9 +18,10 @@
   <tbody>
     {% for product in products %}
     <tr>
-      <td><a href={{ product.get_absolute_url }} title="Link to product detail">{{ product.title }}</a></td>
+      <td><a href="{{ product.get_absolute_url }}" title="Link to product detail">{{ product.title }}</a></td>
       <td>{{ product.brand_name }}</td>
-      <td><i>get_uber_puc no bueno!</i></td>
+{#      <td>{{ product.get_uber_puc }}</td>#}
+      <td>---</td>
     </tr>
     {% endfor %}
   </tbody>

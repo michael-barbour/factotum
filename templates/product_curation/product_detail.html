@@ -39,29 +39,31 @@
         <div class="form-group border bg-light">
           <dl>
               <dt>General Category:</dt>
-              <dd class="text-center">{{  puc.gen_cat|default:"PUC not yet assigned" }} -</dd>
+              <dd class="text-center">{{  puc.gen_cat|default:"PUC not yet assigned" }}</dd>
               <dt>Product Family:</dt>
-              <dd class="text-center">- {{  puc.prod_fam|default:"not specified" }} -</dd>
+              <dd class="text-center">{{  puc.prod_fam|default:"not specified" }}</dd>
               <dt>Product Type:</dt>
-              <dd class="text-center">- {{  puc.prod_type|default:"not specified" }}</dd>
+              <dd class="text-center">{{  puc.prod_type|default:"not specified" }}</dd>
           </dl>
         </div>
         {% if puc.id %}
-            <h4>
-                <span name="PUCTags" class="disabled">PUC Attributes</span>
-            </h4>
+
             <div class="form-group ">
-                {% if product.get_puc_tag_list|length > 1 %}
-                    <form method="post" enctype="multipart/form-data" novalidate>
-                        {% csrf_token %}
-                        {{ tagform }}
-                        <div class="btn-group float-lg-right" role="group">
-                            <button type="submit" class="btn btn-success">Submit</button>
-                        </div>
-                    </form>
-                {%  else %}
-                    No attributes are associated with this PUC
-                {% endif %}
+
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    <h5 class="d-flex">
+                        <span name="PUCTags" class="disabled">Product Attributes</span>
+                    {% if product.get_puc_tag_list|length > 1 %}
+                        <button type="submit" id="tag_submit" class="btn btn-success ml-auto">Submit</button>
+                    </h5>
+                    {{ tagform }}
+                </form>
+                    {%  else %}
+                    </h5>
+                </form>
+                        No attributes are associated with this PUC
+                    {% endif %}
             </div>
         {%  endif %}
     </div>
@@ -136,17 +138,9 @@
 
 {% block css %}
     {{ tagform.media.css }}
-    <style>
-        .taggit-labels.taggit-list .taggit-tag.selected {
-            background-color: #0071bc;
-            color: #FFFFFF;
-            border-color: #0071bc;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard/product.css' %}">
 {% endblock %}
 {% block js %}
-    <script type="text/javascript">
-        $('#id_tags').addClass('taggit-labels taggit-list')
-    </script>
+    <script src="{% static 'js/dashboard/product.js' %}"></script>
     {{ tagform.media.js }}
 {% endblock %}

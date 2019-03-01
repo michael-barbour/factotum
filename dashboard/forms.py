@@ -211,9 +211,15 @@ class ExtractedTextForm(forms.ModelForm):
 
 
 class ExtractedCPCatForm(ExtractedTextForm):
+
     class Meta:
         model = ExtractedCPCat
         fields = ['doc_date','cat_code', 'description_cpcat','cpcat_sourcetype']
+
+class ExtractedCPCatAddForm(ExtractedCPCatForm):
+
+    class Meta(ExtractedCPCatForm.Meta):
+        fields = ExtractedCPCatForm.Meta.fields + ['prod_name','doc_date','rev_num','cpcat_code']
 
 
 class ExtractedHHDocForm(ExtractedTextForm):
@@ -281,32 +287,29 @@ def include_clean_comp_data_form(dg):
         return False
 
 
-def create_detail_formset(group_type, extra=1, can_delete=False):
+def create_detail_formset(document, extra=1, can_delete=False):
     '''Returns the pair of formsets that will be needed based on group_type.
     .                       ('CO'),('CP'),('FU'),('HP'),('HH')
     .
 
     '''
+    group_type = document.data_group.type
     parent, child = get_extracted_models(group_type)
 
-    def make_formset(parent_model,model,fields):
-        return forms.inlineformset_factory(parent_model=parent_model,
-                                            model=model,
-                                            fields=fields,
-                                            extra=extra,
-                                            can_delete=False)
+    def make_formset(parent_model,model,fields,
+                        formset=BaseInlineFormSet, 
+                        form=forms.ModelForm):
 
-    def make_custom_formset(parent_model,model,fields,formset,form):
         return forms.inlineformset_factory(parent_model=parent_model,
                                             model=model,
                                             fields=fields,
-                                            formset=formset, #this specifies a custom formset
+                                            formset=formset,
                                             form=form,
                                             extra=extra,
                                             can_delete=False)
 
     def one(): # for chemicals or unknown
-        ChemicalFormSet = make_custom_formset(
+        ChemicalFormSet = make_formset(
             parent_model=parent,
             model=child,
             fields=child.detail_fields(),
@@ -325,7 +328,9 @@ def create_detail_formset(group_type, extra=1, can_delete=False):
 
     def four(): # for extracted_list_presence
         ListPresenceFormSet = make_formset(parent,child,child.detail_fields())
-        return (ExtractedCPCatForm, ListPresenceFormSet)
+        extracted = hasattr(document,'extractedtext')
+        ParentForm = ExtractedCPCatForm if extracted else ExtractedCPCatAddForm
+        return (ParentForm, ListPresenceFormSet)
 
     def five(): # for extracted_hh_rec
         HHFormSet = make_formset(parent,child,child.detail_fields())

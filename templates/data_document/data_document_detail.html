@@ -168,9 +168,8 @@
                 {% csrf_token %}
                 <div class="modal-body">
                     <div class="form-group">
-                            {% include 'core/bs4_form.html' with form=new_text_form colspan='col-6'%}
+                        {% include 'core/bs4_form.html' with form=new_text_form colspan='col-6'%}
                     </div>
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -210,13 +209,19 @@
     </div>
     <br>
     {% if detail_formset %}
+    <form action="{% url 'extracted_child_add' doc.id %}" method="post">
+        {% csrf_token %}
+        {{ detail_formset.management_form }}
         <div class="row col-lg-12 card-header">
             <h4>{{ doc.data_group.group_type }} detail</h4>
-            <!-- <button type="submit" id="save_extracted_detail" name="save_extracted_detail"
-        class="btn btn-primary detail-control ml-auto" role="button">Save {{ doc.data_group.group_type }} edits</button>     -->
+            {% if edit %}
+            <button type="submit" 
+                    class="btn btn-primary ml-auto" 
+                    role="button">Save {{ doc.data_group.group_type }} edits</button>
+                    
+            {% endif %}
         </div>
         <div class="card-body">
-            {% csrf_token %}
             <div class="row">
                 {% for form in detail_formset.forms %}
                     <div class="col-lg-6 col-md-6" style="padding-top: 30px;">
@@ -227,7 +232,7 @@
                                         <span class="alert-danger">{{ form.errors }}</span>
                                     </div>
                                 {% endif %}
-                                {{ form.id.as_hidden }}
+                                {{ form.rawchem_ptr.as_hidden }}
                                 <dl class="row col-lg-12">
                                     {% for field in form.visible_fields %}
                                         <dt class="col-lg-6">{{ field.label_tag }}</dt>
@@ -238,11 +243,15 @@
                                     {% endfor %}
                                 </dl>
                             </div>
-                            {{ detail_formset.management_form }}
                         </div>
                     </div>
                 {% endfor %}
             </div>
         </div>
+    </form>
     {% endif %}
 {% endblock %}
+
+
+
+

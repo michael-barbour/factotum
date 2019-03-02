@@ -14,22 +14,27 @@ def data_document_detail(request, pk):
     template_name='data_document/data_document_detail.html'
     doc = get_object_or_404(DataDocument, pk=pk, )
     code = doc.data_group.group_type.code
-    extra = 1 if code in ['CP'] else 0
-    ParentForm, ChildForm = create_detail_formset(doc, extra=extra, can_delete=False)
+    edit = 1 if code in ['CP','HH'] else 0
+    # edit adds an extra record to the formset, but is also a switch in the 
+    # template and to add the delete input, this will only work if we add one at
+    # a time...
+    ParentForm, ChildFormSet = create_detail_formset(doc, extra=edit, can_delete=edit)
     document_type_form = DocumentTypeForm(request.POST or None, instance=doc)
     qs = DocumentType.objects.filter(group_type=doc.data_group.group_type)
     document_type_form.fields['document_type'].queryset = qs
     context = {'doc': doc,
-            'document_type_form': document_type_form}
+                'edit':edit,
+                'document_type_form': document_type_form}
     if hasattr(doc,'extractedtext'):
         
         extracted_text = doc.extractedtext
         extracted_text_form = ParentForm(instance=extracted_text)
-        child_formset = ChildForm(instance=extracted_text)
+        child_formset = ChildFormSet(instance=extracted_text)
 
-        for form in child_formset.forms:
-            for field in form.fields:
-                form.fields[field].widget.attrs['disabled'] = True
+        if not edit:
+            for form in child_formset.forms:
+                for field in form.fields:
+                    form.fields[field].widget.attrs['disabled'] = True
 
         context.update(
             {'extracted_text': extracted_text,
@@ -95,7 +100,7 @@ def extracted_text_add(request, pk):
     ParentForm, _ = create_detail_formset(doc, extra=0, can_delete=False)
     model = ParentForm.Meta.model
     script = Script.objects.get(title__icontains='Manual (dummy)')
-    exttext = model.objects.create(extraction_script=script,
+    exttext = model.objects.get_or_create(extraction_script=script,
                                     data_document_id=pk)
     form = ParentForm(request.POST, instance=exttext)
     if form.is_valid():
@@ -104,3 +109,12 @@ def extracted_text_add(request, pk):
     else:
         extext.delete()
         return HttpResponse("Houston, we have a problem.")
+
+@login_required
+def extracted_child_add(request, pk):
+    doc = get_object_or_404(DataDocument, pk=pk)
+    _, ChildFormSet = create_detail_formset(doc, extra=1, can_delete=True)
+    formset = ChildFormSet(request.POST,instance=doc.extractedtext)
+    if formset.is_valid():
+        formset.save()
+    return redirect('data_document', pk=doc.pk)

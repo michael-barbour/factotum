@@ -13,7 +13,9 @@ from dashboard.models import *
 def data_document_detail(request, pk):
     template_name='data_document/data_document_detail.html'
     doc = get_object_or_404(DataDocument, pk=pk, )
-    ParentForm, ChildForm = create_detail_formset(doc, extra=0, can_delete=False)
+    code = doc.data_group.group_type.code
+    extra = 1 if code in ['CP'] else 0
+    ParentForm, ChildForm = create_detail_formset(doc, extra=extra, can_delete=False)
     document_type_form = DocumentTypeForm(request.POST or None, instance=doc)
     qs = DocumentType.objects.filter(group_type=doc.data_group.group_type)
     document_type_form.fields['document_type'].queryset = qs
@@ -97,9 +99,6 @@ def extracted_text_add(request, pk):
                                     data_document_id=pk)
     form = ParentForm(request.POST, instance=exttext)
     if form.is_valid():
-        print("you're in the add view!!")
-
-        print(form.instance.pk)
         form.save()
         return redirect('data_document', pk=doc.pk)
     else:

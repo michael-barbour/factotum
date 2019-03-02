@@ -92,14 +92,16 @@ def extracted_text_add(request, pk):
     doc = get_object_or_404(DataDocument, pk=pk)
     ParentForm, _ = create_detail_formset(doc, extra=0, can_delete=False)
     model = ParentForm.Meta.model
-    exttext = model.objects.create(data_document_id=pk)
+    script = Script.objects.get(title__icontains='Manual (dummy)')
+    exttext = model.objects.create(extraction_script=script,
+                                    data_document_id=pk)
     form = ParentForm(request.POST, instance=exttext)
     if form.is_valid():
         print("you're in the add view!!")
 
         print(form.instance.pk)
-        # form.save()
+        form.save()
+        return redirect('data_document', pk=doc.pk)
     else:
         extext.delete()
-    return HttpResponse("Houston, we have a problem.")
-    # return redirect('data_document', pk=doc.pk)
+        return HttpResponse("Houston, we have a problem.")

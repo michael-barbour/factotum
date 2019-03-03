@@ -39,6 +39,17 @@ extract_models = {
     'CP': (ExtractedCPCat, ExtractedListPresence)
 }
 
+dgColors = { # ☺☺☺☺☺☺ feel free to make changes here ☺☺☺☺☺☺
+        'CO' : '#808000', # Olive
+        'HP' : '#469990', # Teal
+        'FU' : '#9A6324', # Brown 
+        'CP' : '#911eb4', # Purple 
+        'HH' : '#e6194b', # Lime
+        'SU' : '#000075', # Navy
+        'UN' : '#2F4F4F', # Black
+}
+
+
 class DataGroup(CommonInfo):
 
     name = models.CharField(max_length=50)
@@ -78,6 +89,10 @@ class DataGroup(CommonInfo):
     @property
     def is_chemical_presence(self):
         return self.type == 'CP'
+
+    @property
+    def color(self):
+        return dgColors[self.group_type.code]
 
     def get_extract_models(self):
         '''returns a tuple with parent/child extract models'''

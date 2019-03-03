@@ -103,7 +103,7 @@ class TestDynamicDetailFormsets(TestCase):
         '''
         for et in ExtractedText.objects.all():
             dd = et.data_document
-            ParentForm, ChildForm = create_detail_formset(dd.data_group.type, EXTRA)
+            ParentForm, ChildForm = create_detail_formset(dd, EXTRA)
             extracted_text_form = ParentForm(instance=et)
             child_formset = ChildForm(instance=et)
             # Compare the model of the child formset's QuerySet to the model
@@ -119,7 +119,7 @@ class TestDynamicDetailFormsets(TestCase):
         '''
         for et in ExtractedText.objects.all():
             dd = et.data_document
-            ParentForm, ChildForm = create_detail_formset(dd.data_group.type)
+            ParentForm, ChildForm = create_detail_formset(dd)
             child_formset = ChildForm(instance=et)
             #print('Data doc %s , Group Type: %s ' % (dd.id, dd.data_group.type ))
             for form in child_formset.forms:

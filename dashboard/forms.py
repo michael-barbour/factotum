@@ -279,7 +279,7 @@ class ExtractedChemicalForm(forms.ModelForm):
             self.fields['DTXSID'].initial = self.instance.sid
 
     class Meta:
-        model = RawChem
+        model = ExtractedChemical
         fields = '__all__'
 
 
@@ -312,6 +312,8 @@ def create_detail_formset(document, extra=1, can_delete=False):
         return forms.inlineformset_factory(parent_model=parent_model,
                                             model=model,
                                             fields=model.detail_fields(),
+                                            formset=formset, #this specifies a custom formset
+                                            form=form,
                                             extra=extra,
                                             can_delete=can_delete)
 

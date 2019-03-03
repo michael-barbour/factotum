@@ -31,6 +31,9 @@ class PUCAdmin(admin.ModelAdmin):
     def tag_list(self, obj):
         return u", ".join(o.name for o in obj.tags.all())
 
+class HHDocAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'hhe_report_number')
+
 
 # Register your models here.
 admin.site.register(DataSource)
@@ -56,3 +59,5 @@ admin.site.register(PUCTag) #,ProductTagAdmin
 admin.site.register(Taxonomy)
 admin.site.register(TaxonomySource)
 admin.site.register(TaxonomyToPUC)
+admin.site.register(ExtractedHHDoc, HHDocAdmin)
+admin.site.register(ExtractedHHRec)

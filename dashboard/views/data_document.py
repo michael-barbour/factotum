@@ -27,7 +27,7 @@ def data_document_detail(request, pk):
                 'document_type_form': document_type_form}
     if hasattr(doc,'extractedtext'):
         
-        extracted_text = doc.extractedtext
+        extracted_text = doc.extractedtext.pull_out_hh()
         extracted_text_form = ParentForm(instance=extracted_text)
         child_formset = ChildFormSet(instance=extracted_text)
 
@@ -100,7 +100,7 @@ def extracted_text_add(request, pk):
     ParentForm, _ = create_detail_formset(doc, extra=0, can_delete=False)
     model = ParentForm.Meta.model
     script = Script.objects.get(title__icontains='Manual (dummy)')
-    exttext = model.objects.get_or_create(extraction_script=script,
+    exttext, _ = model.objects.get_or_create(extraction_script=script,
                                     data_document_id=pk)
     form = ParentForm(request.POST, instance=exttext)
     if form.is_valid():

@@ -32,7 +32,7 @@ class ExtractedText(CommonInfo):
 
 
     def __str__(self):
-        return str(self.prod_name)
+        return str(self.data_document)
 
     def next_extracted_text_in_qa_group(self):
         nextid = 0
@@ -51,6 +51,12 @@ class ExtractedText(CommonInfo):
     def pull_out_cp(self):
         if hasattr(self, 'extractedcpcat'):
             return self.extractedcpcat
+        else:
+            return self
+
+    def pull_out_hh(self):
+        if hasattr(self, 'extractedhhdoc'):
+            return self.extractedhhdoc
         else:
             return self
 

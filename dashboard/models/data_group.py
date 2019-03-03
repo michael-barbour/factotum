@@ -91,6 +91,10 @@ class DataGroup(CommonInfo):
         return self.type == 'CP'
 
     @property
+    def is_hh(self):
+        return self.type == 'HH'
+
+    @property
     def color(self):
         return dgColors[self.group_type.code]
 

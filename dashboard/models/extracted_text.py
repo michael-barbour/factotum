@@ -8,6 +8,13 @@ from .script import Script
 from itertools import chain
 from model_utils.managers import InheritanceManager
 
+    # this could potentially be used for 1:1 matching when uploading
+    # coming in django v2.2!!
+	# class Meta:
+	# 	constraints = [
+	# 		models.UniqueConstraint(fields=['prod_name','data_document'],
+	# 								name='unique_assignment'),
+	# 	]
 
 class ExtractedText(CommonInfo):
     data_document = models.OneToOneField(DataDocument,on_delete=models.CASCADE,

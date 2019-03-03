@@ -180,8 +180,17 @@ class BulkProductPUCForm(forms.ModelForm):
         model = ProductToPUC
         fields = ['puc', 'id_pks']
 
+class BulkPUCForm(BasePUCForm):
+    class Meta:
+        model = ProductToPUC
+        fields = ['puc']
+    def __init__(self, *args, **kwargs):
+        super(BulkPUCForm, self).__init__(*args, **kwargs)
+        lbl = 'Select PUC for Attribute to Assign to Selected Products'
+        self.fields['puc'].label = lbl
+        self.fields['puc'].widget.attrs['onchange'] = 'form.submit();'
 
-class BulkProductTagForm(BasePUCForm):
+class BulkProductTagForm(forms.ModelForm):
     required_css_class = 'required' # adds to label tag
     tag = forms.ModelChoiceField(queryset=PUCTag.objects.none(),
                                  label='Attribute')
@@ -190,13 +199,11 @@ class BulkProductTagForm(BasePUCForm):
 
     class Meta:
         model = ProductToPUC
-        fields = ['puc', 'tag', 'id_pks']
-
+        fields = ['tag', 'id_pks']
     def __init__(self, *args, **kwargs):
         super(BulkProductTagForm, self).__init__(*args, **kwargs)
-        self.fields['puc'].label = 'Select PUC for Attribute to Assign to Selected Products'
-        self.fields['tag'].label = 'Select Attribute to Assign to Selected Products'
-        self.fields['puc'].widget.attrs['onchange'] = 'form.submit();'
+        lbl = 'Select Attribute to Assign to Selected Products'
+        self.fields['tag'].label = lbl
 
 
 class ExtractedTextForm(forms.ModelForm):

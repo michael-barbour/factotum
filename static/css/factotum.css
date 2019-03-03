@@ -9,6 +9,7 @@ div.search-result-main{
     content: " | ";
 }
 
+/* Used in the DataGroup list view */
 .dot {
     height: 25px;
     width: 25px;

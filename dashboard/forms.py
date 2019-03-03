@@ -305,15 +305,13 @@ def create_detail_formset(document, extra=1, can_delete=False):
     parent, child = get_extracted_models(group_type)
     extracted = hasattr(document,'extractedtext')
 
-    def make_formset(parent_model,model,fields,
+    def make_formset(parent_model,model,
                         formset=BaseInlineFormSet, 
                         form=forms.ModelForm):
 
         return forms.inlineformset_factory(parent_model=parent_model,
                                             model=model,
-                                            fields=fields,
-                                            # formset=formset,
-                                            # form=form,
+                                            fields=model.detail_fields(),
                                             extra=extra,
                                             can_delete=can_delete)
 
@@ -321,27 +319,26 @@ def create_detail_formset(document, extra=1, can_delete=False):
         ChemicalFormSet = make_formset(
             parent_model=parent,
             model=child,
-            fields=child.detail_fields(),
             formset=ExtractedChemicalFormSet,
             form=ExtractedChemicalForm
             )
         return (ExtractedTextForm, ChemicalFormSet)
 
     def two(): # for functional_use
-        FunctionalUseFormSet = make_formset(parent,child,child.detail_fields())
+        FunctionalUseFormSet = make_formset(parent,child)
         return (ExtractedTextForm, FunctionalUseFormSet)
 
     def three(): # for habits_and_practices
-        HnPFormSet = make_formset(parent,child,child.detail_fields())
+        HnPFormSet = make_formset(parent,child)
         return (ExtractedTextForm, HnPFormSet)
 
     def four(): # for extracted_list_presence
-        ListPresenceFormSet = make_formset(parent,child,child.detail_fields())
+        ListPresenceFormSet = make_formset(parent,child)
         ParentForm = ExtractedCPCatForm if extracted else ExtractedCPCatAddForm
         return (ParentForm, ListPresenceFormSet)
 
     def five(): # for extracted_hh_rec
-        HHFormSet = make_formset(parent,child,child.detail_fields())
+        HHFormSet = make_formset(parent,child)
         ParentForm = ExtractedHHDocForm if extracted else ExtractedHHDocEditForm
         return (ParentForm , HHFormSet)
     dg_types = {

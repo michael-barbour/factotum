@@ -44,9 +44,9 @@ dgColors = { # ☺☺☺☺☺☺ feel free to make changes here ☺☺☺☺☺
         'HP' : '#469990', # Teal
         'FU' : '#9A6324', # Brown 
         'CP' : '#911eb4', # Purple 
-        'HH' : '#e6194b', # Lime
+        'HH' : '#e6194b', # Red
         'SU' : '#000075', # Navy
-        'UN' : '#2F4F4F', # Black
+        'UN' : '#2F4F4F', # Slategreyblack
 }
 
 

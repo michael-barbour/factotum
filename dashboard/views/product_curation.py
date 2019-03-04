@@ -199,9 +199,14 @@ def assign_puc_to_product(request, pk, template_name=('product_curation/'
                                                       'product_puc.html')):
     p = Product.objects.get(pk=pk)
     p2p = ProductToPUC.objects.filter(classification_method='MA', product=p).first()
-    form = ProductPUCForm(request.POST or None, instance=p2p or None)
+    form = ProductPUCForm(request.POST or None, instance=p2p)
     if form.is_valid():
-        p2p.save()
+        if p2p:
+            p2p.save()
+        else:
+            puc = PUC.objects.get(id=form['puc'].value())
+            p2p = ProductToPUC.objects.create(puc=puc, product=p, classification_method='MA',
+                                        puc_assigned_usr=request.user)
         referer = request.POST.get('referer') if request.POST.get('referer') else 'category_assignment'
         pk = p2p.product.pk if referer == 'product_detail' else p2p.product.data_source.pk
         return redirect(referer, pk=pk)

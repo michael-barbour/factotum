@@ -18,9 +18,10 @@
   <tbody>
     {% for product in products %}
     <tr>
-      <td><a href={{ product.get_absolute_url }} title="Link to product detail">{{ product.title }}</a></td>
+      <td><a href="{{ product.get_absolute_url }}" title="Link to product detail">{{ product.title }}</a></td>
       <td>{{ product.brand_name }}</td>
-      <td><i>get_uber_puc no bueno!</i></td>
+{#      <td>{{ product.get_uber_puc }}</td>#}
+      <td>---</td>
     </tr>
     {% endfor %}
   </tbody>
@@ -28,23 +29,5 @@
 {% endblock %}
 
 {% block js %}
-  <script type="text/javascript">
-
-  $(document).ready(function () {
-    var table = $('#products').DataTable({
-      "serverSide": false,
-      "paging": true,
-      "searching": true,
-      "ordering": true,
-      dom:"<'row'<'col-md-4 form-inline'l><'col-md-4 form-inline'f>>" +
-          "<'row'<'col-sm-12'tr>>" +
-          "<'row'<'col-sm-5'i><'col-sm-7'p>>", // order the control divs
-      "columns": [
-                  { "width": "50%" },
-                  { "width": "20%" },
-                  { "width": "30%" }
-                ]
-    });
-  });
-  </script>
+    <script type="text/javascript" src="{% static 'js/dashboard/product.js' %}"></script>
 {% endblock %}

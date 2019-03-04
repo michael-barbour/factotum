@@ -19,7 +19,7 @@
 
     <link rel="stylesheet" href="{% static "css/bootstrap_overrides.css" %}">
     <link rel="stylesheet" href="{% static "css/datatables_overrides.css" %}">
-    {% block css %}{% endblock %}
+
 
     <title>{% block title %}factotum{% endblock %}</title>
 
@@ -116,6 +116,7 @@
     <script src="{% static 'DataTables/datatables.min.js' %}"></script>
     <script src="{% static 'js/facet_search.js' %}"></script>
     {% block js %}{% endblock %}
+    {% block css %}{% endblock %}
 
 </body>
 </html>

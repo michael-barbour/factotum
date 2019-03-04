@@ -81,7 +81,7 @@ class ModelsTest(TestCase):
         # Test properties of objects
         # DataSource
         self.assertEqual(str(self.objects.ds), self.objects.ds.title)
-
+        self.assertTrue(hasattr(PUCToTag,'assumed'))
         # DataDocuments
         # Confirm that one of the data documents appears in the data group
         # show page after upload from CSV

@@ -39,15 +39,6 @@ extract_models = {
     'CP': (ExtractedCPCat, ExtractedListPresence)
 }
 
-dgColors = { # ☺☺☺☺☺☺ feel free to make changes here ☺☺☺☺☺☺
-        'CO' : '#808000', # Olive
-        'HP' : '#469990', # Teal
-        'FU' : '#9A6324', # Brown 
-        'CP' : '#911eb4', # Purple 
-        'HH' : '#e6194b', # Red
-        'SU' : '#000075', # Navy
-        'UN' : '#2F4F4F', # Slategreyblack
-}
 
 
 class DataGroup(CommonInfo):
@@ -94,9 +85,6 @@ class DataGroup(CommonInfo):
     def is_hh(self):
         return self.type == 'HH'
 
-    @property
-    def color(self):
-        return dgColors[self.group_type.code]
 
     def get_extract_models(self):
         '''returns a tuple with parent/child extract models'''

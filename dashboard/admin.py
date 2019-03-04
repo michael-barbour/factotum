@@ -34,6 +34,13 @@ class PUCAdmin(admin.ModelAdmin):
 class HHDocAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'hhe_report_number')
 
+class PUCToTagAdmin(admin.ModelAdmin):
+    list_display = ('content_object', 'tag', 'assumed')
+    list_filter = ('tag',)
+    def tag(self, obj):
+        return obj.tag    
+    def assumed(self, obj):
+        return obj.assumed 
 
 # Register your models here.
 admin.site.register(DataSource)
@@ -61,3 +68,4 @@ admin.site.register(TaxonomySource)
 admin.site.register(TaxonomyToPUC)
 admin.site.register(ExtractedHHDoc, HHDocAdmin)
 admin.site.register(ExtractedHHRec)
+admin.site.register(PUCToTag, PUCToTagAdmin)

@@ -100,7 +100,8 @@ class TestProductPuc(TestCase):
                                      'id_pks': '11,150,151,152'})
         # Note that product 11 already has PUC 1 linked to it in the seed data. Including it in this
         # test set is a test against the edge case wherein a product with a manually assigned PUC
-        # somehow makes it into the batch assignment process
+        # somehow makes it into the batch assignment process. This should generate a new 'MB' ProductToPuc
+        # but the preexisting 'MA' ProductToPuc should still take priority as the uber_puc
         product = Product.objects.get(pk=11)
         puc = PUC.objects.get(pk=1)
         self.assertEqual(product.get_uber_puc(), puc, "Product 11 should still be assigned to uber_puc PUC 1" )

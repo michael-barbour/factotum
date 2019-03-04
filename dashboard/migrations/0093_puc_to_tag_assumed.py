@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dashboard', '0091_dd_note_field'),
+        ('dashboard', '0092_remove_backup_rawchem_links'),
     ]
 
     operations = [

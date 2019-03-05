@@ -209,7 +209,7 @@ class BulkProductTagForm(forms.ModelForm):
 class ExtractedTextForm(forms.ModelForm):
     class Meta:
         model = ExtractedText
-        fields = ['prod_name', 'rev_num', 'doc_date']
+        fields = ['prod_name', 'doc_date', 'rev_num']
 
         widgets = {
             'data_document': forms.HiddenInput(),
@@ -223,7 +223,7 @@ class ExtractedCPCatForm(ExtractedTextForm):
         model = ExtractedCPCat
         fields = ['doc_date','cat_code', 'description_cpcat','cpcat_sourcetype']
 
-class ExtractedCPCatAddForm(ExtractedCPCatForm):
+class ExtractedCPCatEditForm(ExtractedCPCatForm):
 
     class Meta(ExtractedCPCatForm.Meta):
         fields = ExtractedCPCatForm.Meta.fields + ['prod_name','doc_date','rev_num','cpcat_code']
@@ -343,7 +343,7 @@ def create_detail_formset(document, extra=1, can_delete=False):
 
     def four(): # for extracted_list_presence
         ListPresenceFormSet = make_formset(parent,child)
-        ParentForm = ExtractedCPCatForm if extracted else ExtractedCPCatAddForm
+        ParentForm = ExtractedCPCatForm if extracted else ExtractedCPCatEditForm
         return (ParentForm, ListPresenceFormSet)
 
     def five(): # for extracted_hh_rec

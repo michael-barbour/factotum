@@ -37,7 +37,8 @@ def data_document_detail(request, pk):
                     form.fields[field].widget.attrs['disabled'] = True
 
         context.update(
-            {'extracted_text': extracted_text,
+            {'edit_text_form':ParentForm(instance=extracted_text),
+             'extracted_text': extracted_text,
              'detail_formset': child_formset}
         )
                 
@@ -46,7 +47,7 @@ def data_document_detail(request, pk):
         for form in child_formset.forms:
             form.color = next(color)
     else:
-        context['new_text_form'] = ParentForm()
+        context['edit_text_form'] = ParentForm()
     return render(request, template_name, context)
 
 @login_required()
@@ -95,7 +96,7 @@ def dg_dd_csv_view(request, pk):
     return render_to_csv_response(qs, filename=filename, append_datestamp=True)
 
 @login_required
-def extracted_text_add(request, pk):
+def extracted_text_edit(request, pk):
     doc = get_object_or_404(DataDocument, pk=pk)
     ParentForm, _ = create_detail_formset(doc, extra=0, can_delete=False)
     model = ParentForm.Meta.model
@@ -113,7 +114,7 @@ def extracted_text_add(request, pk):
         return HttpResponse("Houston, we have a problem.")
 
 @login_required
-def extracted_child_add(request, pk):
+def extracted_child_edit(request, pk):
     doc = get_object_or_404(DataDocument, pk=pk)
     _, ChildFormSet = create_detail_formset(doc, extra=1, can_delete=True)
     formset = ChildFormSet(request.POST,instance=doc.extractedtext)

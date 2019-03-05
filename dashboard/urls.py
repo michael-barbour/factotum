@@ -104,6 +104,10 @@ urlpatterns = [
                                             name='data_group_diagnostics'),
     path('datagroup/diagnostics/',   views.data_group_diagnostics,
                                             name='data_group_diagnostics'),
+    path('extractedtext/edit/<int:pk>/',   views.extracted_text_edit,
+                                            name='extracted_text_edit'),
+    path('extractedchild/edit/<int:pk>/',   views.extracted_child_edit,
+                                            name='extracted_child_edit'),
 ]
 
 if settings.DEBUG is True:

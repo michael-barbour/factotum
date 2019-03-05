@@ -2,7 +2,7 @@ from django.test import TestCase, override_settings
 from dashboard.tests.loader import *
 from lxml import html
 from django.urls import reverse
-from dashboard.models import PUC, PUCTag, Product, ProductToTag
+from dashboard.models import PUC, PUCTag, PUCToTag, Product, ProductToTag
 
 @override_settings(ALLOWED_HOSTS=['testserver'])
 class TestProductPuc(TestCase):
@@ -20,6 +20,14 @@ class TestProductPuc(TestCase):
                       'The column Tag List should exist on the PUC admin table')
         self.assertIn('aerosol', response_html.xpath('string(/html/body/div[1]/div[3]/div/div/form/div[2]/table/tbody/tr[2]/td[2])'),
                       'The tag aerosol should exist in the tag list column for PUC 1')
+        response = self.client.get(reverse('admin:dashboard_puctotag_changelist'))
+        response_html = html.fromstring(response.content.decode('utf8'))
+        # import pdb; pdb.set_trace()
+        tag_col = response_html.xpath('//th[contains(@class, "column-tag")]/div/a')[0].text
+        self.assertEqual('Tag', tag_col, "Tag should be a column in the table!")
+        tag_filter = response_html.xpath('//div[contains(@id, "changelist-filter")]/h3')[0].text
+        self.assertEqual(tag_filter, ' By tag ', "Filter by tag!")
+
 
     def test_admin_puc_change(self):
         puc = PUC.objects.get(pk=1)
@@ -61,6 +69,10 @@ class TestProductPuc(TestCase):
         self.assertIn('selected',
                          product_response_html.xpath('string(//*[@id="id_tags"]/li[@data-tag-name="cartridge"]/@class)'),
                          'The tag cartridge should exist but not be selected for this product')
+        assumed = product_response_html.xpath('//button[contains(@class, "assumed")]')
+        self.assertEqual(len(assumed), 2, "There should be 2 assumed attributes")
+        self.assertEqual([ass.text for ass in assumed], ['gel', 'powder|spray'],
+                            "Assumed attributes are incorrect.")
 
 
     def test_bulk_product_puc_ui(self):
@@ -105,17 +117,17 @@ class TestProductPuc(TestCase):
         product_response_url = reverse('bulk_product_tag')
         response = self.client.post(product_response_url,
                                     {'puc': 1,
-                                     'tag': '4',
+                                     'tag': '9',
                                      'id_pks': '11,1845',
                                      'save':'save'})
 
-        self.assertIn('The &quot;gel&quot; Attribute was assigned to 2 Product(s)', response.content.decode('utf-8'),
+        self.assertIn('The &quot;paste&quot; Attribute was assigned to 2 Product(s)', response.content.decode('utf-8'),
                       'The "aerosol" tag message should be displayed in the response')
-
+        self.assertIn('Along with the assumed tags: gel | powder|spray', response.content.decode('utf-8'),
+                      'The assumed tags should be displayed in the response')
         product = Product.objects.get(pk=11)
-        tag = PUCTag.objects.get(pk=1)
         tag_count  = product.producttotag_set.count()
-        self.assertEqual(tag_count, 4, "Product 11 should now be assigned to 4 Tags" )
+        self.assertEqual(tag_count, 5, "Product 11 should now be assigned to 5 Tags" )
 
     def test_bulk_product_tag_post_without_products(self):
         product_response_url = reverse('bulk_product_tag')
@@ -123,3 +135,18 @@ class TestProductPuc(TestCase):
                                     {'puc': 1, 'tag': '1'})
         self.assertEqual(response.status_code, 200,
             "The request should return a valid response even without any Products" )
+
+    def test_bulk_product_tag_filter(self):
+        puc_attrs = PUCToTag.objects.filter(content_object_id=1) 
+        assumed_attrs = [attr.tag.name for attr in puc_attrs.filter(assumed=True)]
+        self.assertEqual(['gel', 'powder|spray'], assumed_attrs)
+        product_response_url = reverse('bulk_product_tag')
+        response = self.client.post(product_response_url,
+                                    {'puc': 1})
+        response_html = html.fromstring(response.content.decode('utf8'))
+        select = response_html.xpath('//select[contains(@id, "id_tag")]/option')
+        texts = [x.text for x in select]
+        for attr in assumed_attrs:
+            self.assertNotIn(attr, texts, "assumed attributes shouldn't be here")
+        # import pdb; pdb.set_trace()
+ 

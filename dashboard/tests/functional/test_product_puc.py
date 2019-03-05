@@ -2,7 +2,9 @@ from django.test import TestCase, override_settings
 from dashboard.tests.loader import *
 from lxml import html
 from django.urls import reverse
-from dashboard.models import PUC, PUCTag, PUCToTag, Product, ProductToTag
+from dashboard.models import PUC, PUCTag, PUCToTag, Product
+from django.db.utils import IntegrityError
+
 
 @override_settings(ALLOWED_HOSTS=['testserver'])
 class TestProductPuc(TestCase):
@@ -109,6 +111,8 @@ class TestProductPuc(TestCase):
         p2p = ProductToPUC.objects.filter(product=product,puc=puc,classification_method='MB')
         self.assertTrue(p2p, "Product 11 should also be assigned to PUC 1 with a classification method of MB" )
 
+        duplicate_record = ProductToPUC(product=product, puc=puc, classification_method='MB')
+        self.assertRaises(IntegrityError, duplicate_record.clean())
 
     def test_product_puc_duplicate(self):
         product = Product.objects.get(pk=11)

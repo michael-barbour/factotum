@@ -105,6 +105,8 @@ def extracted_text_add(request, pk):
     form = ParentForm(request.POST, instance=exttext)
     if form.is_valid():
         form.save()
+        doc.extracted = True
+        doc.save()
         return redirect('data_document', pk=doc.pk)
     else:
         extext.delete()

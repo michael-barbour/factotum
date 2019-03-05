@@ -28,6 +28,10 @@ class DataDocument(CommonInfo):
     def __str__(self):
         return str(self.title)
 
+    @property
+    def is_extracted(self):
+        return hasattr(self,'extractedtext')
+
     def get_absolute_url(self):
         return reverse('data_document', kwargs={'pk': self.pk})
 

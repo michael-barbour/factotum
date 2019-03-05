@@ -25,7 +25,7 @@ def data_document_detail(request, pk):
     context = {'doc': doc,
                 'edit':edit,
                 'document_type_form': document_type_form}
-    if hasattr(doc,'extractedtext'):
+    if doc.is_extracted:
         
         extracted_text = doc.extractedtext.pull_out_hh()
         extracted_text_form = ParentForm(instance=extracted_text)

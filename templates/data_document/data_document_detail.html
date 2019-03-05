@@ -102,10 +102,10 @@
     </dl>
 
     <div class="row col-lg-12">
-
         <div class="col-lg-6 col-md-6 extracted-text">
             <div class="card-header">
                 <h4>Extracted Text
+                    {% if edit %}
                         <a class="btn btn-success btn-sm float-right" role="button" title="add extracted text"
                         data-toggle="modal"
                         data-target="#extextModal">
@@ -114,10 +114,8 @@
                         {% else %}
                             <span class="oi oi-plus">
                         {% endif %}</span> </a>
+                    {% endif %}
                 </h4>
-
-
-                
                 <!-- Modal -->
                 <div class="modal fade" id="extextModal" tabindex="-1" role="dialog" aria-labelledby="extextModalLabel"
                     aria-hidden="true">
@@ -144,17 +142,6 @@
                         </div>
                     </div>
                 </div>
-
-
-
-
-
-
-
-
-
-
-
             </div>
             <div class="card-body border container">
                 {% if extracted_text %}

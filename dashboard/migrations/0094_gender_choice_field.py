@@ -18,7 +18,7 @@ def remove_hh_gender_strings(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dashboard', '0092_puc_to_tag_assumed'),
+        ('dashboard', '0093_puc_to_tag_assumed'),
     ]
 
     operations = [

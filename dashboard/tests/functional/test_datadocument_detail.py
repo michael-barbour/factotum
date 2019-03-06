@@ -37,7 +37,8 @@ class DataDocumentDetailTest(TestCase):
         #response = self.client.get(f'/datadocument/{doc.pk}/')
         response = self.client.get(f'/datadocument/179486/')
         self.assertIn('Download Script',response.content.decode('utf-8'))
-        self.assertIn('Extraction Script',response.content.decode('utf-8'))
+        if doc.extracted:
+            self.assertIn('Extraction Script',response.content.decode('utf-8'))
 
     def test_product_card_location(self):
         response = self.client.get('/datadocument/179486/')
@@ -168,20 +169,21 @@ class TestDynamicDetailFormsets(TestCase):
 
             doc = DataDocument.objects.filter(
                                 document_type__group_type__code=code,
-                                extractedtext__isnull=False
+                                extracted_text__isnull=False
             ).first()
             response = self.client.get(
                                 reverse('data_document',kwargs={'pk': doc.pk})
             )
-            num_forms = response.context['detail_formset'].total_form_count()
-            children = model.objects.filter(
-                                extracted_text=doc.extractedtext
-            ).count()
-            if code in ['CO','FU','HP']:
-                error = (f'{model.__module__} should have the same number'
-                                                    ' of forms as instances')
-                self.assertEqual(num_forms, children, error)
-            if code in ['CP','HH']:
-                error = (f'{model.__module__} should have one more forms'
-                                                            ' than instances')
-                self.assertEqual(num_forms, children + 1, error)
+            if 'detail_formset' in response.context:
+                num_forms = response.context['detail_formset'].total_form_count()
+                children = model.objects.filter(
+                                    extracted_text=doc.extractedtext
+                ).count()
+                if code in ['CO','FU','HP']:
+                    error = (f'{model.__module__} should have the same number'
+                                                        ' of forms as instances')
+                    self.assertEqual(num_forms, children, error)
+                if code in ['CP','HH']:
+                    error = (f'{model.__module__} should have one more forms'
+                                                                ' than instances')
+                    self.assertEqual(num_forms, children + 1, error)

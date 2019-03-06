@@ -124,7 +124,7 @@ def extracted_text_qa(request, pk,
     # The model used for the formset depends on whether the
     # extracted text object matches a data document()
     
-    ParentForm, ChildForm = create_detail_formset(doc.data_group.type, EXTRA)
+    ParentForm, ChildForm = create_detail_formset(doc, EXTRA)
     # extext = extext.pull_out_cp()
     ext_form = ParentForm(instance=extext)
     detail_formset = ChildForm(instance=extext)
@@ -153,7 +153,7 @@ def extracted_text_qa(request, pk,
     if request.method == 'POST' and 'save' in request.POST:
         #print(request.__dict__)
         
-        ParentForm, ChildForm = create_detail_formset(doc.data_group.type, EXTRA)
+        ParentForm, ChildForm = create_detail_formset(doc, EXTRA)
         # extext = extext.pull_out_cp()
         ext_form = ParentForm(request.POST, instance=extext)
         detail_formset = ChildForm(request.POST, instance=extext)

@@ -48,10 +48,10 @@
       {% for habit in hnp %}
         {% if habit.pk == first %}
           <li class="nav-item">
-          <a class="nav-link active" data-toggle="tab" href="#{{ habit.pk }}" role="tab" aria-controls="home" aria-selected="true"><b>{{ habit.product_surveyed }}</b></a>
+          <a class="nav-link active" data-toggle="tab" href="#habit-{{ habit.pk }}" role="tab" aria-controls="home" aria-selected="true"><b>{{ habit.product_surveyed }}</b></a>
         {% else %}
           <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" href="#{{ habit.pk }}" role="tab" aria-controls="home" aria-selected="false"><b>{{ habit.product_surveyed }}</b></a>
+          <a class="nav-link" data-toggle="tab" href="#habit-{{ habit.pk }}" role="tab" aria-controls="home" aria-selected="false"><b>{{ habit.product_surveyed }}</b></a>
         {% endif %}
        </li>
       {% endfor %}
@@ -63,7 +63,7 @@
       <div class="tab-pane fade show text-center
       {% if habit.pk == first %}
         active
-      {% endif %}" id="{{ habit.pk }}" role="tabpanel">
+      {% endif %}" id="habit-{{ habit.pk }}" role="tabpanel">
       <label><b>Data Document:</b></label> <a href="/media/{{ habit.extracted_text.data_document.data_group.get_dg_folder }}/pdf/{{ habit.extracted_text.data_document.filename }}" target="_blank" title="Link to {{ habit.extracted_text.data_document.filename }}"><b>{{ habit.extracted_text.data_document }}</b></a> <br>
       <label><b>Product Surveyed:</b></label> {{ habit.product_surveyed }} <br>
       <label><b>Mass:</b></label> {{ habit.mass|floatformat:2|intcomma }} {{ habit.mass_unit }} <br>

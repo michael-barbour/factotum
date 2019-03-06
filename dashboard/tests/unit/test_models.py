@@ -102,7 +102,7 @@ class ModelsTest(TestCase):
         self.assertEqual(str(self.objects.script), 'Test Download Script')
         # ExtractedText
         self.assertEqual(str(self.objects.extext),
-                                    'Test Extracted Text Record')
+                                    'test document')
         # RawChem
         self.assertEqual(str(self.objects.rc), 'Test Chem Name')
         # ExtractedChemical

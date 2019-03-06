@@ -46,32 +46,40 @@
                     <dd class="text-center">{{ puc.prod_type|default:"not specified" }}</dd>
                 </dl>
             </div>
+
+
+
             {% if puc.id %}
-                <h4>
+                <h5 class="">
                     <span>Assumed Attributes</span>
-                </h4>
-                <div class="d-flex justify-content-around">
+                </h5>
+                <div class="flex border border-secondary border-2 border-top-0 border-left-0 rounded-bottom">
                     {% for assumed in assumed_tags %}
-                        <button type="button" class="assumed btn btn-primary" disabled>{{ assumed.name }}</button>
+                        <button type="button" class="flex-1 mb-1 ml-1 assumed btn btn-primary" disabled>{{ assumed.name }}</button>
                     {% endfor %}
                 </div>
-                <h4>
-                    <span>Product Attributes</span>
-                </h4>
-                <div class="form-group ">
-                    {% if product.get_puc_tag_list|length > 1 %}
-                        <form method="post" enctype="multipart/form-data" novalidate>
-                            {% csrf_token %}
-                            {{ tagform }}
-                            <div class="btn-group float-lg-right" role="group">
-                                <button type="submit" class="btn btn-success">Submit</button>
-                            </div>
-                        </form>
-                    {% else %}
-                        No attributes are associated with this PUC
-                        <a href={{ puc.admin_url }}>(edit)</a>
-                    {% endif %}
+                </br>
+                <div class="form-group">
+                {% if product.get_puc_tag_list|length > 1 %}
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        <h5 class="d-flex">
+                            <span name="PUCTags" class="disabled">Product Attributes</span>
+                        {% if product.get_puc_tag_list|length > 1 %}
+                            <button type="submit" 
+                                    id="tag_submit" 
+                                    class="btn btn-sm btn-success rounded-0 ml-auto"><small>Submit</small></button>
+                        </h5>
+                        {{ tagform }}
+                    </form>
+                        {%  else %}
+                        </h5>
+                    </form>
+                            No attributes are associated with this PUC
+                            <a href={{ puc.admin_url }}>(edit)</a>
+                        {% endif %}
                 </div>
+                {% endif %}
             {% endif %}
         </div>
         <div class="col-5">

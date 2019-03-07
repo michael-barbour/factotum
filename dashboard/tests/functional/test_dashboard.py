@@ -9,6 +9,7 @@ from dashboard.tests.loader import load_model_objects, fixtures_standard
 from dashboard import views
 from dashboard.models import *
 
+
 class DashboardTest(TestCase):
 
     def setUp(self):
@@ -24,7 +25,7 @@ class DashboardTest(TestCase):
         response = self.client.get('/').content.decode('utf8')
         response_html = html.fromstring(response)
         self.assertIn('factotum', response_html.xpath('string(/html/body/nav//a[@href="/"]/text())'),
-                         'The app name factotum should appear in the public navbar')
+                      'The app name factotum should appear in the public navbar')
         self.assertNotIn('QA', response_html.xpath('string(/html/body/nav//a[@href="/qa/"])'),
                          'The link to /qa/ should not appear in the public navbar')
 
@@ -53,24 +54,18 @@ class DashboardTest(TestCase):
 
     def test_PUC_download(self):
         p = self.objects.puc
-        puc_line = (p.gen_cat+','+p.prod_fam+','+p.prod_type+','+p.description+
-                    ','+str(p.get_level())+','+str(p.product_count))
+        puc_line = (p.gen_cat + ',' + p.prod_fam + ',' + p.prod_type + ',' + p.description +
+                    ',' + str(p.get_level()) + ',' + str(p.product_count))
         # get csv
         response = self.client.get('/dl_pucs/')
         self.assertEqual(response.status_code, 200)
         csv_lines = response.content.decode('ascii').split('\r\n')
         # check header
-        self.assertEqual(csv_lines[0],('gen_cat,prod_fam,prod_type,description,'
-                                                        'PUC_type,num_prods'))
+        self.assertEqual(csv_lines[0], ('gen_cat,prod_fam,prod_type,description,'
+                                        'PUC_type,num_prods'))
         # check the PUC from loader
-        self.assertEqual(csv_lines[1],puc_line)
+        self.assertEqual(csv_lines[1], puc_line)
 
-    def test_chem_search_input(self):
-        self.client.logout()
-        response = self.client.get('/').content.decode('utf8')
-        response_html = html.fromstring(response)
-        self.assertTrue(response_html.xpath('//*[@id="chemical_search"]'),
-                      'The chemical search input should appear on the dashboard')
 
 class DashboardTestWithFixtures(TestCase):
     fixtures = fixtures_standard
@@ -78,10 +73,11 @@ class DashboardTestWithFixtures(TestCase):
     def test_chemical_card(self):
         response = self.client.get('/').content.decode('utf8')
         self.assertIn('DSS Tox Chemicals', response,
-                                    'Where is the DSS Tox Chemicals card???')
+                      'Where is the DSS Tox Chemicals card???')
         response_html = html.fromstring(response)
         num_dss = int(response_html.xpath('//*[@name="dsstox"]')[0].text)
         self.assertEqual(num_dss, 31, 'There should be 31 curated chemical records')
+
 
 class DashboardTestWithFixtures(TestCase):
     fixtures = fixtures_standard
@@ -89,12 +85,13 @@ class DashboardTestWithFixtures(TestCase):
     def test_producttopuc_counts(self):
         response = self.client.get('/').content.decode('utf8')
         self.assertIn('Products Linked To PUC', response,
-                                    'Where is the Products Linked to PUC card???')
+                      'Where is the Products Linked to PUC card???')
         response_html = html.fromstring(response)
         num_prods = int(response_html.xpath('//*[@name="product_with_puc_count"]')[0].text)
 
         orm_prod_puc_count = ProductToPUC.objects.values('product_id').distinct().count()
-        self.assertEqual(num_prods, orm_prod_puc_count, 'The page should show %s Products linked to PUCs' % orm_prod_puc_count)
+        self.assertEqual(num_prods, orm_prod_puc_count,
+                         'The page should show %s Products linked to PUCs' % orm_prod_puc_count)
 
         # Assign an already-assigned product to a different PUC with a different method
         # and confirm that the count has not changed
@@ -107,7 +104,8 @@ class DashboardTestWithFixtures(TestCase):
         response = self.client.get('/').content.decode('utf8')
         response_html = html.fromstring(response)
         num_prods = int(response_html.xpath('//*[@name="product_with_puc_count"]')[0].text)
-        self.assertEqual(num_prods, orm_prod_puc_count, 'The page should show %s Products linked to PUCs' % orm_prod_puc_count)
+        self.assertEqual(num_prods, orm_prod_puc_count,
+                         'The page should show %s Products linked to PUCs' % orm_prod_puc_count)
 
         # Assign a previously unassigned product to a different PUC with a different method
         # and confirm that the count has gone up
@@ -122,5 +120,4 @@ class DashboardTestWithFixtures(TestCase):
         response_html = html.fromstring(response)
         num_prods = int(response_html.xpath('//*[@name="product_with_puc_count"]')[0].text)
         self.assertEqual(num_prods, orm_prod_puc_count + 1,
-        'The page should show %s Products linked to PUCs' % str(orm_prod_puc_count + 1 ))
-
+                         'The page should show %s Products linked to PUCs' % str(orm_prod_puc_count + 1))

@@ -2,7 +2,9 @@ from django.test import TestCase, override_settings
 from dashboard.tests.loader import *
 from lxml import html
 from django.urls import reverse
-from dashboard.models import PUC, PUCTag, PUCToTag, Product, ProductToTag
+from dashboard.models import PUC, PUCTag, PUCToTag, Product
+from django.db.utils import IntegrityError
+
 
 @override_settings(ALLOWED_HOSTS=['testserver'])
 class TestProductPuc(TestCase):
@@ -100,11 +102,32 @@ class TestProductPuc(TestCase):
                                      'id_pks': '11,150,151,152'})
         # Note that product 11 already has PUC 1 linked to it in the seed data. Including it in this
         # test set is a test against the edge case wherein a product with a manually assigned PUC
-        # somehow makes it into the batch assignment process
+        # somehow makes it into the batch assignment process. This should generate a new 'MB' ProductToPuc
+        # but the preexisting 'MA' ProductToPuc should still take priority as the uber_puc
         product = Product.objects.get(pk=11)
         puc = PUC.objects.get(pk=1)
-        pucs  = product.producttopuc_set
-        self.assertEqual(product.get_uber_puc(), puc, "Product 11 should now be assigned to PUC 1" )
+        self.assertEqual(product.get_uber_puc(), puc, "Product 11 should still be assigned to uber_puc PUC 1" )
+
+        p2p = ProductToPUC.objects.filter(product=product,puc=puc,classification_method='MB')
+        self.assertTrue(p2p, "Product 11 should also be assigned to PUC 1 with a classification method of MB" )
+
+        duplicate_record = ProductToPUC(product=product, puc=puc, classification_method='MB')
+        self.assertRaises(IntegrityError, duplicate_record.clean())
+
+    def test_product_puc_duplicate(self):
+        product = Product.objects.get(pk=11)
+        puc = PUC.objects.get(pk=1)
+        p2p = ProductToPUC.objects.filter(product=product,puc=puc,classification_method='MA').first()
+        updated_at = p2p.updated_at
+        self.assertTrue(p2p, "Product 11 should also be assigned to PUC 1 with a classification method of MA" )
+
+        response = self.client.post('/product_puc/11/',
+                                    {'puc': '6'})
+        p2p.refresh_from_db()
+        self.assertEqual(p2p.puc.id, 6, "Product 11 should noe be assigned to PUC 6" )
+        self.assertNotEqual(p2p.updated_at, updated_at, "ProductToPuc should have an new updated_at date" )
+
+
 
     def test_bulk_product_puc_post_without_products(self):
         product_response_url = reverse('bulk_product_puc')
@@ -164,4 +187,5 @@ class TestProductPuc(TestCase):
         for attr in assumed_attrs:
             self.assertNotIn(attr, texts, "assumed attributes shouldn't be here")
         # import pdb; pdb.set_trace()
- 
+
+

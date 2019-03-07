@@ -146,10 +146,10 @@ class TestDynamicDetailFormsets(TestCase):
                     ec = form.instance
                     if ec.dsstox is not None:
                         self.assertTrue( 'true_cas' in form.fields )
-                        self.assertTrue( 'DTXSID' in form.fields )
+                        self.assertTrue( 'SID' in form.fields )
                     else:
                         self.assertFalse( 'true_cas' in form.fields )
-                        self.assertFalse( 'DTXSID' in form.fields )
+                        self.assertFalse( 'SID' in form.fields )
                 else:
                     self.assertFalse( 'true_cas' in form.fields )
             

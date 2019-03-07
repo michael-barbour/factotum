@@ -83,6 +83,7 @@ urlpatterns = [
     path('p_json/', views.product_ajax,    name='p_ajax_url'),
     path('pucs/', views.puc_list,  name='puc_list'),
     path('dl_pucs/', views.download_PUCs,  name='download_PUCs'),
+    path('dl_raw_chems/', views.download_raw_chems,  name='download_raw_chems'),
     path('dsstox_lookup/<int:pk>/', views.dsstox_lookup_detail,
                                             name='dsstox_lookup'),
     path('habitsandpractices/<int:pk>/', views.habitsandpractices,

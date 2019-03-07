@@ -2767,7 +2767,7 @@
 - model: dashboard.rawchem
   pk: 5
   fields: {extracted_text: 5, raw_cas: 520-45-7, raw_chem_name: Fictional acid, temp_id: 6,
-    temp_obj_name: ExtractedChemical, rid: null, dsstox: null}
+    temp_obj_name: ExtractedChemical, rid: DTXRID005, dsstox: null}
 - model: dashboard.rawchem
   pk: 6
   fields: {extracted_text: 8, raw_cas: 84-74-2, raw_chem_name: dibutyl phthalate,

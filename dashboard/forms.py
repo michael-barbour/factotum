@@ -305,7 +305,7 @@ def include_clean_comp_data_form(dg):
         return False
 
 
-def create_detail_formset(document, extra=1, can_delete=False):
+def create_detail_formset(document, extra=1, can_delete=True):
     '''Returns the pair of formsets that will be needed based on group_type.
     .                       ('CO'),('CP'),('FU'),('HP'),('HH')
     .

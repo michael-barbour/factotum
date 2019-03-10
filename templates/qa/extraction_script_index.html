@@ -1,15 +1,10 @@
 {% extends 'core/base.html' %}
+{% load staticfiles %}
 {% load humanize %}
 
 {% block content %}
-
-
 <h1 class="col-sm-12"><span class="oi oi-task" title="factotum"></span>
-QA</h1>
-<div class="col-sm-12">
-  <a class="btn btn-info float-lg-right " role="button" href="">TODO: toggle completed scripts</a>
-</div>
-
+QA Extraction Scripts</h1>
 <br>
 <table class="table table-striped table-bordered dataTable no-footer" id='extraction_script_table'>
     <thead class="table-primary">
@@ -28,10 +23,12 @@ QA</h1>
             {{ extraction_script.title }}
             {% endif %}
         </td>
-        <td>{{ extraction_script.get_datadocument_count }}</td>
-        <td>{{ extraction_script.get_pct_checked }}</td>
+        <td>{{ extraction_script.datadocument_count }}</td>
         <td>
-         {% if extraction_script.get_datadocument_count > 0 %}
+            {% widthratio extraction_script.qa_complete_extractedtext_count extraction_script.datadocument_count 100 %}%
+        </td>
+        <td>
+         {% if extraction_script.datadocument_count > 0 %}
           <a class="btn btn-info btn-sm" role="button" title="{{ extraction_script.qa_button_text }} on {{ extraction_script.title }}"
            href='{% url "extraction_script_qa" extraction_script.id %}'> {{ extraction_script.qa_button_text }}
          </a>
@@ -42,21 +39,7 @@ QA</h1>
     </tbody>
   </table>
 {% endblock %}
+
 {% block js %}
-  <script type="text/javascript">
-    $(document).ready(function () {
-      var table = $('#extraction_script_table').DataTable({
-      // "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
-      "columnDefs": [
-          {
-              "targets": 3,
-              "orderable": false
-          }
-      ],
-      dom:"<'row'<'col-md-4 form-inline'l><'col-md-4 form-inline'f>>" +
-          "<'row'<'col-sm-12 text-center'tr>>" +
-          "<'row'<'col-sm-5'i><'col-sm-7'p>>" // order the control divs
-      });
-    });
-  </script>
+    <script src="{% static 'js/dashboard/qa_extraction_script_index.js' %}"></script>
 {% endblock %}

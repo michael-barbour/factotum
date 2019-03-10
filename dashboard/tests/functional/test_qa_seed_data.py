@@ -24,7 +24,7 @@ class TestQaPage(TestCase):
     
     def test_new_qa_group_urls(self):
         # Begin from the QA index page
-        response = self.client.get(f'/qa/')
+        response = self.client.get(f'/qa/extractionscript/')
         self.assertIn(f"/qa/extractionscript/15/'> Begin QA".encode() , response.content)
         # Script 15 has one ExtractedText object
         pk = 15
@@ -42,13 +42,13 @@ class TestQaPage(TestCase):
         et = ExtractedText.objects.filter(extraction_script = pk).first()
         self.assertTrue( et.qa_group_id == group_pk )
         # The link on the QA index page should now say "Continue QA"
-        response = self.client.get(f'/qa/')
+        response = self.client.get(f'/qa/extractionscript/')
         self.assertIn(f"'/qa/extractionscript/15/\'> Continue QA".encode() , response.content)
 
 
     def test_qa_script_without_ext_text(self):
         # Begin from the QA index page
-        response = self.client.get(f'/qa/')
+        response = self.client.get(f'/qa/extractionscript/')
         self.assertIn(f"/qa/extractionscript/15/'> Begin QA".encode() , response.content)
         # Script 9 has no ExtractedText objects
         pk = 9
@@ -78,7 +78,7 @@ class TestQaPage(TestCase):
         et = ExtractedText.objects.get(pk=pk)
         self.assertTrue( et.qa_group == new_group )
         # The link on the QA index page should now say "Continue QA"
-        response = self.client.get(f'/qa/')
+        response = self.client.get(f'/qa/extractionscript/')
         self.assertIn(f"'/qa/extractionscript/{scr.pk}/\'> Continue QA".encode() , response.content)
 
         # Open the QA page for an ExtractedText record that has no QA group and

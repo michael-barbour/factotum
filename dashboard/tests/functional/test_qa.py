@@ -11,7 +11,7 @@ class QATest(TestCase):
         self.client.login(username='Karyn', password='specialP@55word')
 
     def test_qa_scoreboard(self):
-        response = self.client.get('/qa/').content.decode('utf8')
+        response = self.client.get('/qa/extractionscript/').content.decode('utf8')
         response_html = html.fromstring(response)
 
         row_count = len(response_html.xpath('//table[@id="extraction_script_table"]/tbody/tr'))
@@ -74,7 +74,7 @@ class QATest(TestCase):
                          'The qa_begun property of the ExtractionScript should now be True')
 
         # Go back to the QA index page to confirm
-        response = self.client.get('/qa/').content.decode('utf8')
+        response = self.client.get('/qa/extractionscript/').content.decode('utf8')
         response_html = html.fromstring(response)
         script_qa_link = response_html.xpath(
             '//*[@id="extraction_script_table"]/tbody/tr[contains(.,"Test Extraction Script")]/td[4]/a/text()')[0]

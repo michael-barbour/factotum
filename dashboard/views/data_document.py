@@ -96,6 +96,21 @@ def dg_dd_csv_view(request, pk):
     return render_to_csv_response(qs, filename=filename, append_datestamp=True)
 
 @login_required
+def data_document_edit(request, pk):
+    doc = get_object_or_404(DataDocument, pk=pk)
+    ParentForm, _ = create_detail_formset(doc, extra=0, can_delete=False)
+    model = ParentForm.Meta.model
+    script = Script.objects.get(title__icontains='Manual (dummy)')
+    exttext, _ = model.objects.get_or_create(extraction_script=script,
+                                    data_document_id=pk)
+    form = ParentForm(request.POST, instance=exttext)
+    if form.is_valid():
+        form.save()
+        return redirect('data_document', pk=doc.pk)
+    else:
+        return HttpResponse("Houston, we have a problem.")
+
+@login_required
 def extracted_text_edit(request, pk):
     doc = get_object_or_404(DataDocument, pk=pk)
     ParentForm, _ = create_detail_formset(doc, extra=0, can_delete=False)

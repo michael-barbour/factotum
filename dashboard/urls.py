@@ -105,6 +105,8 @@ urlpatterns = [
                                             name='extracted_text_edit'),
     path('extractedchild/edit/<int:pk>/',   views.extracted_child_edit,
                                             name='extracted_child_edit'),
+    path('datadocument/edit/<int:pk>/',   views.data_document_edit,
+                                            name='data_document_edit'),
 ]
 
 if settings.DEBUG is True:

@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
+from django.http import HttpResponse
 
 from dashboard.models import Script, DataGroup, DataDocument
 
@@ -34,3 +35,8 @@ def chemical_presence_qa(request, pk,
                             template_name='qa/chemical_presence_qa.html', nextid=0):
     return render(request, template_name)
 
+
+@login_required()
+def flag_qa_children(request, pk ):
+    doc = get_object_or_404(DataDocument, pk=pk)
+    return HttpResponse(f"{doc}, we have a problem.")

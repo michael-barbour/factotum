@@ -110,6 +110,8 @@ urlpatterns = [
                                             name='extracted_text_edit'),
     path('extractedchild/edit/<int:pk>/',   views.extracted_child_edit,
                                             name='extracted_child_edit'),
+    path('listpresence/flag_children/<int:pk>/',   views.flag_qa_children,
+                                            name='flag_presence_children'),
 ]
 
 if settings.DEBUG is True:

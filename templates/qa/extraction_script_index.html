@@ -28,7 +28,7 @@ QA Extraction Scripts</h1>
         <td>
          {% if extraction_script.datadocument_count > 0 %}
           <a class="btn btn-info btn-sm" role="button" title="{{ extraction_script.qa_button_text }} on {{ extraction_script.title }}"
-           href='{% url "extraction_script_qa" extraction_script.id %}'> {{ extraction_script.qa_button_text }}
+           href='{% url "qa_extraction_script" extraction_script.id %}'> {{ extraction_script.qa_button_text }}
          </a>
          {% endif %}
         </td>

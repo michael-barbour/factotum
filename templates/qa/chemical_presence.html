@@ -1,0 +1,51 @@
+  {% extends 'core/base.html' %}
+{% load staticfiles %}
+{% load humanize %}
+
+{% block title %}QA Chemical Presence for Datagroup {{datagroup.name}}{% endblock %}
+
+
+{% block content %}
+<h1 class="col-sm-12"><span class="oi oi-task" title="factotum" ></span>
+QA Chemical Presence for Datagroup {{datagroup.name}}</h1>
+<br>
+<table class="table table-sm table-bordered table-striped table-sortable" id='extracted_text_table'>
+    <thead class="table-primary">
+        <th>Data Document</th>
+        <th>Document Date</th>
+        <th>QA Checked</th>
+    </thead>
+    <tbody>
+    {% for datadocument in datadocuments %}
+      <tr>
+
+        <td>
+          <a class="btn btn-info btn-sm" role="button" title="details"
+            href="{% url "data_document" datadocument.id %}"> {{ datadocument.filename }}
+          </a>
+        </td>
+        <td>{{ datadocument.created_at }}</td>
+        <td>
+            <a class="btn btn-info btn-sm oi-task {% if datadocument.extractedtext.qa_checked %} oi {% endif %}" role="button" title="check"
+              href="{% url "chemical_presence_qa" datadocument.extractedtext.pk %}"> {{ datadocument.extractedtext.qa_checked }}
+            </a>
+          </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}
+{% block js %}
+  <script type="text/javascript">
+    $(document).ready(function () {
+      var table = $('#extracted_text_table').DataTable({
+      // "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
+
+      dom:"<'row'<'col-md-4 form-inline'l><'col-md-4 form-inline'f>>" +
+          "<'row'<'col-sm-12 text-center'tr>>" +
+          "<'row'<'col-sm-5'i><'col-sm-7'p>>" // order the control divs
+      });
+    });
+  </script>
+{% endblock %}

@@ -36,7 +36,7 @@ def extraction_script_list(request, template_name='qa/extraction_script_list.htm
 
 
 @login_required()
-def extraction_script_qa(request, pk,
+def qa_extraction_script(request, pk,
                          template_name='qa/extraction_script.html'):
     """
     The user reviews the extracted text and checks whether it was properly converted to data
@@ -44,7 +44,7 @@ def extraction_script_qa(request, pk,
     es = get_object_or_404(Script, pk=pk)
     # If the Script has no related ExtractedText objects, redirect back to the QA index
     if ExtractedText.objects.filter(extraction_script = es).count() == 0 :
-        return redirect('/qa/')
+        return redirect('/qa/extractionscript/')
     # Check whether QA has begun for the script
     if es.qa_begun:
         # if the QA process has begun, there should already be one QA Group
@@ -118,7 +118,7 @@ def extracted_text_qa(request, pk,
     a = extext.qa_group.get_approved_doc_count()
     r = ExtractedText.objects.filter(qa_group=extext.qa_group).count() - a
     stats = '%s document(s) approved, %s documents remaining' % (a, r)
-    referer = 'data_document' if 'datadocument' in request.path else 'extraction_script_qa'
+    referer = 'data_document' if 'datadocument' in request.path else 'qa_extraction_script'
 
     # Create the formset factory for the extracted records
     # The model used for the formset depends on whether the
@@ -202,5 +202,5 @@ def extracted_text_qa(request, pk,
                             reverse('extracted_text_qa', args=[(nextpk)]))
             elif nextpk == 0:
                 return HttpResponseRedirect(
-                            reverse('qa'))
+                            reverse('qa_extractionscript'))
     return render(request, template_name, context)

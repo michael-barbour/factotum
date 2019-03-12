@@ -59,6 +59,8 @@ urlpatterns = [
                                             name='qa_chemicalpresence_index'),
     path('qa/chemicalpresence/<int:pk>/', views.qa_chemicalpresence,
                                             name='qa_chemical_presence'),
+    path('qa/extracted_cpccat_qa/<int:pk>/', views.extracted_cpccat_qa,
+                                            name='qa_extracted_cpccat'),
     path('bulk_product_puc/', views.bulk_assign_puc_to_product,
                                             name='bulk_product_puc'),
     path('bulk_product_tag/', views.bulk_assign_tag_to_products,

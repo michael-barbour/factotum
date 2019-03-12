@@ -11,24 +11,31 @@ QA Chemical Presence for Datagroup {{datagroup.name}}</h1>
 <br>
 <table class="table table-sm table-bordered table-striped table-sortable" id='extracted_text_table'>
     <thead class="table-primary">
-        <th>Data Document</th>
-        <th>Document Date</th>
-        <th>QA Checked</th>
+        <tr>
+            <th>Data Document</th>
+            <th>Document Date</th>
+            <th>QA Status</th>
+        </tr>
     </thead>
     <tbody>
     {% for datadocument in datadocuments %}
       <tr>
-
         <td>
-          <a class="btn btn-info btn-sm" role="button" title="details"
-            href="{% url "data_document" datadocument.id %}"> {{ datadocument.filename }}
+          <a href="{% url "data_document" datadocument.id %}"> {{ datadocument.filename }}
           </a>
         </td>
         <td>{{ datadocument.created_at }}</td>
         <td>
-            <a class="btn btn-info btn-sm oi-task {% if datadocument.extractedtext.qa_checked %} oi {% endif %}" role="button" title="check"
-              href="{% url "chemical_presence_qa" datadocument.extractedtext.pk %}"> {{ datadocument.extractedtext.qa_checked }}
-            </a>
+            {%  if datadocument.extractedtext %}
+                {% if datadocument.extractedtext.qa_checked %}
+                    Complete
+                {%  else %}
+                    <a class="btn btn-info btn-sm" role="button"
+                       href="{% url "qa_extracted_cpccat" datadocument.extractedtext.pk %}"> Incomplete - Perform QA </a>
+                {%  endif %}
+            {% else %}
+                Err: No ExtractedText object matches this DataDocument
+            {% endif %}
           </td>
       </tr>
     {% endfor %}
@@ -37,15 +44,5 @@ QA Chemical Presence for Datagroup {{datagroup.name}}</h1>
 
 {% endblock %}
 {% block js %}
-  <script type="text/javascript">
-    $(document).ready(function () {
-      var table = $('#extracted_text_table').DataTable({
-      // "lengthMenu": [ 10, 25, 50, 75, 100 ], // change number of records shown
-
-      dom:"<'row'<'col-md-4 form-inline'l><'col-md-4 form-inline'f>>" +
-          "<'row'<'col-sm-12 text-center'tr>>" +
-          "<'row'<'col-sm-5'i><'col-sm-7'p>>" // order the control divs
-      });
-    });
-  </script>
+    <script src="{% static 'js/dashboard/qa_chemical_presence.js' %}"></script>
 {% endblock %}

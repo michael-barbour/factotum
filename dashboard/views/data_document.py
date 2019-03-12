@@ -70,15 +70,15 @@ def data_document_note(request, pk):
 
 @login_required()
 def save_ext_form(request, pk):
+    referer = request.POST['referer']
+    print(referer)
     doc = get_object_or_404(DataDocument, pk=pk)
     ExtractedTextForm, _ = create_detail_formset(doc)
-    extracted_text = doc.extractedtext.get_subclass()
-    print('Saving extracted text form')
-    print(type(extracted_text))
+    extracted_text = ExtractedText.objects.get_subclass(pk=pk)
     ext_text_form = ExtractedTextForm(request.POST, instance=extracted_text)
     if ext_text_form.is_valid() and ext_text_form.has_changed():
         ext_text_form.save()
-    return redirect('data_document', pk=pk)
+    return redirect(referer, pk=pk)
 
 @login_required()
 def data_document_delete(request, pk, template_name='data_source/datasource_confirm_delete.html'):
@@ -112,6 +112,7 @@ def data_document_edit(request, pk):
 
 @login_required
 def extracted_text_edit(request, pk):
+    print(request.__dict__)
     doc = get_object_or_404(DataDocument, pk=pk)
     ParentForm, _ = create_detail_formset(doc, extra=0, can_delete=False)
     model = ParentForm.Meta.model

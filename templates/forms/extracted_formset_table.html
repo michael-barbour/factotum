@@ -1,5 +1,19 @@
-{{ detail_formset.management_form }}
 
+
+<form method="post"  >
+        {% csrf_token %}
+        {{ detail_formset.management_form }}
+        <ul class="list-inline factotum-control-row" role="group" aria-label="Extracted child record editing controls">
+                <li class="list-inline-item">
+                        <button type="button" id="btn-toggle-edit" data-toggle="button" class="btn btn-secondary" onclick="toggleDetailEdit(true)">
+                                <span id="btn-toggle-label" class="oi oi-wrench"></span>
+                                Edit {{ doc.data_group.group_type }} Records
+                        </button>  
+                </li>
+                <li class="list-inline-item">
+                <button type = "submit" id="save" name="save" class="btn btn-primary detail-control" role="button">Save edits</button>
+                </li>
+            </ul>
 
 
             <table id="formset" class="form">
@@ -28,4 +42,4 @@
             </tr>
             {% endfor %}
             </table>
-
+        </form>

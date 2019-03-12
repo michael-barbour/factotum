@@ -55,18 +55,19 @@
           </a>
         </td>
       </tr>
-      <tr>
-        <th>Document Type</th>
-        <td>
-          {{ doc.document_type }}
-        </td>
-      </tr>
+
+      <form method="post" action="{% url 'save_doc_form' doc.pk %}" novalidate>
+                        {% csrf_token %}
+                        {{ document_type_form }}
+      </form>
+
       <tr>
         <th>Raw Category</th>
         <td>
           {{ doc.raw_category }}
         </td>
       </tr>
+
       <tr>
         <th>URL</th>
         <td>
@@ -108,25 +109,14 @@
 
       <div class="card-body">
           
-          <!-- Extracted text form and subforms -->
-        <form method="post" >
-        {% csrf_token %}
-
-            {% if error %}
-            <div class="form-group has-error">
-                <span class="help-block">{{ error }}</span>
-            </div>
-            {% endif %}
-
+          <!-- Extracted text form with modal editor -->
             {% include 'forms/extracted_text_form_rows.html' with form=ext_form colspan='col-6'%}
 
             <!-- Extracted Text Modal -->
-            {% include 'forms/extracted_text_modal.html' with form=ext_form colspan='col-6'%}
+            {% include 'forms/extracted_text_modal.html' with form=ext_form colspan='col-8'%}
             <div class="row">
-                    <button type="button" id="btn-toggle-edit" data-toggle="button" class="btn btn-secondary" onclick="toggleDetailEdit(true)">
-                            <span id="btn-toggle-label" class="oi oi-wrench"></span>
-                            Edit {{ doc.data_group.group_type }} Records
-                    </button>
+ 
+
             </div> <!-- row -->
 
 
@@ -176,7 +166,6 @@
         </div>
 
         </div>
-        </form>
         <p class="card-footer"> {{stats}}</p>
       </div>
     </div>
@@ -202,10 +191,11 @@
                 $('#save').removeClass('disabled');
                 $('#btn-toggle-edit').addClass('btn-warning');
                 $('#btn-toggle-edit').attr("onclick","toggleDetailEdit(false)");
+                // TODO: change the button's label to read "Stop Editing"
                 $('.detail-control').addClass('unlocked');
                 $('.detail-control').prop('disabled', false);
-                $('.extext-control').addClass('unlocked');
-                $('.extext-control').prop('disabled', false);
+                //$('.extext-control').addClass('unlocked');
+                //$('.extext-control').prop('disabled', false);
             } else{
                 // exit edit mode
                 $('#btn-toggle-edit').attr("onclick","toggleDetailEdit(true)");
@@ -213,8 +203,8 @@
                 $('#btn-toggle-edit').removeClass('btn-warning');
                 $('.detail-control').removeClass('unlocked');
                 $('.detail-control').prop('disabled', true);
-                $('.extext-control').removeClass('unlocked');
-                $('.extext-control').prop('disabled', true);
+                //$('.extext-control').removeClass('unlocked');
+                //$('.extext-control').prop('disabled', true);
                 console.log( "Has disabled class been added to controls?" );
                 console.log( $('.detail-control').hasClass('disabled') );
 

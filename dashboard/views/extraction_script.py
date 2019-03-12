@@ -16,7 +16,7 @@ from factotum.settings import EXTRA
 from dashboard.models import *
 from dashboard.utils import get_extracted_models
 from dashboard.forms import (ExtractedTextForm,
-                            create_detail_formset,   QANotesForm)
+                            create_detail_formset,   QANotesForm, DocumentTypeForm)
 
 
 from factotum.settings import EXTRA # if this goes to 0, tests will fail because of what num form we search for
@@ -93,7 +93,7 @@ def extracted_text_qa(request, pk,
     record, edit its ExtractedChemical objects, skip to the next ExtractedText
     in the QA group, or exit to the index page
     """
-    extext = get_object_or_404(ExtractedText, pk=pk)
+    extext = get_object_or_404(ExtractedText.objects.select_subclasses(), pk=pk)
     # The related DataDocument has the same pk as the ExtractedText object
     doc = DataDocument.objects.get(pk=pk)
     exscript = extext.extraction_script
@@ -123,10 +123,10 @@ def extracted_text_qa(request, pk,
     # Create the formset factory for the extracted records
     # The model used for the formset depends on whether the
     # extracted text object matches a data document()
-    
     ParentForm, ChildForm = create_detail_formset(doc, EXTRA)
     # extext = extext.pull_out_cp()
     ext_form = ParentForm(instance=extext)
+
     detail_formset = ChildForm(instance=extext)
     # Add CSS selector classes to each form
     for form in detail_formset:
@@ -138,6 +138,13 @@ def extracted_text_qa(request, pk,
     note, created = QANotes.objects.get_or_create(extracted_text=extext)
     notesform =  QANotesForm(instance=note)
 
+    # Allow the user to edit the data document type
+    document_type_form = DocumentTypeForm(request.POST or None, instance=doc)
+    qs = DocumentType.objects.filter(group_type=doc.data_group.group_type)
+    document_type_form.fields['document_type'].queryset = qs
+    # the form class overrides the label, so over-override it
+    document_type_form.fields['document_type'].label = 'Data document type:'
+
     context = {
         'extracted_text': extext,
         'doc': doc,
@@ -147,29 +154,29 @@ def extracted_text_qa(request, pk,
         'detail_formset': detail_formset,
         'notesform': notesform,
         'ext_form': ext_form,
-        'referer': referer
+        'referer': referer,
+        'document_type_form': document_type_form
         }
-
-    if request.method == 'POST' and 'save' in request.POST:
-        #print(request.__dict__)
-        
+    if request.method == 'POST' and 'save' in request.POST: 
+        # The save action only applies to the child records and QA properties, 
+        # # no need to save the ExtractedText form       
         ParentForm, ChildForm = create_detail_formset(doc, EXTRA)
-        # extext = extext.pull_out_cp()
-        ext_form = ParentForm(request.POST, instance=extext)
         detail_formset = ChildForm(request.POST, instance=extext)
 
         notesform = QANotesForm(request.POST, instance=note)
         notesform.save()
-        if detail_formset.has_changed() or ext_form.has_changed():
-            if detail_formset.is_valid() and ext_form.is_valid():
+        if detail_formset.has_changed() :
+            if detail_formset.is_valid() :
                 detail_formset.save()
-                ext_form.save()
+                #ext_form.save()
                 extext.qa_edited = True
                 extext.save()
-                # rebuild the formset after saving it
+                # rebuild the detail formset after saving it
                 detail_formset = ChildForm( instance=extext)
             else:
+                print('Errors in detail formset:')
                 print(detail_formset.errors)
+                print(f'errors: %s' % detail_formset.total_error_count())
                 # TODO: iterate through this dict of errors and map each error to
                 # the corresponding form in the template for rendering
 

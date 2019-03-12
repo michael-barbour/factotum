@@ -4,7 +4,6 @@
 {% for hidden_field in form.hidden_fields %}
   {{ hidden_field }}
 {% endfor %}
-
 {% if form.non_field_errors %}
   <div class="alert alert-danger" role="alert">
     {% for error in form.non_field_errors %}
@@ -20,17 +19,17 @@
 
     {% if form.is_bound %}
       {% if field.errors %}
-       {% render_field field class="detail-control form-control is-invalid" %}
+       {% render_field field class="extext-control form-control is-invalid" readonly="readonly" %}
         {% for error in field.errors %}
           <div class="invalid-feedback">
             {{ error }}
           </div>
         {% endfor %}
       {% else %}
-        {% render_field field class="detail-control form-control is-valid" %}
+        {% render_field field class="extext-control form-control is-valid" readonly="readonly"%}
       {% endif %}
     {% else %}
-      {% render_field field class="detail-control form-control" %}
+      {% render_field field class="extext-control form-control" readonly="readonly"%}
     {% endif %}
 
     {% if field.help_text %}
@@ -43,3 +42,4 @@
         {% endif %}
 {% endfor %}
 </div> <!-- close the form-row -->
+

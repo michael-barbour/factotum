@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
+from django.http import HttpResponse
 
 from dashboard.models import Script, DataGroup, DataDocument, ExtractedCPCat
 
@@ -151,3 +152,8 @@ def extracted_cpccat_qa(request, pk,
                     reverse('qa_extractionscript'))
     return render(request, template_name, context)
 
+
+@login_required()
+def flag_qa_children(request, pk ):
+    doc = get_object_or_404(DataDocument, pk=pk)
+    return HttpResponse(f"{doc}, we have a problem.")

@@ -171,7 +171,8 @@ def extracted_text_qa(request, pk,
                 # rebuild the formset after saving it
                 detail_formset = ChildForm(instance=extext)
             else:
-                print(detail_formset.errors)
+                pass
+                # print(detail_formset.errors)
                 # TODO: iterate through this dict of errors and map each error to
                 # the corresponding form in the template for rendering
 

@@ -124,7 +124,6 @@ def data_document_edit(request, pk):
     form = ParentForm(request.POST, instance=exttext)
     if form.is_valid():
         form.save()
-        print(f'returning browser to %s' % referer)
         return redirect(referer, pk=doc.pk)
     else:
         return HttpResponse("Houston, we have a problem.")
@@ -132,7 +131,6 @@ def data_document_edit(request, pk):
 
 @login_required
 def extracted_text_edit(request, pk):
-    print(request.__dict__)
     doc = get_object_or_404(DataDocument, pk=pk)
     ParentForm, _ = create_detail_formset(doc, extra=0, can_delete=False)
     model = ParentForm.Meta.model

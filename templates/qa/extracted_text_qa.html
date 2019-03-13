@@ -189,7 +189,9 @@
             if (enable)  {
                 // enter edit mode
                 console.log( "enabling editor" );
+                // show the Save button 
                 $('#save').removeClass('disabled');
+                $('#save').show();
                 $('#btn-toggle-edit').addClass('btn-warning');
                 $('#btn-toggle-edit').attr("onclick","toggleDetailEdit(false)");
                 // TODO: change the button's label to read "Stop Editing"
@@ -200,7 +202,9 @@
             } else{
                 // exit edit mode
                 $('#btn-toggle-edit').attr("onclick","toggleDetailEdit(true)");
+                // hide the Save button
                 $('#save').addClass('disabled');
+                $('#save').hide();
                 $('#btn-toggle-edit').removeClass('btn-warning');
                 $('.detail-control').removeClass('unlocked');
                 $('.detail-control').prop('disabled', true);

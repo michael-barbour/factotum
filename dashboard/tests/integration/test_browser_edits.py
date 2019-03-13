@@ -68,7 +68,7 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
 
     def test_new_chem(self):
         '''
-        Adding a new ExtractedChemical without a unity type should return a validation error
+        Adding a new ExtractedChemical without a unit type should return a validation error
         '''
         # currently "loops" over just a single data document. Other cases can be added
         ets_with_curation = ExtractedText.objects.filter(

@@ -16,10 +16,11 @@ from factotum.settings import EXTRA
 from dashboard.models import *
 from dashboard.utils import get_extracted_models
 from dashboard.forms import (ExtractedTextForm,
-                            create_detail_formset,   QANotesForm, DocumentTypeForm)
+                             create_detail_formset,   QANotesForm, DocumentTypeForm)
 
 
-from factotum.settings import EXTRA # if this goes to 0, tests will fail because of what num form we search for
+# if this goes to 0, tests will fail because of what num form we search for
+from factotum.settings import EXTRA
 
 
 @login_required()
@@ -43,38 +44,38 @@ def extraction_script_qa(request, pk,
     """
     es = get_object_or_404(Script, pk=pk)
     # If the Script has no related ExtractedText objects, redirect back to the QA index
-    if ExtractedText.objects.filter(extraction_script = es).count() == 0 :
+    if ExtractedText.objects.filter(extraction_script=es).count() == 0:
         return redirect('/qa/')
     # Check whether QA has begun for the script
     if es.qa_begun:
         # if the QA process has begun, there should already be one QA Group
-        # associated with the Script. 
+        # associated with the Script.
         try:
             # get the QA Group
             qa_group = QAGroup.objects.get(extraction_script=es,
-                                        qa_complete=False)
+                                           qa_complete=False)
         except MultipleObjectsReturned:
             qa_group = QAGroup.objects.filter(extraction_script=es,
-                                        qa_complete=False).first()
+                                              qa_complete=False).first()
         except ObjectDoesNotExist:
             print('No QA Group was found matching Extraction Script %s' % es.pk)
-        
 
         texts = ExtractedText.objects.filter(qa_group=qa_group,
-                                                qa_checked=False)        
+                                             qa_checked=False)
         return render(request, template_name, {'extractionscript': es,
-                                                'extractedtexts': texts,
-                                                'qagroup': qa_group})
+                                               'extractedtexts': texts,
+                                               'qagroup': qa_group})
     else:
-        qa_group = es.create_qa_group() 
-        es.qa_begun = True  
+        qa_group = es.create_qa_group()
+        es.qa_begun = True
         es.save()
     # Collect all the ExtractedText objects in the QA Group
     texts = ExtractedText.objects.filter(qa_group=qa_group)
-    
+
     return render(request, template_name, {'extractionscript': es,
                                            'extractedtexts': texts,
                                            'qagroup': qa_group})
+
 
 @login_required()
 def extraction_script_detail(request, pk,
@@ -87,22 +88,23 @@ def extraction_script_detail(request, pk,
 
 @login_required()
 def extracted_text_qa(request, pk,
-                            template_name='qa/extracted_text_qa.html', nextid=0):
+                      template_name='qa/extracted_text_qa.html', nextid=0):
     """
     Detailed view of an ExtractedText object, where the user can approve the
     record, edit its ExtractedChemical objects, skip to the next ExtractedText
     in the QA group, or exit to the index page
     """
-    extext = get_object_or_404(ExtractedText.objects.select_subclasses(), pk=pk)
+    extext = get_object_or_404(
+        ExtractedText.objects.select_subclasses(), pk=pk)
     # The related DataDocument has the same pk as the ExtractedText object
     doc = DataDocument.objects.get(pk=pk)
     exscript = extext.extraction_script
     # when not coming from extraction_script page, we don't necessarily have a qa_group created
     if not extext.qa_group:
-        # create the qa group with the optional ExtractedText pk argument 
+        # create the qa group with the optional ExtractedText pk argument
         # so that the ExtractedText gets added to the QA group even if the
         # group uses a random sample
-        qa_group = exscript.create_qa_group( pk)
+        qa_group = exscript.create_qa_group(pk)
         exscript.qa_begun = True
         exscript.save()
         extext.qa_group = qa_group
@@ -133,10 +135,10 @@ def extracted_text_qa(request, pk,
         for field in form.fields:
             form.fields[field].widget.attrs.update(
                 {'class': f'detail-control form-control %s' % doc.data_group.type}
-                )
+            )
 
     note, created = QANotes.objects.get_or_create(extracted_text=extext)
-    notesform =  QANotesForm(instance=note)
+    notesform = QANotesForm(instance=note)
 
     # Allow the user to edit the data document type
     document_type_form = DocumentTypeForm(request.POST or None, instance=doc)
@@ -156,23 +158,23 @@ def extracted_text_qa(request, pk,
         'ext_form': ext_form,
         'referer': referer,
         'document_type_form': document_type_form
-        }
-    if request.method == 'POST' and 'save' in request.POST: 
-        # The save action only applies to the child records and QA properties, 
-        # # no need to save the ExtractedText form       
+    }
+    if request.method == 'POST' and 'save' in request.POST:
+        # The save action only applies to the child records and QA properties,
+        # # no need to save the ExtractedText form
         ParentForm, ChildForm = create_detail_formset(doc, EXTRA)
         detail_formset = ChildForm(request.POST, instance=extext)
 
         notesform = QANotesForm(request.POST, instance=note)
         notesform.save()
-        if detail_formset.has_changed() :
-            if detail_formset.is_valid() :
+        if detail_formset.has_changed():
+            if detail_formset.is_valid():
                 detail_formset.save()
-                #ext_form.save()
+                # ext_form.save()
                 extext.qa_edited = True
                 extext.save()
                 # rebuild the detail formset after saving it
-                detail_formset = ChildForm( instance=extext)
+                detail_formset = ChildForm(instance=extext)
             else:
                 print('Errors in detail formset:')
                 print(detail_formset.errors)
@@ -182,23 +184,24 @@ def extracted_text_qa(request, pk,
 
             context['detail_formset'] = detail_formset
             context['ext_form'] = ext_form
-            context.update({'notesform' : notesform}) # calls the clean method? y?
+            # calls the clean method? y?
+            context.update({'notesform': notesform})
 
         # Add CSS selector classes to each form
         for form in detail_formset:
             for field in form.fields:
                 form.fields[field].widget.attrs.update(
                     {'class': f'detail-control form-control %s' % doc.data_group.type}
-                    )
+                )
 
-    elif request.method == 'POST' and 'approve' in request.POST: # APPROVAL
-        notesform =  QANotesForm(request.POST, instance=note)
+    elif request.method == 'POST' and 'approve' in request.POST:  # APPROVAL
+        notesform = QANotesForm(request.POST, instance=note)
         context['notesform'] = notesform
         nextpk = extext.next_extracted_text_in_qa_group()
         if notesform.is_valid():
             extext.qa_approved_date = timezone.now()
-            extext.qa_approved_by =  request.user
-            extext.qa_checked =  True
+            extext.qa_approved_by = request.user
+            extext.qa_checked = True
             extext.save()
             notesform.save()
             if referer == 'data_document':
@@ -206,8 +209,8 @@ def extracted_text_qa(request, pk,
                     reverse(referer, kwargs={'pk': pk}))
             elif not nextpk == 0:
                 return HttpResponseRedirect(
-                            reverse('extracted_text_qa', args=[(nextpk)]))
+                    reverse('extracted_text_qa', args=[(nextpk)]))
             elif nextpk == 0:
                 return HttpResponseRedirect(
-                            reverse('qa'))
+                    reverse('qa'))
     return render(request, template_name, context)

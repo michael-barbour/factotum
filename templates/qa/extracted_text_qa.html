@@ -57,6 +57,7 @@
       </tr>
 
       <form method="post" action="{% url 'save_doc_form' doc.pk %}" novalidate>
+            <input type="hidden" name="referer" value="{{request.path}}" />
                         {% csrf_token %}
                         {{ document_type_form }}
       </form>

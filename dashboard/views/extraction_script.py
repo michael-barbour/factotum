@@ -125,7 +125,9 @@ def extracted_text_qa(request, pk,
     # Create the formset factory for the extracted records
     # The model used for the formset depends on whether the
     # extracted text object matches a data document()
-    ParentForm, ChildForm = create_detail_formset(doc, EXTRA)
+    # The QA view should exclude the weight_fraction_type field.
+    ParentForm, ChildForm = create_detail_formset(
+        doc, EXTRA, can_delete=True, exclude=['weight_fraction_type'])
     # extext = extext.pull_out_cp()
     ext_form = ParentForm(instance=extext)
 
@@ -163,6 +165,13 @@ def extracted_text_qa(request, pk,
         # The save action only applies to the child records and QA properties,
         # # no need to save the ExtractedText form
         ParentForm, ChildForm = create_detail_formset(doc, EXTRA)
+
+    if request.method == 'POST' and 'save' in request.POST:
+
+        ParentForm, ChildForm = create_detail_formset(
+            doc, EXTRA, can_delete=True, exclude=['weight_fraction_type'])
+        # extext = extext.pull_out_cp()
+        ext_form = ParentForm(request.POST, instance=extext)
         detail_formset = ChildForm(request.POST, instance=extext)
 
         notesform = QANotesForm(request.POST, instance=note)
@@ -173,12 +182,11 @@ def extracted_text_qa(request, pk,
                 # ext_form.save()
                 extext.qa_edited = True
                 extext.save()
-                # rebuild the detail formset after saving it
+                # rebuild the formset after saving it
                 detail_formset = ChildForm(instance=extext)
             else:
-                print('Errors in detail formset:')
-                print(detail_formset.errors)
-                print(f'errors: %s' % detail_formset.total_error_count())
+                pass
+                # print(detail_formset.errors)
                 # TODO: iterate through this dict of errors and map each error to
                 # the corresponding form in the template for rendering
 

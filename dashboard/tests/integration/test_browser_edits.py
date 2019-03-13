@@ -109,3 +109,26 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
                 '../..')
             self.assertFalse(
                 "errorlist" in card_div.get_attribute("innerHTML"))
+
+    def test_redirects(self):
+        '''
+        Editing the data document type should return the user to the page on which the edits were made
+        '''
+        for doc_id in [7]:
+            # QA Page
+            doc_qa_link = f'/qa/extractedtext/%s/' % doc_id
+            self.browser.get(self.live_server_url + doc_qa_link)
+            doc_type_select = Select(self.browser.find_element_by_xpath(
+                '//*[@id="id_document_type"]'))
+            option = doc_type_select.first_selected_option
+            doc_type_select.select_by_visible_text("ingredient disclosure")
+            self.assertIn(doc_qa_link, self.browser.current_url)
+
+            # Data Document Detail Page
+            doc_detail_link = f'/datadocument/%s/' % doc_id
+            self.browser.get(self.live_server_url + doc_detail_link)
+            doc_type_select = Select(self.browser.find_element_by_xpath(
+                '//*[@id="id_document_type"]'))
+            doc_type_select.select_by_visible_text("MSDS")
+            self.assertIn(doc_detail_link, self.browser.current_url)
+

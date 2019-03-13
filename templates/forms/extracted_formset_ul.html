@@ -16,19 +16,19 @@
             </ul>
 
 
-            <table id="formset" class="form">
+            <ul id="formset" class="form">
             {% for form in detail_formset.forms %}
             {% if forloop.first %}
-            <thead><tr>
+            <ul class="list-inline factotum-control-row" role="group" aria-label="Field headers">
                 {% for field in form.visible_fields %}
-                <th>{{ field.label|capfirst }}</th>
+                <li class="list-inline-item" >{{ field.label|capfirst }}</li>
                 {% endfor %}
-            </tr></thead>
+            </ul>
             {% endif %}
-            <tr class="{% cycle row1 row2 %}">
+            <ul class="list-inline factotum-control-row {% cycle row1 row2 %}">
             {{ form.management_form }}
             {% for field in form.visible_fields %}
-                <td>
+                <li  class="list-inline-item" >
                 {# Include the hidden fields in the form #}
                 {% if forloop.first %}
                 {% for hidden in form.hidden_fields %}
@@ -37,10 +37,10 @@
                 {% endif %}
                 {{ field.errors.as_ul }}
                 {{ field }}
-                </td>
+                </li>
             {% endfor %} 
             {# End of the form #}
-            </tr>
+            </ul>
             {% endfor %}
-            </table>
+        </ul>
         </form>

@@ -42,14 +42,16 @@ class DashboardTest(TestCase):
     def test_percent_extracted_text_doc(self):
         response = self.client.get('/').content.decode('utf8')
         response_html = html.fromstring(response)
-        extracted_doc_count = response_html.xpath('/html/body/div[1]/div[1]/div[4]/div/div')[0].text
+        extracted_doc_count = response_html.xpath(
+            '/html/body/div[1]/div[1]/div[4]/div/div')[0].text
         self.assertEqual('0%', extracted_doc_count)
 
         self.objects.doc.extracted = True
         self.objects.doc.save()
         response = self.client.get('/').content.decode('utf8')
         response_html = html.fromstring(response)
-        extracted_doc_count = response_html.xpath('/html/body/div[1]/div[1]/div[4]/div/div')[0].text
+        extracted_doc_count = response_html.xpath(
+            '/html/body/div[1]/div[1]/div[4]/div/div')[0].text
         self.assertEqual('100%', extracted_doc_count)
 
     def test_PUC_download(self):
@@ -76,7 +78,9 @@ class DashboardTestWithFixtures(TestCase):
                       'Where is the DSS Tox Chemicals card???')
         response_html = html.fromstring(response)
         num_dss = int(response_html.xpath('//*[@name="dsstox"]')[0].text)
-        self.assertEqual(num_dss, 31, 'There should be 31 curated chemical records')
+        dss_table_count = DSSToxLookup.objects.count()
+        self.assertEqual(num_dss, dss_table_count,
+                         'The number shown should match the number of records in DSSToxLookup')
 
 
 class DashboardTestWithFixtures(TestCase):
@@ -87,9 +91,11 @@ class DashboardTestWithFixtures(TestCase):
         self.assertIn('Products Linked To PUC', response,
                       'Where is the Products Linked to PUC card???')
         response_html = html.fromstring(response)
-        num_prods = int(response_html.xpath('//*[@name="product_with_puc_count"]')[0].text)
+        num_prods = int(response_html.xpath(
+            '//*[@name="product_with_puc_count"]')[0].text)
 
-        orm_prod_puc_count = ProductToPUC.objects.values('product_id').distinct().count()
+        orm_prod_puc_count = ProductToPUC.objects.values(
+            'product_id').distinct().count()
         self.assertEqual(num_prods, orm_prod_puc_count,
                          'The page should show %s Products linked to PUCs' % orm_prod_puc_count)
 
@@ -103,7 +109,8 @@ class DashboardTestWithFixtures(TestCase):
 
         response = self.client.get('/').content.decode('utf8')
         response_html = html.fromstring(response)
-        num_prods = int(response_html.xpath('//*[@name="product_with_puc_count"]')[0].text)
+        num_prods = int(response_html.xpath(
+            '//*[@name="product_with_puc_count"]')[0].text)
         self.assertEqual(num_prods, orm_prod_puc_count,
                          'The page should show %s Products linked to PUCs' % orm_prod_puc_count)
 
@@ -113,11 +120,13 @@ class DashboardTestWithFixtures(TestCase):
         # print(assigned_prods)
         prod = Product.objects.exclude(id__in=assigned_prods).first()
         puc21 = PUC.objects.get(id=21)
-        p2puc = ProductToPUC.objects.create(product=prod, puc=puc21, classification_method='MA')
+        p2puc = ProductToPUC.objects.create(
+            product=prod, puc=puc21, classification_method='MA')
         p2puc.save()
 
         response = self.client.get('/').content.decode('utf8')
         response_html = html.fromstring(response)
-        num_prods = int(response_html.xpath('//*[@name="product_with_puc_count"]')[0].text)
+        num_prods = int(response_html.xpath(
+            '//*[@name="product_with_puc_count"]')[0].text)
         self.assertEqual(num_prods, orm_prod_puc_count + 1,
                          'The page should show %s Products linked to PUCs' % str(orm_prod_puc_count + 1))

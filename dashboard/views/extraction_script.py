@@ -164,14 +164,9 @@ def extracted_text_qa(request, pk,
     if request.method == 'POST' and 'save' in request.POST:
         # The save action only applies to the child records and QA properties,
         # # no need to save the ExtractedText form
-        ParentForm, ChildForm = create_detail_formset(doc, EXTRA)
-
-    if request.method == 'POST' and 'save' in request.POST:
-
         ParentForm, ChildForm = create_detail_formset(
             doc, EXTRA, can_delete=True, exclude=['weight_fraction_type'])
         # extext = extext.pull_out_cp()
-        ext_form = ParentForm(request.POST, instance=extext)
         detail_formset = ChildForm(request.POST, instance=extext)
 
         notesform = QANotesForm(request.POST, instance=note)

@@ -127,7 +127,8 @@ def extracted_text_qa(request, pk,
     # extracted text object matches a data document()
     # The QA view should exclude the weight_fraction_type field.
     ParentForm, ChildForm = create_detail_formset(
-        doc, EXTRA, can_delete=True, exclude=['weight_fraction_type'])
+        doc, EXTRA, can_delete=True, 
+        exclude=['weight_fraction_type', 'true_cas', 'true_chemname', 'sid'])
     # extext = extext.pull_out_cp()
     ext_form = ParentForm(instance=extext)
 

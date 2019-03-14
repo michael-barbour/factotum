@@ -125,7 +125,8 @@ def extracted_text_qa(request, pk,
     # Create the formset factory for the extracted records
     # The model used for the formset depends on whether the
     # extracted text object matches a data document()
-    # The QA view should exclude the weight_fraction_type field.
+    # The QA view should exclude the weight_fraction_type field
+    # and curated fields
     ParentForm, ChildForm = create_detail_formset(
         doc, EXTRA, can_delete=True, 
         exclude=['weight_fraction_type', 'true_cas', 'true_chemname', 'sid'])

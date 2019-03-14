@@ -18,27 +18,43 @@
 
             <table id="formset" class="form">
             {% for form in detail_formset.forms %}
-            {% if forloop.first %}
+            <!-- {% if forloop.first %}
             <thead><tr>
                 {% for field in form.visible_fields %}
                 <th>{{ field.label|capfirst }}</th>
                 {% endfor %}
             </tr></thead>
-            {% endif %}
+            {% endif %} -->
             <tr class="{% cycle row1 row2 %}">
             {{ form.management_form }}
             {% for field in form.visible_fields %}
+            {% if forloop.first %}
+            <tr class='padding-row' 
+            id='rawchem-{% if form.instance.id %}{{form.instance.id}}{% else %}{{form.data.id}}{% endif %}'>
+                <td>&nbsp;
+                  <code>I am an empty row with id of "rawchem-{% if form.instance.id %}{{form.instance.id}}{% else %}{{form.data.id}}{% endif %}"</code>
+                </td>
+            </tr>
+        {% endif %} 
                 <td>
                 {# Include the hidden fields in the form #}
                 {% if forloop.first %}
-                {% for hidden in form.hidden_fields %}
-                {{ hidden }}
-                {% endfor %}
+                    {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                    {% endfor %}
                 {% endif %}
                 {{ field.errors.as_ul }}
+                {{ field.label|capfirst }}
                 {{ field }}
                 </td>
+
+                {% if forloop.counter|divisibleby:4 %} <!-- if it is after form 4, 8, 12, etc -->
+                </td> <!-- close the table-row -->
+                <tr class="{% cycle row1 row2 %}"> <!-- open a new form-row -->
+                {% endif %}
+
             {% endfor %} 
+
             {# End of the form #}
             </tr>
             {% endfor %}

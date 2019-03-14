@@ -28,16 +28,16 @@ class ExtractedChemical(CommonInfo, RawChem):
                                       null=True, blank=True)
     weight_fraction_type = models.ForeignKey(WeightFractionType,
                                              on_delete=models.PROTECT, null=True, default='1')
-    ingredient_rank = models.PositiveIntegerField(null=True, blank=True,
+    ingredient_rank = models.PositiveIntegerField("Ingredient rank", null=True, blank=True,
                                                   validators=[validate_ingredient_rank])
-    raw_central_comp = models.CharField(max_length=100, null=True, blank=True)
+    raw_central_comp = models.CharField("Raw central composition", max_length=100, null=True, blank=True)
 
     def __str__(self):
         return str(self.raw_chem_name) if self.raw_chem_name else ''
 
     @classmethod
     def detail_fields(cls):
-        return ['extracted_text', 'raw_cas', 'raw_chem_name', 'raw_min_comp', 'raw_central_comp',
+        return ['extracted_text', 'raw_chem_name', 'raw_cas', 'raw_min_comp', 'raw_central_comp',
                 'raw_max_comp', 'unit_type', 'weight_fraction_type', 'report_funcuse',
                 'ingredient_rank', 'rawchem_ptr']
 

@@ -179,6 +179,12 @@ class ModelsTest(TestCase):
         self.assertIn(u, dg_response.content, (
                                     'link to PDF should be in HTML!'))
 
+    def test_script_fields(self):
+        fields = ['title','url','qa_begun','script_type','confidence']
+        for fld in fields:
+            self.assertIn(fld, Script.__dict__, (f'{fld} '
+                                                'should be in Script model.'))
+
 
 class PUCModelTest(TestCase):
 

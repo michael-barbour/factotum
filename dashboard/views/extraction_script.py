@@ -206,5 +206,5 @@ def extracted_text_qa(request, pk,
                     reverse('extracted_text_qa', args=[(nextpk)]))
             elif nextpk == 0:
                 return HttpResponseRedirect(
-                            reverse('qa_extractionscript'))
+                            reverse('qa_extractionscript_index'))
     return render(request, template_name, context)

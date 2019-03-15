@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from django.http import HttpResponse
-
+from django.core.exceptions import ValidationError
 from dashboard.models import Script, DataGroup, DataDocument, ExtractedCPCat
 
 
@@ -26,15 +26,18 @@ def qa_chemicalpresence_index(request, template_name='qa/chemical_presence_index
 
 @login_required()
 def qa_chemicalpresence(request, pk, template_name='qa/chemical_presence.html'):
-    datagroup = get_object_or_404(DataGroup, pk=pk, group_type__code='CP')
-    datadocuments = DataDocument.objects.filter(data_group=datagroup)
-    for datadocument in datadocuments:
-        datadocument.prep_for_cp_qa()
-    return render(request, template_name, {'datagroup':datagroup, 'datadocuments':datadocuments})
+    datagroup = DataGroup.objects.get(pk=pk)
+    if datagroup.group_type.code != 'CP':
+        raise ValidationError('This DataGroup is not of a ChemicalPresence type')
+    extractedcpcats = ExtractedCPCat.objects.filter(data_document__data_group=datagroup)
+    for extractedcpcat in extractedcpcats:
+        print(extractedcpcat.data_document)
+        extractedcpcat.prep_for_cp_qa()
+    return render(request, template_name, {'datagroup':datagroup, 'extractedcpcats':extractedcpcats})
 
 @login_required()
-def extracted_cpccat_qa(request, pk,
-                            template_name='qa/extracted_cpccat_qa.html', nextid=0):
+def extracted_cpcat_qa(request, pk,
+                            template_name='qa/extracted_cpcat_qa.html', nextid=0):
     """
     Detailed view of an ExtractedText object, where the user can approve the
     record, edit its ExtractedChemical objects, skip to the next ExtractedText

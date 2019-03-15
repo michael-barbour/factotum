@@ -12,30 +12,28 @@ QA Chemical Presence for Datagroup {{datagroup.name}}</h1>
 <table class="table table-sm table-bordered table-striped table-sortable" id='extracted_text_table'>
     <thead class="table-primary">
         <tr>
-            <th>Data Document</th>
+            <th>Product Name</th>
+            <th>Document</th>
             <th>Document Date</th>
             <th>QA Status</th>
         </tr>
     </thead>
     <tbody>
-    {% for datadocument in datadocuments %}
+    {% for extractedcpcat in extractedcpcats %}
       <tr>
-        <td>
-          <a href="{% url "data_document" datadocument.id %}"> {{ datadocument.filename }}
-          </a>
+        <td>{{ extractedcpcat.prod_name }}
         </td>
-        <td>{{ datadocument.created_at }}</td>
         <td>
-            {%  if datadocument.extractedtext %}
-                {% if datadocument.extractedtext.qa_checked %}
-                    Complete
-                {%  else %}
-                    <a class="btn btn-info btn-sm" role="button"
-                       href="{% url "qa_extracted_cpccat" datadocument.extractedtext.pk %}"> Incomplete - Perform QA </a>
-                {%  endif %}
-            {% else %}
-                Err: No ExtractedText object matches this DataDocument
-            {% endif %}
+          <a href="{% url "data_document" extractedcpcat.data_document.id %}"> {{ extractedcpcat.data_document }}</a>
+        </td>
+        <td>{{ extractedcpcat.created_at }}</td>
+        <td>
+            {% if extractedcpcat.qa_checked %}
+                Complete
+            {%  else %}
+                <a class="btn btn-info btn-sm" role="button"
+                   href="{% url "qa_extracted_cpcat" extractedcpcat.pk %}"> Incomplete - Perform QA </a>
+            {%  endif %}
           </td>
       </tr>
     {% endfor %}

@@ -7,7 +7,9 @@ from django.urls import reverse
 from django.utils import timezone
 
 from dashboard.forms import create_detail_formset, QANotesForm
-from dashboard.models import Script, DataGroup, DataDocument, ExtractedCPCat, ExtractedText, QAGroup, QANotes
+from dashboard.models import Script, DataGroup, DataDocument,\
+    ExtractedCPCat, ExtractedText, ExtractedListPresence,\
+    QAGroup, QANotes
 from factotum.settings import EXTRA
 
 
@@ -36,9 +38,33 @@ def qa_chemicalpresence(request, pk, template_name='qa/chemical_presence.html'):
         raise ValidationError('This DataGroup is not of a ChemicalPresence type')
     extractedcpcats = ExtractedCPCat.objects.filter(data_document__data_group=datagroup)
     for extractedcpcat in extractedcpcats:
-        print(extractedcpcat.data_document)
-        extractedcpcat.prep_for_cp_qa()
+        prep_cp_for_qa(extractedcpcat)
     return render(request, template_name, {'datagroup':datagroup, 'extractedcpcats':extractedcpcats})
+
+def prep_cp_for_qa(extractedcpcat):
+    from random import shuffle
+
+    list_presence_count = ExtractedListPresence.objects.filter(extracted_text=extractedcpcat).count()
+    if list_presence_count == 0:
+        return
+
+    non_qa_list_presence_ids = list(ExtractedListPresence.objects.filter(extracted_text=extractedcpcat,
+                                                                         qa_flag=False
+                                                                         ).values_list('pk',
+                                                                                       flat=True))
+
+    # total number of qa-flagged listpresence objects
+    list_presence_qa_count = list_presence_count - len(non_qa_list_presence_ids)
+
+    # if less than 30 records (or all records in set) flagged for QA, make up the difference
+    if list_presence_qa_count < 30 and list_presence_qa_count < list_presence_count:
+        random_x = 30 - list_presence_qa_count
+        shuffle(non_qa_list_presence_ids)
+        list_presence = ExtractedListPresence.objects.filter(pk__in=non_qa_list_presence_ids[:random_x])
+        for lp in list_presence:
+            lp.qa_flag = True
+            lp.save()
+    return
 
 @login_required()
 def qa_extraction_script(request, pk,

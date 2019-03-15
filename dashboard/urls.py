@@ -1,6 +1,8 @@
 from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
+
+import dashboard.views.qa
 from . import views
 
 urlpatterns = [
@@ -47,11 +49,11 @@ urlpatterns = [
                                             name='link_product_form'),
     path('qa/extractionscript/', views.qa_extractionscript_index,
                                             name='qa_extractionscript_index'),
-    path('qa/extractionscript/<int:pk>/', views.qa_extraction_script,
+    path('qa/extractionscript/<int:pk>/', dashboard.views.qa.qa_extraction_script,
                                             name='qa_extraction_script'),
-    path('qa/extractedtext/<int:pk>/', views.extracted_text_qa,
+    path('qa/extractedtext/<int:pk>/', dashboard.views.qa.extracted_text_qa,
                                             name='extracted_text_qa'),
-    path('datadocument/qa/extractedtext/<int:pk>/', views.extracted_text_qa,
+    path('datadocument/qa/extractedtext/<int:pk>/', dashboard.views.qa.extracted_text_qa,
                                             name='data_document_extracted_text_qa'),
     path('extractionscript/<int:pk>/', views.extraction_script_detail,
                                             name='extraction_script_detail'),
@@ -59,8 +61,6 @@ urlpatterns = [
                                             name='qa_chemicalpresence_index'),
     path('qa/chemicalpresence/<int:pk>/', views.qa_chemicalpresence,
                                             name='qa_chemical_presence'),
-    path('qa/extracted_cpcat_qa/<int:pk>/', views.extracted_cpcat_qa,
-                                            name='qa_extracted_cpcat'),
     path('bulk_product_puc/', views.bulk_assign_puc_to_product,
                                             name='bulk_product_puc'),
     path('bulk_product_tag/', views.bulk_assign_tag_to_products,
@@ -112,8 +112,6 @@ urlpatterns = [
                                             name='extracted_text_edit'),
     path('extractedchild/edit/<int:pk>/',   views.extracted_child_edit,
                                             name='extracted_child_edit'),
-    path('listpresence/flag_children/<int:pk>/',   views.flag_qa_children,
-                                            name='flag_presence_children'),
 ]
 
 if settings.DEBUG is True:

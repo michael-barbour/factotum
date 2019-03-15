@@ -1,9 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
-from django.http import HttpResponse
-from django.core.exceptions import ValidationError
-from dashboard.models import Script, DataGroup, DataDocument, ExtractedCPCat
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.exceptions import ValidationError, MultipleObjectsReturned, ObjectDoesNotExist
+from django.urls import reverse
+from django.utils import timezone
+
+from dashboard.forms import create_detail_formset, QANotesForm
+from dashboard.models import Script, DataGroup, DataDocument, ExtractedCPCat, ExtractedText, QAGroup, QANotes
+from factotum.settings import EXTRA
 
 
 @login_required()
@@ -36,8 +41,49 @@ def qa_chemicalpresence(request, pk, template_name='qa/chemical_presence.html'):
     return render(request, template_name, {'datagroup':datagroup, 'extractedcpcats':extractedcpcats})
 
 @login_required()
-def extracted_cpcat_qa(request, pk,
-                            template_name='qa/extracted_cpcat_qa.html', nextid=0):
+def qa_extraction_script(request, pk,
+                         template_name='qa/extraction_script.html'):
+    """
+    The user reviews the extracted text and checks whether it was properly converted to data
+    """
+    es = get_object_or_404(Script, pk=pk)
+    # If the Script has no related ExtractedText objects, redirect back to the QA index
+    if ExtractedText.objects.filter(extraction_script = es).count() == 0 :
+        return redirect('/qa/extractionscript/')
+    # Check whether QA has begun for the script
+    if es.qa_begun:
+        # if the QA process has begun, there should already be one QA Group
+        # associated with the Script.
+        try:
+            # get the QA Group
+            qa_group = QAGroup.objects.get(extraction_script=es,
+                                           qa_complete=False)
+        except MultipleObjectsReturned:
+            qa_group = QAGroup.objects.filter(extraction_script=es,
+                                              qa_complete=False).first()
+        except ObjectDoesNotExist:
+            print('No QA Group was found matching Extraction Script %s' % es.pk)
+
+        texts = ExtractedText.objects.filter(qa_group=qa_group,
+                                             qa_checked=False)
+        return render(request, template_name, {'extractionscript': es,
+                                               'extractedtexts': texts,
+                                               'qagroup': qa_group})
+    else:
+        qa_group = es.create_qa_group()
+        es.qa_begun = True
+        es.save()
+    # Collect all the ExtractedText objects in the QA Group
+    texts = ExtractedText.objects.filter(qa_group=qa_group)
+
+    return render(request, template_name, {'extractionscript': es,
+                                           'extractedtexts': texts,
+                                           'qagroup': qa_group})
+
+
+@login_required()
+def extracted_text_qa(request, pk,
+                      template_name='qa/extracted_text_qa.html', nextid=0):
     """
     Detailed view of an ExtractedText object, where the user can approve the
     record, edit its ExtractedChemical objects, skip to the next ExtractedText
@@ -73,8 +119,9 @@ def extracted_cpcat_qa(request, pk,
     # Create the formset factory for the extracted records
     # The model used for the formset depends on whether the
     # extracted text object matches a data document()
-
-    ParentForm, ChildForm = create_detail_formset(doc, EXTRA)
+    # The QA view should exclude the weight_fraction_type field.
+    ParentForm, ChildForm = create_detail_formset(
+        doc, EXTRA, can_delete=True, exclude=['weight_fraction_type'])
     # extext = extext.pull_out_cp()
     ext_form = ParentForm(instance=extext)
     detail_formset = ChildForm(instance=extext)
@@ -101,9 +148,9 @@ def extracted_cpcat_qa(request, pk,
     }
 
     if request.method == 'POST' and 'save' in request.POST:
-        # print(request.__dict__)
 
-        ParentForm, ChildForm = create_detail_formset(doc, EXTRA)
+        ParentForm, ChildForm = create_detail_formset(
+            doc, EXTRA, can_delete=True, exclude=['weight_fraction_type'])
         # extext = extext.pull_out_cp()
         ext_form = ParentForm(request.POST, instance=extext)
         detail_formset = ChildForm(request.POST, instance=extext)
@@ -119,13 +166,15 @@ def extracted_cpcat_qa(request, pk,
                 # rebuild the formset after saving it
                 detail_formset = ChildForm(instance=extext)
             else:
-                print(detail_formset.errors)
+                pass
+                # print(detail_formset.errors)
                 # TODO: iterate through this dict of errors and map each error to
                 # the corresponding form in the template for rendering
 
             context['detail_formset'] = detail_formset
             context['ext_form'] = ext_form
-            context.update({'notesform': notesform})  # calls the clean method? y?
+            # calls the clean method? y?
+            context.update({'notesform': notesform})
 
         # Add CSS selector classes to each form
         for form in detail_formset:
@@ -152,11 +201,5 @@ def extracted_cpcat_qa(request, pk,
                     reverse('extracted_text_qa', args=[(nextpk)]))
             elif nextpk == 0:
                 return HttpResponseRedirect(
-                    reverse('qa_extractionscript'))
+                            reverse('qa_extractionscript_index'))
     return render(request, template_name, context)
-
-
-@login_required()
-def flag_qa_children(request, pk ):
-    doc = get_object_or_404(DataDocument, pk=pk)
-    return HttpResponse(f"{doc}, we have a problem.")

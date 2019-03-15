@@ -8,6 +8,9 @@ from dashboard.models import *
 from selenium import webdriver
 from django.conf import settings
 from selenium.webdriver.support.select import Select
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as ec
 
 
 def log_karyn_in(object):
@@ -79,10 +82,15 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
 
             self.browser.find_element_by_xpath(
                 '//*[@id="btn-toggle-edit"]').click()
+            # wait for the Save button to be clickable
+            wait = WebDriverWait(self.browser, 10) 
+            save_button = wait.until(ec.element_to_be_clickable((By.XPATH, "//*[@id='save']")))
+            # edit the Raw CAS field
             raw_cas_input = self.browser.find_element_by_xpath(
                 '//*[@id="id_rawchem-1-raw_cas"]')
             raw_cas_input.send_keys('test raw cas')
-            self.browser.find_element_by_xpath('//*[@id="save"]').click()
+            # Save the edits
+            save_button.send_keys("\n")
             # Check for the error message after clicking Save
             parent_div = self.browser.find_element_by_xpath(
                 '//*[@id="id_rawchem-1-raw_cas"]/parent::*')
@@ -93,6 +101,9 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
             # Try editing a new record correctly
             self.browser.find_element_by_xpath(
                 '//*[@id="btn-toggle-edit"]').click()
+            # wait for the Save button to be clickable
+            wait = WebDriverWait(self.browser, 10) 
+            save_button = wait.until(ec.element_to_be_clickable((By.XPATH, "//*[@id='save']")))
             raw_cas_input = self.browser.find_element_by_xpath(
                 '//*[@id="id_rawchem-1-raw_cas"]')
             raw_cas_input.send_keys('test raw cas')
@@ -101,7 +112,7 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
                 '//*[@id="id_rawchem-1-unit_type"]'))
             unit_type_select.select_by_index(1)
 
-            self.browser.find_element_by_xpath('//*[@id="save"]').click()
+            save_button.send_keys("\n")
             # Check for the absence of an error message after clicking Save
             parent_div = self.browser.find_element_by_xpath(
                 '//*[@id="id_rawchem-1-raw_cas"]/parent::*')

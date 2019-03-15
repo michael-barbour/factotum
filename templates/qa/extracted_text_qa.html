@@ -29,7 +29,8 @@
     <h3 class="card-header ">
             <a  href="{% url "data_document" doc.pk %}" target="_blank" title='Data Document Detail Page'>DataDocument: {{ doc.title }}</a>
         </h3>
-            <ul class="list-inline factotum-control-row" role="group" aria-label="Data document editing controls">
+        <!-- maybe include functionality to edit the dd later -->
+            <!-- <ul class="list-inline factotum-control-row" role="group" aria-label="Data document editing controls">
                 <li class="list-inline-item">
                 <a id="edit-data-document" class="btn btn-md " role="button" title="edit data document"
                 data-toggle="modal"
@@ -39,11 +40,10 @@
                 </span> 
                 </a>
             </li>
-            </ul>
+            </ul> -->
 
-
-                <!-- Data Document Modal -->
-                {% include 'forms/data_document_modal.html' with form=edit_doc_form colspan='col-6'%}
+            <!-- Data Document Modal -->
+            <!-- {% include 'forms/data_document_modal.html' with form=edit_doc_form colspan='col-6'%} -->
 
     <table class="table table-bordered">
 

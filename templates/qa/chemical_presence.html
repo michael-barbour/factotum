@@ -13,7 +13,7 @@ QA Chemical Presence for Datagroup {{datagroup.name}}</h1>
     <thead class="table-primary">
         <tr>
             <th>Product Name</th>
-            <th>Document</th>
+            <th>Data Document</th>
             <th>Document Date</th>
             <th>QA Status</th>
         </tr>
@@ -32,7 +32,7 @@ QA Chemical Presence for Datagroup {{datagroup.name}}</h1>
                 Complete
             {%  else %}
                 <a class="btn btn-info btn-sm" role="button"
-                   href="{% url "qa_extracted_cpcat" extractedcpcat.pk %}"> Incomplete - Perform QA </a>
+                   href="{% url "extracted_text_qa" extractedcpcat.pk %}"> Incomplete - Perform QA </a>
             {%  endif %}
           </td>
       </tr>

@@ -15,6 +15,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import NoSuchElementException
 from django.conf import settings
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from dashboard.models import *
@@ -123,3 +124,19 @@ class TestIntegration(StaticLiveServerTestCase):
         tag = self.browser.find_element_by_class_name('taggit-tag')
         tag.click()
         self.assertTrue(submit.is_enabled(), "Button should be enabled")
+
+    def test_field_exclusion(self):
+        doc = self.objects.doc
+        # The element should not appear on the QA page
+        qa_url = self.live_server_url + f'/qa/{doc.pk}/'
+        self.browser.get(qa_url)
+        with self.assertRaises(NoSuchElementException):
+            self.browser.find_element_by_xpath('//*[@id="id_rawchem-0-weight_fraction_type"]')
+        # The element should appear on the datadocument page
+        dd_url = self.live_server_url + f'/datadocument/{doc.pk}/'
+        self.browser.get(dd_url)
+        try:
+            self.browser.find_element_by_xpath('//*[@id="id_rawchem-0-weight_fraction_type"]')
+        except NoSuchElementException:
+            self.fail("Absence of weight_fraction_type element raised exception")
+

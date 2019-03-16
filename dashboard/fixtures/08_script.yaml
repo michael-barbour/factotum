@@ -22,7 +22,7 @@
   pk: 5
   fields: {created_at: !!timestamp '2018-05-11 07:00:37.838615', updated_at: !!timestamp '2019-03-08
       17:36:36.328980', title: Georgia Pacific (extract), url: 'https://github.com/HumanExposure/data_mgmt_scripts/blob/master/extract_GeorgiaPacific.ipynb',
-    qa_begun: true, script_type: EX, confidence: 1}
+    qa_begun: false, script_type: EX, confidence: 1}
 - model: dashboard.script
   pk: 6
   fields: {created_at: !!timestamp '2018-05-11 07:00:37.838615', updated_at: !!timestamp '2019-03-12
@@ -52,7 +52,7 @@
   pk: 11
   fields: {created_at: !!timestamp '2018-05-11 07:00:37.838615', updated_at: !!timestamp '2019-03-12
       01:11:21.760498', title: Unilever MSDS (extract), url: 'https://github.com/HumanExposure/data_mgmt_scripts/blob/master/Unilever_Code/Unilever.py',
-    qa_begun: true, script_type: EX, confidence: 1}
+    qa_begun: false, script_type: EX, confidence: 1}
 - model: dashboard.script
   pk: 12
   fields: {created_at: !!timestamp '2018-06-05 14:56:29.918859', updated_at: !!timestamp '2018-06-05

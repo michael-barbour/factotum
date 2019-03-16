@@ -9,7 +9,7 @@ from dashboard.signals import *
 class PUCAdminForm(forms.ModelForm):
     class Meta:
         model = PUC
-        fields = ['gen_cat', 'prod_fam', 'prod_type', 'description','tags',]
+        fields = ['gen_cat', 'prod_fam', 'prod_type', 'description','tags','kind']
         readonly_fields = ('num_products',)
         widgets = {
             'tags': LabelWidget(model=PUCTag),
@@ -17,6 +17,7 @@ class PUCAdminForm(forms.ModelForm):
 
 class PUCAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'tag_list','num_products')
+    list_filter = ('kind',)
     form = PUCAdminForm
     def get_changeform_initial_data(self, request):
         get_data = super(PUCAdmin, self).get_changeform_initial_data(request)

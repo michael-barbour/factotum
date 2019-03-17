@@ -42,23 +42,27 @@ def qa_chemicalpresence(request, pk, template_name='qa/chemical_presence.html'):
     return render(request, template_name, {'datagroup':datagroup, 'extractedcpcats':extractedcpcats})
 
 def prep_cp_for_qa(extractedcpcat):
+    '''
+    Given an ExtractedCPCat object, select a sample of its ExtractedListPresence children
+    for QA review.
+    '''
+
     from random import shuffle
+    QA_RECORDS_PER_DOCUMENT = 30
 
-    list_presence_count = ExtractedListPresence.objects.filter(extracted_text=extractedcpcat).count()
-    if list_presence_count == 0:
+    if extractedcpcat.rawchem:
+        list_presence_count = extractedcpcat.rawchem.count()
+    else:
         return
-
-    non_qa_list_presence_ids = list(ExtractedListPresence.objects.filter(extracted_text=extractedcpcat,
-                                                                         qa_flag=False
-                                                                         ).values_list('pk',
-                                                                                       flat=True))
+    elps = extractedcpcat.rawchem.select_subclasses()
+    non_qa_list_presence_ids = list(elps.filter(extractedlistpresence__qa_flag=False).values_list('pk',flat=True))
 
     # total number of qa-flagged listpresence objects
-    list_presence_qa_count = list_presence_count - len(non_qa_list_presence_ids)
+    list_presence_qa_count = elps.filter(extractedlistpresence__qa_flag=True).count()
 
     # if less than 30 records (or all records in set) flagged for QA, make up the difference
-    if list_presence_qa_count < 30 and list_presence_qa_count < list_presence_count:
-        random_x = 30 - list_presence_qa_count
+    if list_presence_qa_count < QA_RECORDS_PER_DOCUMENT and list_presence_qa_count < list_presence_count:
+        random_x = QA_RECORDS_PER_DOCUMENT - list_presence_qa_count
         shuffle(non_qa_list_presence_ids)
         list_presence = ExtractedListPresence.objects.filter(pk__in=non_qa_list_presence_ids[:random_x])
         for lp in list_presence:

@@ -120,16 +120,6 @@ class TestQaPage(TestCase):
         response = self.client.get('/qa/extractedtext/7', follow=True)
         # print(response.context['extracted_text'])
 
-    def test_chemical_presence_formset(self):
-        # Open the Script page to create a QA Group
-        response = self.client.get('/qa/extractionscript/11', follow=True)
-        # Follow the first approval link
-        response = self.client.get('/qa/extractedtext/254781', follow=True)
-        self.assertIn(b'<input type="text" name="rawchem-0-raw_cas" value="0000064-17-5"', response.content)
-        self.assertIn(b'<input type="text" name="rawchem-0-raw_chem_name" value="sd alcohol 40-b (ethanol)"', response.content)
-        # Check for the presence of the new Chemical Presence-specific class tags
-        self.assertIn(b'class="detail-control form-control CP"', response.content)
-
     def test_hidden_fields(self):
         '''ExtractionScript 15 includes a functional use data group with pk = 5.
         Its QA page should hide the composition fields '''

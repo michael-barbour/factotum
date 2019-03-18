@@ -1,6 +1,5 @@
 from django.db import models
 from .extracted_text import ExtractedText
-from .extracted_list_presence import ExtractedListPresence
 
 
 class ExtractedCPCat(ExtractedText):

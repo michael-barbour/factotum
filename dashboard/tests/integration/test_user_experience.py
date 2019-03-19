@@ -74,7 +74,7 @@ class TestIntegration(StaticLiveServerTestCase):
         self.assertIn('/datasource/', self.browser.current_url,
                       "User should always return to detail page after submit")
 
-        num_pucs = len(PUC.objects.all())
+        num_pucs = len(PUC.objects.filter(kind='FO'))
         self.browser.get(self.live_server_url)
         import time
         time.sleep(3)  # or however long you think it'll take you to scroll down to bubble chart

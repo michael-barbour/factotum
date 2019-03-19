@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dashboard', '0095_dd_url_and_raw_category_bigger'),
+        ('dashboard', '0096_puc_kind'),
     ]
 
     operations = [

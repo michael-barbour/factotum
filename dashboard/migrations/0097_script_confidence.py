@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dashboard', '0096_QA_for_list_presence'),
+        ('dashboard', '0096_puc_kind'),
     ]
 
     operations = [

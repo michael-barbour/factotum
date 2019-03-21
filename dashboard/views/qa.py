@@ -166,10 +166,6 @@ def extracted_text_qa(request, pk,
         a = extext.qa_group.get_approved_doc_count()
         r = ExtractedText.objects.filter(qa_group=extext.qa_group).count() - a
         stats = '%s document(s) approved, %s documents remaining' % (a, r)
-        
-
-
-
 
     referer = 'data_document' if 'datadocument' in request.path else 'qa_extraction_script'
 
@@ -277,4 +273,7 @@ def extracted_text_qa(request, pk,
                 return HttpResponseRedirect(
                         extext.get_qa_index_path()
                             )
+        else:
+            # The notesform is not valid
+            pass
     return render(request, template_name, context)

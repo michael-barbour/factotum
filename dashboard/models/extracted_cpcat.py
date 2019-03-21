@@ -14,3 +14,7 @@ class ExtractedCPCat(ExtractedText):
 
     def __str__(self):
         return str(self.prod_name)
+
+    @property
+    def qa_begun(self):
+        return self.rawchem.select_subclasses().filter(extractedlistpresence__qa_flag=True).count() > 0

@@ -32,13 +32,11 @@ def qa_chemicalpresence_index(request, template_name='qa/chemical_presence_index
     return render(request, template_name, {'datagroups': datagroups})
 
 @login_required()
-def qa_chemicalpresence(request, pk, template_name='qa/chemical_presence.html'):
+def qa_chemicalpresence_group(request, pk, template_name='qa/chemical_presence.html'):
     datagroup = DataGroup.objects.get(pk=pk)
     if datagroup.group_type.code != 'CP':
         raise ValidationError('This DataGroup is not of a ChemicalPresence type')
     extractedcpcats = ExtractedCPCat.objects.filter(data_document__data_group=datagroup)
-    for extractedcpcat in extractedcpcats:
-        prep_cp_for_qa(extractedcpcat)
     return render(request, template_name, {'datagroup':datagroup, 'extractedcpcats':extractedcpcats})
 
 def prep_cp_for_qa(extractedcpcat):
@@ -46,11 +44,10 @@ def prep_cp_for_qa(extractedcpcat):
     Given an ExtractedCPCat object, select a sample of its ExtractedListPresence children
     for QA review.
     '''
-
     from random import shuffle
     QA_RECORDS_PER_DOCUMENT = 30
 
-    if extractedcpcat.rawchem:
+    if extractedcpcat.rawchem.count() > 0:
         list_presence_count = extractedcpcat.rawchem.count()
     else:
         return
@@ -69,6 +66,9 @@ def prep_cp_for_qa(extractedcpcat):
             lp.qa_flag = True
             lp.save()
     return
+
+ 
+
 
 @login_required()
 def qa_extraction_script(request, pk,
@@ -119,7 +119,11 @@ def extracted_text_qa(request, pk,
     record, edit its ExtractedChemical objects, skip to the next ExtractedText
     in the QA group, or exit to the index page
     """
-    extext = get_object_or_404(ExtractedText, pk=pk)
+    extext = get_object_or_404(ExtractedText.objects.select_subclasses(), pk=pk)
+    # If the object is an ExtractedCPCat record, there will be no Script
+    # associated with it and no QA Group
+    if hasattr(extext, 'extractedcpcat'):
+        prep_cp_for_qa(extext)
     # The related DataDocument has the same pk as the ExtractedText object
     doc = DataDocument.objects.get(pk=pk)
     exscript = extext.extraction_script
@@ -155,6 +159,11 @@ def extracted_text_qa(request, pk,
     # extext = extext.pull_out_cp()
     ext_form = ParentForm(instance=extext)
     detail_formset = ChildForm(instance=extext)
+
+    if hasattr(extext, 'extractedcpcat') :
+        qs = detail_formset.get_queryset().filter(qa_flag=True)
+        detail_formset._queryset = qs
+    
     # Add CSS selector classes to each form
     for form in detail_formset:
         for field in form.fields:

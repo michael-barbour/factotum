@@ -31,8 +31,13 @@ QA Chemical Presence for Datagroup {{datagroup.name}}</h1>
             {% if extractedcpcat.qa_checked %}
                 Complete
             {%  else %}
-                <a class="btn btn-info btn-sm" role="button"
-                   href="{% url "extracted_text_qa" extractedcpcat.pk %}"> Incomplete - Perform QA </a>
+                {% if extractedcpcat.qa_begun %}
+                    <a class="btn btn-info btn-sm" role="button"
+                    href="{% url "extracted_text_qa" extractedcpcat.pk %}"> Continue QA </a>
+                {% else %}
+                    <a class="btn btn-info btn-sm" role="button"
+                    href="{% url "extracted_text_qa" extractedcpcat.pk %}"> Begin QA </a>
+                {%  endif %}
             {%  endif %}
           </td>
       </tr>

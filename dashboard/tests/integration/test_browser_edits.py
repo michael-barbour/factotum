@@ -110,39 +110,4 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
             self.assertFalse(
                 "errorlist" in card_div.get_attribute("innerHTML"))
 
-    def test_listpresence_qa(self):
-        '''
-        The QA Chemical Presence index page should show a link for each ExtractedCPCat
-        record. Clicking one of those links for the first time runs the
-        prep_cp_for_qa() method. The method sets the qa_flag attribute for randomly
-        chosen ExtractedListPresence records
-        '''
-        # Start at the list of data groups
-        qa_index_link = '/qa/chemicalpresence' 
-        self.browser.get(self.live_server_url + qa_index_link)
-        dg_link = self.browser.find_element_by_xpath(
-            '//*[@id="chemical_presence_table"]/tbody/tr[2]/td[4]/a')
-        dg_url = dg_link.get_attribute("href").rstrip("/")
-        dg_id = dg_url.split("/")[-1]
-        dg = DataGroup.objects.get(pk=dg_id)
-        # Count the qa_flag records inside the data group's data documents
-        dds = dg.datadocument_set.select_related('extractedtext__extractedcpcat').filter(extractedtext__extractedcpcat__isnull=False)
-        for dd in dds:
-            qa_count = dd.extractedtext.extractedcpcat.rawchem.select_subclasses().filter(extractedlistpresence__qa_flag=True).count()
-            self.assertEqual(qa_count, 0, 'There should be no QA-flagged child records under any ExtractedListPresence')
 
-        # click through to the second datagroup with extracted CPCat records
-        # this causes the prep_cp_for_qa method to run
-        dg_link.click()
-
-        # Get the ExtractedCPCat record that corresponds to the second row
-        cpcat_link = self.browser.find_element_by_xpath(
-            '//*[@id="extracted_text_table"]/tbody/tr[2]/td[4]/a')
-        cpcat_url = cpcat_link.get_attribute("href").rstrip("/")
-        cpcat_id = cpcat_url.split("/")[-1]
-        
-        cpcat = ExtractedCPCat.objects.get(pk=cpcat_id)
-        elps = cpcat.rawchem.select_subclasses()
-        qa_elp_count = elps.filter(extractedlistpresence__qa_flag=True).count()
-        self.assertTrue(qa_elp_count > 0, 'After clicking the link there should be some qa_flag records')
-        

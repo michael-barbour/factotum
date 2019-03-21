@@ -372,6 +372,8 @@ def create_detail_formset(document, extra=1, can_delete=False, exclude=[]):
     def four():  # for extracted_list_presence
         ListPresenceFormSet = make_formset(parent, child)
         ParentForm = ExtractedCPCatForm if extracted else ExtractedCPCatEditForm
+
+
         return (ParentForm, ListPresenceFormSet)
 
     def five():  # for extracted_hh_rec

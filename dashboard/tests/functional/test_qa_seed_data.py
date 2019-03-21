@@ -2,6 +2,7 @@ from django.test import Client
 from dashboard.tests.loader import *
 from django.test import TestCase, override_settings, RequestFactory
 from dashboard.models import DataDocument, Script, ExtractedText, ExtractedChemical, QAGroup
+from django.db.models import Count
 
 
 @override_settings(ALLOWED_HOSTS=['testserver'])
@@ -62,9 +63,13 @@ class TestQaPage(TestCase):
     def test_data_document_qa(self):
         # Open the QA page for a Composition ExtractedText record that has no QA group
         # and is in a Script with < 100 documents
-        pk = ExtractedText.objects.filter(qa_group=None).filter(
+        scr = Script.objects.annotate(num_ets=Count('extractedtext')).filter(
+            num_ets__lt=100).filter(script_type='EX').first()
+        pk = ExtractedText.objects.filter(qa_group=None).filter(extraction_script=scr
+                                                                ).filter(
             data_document__data_group__group_type__code='CO').first().pk
         response = self.client.get(f'/qa/extractedtext/{pk}/')
+
         # After opening the QA link from the data document detail page, the
         # following should be true:
         # One new QA group should be created
@@ -84,7 +89,9 @@ class TestQaPage(TestCase):
 
         # Open the QA page for an ExtractedText record that has no QA group and
         # is related to a script with over 100 documents
-        pk = ExtractedText.objects.filter(extraction_script_id=12).first().pk
+        scr = Script.objects.annotate(num_ets=Count(
+            'extractedtext')).filter(num_ets__gt=100).first()
+        pk = ExtractedText.objects.filter(extraction_script=scr).first().pk
         response = self.client.get(f'/qa/extractedtext/{pk}/')
         scr = ExtractedText.objects.get(pk=pk).extraction_script
         # After opening the QA link from the data document detail page, the

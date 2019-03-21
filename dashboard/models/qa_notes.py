@@ -14,6 +14,6 @@ class QANotes(CommonInfo):
         return 'Notes for {}'.format(self.extracted_text)
 
     def clean(self):
-        if self.extracted_text.qa_edited and not self.qa_notes.strip():
+        if self.extracted_text.qa_edited and not self.qa_notes:
             raise ValidationError(
                     _('Before approving, please add a note explaining your edits to the extracted data'))

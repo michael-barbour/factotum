@@ -11,7 +11,7 @@ QA Extraction Scripts</h1>
         <th>Extraction Script</th>
         <th>Documents</th>
         <th>Percent QA Checked</th>
-        <th></th>
+        <th>QA Status</th>
     </thead>
     <tbody>
     {% for extraction_script in extraction_scripts %}
@@ -27,7 +27,6 @@ QA Extraction Scripts</h1>
         <td>{% widthratio extraction_script.qa_complete_extractedtext_count extraction_script.datadocument_count 100 %}%</td>
         <td>
          {% if extraction_script.datadocument_count > 0 %}
-          
             {% if not extraction_script.qa_button_text == "QA Complete" %}
               <a class="btn btn-info btn-sm" role="button" 
                 title="{{ extraction_script.qa_button_text }} on {{ extraction_script.title }}"

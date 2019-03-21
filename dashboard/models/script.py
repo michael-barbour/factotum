@@ -65,14 +65,20 @@ class Script(CommonInfo):
         return pct
 
     def qa_button_text(self):
-        return "Begin QA" if not self.qa_begun else "Continue QA"
+        if self.get_qa_status():
+            return "QA Complete" 
+        elif self.qa_begun:
+            return "Continue QA"
+        else:
+            return "Begin QA"
 
     def get_qa_status(self):
         """
         Compare the derived percent checked against the threshold constant
         Return true when the percent checked is above the threshold
         """
-        return self.get_pct_checked_numeric() >= QA_COMPLETE_PERCENTAGE * 100
+        print(self.get_pct_checked_numeric())
+        return self.get_pct_checked_numeric() >= self.QA_COMPLETE_PERCENTAGE * 100
 
     def create_qa_group(self, force_doc_id=None):
         """

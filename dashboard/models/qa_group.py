@@ -7,6 +7,7 @@ from .script import Script
 class QAGroup(CommonInfo):
     extraction_script = models.ForeignKey(Script,
                                     on_delete=models.CASCADE,
+                                    related_name='qa_group',
                                     blank=True, null=True,
                                     limit_choices_to={'script_type': 'EX'}, )
     qa_complete = models.BooleanField(default=False)

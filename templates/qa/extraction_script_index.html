@@ -27,9 +27,15 @@ QA Extraction Scripts</h1>
         <td>{% widthratio extraction_script.qa_complete_extractedtext_count extraction_script.datadocument_count 100 %}%</td>
         <td>
          {% if extraction_script.datadocument_count > 0 %}
-          <a class="btn btn-info btn-sm" role="button" title="{{ extraction_script.qa_button_text }} on {{ extraction_script.title }}"
+          
+            {% if not extraction_script.qa_button_text == "QA Complete" %}
+              <a class="btn btn-info btn-sm" role="button" 
+                title="{{ extraction_script.qa_button_text }} on {{ extraction_script.title }}"
            href='{% url "qa_extraction_script" extraction_script.id %}'> {{ extraction_script.qa_button_text }}
-         </a>
+                </a>
+            {% else %}
+            {{ extraction_script.qa_button_text }}
+            {% endif %}
          {% endif %}
         </td>
       </tr>

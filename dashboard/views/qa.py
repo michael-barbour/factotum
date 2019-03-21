@@ -81,8 +81,8 @@ def qa_extraction_script(request, pk,
     if ExtractedText.objects.filter(extraction_script = es).count() == 0 :
         return redirect('/qa/extractionscript/')
     # Check whether QA has begun for the script
-    if es.qa_begun:
-        # if the QA process has begun, there should already be one QA Group
+    if es.qa_group.count() > 0:
+        # if the QA process has begun, there will already be one QA Group
         # associated with the Script.
         try:
             # get the QA Group
@@ -117,37 +117,60 @@ def extracted_text_qa(request, pk,
     """
     Detailed view of an ExtractedText object, where the user can approve the
     record, edit its ExtractedChemical objects, skip to the next ExtractedText
-    in the QA group, or exit to the index page
+    in the QA group, or exit to the index page.
+    This view processes objects of different models with different QA workflows. 
+    The qa_focus variable is used to indicate whether an ExtractedText object is
+    part of a QA Group, as with Composition records, or if the DataDocument/ExtractedText
+    is its own QA Group, as with ExtractedCPCat and ExtractedHHDoc records.  
     """
     extext = get_object_or_404(ExtractedText.objects.select_subclasses(), pk=pk)
-    # If the object is an ExtractedCPCat record, there will be no Script
-    # associated with it and no QA Group
-    if hasattr(extext, 'extractedcpcat'):
-        prep_cp_for_qa(extext)
-    # The related DataDocument has the same pk as the ExtractedText object
+    
     doc = DataDocument.objects.get(pk=pk)
     exscript = extext.extraction_script
-    # when not coming from extraction_script page, we don't necessarily have a qa_group created
-    if not extext.qa_group:
-        # create the qa group with the optional ExtractedText pk argument
-        # so that the ExtractedText gets added to the QA group even if the
-        # group uses a random sample
-        qa_group = exscript.create_qa_group(pk)
-        exscript.qa_begun = True
-        exscript.save()
-        extext.qa_group = qa_group
-        extext.save()
-    # get the next unapproved Extracted Text object
-    # Its ID will populate the URL for the "Skip" button
-    if extext.qa_checked:  # if ExtractedText object's QA process done, use 0
-        nextid = 0
-    else:
-        nextid = extext.next_extracted_text_in_qa_group()
-    # derive number of approved records and remaining unapproved in QA Group
+    group_type_code = extext.data_document.data_group.group_type.code
 
-    a = extext.qa_group.get_approved_doc_count()
-    r = ExtractedText.objects.filter(qa_group=extext.qa_group).count() - a
-    stats = '%s document(s) approved, %s documents remaining' % (a, r)
+    if group_type_code in ['CP','HH']:
+        qa_focus = 'doc'
+        #
+        # Document-focused QA process
+        #
+        # If the object is an ExtractedCPCat record, there will be no Script
+        # associated with it and no QA Group
+        prep_cp_for_qa(extext)
+
+        stats = ''
+        qa_home_page = f'qa/chemicalpresencegroup/%s/' % extext.data_document.data_group.id
+    else:
+        qa_focus = 'script'
+        #
+        # Extraction Script-focused QA process
+        #
+        # when not coming from extraction_script page, the document's script might not have 
+        # a QA Group yet. 
+        if not extext.qa_group:
+            # create the qa group with the optional ExtractedText pk argument
+            # so that the ExtractedText gets added to the QA group even if the
+            # group uses a random sample
+            qa_group = exscript.create_qa_group(pk)
+            exscript.qa_begun = True
+            exscript.save()
+            extext.qa_group = qa_group
+            extext.save()
+        # get the next unapproved Extracted Text object
+        # Its ID will populate the URL for the "Skip" button
+        if extext.qa_checked:  # if ExtractedText object's QA process done, use 0
+            nextid = 0
+        else:
+            nextid = extext.next_extracted_text_in_qa_group()
+        # derive number of approved records and remaining unapproved in QA Group
+        a = extext.qa_group.get_approved_doc_count()
+        r = ExtractedText.objects.filter(qa_group=extext.qa_group).count() - a
+        stats = '%s document(s) approved, %s documents remaining' % (a, r)
+        
+
+
+
+
     referer = 'data_document' if 'datadocument' in request.path else 'qa_extraction_script'
 
     # Create the formset factory for the extracted records
@@ -160,7 +183,9 @@ def extracted_text_qa(request, pk,
     ext_form = ParentForm(instance=extext)
     detail_formset = ChildForm(instance=extext)
 
-    if hasattr(extext, 'extractedcpcat') :
+    # If the document is CPCat or HHE type, the display should only show the
+    # child records where qa_flag = True
+    if qa_focus == 'doc' :
         qs = detail_formset.get_queryset().filter(qa_flag=True)
         detail_formset._queryset = qs
     
@@ -232,13 +257,24 @@ def extracted_text_qa(request, pk,
             extext.qa_checked = True
             extext.save()
             notesform.save()
+            # After approval, the user proceeds to either the next document
+            # in the QA Group, to the extractionscript QA index, or to the
+            # index page that matches the document's data group type 
+            # 
+
             if referer == 'data_document':
+                # The user got to the QA page from a data document detail page,
+                # so return there
                 return HttpResponseRedirect(
                     reverse(referer, kwargs={'pk': pk}))
             elif not nextpk == 0:
                 return HttpResponseRedirect(
                     reverse('extracted_text_qa', args=[(nextpk)]))
             elif nextpk == 0:
+                # return to the top of the most local QA stack.
+                # that may be the list of ExtractionScripts or 
+                # the list of Chemical Presence Data Groups
                 return HttpResponseRedirect(
-                            reverse('qa_extractionscript_index'))
+                        extext.get_qa_index_path()
+                            )
     return render(request, template_name, context)

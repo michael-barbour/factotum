@@ -38,9 +38,10 @@
         <dt class="col-lg-3">Data Document Type</dt>
         <dd class="col-lg-9">
             <form method="post" action="{% url 'save_doc_form' doc.pk %}" novalidate>
+                <input type="hidden" name="referer" value="{{request.path}}" />
                 {% csrf_token %}
                 {{ document_type_form }}
-                {{ detail_formset.management_form }}
+                {{ document_type_form.management_form }}
             </form>
         </dd>
         <dt class="col-lg-3">Download Script</dt>

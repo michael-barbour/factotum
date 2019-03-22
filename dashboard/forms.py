@@ -340,10 +340,9 @@ def create_detail_formset(document, extra=1, can_delete=False, exclude=[]):
                      formset=BaseInlineFormSet,
                      form=forms.ModelForm,
                      exclude=exclude):
+        formset_fields = model.detail_fields()
         if exclude:
-            formset_fields = list(set(model.detail_fields()) - set(exclude))
-        else:
-            formset_fields = model.detail_fields()
+            formset_fields = [in_field for in_field in formset_fields if not in_field in exclude]
         return forms.inlineformset_factory(parent_model=parent_model,
                                            model=model,
                                            fields=formset_fields,

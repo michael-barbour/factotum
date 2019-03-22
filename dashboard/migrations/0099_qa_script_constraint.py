@@ -3,6 +3,12 @@
 from django.db import migrations, models
 import django.db.models.deletion
 
+from django.apps import apps
+
+def get_default_extractionscript():
+    Script = apps.get_model('dashboard', 'Script')
+    ex = Script.objects.filter(title='Manual (dummy)').filter(script_type='EX').first()
+    return ex.id
 
 class Migration(migrations.Migration):
 
@@ -14,6 +20,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='qagroup',
             name='extraction_script',
-            field=models.ForeignKey(blank=True, limit_choices_to={'script_type': 'EX'}, null=True, on_delete=django.db.models.deletion.CASCADE, to='dashboard.Script'),
+            field=models.ForeignKey(default=get_default_extractionscript(), blank=False, limit_choices_to={'script_type': 'EX'}, null=False, on_delete=django.db.models.deletion.CASCADE, to='dashboard.Script'),
         ),
     ]

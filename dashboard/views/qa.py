@@ -6,10 +6,10 @@ from django.core.exceptions import ValidationError, MultipleObjectsReturned, Obj
 from django.urls import reverse
 from django.utils import timezone
 
-from dashboard.forms import create_detail_formset, QANotesForm
+from dashboard.forms import create_detail_formset, QANotesForm, DocumentTypeForm
 from dashboard.models import Script, DataGroup, DataDocument,\
     ExtractedCPCat, ExtractedText, ExtractedListPresence,\
-    QAGroup, QANotes
+    QAGroup, QANotes, DocumentType
 from factotum.settings import EXTRA
 
 
@@ -123,7 +123,8 @@ def extracted_text_qa(request, pk,
     part of a QA Group, as with Composition records, or if the DataDocument/ExtractedText
     is its own QA Group, as with ExtractedCPCat and ExtractedHHDoc records.  
     """
-    extext = get_object_or_404(ExtractedText.objects.select_subclasses(), pk=pk)
+    extext = get_object_or_404(
+	        ExtractedText.objects.select_subclasses(), pk=pk)
     
     doc = DataDocument.objects.get(pk=pk)
     exscript = extext.extraction_script
@@ -174,7 +175,8 @@ def extracted_text_qa(request, pk,
     # extracted text object matches a data document()
     # The QA view should exclude the weight_fraction_type field.
     ParentForm, ChildForm = create_detail_formset(
-        doc, EXTRA, can_delete=True, exclude=['weight_fraction_type'])
+        doc, EXTRA, can_delete=True, 
+        exclude=['weight_fraction_type', 'true_cas', 'true_chemname', 'sid'])
     # extext = extext.pull_out_cp()
     ext_form = ParentForm(instance=extext)
     detail_formset = ChildForm(instance=extext)
@@ -195,6 +197,13 @@ def extracted_text_qa(request, pk,
     note, created = QANotes.objects.get_or_create(extracted_text=extext)
     notesform = QANotesForm(instance=note)
 
+    # Allow the user to edit the data document type
+    document_type_form = DocumentTypeForm(request.POST or None, instance=doc)
+    qs = DocumentType.objects.filter(group_type=doc.data_group.group_type)
+    document_type_form.fields['document_type'].queryset = qs
+    # the form class overrides the label, so over-override it
+    document_type_form.fields['document_type'].label = 'Data document type:'
+
     context = {
         'extracted_text': extext,
         'doc': doc,
@@ -204,23 +213,23 @@ def extracted_text_qa(request, pk,
         'detail_formset': detail_formset,
         'notesform': notesform,
         'ext_form': ext_form,
-        'referer': referer
+        'referer': referer,
+        'document_type_form': document_type_form
     }
 
     if request.method == 'POST' and 'save' in request.POST:
-
+        # The save action only applies to the child records and QA properties,
+        # no need to save the ExtractedText form
         ParentForm, ChildForm = create_detail_formset(
             doc, EXTRA, can_delete=True, exclude=['weight_fraction_type'])
         # extext = extext.pull_out_cp()
-        ext_form = ParentForm(request.POST, instance=extext)
         detail_formset = ChildForm(request.POST, instance=extext)
 
         notesform = QANotesForm(request.POST, instance=note)
         notesform.save()
-        if detail_formset.has_changed() or ext_form.has_changed():
-            if detail_formset.is_valid() and ext_form.is_valid():
+        if detail_formset.has_changed():
+            if detail_formset.is_valid() :
                 detail_formset.save()
-                ext_form.save()
                 extext.qa_edited = True
                 extext.save()
                 # rebuild the formset after saving it

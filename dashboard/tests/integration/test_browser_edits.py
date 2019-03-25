@@ -92,6 +92,8 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
             # Save the edits
             save_button.send_keys("\n")
             # Check for the error message after clicking Save
+            wait.until(ec.visibility_of(self.browser.find_element_by_xpath(
+                '//*[@id="id_rawchem-1-raw_cas"]/parent::*')))
             parent_div = self.browser.find_element_by_xpath(
                 '//*[@id="id_rawchem-1-raw_cas"]/parent::*')
             card_div = parent_div.find_element_by_xpath(

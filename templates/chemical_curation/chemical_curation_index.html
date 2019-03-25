@@ -4,15 +4,17 @@
 {% block title %}Chemical Curation{% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-3"><a class="btn btn-primary btn-sm" role="button" href="{% url "download_raw_chems" %}">Download
-            Uncurated
-            Chemicals</a></div>
+    <div class="row m-2">
+        <div class="col-3"><a class="btn btn-outline-primary btn-sm" role="button"
+                              href="{% url "download_raw_chems" %}">Download Uncurated Chemicals</a></div>
         <div class="col-9">Download {{ uncurated_chemical_count | intcomma }} extracted chemical records
             without DSSTOX SIDs assigned.
         </div>
-
-
+    </div>
+    <div class="row m-2">
+        <div class="col-3"><a class="btn btn-outline-primary btn-sm"
+                              role="button" href="{% url "upload_raw_chems" %}">Upload curated CSV Chemicals</a>
+        </div>
     </div>
 
 

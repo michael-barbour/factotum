@@ -22,6 +22,12 @@ INDEX.settings(
 
 @INDEX.doc_type
 class DataDocumentDocument(DocType):
+
+    facet_model_name = fields.KeywordField()
+
+    def prepare_facet_model_name(self, instance):
+        return "Data Document"
+
     class Meta:
         model = DataDocument # The model associated with this DocType
 

@@ -22,16 +22,25 @@ INDEX.settings(
 @INDEX.doc_type
 class ChemicalDocument(DocType):
 
+    facet_model_name = fields.KeywordField()
+
+    def prepare_facet_model_name(self, instance):
+        return "Chemical"
+
+    raw_cas = fields.KeywordField()
+
+    def prepare_raw_cas(self, instance):
+        return instance.raw_cas
+
     dsstox = fields.ObjectField(properties={
-        'true_cas': fields.TextField(),
-        'true_chemname': fields.TextField(),
+        'true_cas': fields.KeywordField(),
+        'true_chemname': fields.KeywordField(),
     })
     class Meta:
         model = RawChem # The model associated with this DocType
 
         # The fields of the model you want to be indexed in Elasticsearch
         fields = [
-            'raw_cas',
             'raw_chem_name',
         ]
 

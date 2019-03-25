@@ -13,7 +13,7 @@ class ProductToPUC(CommonInfo):
                                 ('RU', 'Rule Based'),
                                 ('MB', 'Manual Batch'))
 
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='pucs')
     puc = models.ForeignKey(PUC, on_delete=models.CASCADE)
     puc_assigned_usr = models.ForeignKey('auth.User',
                                          on_delete=models.SET_NULL,

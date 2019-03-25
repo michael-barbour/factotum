@@ -35,6 +35,8 @@ urlpatterns = [
                                             name='data_group_delete'),
     path('datadocument/delete/<int:pk>/', views.data_document_delete,
                                             name='data_document_delete'),
+    path('datadocument/note/<int:pk>/', views.data_document_note,
+                                            name='data_document_note'),
     path('product_curation/', views.product_curation_index,
                                             name='product_curation'),
     path('category_assignment/<int:pk>/', views.category_assignment,
@@ -79,12 +81,9 @@ urlpatterns = [
     # path('find/', views.search.FacetedSearchView.as_view(),
     #                                         name='haystack_search'),
     path('p_json/', views.product_ajax,    name='p_ajax_url'),
-    path('chem_search/', views.chemical_search.chem_search_json_view,
-                                            name='chem_search_json_view'),
-    path('findchemical/', views.chemical_search.chem_search,
-                                            name='chem_search'),
     path('pucs/', views.puc_list,  name='puc_list'),
     path('dl_pucs/', views.download_PUCs,  name='download_PUCs'),
+    path('dl_raw_chems/', views.download_raw_chems,  name='download_raw_chems'),
     path('dsstox_lookup/<int:pk>/', views.dsstox_lookup_detail,
                                             name='dsstox_lookup'),
     path('habitsandpractices/<int:pk>/', views.habitsandpractices,
@@ -102,6 +101,10 @@ urlpatterns = [
                                             name='data_group_diagnostics'),
     path('datagroup/diagnostics/',   views.data_group_diagnostics,
                                             name='data_group_diagnostics'),
+    path('extractedtext/edit/<int:pk>/',   views.extracted_text_edit,
+                                            name='extracted_text_edit'),
+    path('extractedchild/edit/<int:pk>/',   views.extracted_child_edit,
+                                            name='extracted_child_edit'),
 ]
 
 if settings.DEBUG is True:

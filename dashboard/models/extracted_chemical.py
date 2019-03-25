@@ -12,8 +12,7 @@ def validate_ingredient_rank(value):
             (f'Quantity {value} is not allowed'), params={'value': value},)
 
 class ExtractedChemical(CommonInfo, RawChem):
-    extracted_text = models.ForeignKey(ExtractedText, on_delete=models.CASCADE,
-                                                    related_name='chemicals')
+
     raw_cas_old = models.CharField("Raw CAS", max_length=100, null=True, blank=True)
     raw_chem_name_old = models.CharField("Raw chemical name", max_length=500,
                                                         null=True, blank=True)
@@ -29,10 +28,6 @@ class ExtractedChemical(CommonInfo, RawChem):
     ingredient_rank = models.PositiveIntegerField(null=True, blank=True,
                                         validators=[validate_ingredient_rank])
     raw_central_comp = models.CharField(max_length=100, null=True, blank=True)
-
-    rawchem_ptr = models.OneToOneField(blank=False, null=False,
-            related_name='extracted_chemical', parent_link=True ,
-            on_delete=models.CASCADE, to='dashboard.RawChem')
 
     def __str__(self):
         return str(self.raw_chem_name) if self.raw_chem_name else ''

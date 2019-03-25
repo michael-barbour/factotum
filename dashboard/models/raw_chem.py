@@ -1,5 +1,6 @@
 from django.db import models
 from .dsstox_lookup import DSSToxLookup
+from .extracted_text import ExtractedText
 from model_utils.managers import InheritanceManager
 from django.apps import apps
 from django.db.models.signals import pre_save
@@ -9,6 +10,8 @@ from model_utils import FieldTracker
 
 
 class RawChem(models.Model):
+    extracted_text = models.ForeignKey(ExtractedText, related_name = 'rawchem', 
+        on_delete=models.CASCADE, null=False, blank = False)
 
     raw_cas = models.CharField("Raw CAS", max_length=100, null=True, blank=True)
     raw_chem_name = models.CharField("Raw chemical name", max_length=500,
@@ -26,7 +29,7 @@ class RawChem(models.Model):
     tracker = FieldTracker()
 
     def __str__(self):
-        return self.raw_chem_name
+        return str(self.raw_chem_name) if self.raw_chem_name else ''
 
     @property
     def sid(self):

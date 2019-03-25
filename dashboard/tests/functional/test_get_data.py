@@ -93,9 +93,8 @@ class TestGetData(TestCase):
         for e in stats:
             if e['sid'] == 'DTXSID9022528':
                ethylparaben_stats = e
-
         self.assertEqual(1, ethylparaben_stats['dds_wf_n'], 'There should be 1 extracted chemical \
-        with weight fraction data associated with ethylaraben')
+        with weight fraction data associated with ethylparaben')
         # add weight fraction data to a different extractedchemical
         ec = ExtractedChemical.objects.get(rawchem_ptr_id = 73)
         ec.raw_min_comp=0.1
@@ -105,8 +104,8 @@ class TestGetData(TestCase):
             if e['sid'] == 'DTXSID9022528':
                ethylparaben_stats = e
 
-        self.assertEqual(1, ethylparaben_stats['dds_wf_n'], 'There should be 2 extracted chemicals \
-        with weight fraction data associated with ethylaraben')
+        self.assertEqual(2, ethylparaben_stats['dds_wf_n'], 'There should be 2 extracted chemicals \
+        with weight fraction data associated with ethylparaben')
 
 
     def test_dtxsid_products_n(self):
@@ -155,3 +154,24 @@ class TestGetData(TestCase):
         response = self.client.get('/get_data/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Download PUCs')
+
+    def test_download_raw_chem_button(self):
+        response = self.client.get('/get_data/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Download Uncurated Chemicals')
+        # Pick one curated and one non-curated RawChem record, and 
+        # confirm that the downloaded file excludes and includes them,
+        # respectively.
+        
+        rc = RawChem.objects.filter(dsstox_id__isnull=True).first()
+        response = self.client.get('/dl_raw_chems/')
+        rc_row = f'%s,%s,%s,%s\r\n' % (rc.id, rc.raw_cas, rc.raw_chem_name, rc.rid if rc.rid else '')
+        rc_row = bytes(rc_row, 'utf-8')
+        self.assertIn(rc_row,response.content, 'The non-curated row should appear')
+
+        rc = RawChem.objects.filter(dsstox_id__isnull=False).first()
+        rc_row = f'%s,%s,%s,%s\r\n' % (rc.id, rc.raw_cas, rc.raw_chem_name, rc.sid if rc.sid else '')
+        rc_row = bytes(rc_row, 'utf-8')
+        self.assertNotIn(rc_row,response.content, 'The curated row should not appear')
+        
+

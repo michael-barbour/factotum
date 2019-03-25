@@ -133,3 +133,10 @@ ELASTICSEARCH_DSL={
         'hosts': 'localhost:9200'
     },
 }
+
+# Name of the Elasticsearch indexes
+ELASTICSEARCH_INDEX_NAMES = {
+    'dashboard.search_indexes.documents.datadocument': 'datadocument',
+    'dashboard.search_indexes.documents.chemical': 'chemical',
+    'dashboard.search_indexes.documents.product': 'product',
+}

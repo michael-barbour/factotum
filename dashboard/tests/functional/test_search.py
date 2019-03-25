@@ -1,7 +1,7 @@
 from django.test import TestCase
 from dashboard.tests.loader import load_model_objects, fixtures_standard
 from dashboard.models import DataDocument
-from dashboard.documents import DataDocumentDocument
+from dashboard.search_indexes.documents.datadocument import DataDocumentDocument
 from django_elasticsearch_dsl import DocType, Index
 
 class TestSearch(TestCase):

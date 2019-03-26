@@ -42,23 +42,24 @@ def upload_raw_chem_csv(request):
         if csv_file.multiple_chunks():
             messages.error(request, "Uploaded file is too big (%.2f MB)." % (csv_file.size / (1000 * 1000),))
             return HttpResponseRedirect(reverse("upload_raw_chem_csv"))
-        # TODO if file does not have the right column headers, return
 
         file_data = csv_file.read().decode("utf-8")
-
         lines = file_data.split("\n")
+
         # loop over the lines and save them in db. If error , store as string and then display
         for line in lines:
             fields = line.split(",")
             data_dict = {}
-            data_dict["name"] = fields[0]
-            data_dict["start_date_time"] = fields[1]
-            data_dict["end_date_time"] = fields[2]
-            data_dict["notes"] = fields[3]
+            data_dict["raw_chemical_id"] = fields[0].strip()
+            data_dict["rid"] = fields[1].strip()
+            data_dict["sid"] = fields[2].strip()
+            data_dict["true_chemical_name"] = fields[3].strip()
+            data_dict["true_cas"] = fields[4].strip()
+            if not data_dict["raw_chemical_id"] == "raw_chemical_id":
+                print(data_dict)
         try:
-            form = EventsForm(data_dict)
-            if form.is_valid():
-                form.save()
+            # TODO Save the record here
+            print(line["true_chemical_name"])
         except Exception as e:
             pass
 

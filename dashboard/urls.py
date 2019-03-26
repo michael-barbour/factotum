@@ -41,6 +41,8 @@ urlpatterns = [
                                             name='product_curation'),
     path('chemical_curation/', views.chemical_curation_index,
          name='chemical_curation'),
+    path('chemical_curation/upload_raw_chemical/', views.upload_raw_chem_csv,
+         name='upload_raw_chem_csv'),
     path('category_assignment/<int:pk>/', views.category_assignment,
                                             name='category_assignment'),
     path('link_product_list/<int:pk>/', views.link_product_list,

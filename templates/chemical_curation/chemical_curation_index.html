@@ -3,6 +3,14 @@
 {% load humanize %}
 {% block title %}Chemical Curation{% endblock %}
 
+{% block errors %}
+    {% if records_processed %}
+        <div class="alert alert-success" role="alert">
+            {{ records_processed }} records processed.
+        </div>
+    {% endif %}
+{% endblock %}
+
 {% block content %}
     <h1 class="mb-5"><span class="oi oi-beaker" title="factotum" aria-hidden="true"></span> Chemical Curation</h1>
     <div class="row">
@@ -18,12 +26,12 @@
         <div class="col-3">Upload curated CSV Chemicals
         </div>
         <div class="col-9">
-            <div class="text-info mb-4">The uploaded csv must have the following column names (header)0 in this order:
+            <div class="text-info mb-4">The uploaded csv must have the following column names in this order:
                 <br>
                 <code class="m-2">external_id, rid, sid, true_chemical_name, true_cas</code>
             </div>
 
-            <form action="{% url "upload_raw_chem_csv" %}" method="POST"
+            <form action="{% url "chemical_curation" %}" method="POST"
                   enctype="multipart/form-data" class="form-horizontal">
                 {% csrf_token %}
                 <div class="form-group">

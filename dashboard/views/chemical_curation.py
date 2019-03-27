@@ -10,7 +10,62 @@ import csv
 @login_required()
 def chemical_curation_index(request, template_name='chemical_curation/chemical_curation_index.html'):
     uncurated_chemical_count = RawChem.objects.filter(dsstox_id=None).count()
-    data = {'uncurated_chemical_count': uncurated_chemical_count}
+    records_processed = 0
+    data = {'uncurated_chemical_count': uncurated_chemical_count, 'records_processed': records_processed}
+    # if not GET, then proceed
+    if "POST" == request.method:
+        try:
+            csv_file = request.FILES["csv_file"]
+            if not csv_file.name.endswith('.csv'):
+                messages.error(request, 'File is not CSV type')
+                return HttpResponseRedirect(reverse("upload_raw_chem_csv"))
+            # if file is too large, return
+            if csv_file.multiple_chunks():
+                messages.error(request, "Uploaded file is too big (%.2f MB)." % (csv_file.size / (1000 * 1000),))
+                return HttpResponseRedirect(reverse("upload_raw_chem_csv"))
+
+            file_data = csv_file.read().decode("utf-8")
+            lines = file_data.split("\n")
+
+            # loop over the lines and save them in db. If error , store as string and then display
+            records_processed = len(lines) - 1
+            for line in lines:
+                fields = line.split(",")
+                data_dict = {}
+                data_dict["raw_chemical_id"] = fields[0].strip()
+                data_dict["rid"] = fields[1].strip()
+                data_dict["sid"] = fields[2].strip()
+                data_dict["true_chemical_name"] = fields[3].strip()
+                data_dict["true_cas"] = fields[4].strip()
+                # If it is the header row do not process it
+                if data_dict["raw_chemical_id"] != "raw_chemical_id":
+                    try:
+                        # Check to see of SID exists,
+                        if DSSToxLookup.objects.filter(sid=data_dict['sid']).exists():
+                            # if is does exist Overwrite the existing True CAS and Chemname
+                            chem = DSSToxLookup.objects.filter(sid=data_dict['sid']). \
+                                update(true_cas=data_dict["true_cas"],
+                                       true_chemname=data_dict["true_chemical_name"])
+                        # if not create it in DSSToxLookup
+                        else:
+                            chem = DSSToxLookup.objects.create(true_cas=data_dict["true_cas"],
+                                                               true_chemname=data_dict["true_chemical_name"],
+                                                               sid=data_dict["sid"])
+                            chem.save()
+                        # ensure link back to DSSToxLookup
+                        sid_id = DSSToxLookup.objects.filter(sid=data_dict['sid'])
+                        RawChem.objects.filter(id=data_dict["raw_chemical_id"]).update(rid=data_dict['rid'],
+                                                                                       dsstox_id=sid_id[0].id)
+                    except Exception as e:
+                        print(e)
+                        pass
+
+        except Exception as e:
+            messages.error(request, "Unable to upload file. " + repr(e))
+    if records_processed > 0:
+        print(records_processed)
+        data.update({"records_processed": records_processed})
+    print(data)
     return render(request, template_name, data)
 
 
@@ -25,45 +80,3 @@ def download_raw_chems(stats):
     for rawchem in RawChem.objects.filter(dsstox_id=None):
         writer.writerow([rawchem.id, rawchem.raw_cas, rawchem.raw_chem_name, rawchem.rid if rawchem.rid else ''])
     return response
-
-
-@login_required()
-def upload_raw_chem_csv(request):
-    data = {}
-    if "GET" == request.method:
-        return render(request, "chemical_curation/chemical_curation_index.html", data)
-        # if not GET, then proceed
-    try:
-        csv_file = request.FILES["csv_file"]
-        if not csv_file.name.endswith('.csv'):
-            messages.error(request, 'File is not CSV type')
-            return HttpResponseRedirect(reverse("upload_raw_chem_csv"))
-        # if file is too large, return
-        if csv_file.multiple_chunks():
-            messages.error(request, "Uploaded file is too big (%.2f MB)." % (csv_file.size / (1000 * 1000),))
-            return HttpResponseRedirect(reverse("upload_raw_chem_csv"))
-
-        file_data = csv_file.read().decode("utf-8")
-        lines = file_data.split("\n")
-
-        # loop over the lines and save them in db. If error , store as string and then display
-        for line in lines:
-            fields = line.split(",")
-            data_dict = {}
-            data_dict["raw_chemical_id"] = fields[0].strip()
-            data_dict["rid"] = fields[1].strip()
-            data_dict["sid"] = fields[2].strip()
-            data_dict["true_chemical_name"] = fields[3].strip()
-            data_dict["true_cas"] = fields[4].strip()
-            if not data_dict["raw_chemical_id"] == "raw_chemical_id":
-                print(data_dict)
-        try:
-            # TODO Save the record here
-            print(line["true_chemical_name"])
-        except Exception as e:
-            pass
-
-    except Exception as e:
-        messages.error(request, "Unable to upload file. " + repr(e))
-
-    return HttpResponseRedirect(reverse("upload_raw_chem_csv"))

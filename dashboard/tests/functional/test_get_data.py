@@ -107,7 +107,6 @@ class TestGetData(TestCase):
         self.assertEqual(2, ethylparaben_stats['dds_wf_n'], 'There should be 2 extracted chemicals \
         with weight fraction data associated with ethylparaben')
 
-
     def test_dtxsid_products_n(self):
         dtxs =["DTXSID9022528", "DTXSID1020273","DTXSID6026296","DTXSID2021781"]
         # Functional test: the stats calculation
@@ -140,7 +139,6 @@ class TestGetData(TestCase):
         self.assertEqual(1, ethylparaben_stats['products_n'], 'There should now be 1 product \
         associated with ethylparaben')
 
-
     def test_habits_and_practices_cards(self):
         data = {'puc':['2']}
         response = self.client.post('/get_data/',data=data)
@@ -154,19 +152,3 @@ class TestGetData(TestCase):
         response = self.client.get('/get_data/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Download PUCs')
-
-        # Pick one curated and one non-curated RawChem record, and 
-        # confirm that the downloaded file excludes and includes them,
-        # respectively.
-        rc = RawChem.objects.filter(dsstox_id__isnull=True).first()
-        response = self.client.get('/dl_raw_chems/')
-        rc_row = f'%s,%s,%s,%s\r\n' % (rc.id, rc.raw_cas, rc.raw_chem_name, rc.rid if rc.rid else '')
-        rc_row = bytes(rc_row, 'utf-8')
-        self.assertIn(rc_row,response.content, 'The non-curated row should appear')
-
-        rc = RawChem.objects.filter(dsstox_id__isnull=False).first()
-        rc_row = f'%s,%s,%s,%s\r\n' % (rc.id, rc.raw_cas, rc.raw_chem_name, rc.sid if rc.sid else '')
-        rc_row = bytes(rc_row, 'utf-8')
-        self.assertNotIn(rc_row,response.content, 'The curated row should not appear')
-        
-

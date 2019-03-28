@@ -77,7 +77,6 @@ def chemical_curation_index(request, template_name='chemical_curation/chemical_c
             messages.error(request, "Unable to upload file. " + repr(e))
     if records_processed > 0:
         data.update({"records_processed": records_processed})
-    print(data)
     return render(request, template_name, data)
 
 

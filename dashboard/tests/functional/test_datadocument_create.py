@@ -23,14 +23,14 @@ class DDTestModel(TestCase):
 
     def test_dd_model_with_wrong_document_type(self):
         # Choose a Composition group
-        dgcomp = DataGroup.objects.filter(group_type__title='Composition').first()
+        dgcomp = DataGroup.objects.filter(group_type__code='CO').first()
         # Choose a document type from the wrong parent group type
-        dt_fu = DocumentType.objects.filter(group_type__title='Functional use').first()
+        dt_fu = DocumentType.objects.filter(group_type__code='FU').first()
         dd = DataDocument.objects.create(filename="some.pdf", title="My Document", document_type = dt_fu , data_group=dgcomp)
         with self.assertRaises(ValidationError):
             dd.save()
             dd.full_clean()
-        dt_comp = DocumentType.objects.filter(group_type__title='Composition').first()
+        dt_comp = DocumentType.objects.filter(group_type__code='CO').first()
         dd = DataDocument.objects.create(filename="some.pdf", title="My Document", document_type = dt_comp , data_group=dgcomp)
         dd.save()
         self.assertEqual(dt_comp.title, dd.document_type.title )
@@ -47,8 +47,6 @@ class DDTestUpload(TestCase):
         csv_string_good = ("filename,title,document_type,url,organization\n"
                 "0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf,NUTRA NAIL,MS,, \n"
                 "0c68ab16-2065-4d9b-a8f2-e428eb192465.pdf,Body Cream,MS,, \n")
-                # DocumentType.objects.all().filter(group_type__title='Composition').values('id', 'title')
-                # assigning the (compatible) MSDS document type in the csv
 
         data = io.StringIO(csv_string_good)
         csv_len = len(csv_string_good)
@@ -85,8 +83,7 @@ class DDTestUpload(TestCase):
         csv_string_bad = ("filename,title,document_type,url,organization\n"
                 "0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf,NUTRA NAIL,9,, \n"
                 "0c68ab16-2065-4d9b-a8f2-e428eb192465.pdf,Body Cream,4,, \n")
-                # DocumentType.objects.all().exclude(group_type__title='Composition').values('id', 'title')
-                # assigning the (incompatible) *chemical use disclosure* document type in row 1 of the csv
+
 
         data = io.StringIO(csv_string_bad)
         csv_len = len(csv_string_bad)

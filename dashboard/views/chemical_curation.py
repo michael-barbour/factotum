@@ -11,18 +11,21 @@ import csv
 def chemical_curation_index(request, template_name='chemical_curation/chemical_curation_index.html'):
     uncurated_chemical_count = RawChem.objects.filter(dsstox_id=None).count()
     records_processed = 0
+
     data = {'uncurated_chemical_count': uncurated_chemical_count, 'records_processed': records_processed}
     # if not GET, then proceed
     if "POST" == request.method:
         try:
+            # if not a csv file
             csv_file = request.FILES["csv_file"]
             if not csv_file.name.endswith('.csv'):
-                messages.error(request, 'File is not CSV type')
-                return HttpResponseRedirect(reverse("upload_raw_chem_csv"))
+                data.update({'error_message': 'File is not CSV type'})
+                return render(request, template_name, data)
             # if file is too large, return
             if csv_file.multiple_chunks():
-                messages.error(request, "Uploaded file is too big (%.2f MB)." % (csv_file.size / (1000 * 1000),))
-                return HttpResponseRedirect(reverse("upload_raw_chem_csv"))
+                error = "Uploaded file is too big (%.2f MB)." % (csv_file.size / (1000 * 1000))
+                data.update({'error_message': error})
+                return render(request, template_name, data)
 
             file_data = csv_file.read().decode("utf-8")
             lines = file_data.split("\n")
@@ -37,13 +40,19 @@ def chemical_curation_index(request, template_name='chemical_curation/chemical_c
                 data_dict["sid"] = fields[2].strip()
                 data_dict["true_chemical_name"] = fields[3].strip()
                 data_dict["true_cas"] = fields[4].strip()
-                # If it is the header row do not process it
-                if data_dict["raw_chemical_id"] != "raw_chemical_id":
+                # If it is the header row check to see that the columns are in order.
+                if data_dict["raw_chemical_id"] == "external_id":
+                    if (data_dict["raw_chemical_id"] != "external_id") or (data_dict['sid'] != 'sid') or \
+                            (data_dict['true_chemical_name'] != "true_chemical_name") or \
+                            (data_dict['true_cas'] != 'true_cas'):
+                        data.update({"error_message": "Check to ensure your column headers are in order."})
+                        return render(request, template_name, data)
+                else:
                     try:
                         # Check to see of SID exists,
                         if DSSToxLookup.objects.filter(sid=data_dict['sid']).exists():
                             # if is does exist Overwrite the existing True CAS and Chemname
-                            chem = DSSToxLookup.objects.filter(sid=data_dict['sid']). \
+                            DSSToxLookup.objects.filter(sid=data_dict['sid']). \
                                 update(true_cas=data_dict["true_cas"],
                                        true_chemname=data_dict["true_chemical_name"])
                         # if not create it in DSSToxLookup
@@ -61,9 +70,12 @@ def chemical_curation_index(request, template_name='chemical_curation/chemical_c
                         pass
 
         except Exception as e:
+            # This is the catchall - MySQL database has went away, etc....
+            error = "Something is seriously wrong with this csv - %s" % repr(e)
+            data.update({"error_messasage": error})
+            return render(request, template_name, data)
             messages.error(request, "Unable to upload file. " + repr(e))
     if records_processed > 0:
-        print(records_processed)
         data.update({"records_processed": records_processed})
     print(data)
     return render(request, template_name, data)

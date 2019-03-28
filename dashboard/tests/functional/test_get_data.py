@@ -155,14 +155,9 @@ class TestGetData(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Download PUCs')
 
-    def test_download_raw_chem_button(self):
-        response = self.client.get('/chemical_curation/')
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Download Uncurated Chemicals')
         # Pick one curated and one non-curated RawChem record, and 
         # confirm that the downloaded file excludes and includes them,
         # respectively.
-        
         rc = RawChem.objects.filter(dsstox_id__isnull=True).first()
         response = self.client.get('/dl_raw_chems/')
         rc_row = f'%s,%s,%s,%s\r\n' % (rc.id, rc.raw_cas, rc.raw_chem_name, rc.rid if rc.rid else '')

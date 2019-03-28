@@ -180,10 +180,10 @@ def extracted_text_qa(request, pk,
     # extext = extext.pull_out_cp()
     ext_form = ParentForm(instance=extext)
     detail_formset = ChildForm(instance=extext)
-
+    
     # If the document is CPCat or HHE type, the display should only show the
     # child records where qa_flag = True
-    if qa_focus == 'doc' :
+    if qa_focus == 'doc' and hasattr(detail_formset.get_queryset().model, 'qa_flag'):
         qs = detail_formset.get_queryset().filter(qa_flag=True)
         detail_formset._queryset = qs
     

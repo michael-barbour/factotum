@@ -134,38 +134,41 @@
                 </div>
         <div class="row card-body">
         <div class="col-sm-6">
+        <form method="post">
+                {% csrf_token %}
             <button type = "submit" id="approve" name="approve" class="btn btn-success btn-lg btn-block" role="button">Approve</button>
-            <br>
-            {% if referer != 'data_document'%}
-                {% if nextid > 0 %}
-                    <a class="btn btn-warning btn-lg btn-block" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>
-                {% else %}
-                    <button type="button" title="All the other documents in this QA group have been approved" class="btn btn-secondary btn-lg btn-block" aria-disabled="true" disabled>Skip</button>
-                {% endif %}
-            {% endif %}
-            <br>
-            <a class="btn btn-secondary btn-lg btn-block" href="{% url referer doc.id %}" role="button">Exit</a>
-        </div>
-        <div class="col-sm-6 text-center">
-            <b>{{ notesform.qa_notes.label_tag }}</b>
-            <br>
-            {% if notesform.is_bound %}
-                {% if notesform.errors %}
-                {{ notesform.qa_notes.errors }}
-                {% render_field notesform.qa_notes class="form-control is-invalid" %}
-                {% for k, error in notesform.errors.items %}
-                    <div class="invalid-feedback">
-                    {{ error }}
-                    </div>
-                {% endfor %}
-                {% else %}
-                {% render_field notesform.qa_notes class="form-control is-valid" %}
-                {% endif %}
-            {% else %}
-                {% render_field notesform.qa_notes class="form-control" %}
-            {% endif %}
-        </div>
 
+                <br>
+                {% if referer != 'data_document'%}
+                    {% if nextid > 0 %}
+                        <a class="btn btn-warning btn-lg btn-block" href="{% url "extracted_text_qa" nextid %}" role="button">Skip</a>
+                    {% else %}
+                        <button type="button" title="All the other documents in this QA group have been approved" class="btn btn-secondary btn-lg btn-block" aria-disabled="true" disabled>Skip</button>
+                    {% endif %}
+                {% endif %}
+                <br>
+                <a class="btn btn-secondary btn-lg btn-block" href="{% url referer doc.id %}" role="button">Exit</a>
+            </div>
+            <div class="col-sm-6 text-center">
+                <b>{{ notesform.qa_notes.label_tag }}</b>
+                <br>
+                {% if notesform.is_bound %}
+                    {% if notesform.errors %}
+                    {{ notesform.qa_notes.errors }}
+                    {% render_field notesform.qa_notes class="form-control is-invalid" %}
+                    {% for k, error in notesform.errors.items %}
+                        <div class="invalid-feedback">
+                        {{ error }}
+                        </div>
+                    {% endfor %}
+                    {% else %}
+                    {% render_field notesform.qa_notes class="form-control is-valid" %}
+                    {% endif %}
+                {% else %}
+                    {% render_field notesform.qa_notes class="form-control" %}
+                {% endif %}
+            </div>
+        </form>
         </div>
         <p class="card-footer"> {{stats}}</p>
       </div>

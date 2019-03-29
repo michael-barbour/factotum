@@ -83,8 +83,9 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
             self.browser.find_element_by_xpath(
                 '//*[@id="btn-toggle-edit"]').click()
             # wait for the Save button to be clickable
-            wait = WebDriverWait(self.browser, 10) 
-            save_button = wait.until(ec.element_to_be_clickable((By.XPATH, "//*[@id='save']")))
+            wait = WebDriverWait(self.browser, 10)
+            save_button = wait.until(
+                ec.element_to_be_clickable((By.XPATH, "//*[@id='save']")))
             # edit the Raw CAS field
             raw_cas_input = self.browser.find_element_by_xpath(
                 '//*[@id="id_rawchem-1-raw_cas"]')
@@ -104,8 +105,9 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
             self.browser.find_element_by_xpath(
                 '//*[@id="btn-toggle-edit"]').click()
             # wait for the Save button to be clickable
-            wait = WebDriverWait(self.browser, 10) 
-            save_button = wait.until(ec.element_to_be_clickable((By.XPATH, "//*[@id='save']")))
+            wait = WebDriverWait(self.browser, 10)
+            save_button = wait.until(
+                ec.element_to_be_clickable((By.XPATH, "//*[@id='save']")))
             raw_cas_input = self.browser.find_element_by_xpath(
                 '//*[@id="id_rawchem-1-raw_cas"]')
             raw_cas_input.send_keys('test raw cas')
@@ -144,4 +146,76 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
                 '//*[@id="id_document_type"]'))
             doc_type_select.select_by_visible_text("MSDS")
             self.assertIn(doc_detail_link, self.browser.current_url)
+
+    def test_qa_approval(self):
+        '''
+        Test the QA process in the browser
+        1. Open the QA page for an ExtractedText record
+        2. Edit one of the child records
+        3. Attempt to approve the document without a QA note
+        4. Add a note
+        5. Approve 
+        '''
+        for doc_id in [7,      # Composition
+                       5,      # Functional Use
+                       254781, # Chemical Presence List
+                       354783, # HHE Report 
+                       ]: 
+            # QA Page
+            qa_url = self.live_server_url + f'/qa/extractedtext/{doc_id}/'
+            self.browser.get(qa_url)
+            # Activate the edit mode
+            self.browser.find_element_by_xpath(
+                '//*[@id="btn-toggle-edit"]').click()
+
+            # Modify the first raw_chem_name field's value
+            #  
+            raw_chem = self.browser.find_element_by_xpath(
+                '//*[@id="id_rawchem-0-raw_chem_name"]')
+            # Wait for the field to be editable
+            wait = WebDriverWait(self.browser, 10)
+            raw_chem_name_field = wait.until(ec.element_to_be_clickable(
+                (By.XPATH, "//*[@id='id_rawchem-0-raw_chem_name']")))
+
+            old_raw_chem_name = raw_chem_name_field.get_attribute('value')
+
+            # Get the detailed child record's ID
+            rawchem_id_field = self.browser.find_element_by_xpath(
+                '//*[@id="id_rawchem-0-rawchem_ptr"]')
+            rawchem_id = rawchem_id_field.get_attribute('value')
+            # print(rawchem_id)
+
+            raw_chem_name_field.send_keys(' edited')
+            # save changes
+            self.browser.find_element_by_xpath('//*[@id="save"]').click()
+
+            # Confirm the changes in the ORM
+            rc = RawChem.objects.get(pk=rawchem_id)
+            self.assertEqual(rc.raw_chem_name, f'%s edited' %
+                             old_raw_chem_name, 'The raw_chem_name field should have changed')
+
+            et = ExtractedText.objects.get(pk=doc_id)
+            # print(et.data_document.data_group.group_type)
+            self.assertTrue(
+                et.qa_edited, 'The qa_edited attribute should be True')
+
+            # Click Approve without any notes and confirm validation failure
+            self.browser.find_element_by_xpath('//*[@id="approve"]').click()
+            # The QA notes field should be invalid
+            qa_notes_field = self.browser.find_element_by_xpath(
+                '//*[@id="id_qa_notes"]')
+            self.assertIn('is-invalid', qa_notes_field.get_attribute('class'))
+            et.refresh_from_db()
+            self.assertFalse(
+                et.qa_checked, 'The qa_checked attribute should be False')
+
+            # Add the mandatory QA note
+            qa_notes_field.send_keys('Some QA Notes')
+            # Click "Approve" again
+            self.browser.find_element_by_xpath('//*[@id="approve"]').click()
+            et.refresh_from_db()
+            self.assertTrue(
+                et.qa_checked, 'The qa_checked attribute should be True')
+
+
 

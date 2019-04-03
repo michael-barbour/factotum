@@ -122,7 +122,6 @@ def download_PUCs(request):
         row = [ puc.gen_cat,
                 puc.prod_fam, 
                 puc.prod_type, 
-                # list(puc.get_allowed_tags()),
                 ', '.join([str(allowedTag) for allowedTag in puc.puctotag_set.all()]),
                 ', '.join([str(assumedTag) for assumedTag in puc.puctotag_set.filter(assumed=True)]),
                 puc.description, 

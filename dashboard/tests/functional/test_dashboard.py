@@ -55,16 +55,27 @@ class DashboardTest(TestCase):
 
     def test_PUC_download(self):
         p = self.objects.puc
-        puc_line = (p.gen_cat + ',' + p.prod_fam + ',' + p.prod_type + ',' + p.description +
-                    ',' + str(p.get_level()) + ',' + str(p.product_count))
+        # puc_line = (f'{p.gen_cat},'
+        #         f'{p.prod_fam},'
+        #         f'{p.prod_type},'
+        #         '; '.join([str(allowedTag) for allowedTag in p.puctotag_set.all()])
+        #         '; '.join([str(assumedTag) for assumedTag in p.puctotag_set.filter(assumed=True)])
+        #         f'{p.description},'
+        #         f'{p.kind},'
+        #         f'{p.get_level()},'
+        #         f'{p.product_count}')
+
+
         # get csv
         response = self.client.get('/dl_pucs/')
         self.assertEqual(response.status_code, 200)
         csv_lines = response.content.decode('ascii').split('\r\n')
         # check header
-        self.assertEqual(csv_lines[0], ('gen_cat,prod_fam,prod_type,description,'
-                                        'PUC_type,num_prods'))
+        # print(csv_lines[0])
+        self.assertEqual(csv_lines[0], ('General category,Product family,Product type,'
+            'Allowed Tags,Assumed Tags,Description,PUC type,PUC level,Product count'))
         # check the PUC from loader
+        print(csv_lines[1])
         self.assertEqual(csv_lines[1], puc_line)
 
 

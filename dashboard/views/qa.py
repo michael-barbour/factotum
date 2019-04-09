@@ -11,6 +11,7 @@ from dashboard.models import Script, DataGroup, DataDocument,\
     ExtractedCPCat, ExtractedText, ExtractedListPresence,\
     QAGroup, QANotes, DocumentType
 from factotum.settings import EXTRA
+from django import forms
 
 
 @login_required()
@@ -111,6 +112,14 @@ def qa_extraction_script(request, pk,
                                            'qagroup': qa_group})
 
 
+def hide_dsstox_fields(formset):
+    # Hide the curated DSSToxLookup fields in the formset if they appear
+    for form in formset:
+        for dssfield in ['true_cas','true_chemname','SID']:
+            if dssfield in form.fields:
+                form.fields[dssfield].widget = forms.HiddenInput()
+
+
 @login_required()
 def extracted_text_qa(request, pk,
                       template_name='qa/extracted_text_qa.html', nextid=0):
@@ -187,6 +196,11 @@ def extracted_text_qa(request, pk,
         qs = detail_formset.get_queryset().filter(qa_flag=True)
         detail_formset._queryset = qs
     
+    # This code is being repeated in the GET and POST blocks
+    # 
+    # Hide all the DSSToxLookup fields 
+    hide_dsstox_fields(detail_formset)
+
     # Add CSS selector classes to each form
     for form in detail_formset:
         for field in form.fields:
@@ -244,6 +258,11 @@ def extracted_text_qa(request, pk,
             context['ext_form'] = ext_form
             # calls the clean method? y?
             context.update({'notesform': notesform})
+
+        # This code is being repeated in the GET and POST blocks
+        # 
+        # Hide all the DSSToxLookup fields 
+        hide_dsstox_fields(detail_formset)
 
         # Add CSS selector classes to each form
         for form in detail_formset:

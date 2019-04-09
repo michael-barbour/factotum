@@ -154,7 +154,7 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
         2. Edit one of the child records
         3. Attempt to approve the document without a QA note
         4. Add a note
-        5. Approve 
+        5. Approve
         '''
         for doc_id in [7,      # Composition
                        5,      # Functional Use
@@ -221,7 +221,7 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
         '''
         Test that when a datadocument has no ExtractedText,
         the user can add one in the browser
-        1. 
+        1.
         '''
 
         for doc_id in [155324   # CO record with no ExtractedText
@@ -279,4 +279,4 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
             et = ExtractedText.objects.get(data_document_id=doc_id)
             self.assertEqual('Fake Product', et.prod_name,
                              "The prod_name of the new object should match what was entered")
-            
+

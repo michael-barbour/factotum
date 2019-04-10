@@ -154,6 +154,7 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
         2. Edit one of the child records
         3. Attempt to approve the document without a QA note
         4. Add a note
+
         5. Approve
         '''
         for doc_id in [7,      # Composition
@@ -161,6 +162,7 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
                        254781,  # Chemical Presence List
                        354783,  # HHE Report
                        ]:
+
             # QA Page
             qa_url = self.live_server_url + f'/qa/extractedtext/{doc_id}/'
             self.browser.get(qa_url)
@@ -169,7 +171,7 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
                 '//*[@id="btn-toggle-edit"]').click()
 
             # Modify the first raw_chem_name field's value
-            #
+
             raw_chem = self.browser.find_element_by_xpath(
                 '//*[@id="id_rawchem-0-raw_chem_name"]')
             # Wait for the field to be editable
@@ -216,6 +218,7 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
             et.refresh_from_db()
             self.assertTrue(
                 et.qa_checked, 'The qa_checked attribute should be True')
+
 
     def test_datadoc_add_extracted(self):
         '''
@@ -279,4 +282,5 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
             et = ExtractedText.objects.get(data_document_id=doc_id)
             self.assertEqual('Fake Product', et.prod_name,
                              "The prod_name of the new object should match what was entered")
+
 

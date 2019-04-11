@@ -184,7 +184,9 @@ class ModelsTest(TestCase):
         for fld in fields:
             self.assertIn(fld, Script.__dict__, (f'{fld} '
                                                 'should be in Script model.'))
-
+        url = [f for f in Script._meta.fields if f.name == 'url'][0]
+        self.assertTrue(url.max_length == 225, ("'url' field should be of "
+                                                                "length 225"))
 
 class PUCModelTest(TestCase):
 

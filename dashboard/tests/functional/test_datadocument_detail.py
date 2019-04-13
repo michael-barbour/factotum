@@ -216,4 +216,3 @@ class TestDynamicDetailFormsets(TestCase):
                                                         ' of forms as instances')
                     self.assertEqual(num_forms, children, error)
 
-

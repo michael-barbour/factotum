@@ -228,8 +228,7 @@ class ExtractedCPCatForm(ExtractedTextForm):
 
     class Meta:
         model = ExtractedCPCat
-        fields = ['doc_date', 'cat_code',
-                  'description_cpcat', 'cpcat_sourcetype']
+        fields = ['doc_date', 'cat_code', 'description_cpcat', 'cpcat_code', 'cpcat_sourcetype']
 
 
 class ExtractedCPCatEditForm(ExtractedCPCatForm):

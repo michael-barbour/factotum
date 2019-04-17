@@ -124,7 +124,35 @@
                             <dd>
                                 {{ extracted_text.rev_num }}
                             </dd>
-    
+
+                            {% if extracted_text.cat_code %}
+                                <dt>cat_code</dt>
+                                <dd>
+                                    {{ extracted_text.cat_code }}
+                                </dd>
+                            {% endif %}
+
+                            {% if extracted_text.description_cpcat %}
+                                <dt>CPCat cassette</dt>
+                                <dd>
+                                    {{ extracted_text.description_cpcat }}
+                                </dd>
+                            {% endif %}
+
+                            {% if extracted_text.cpcat_code %}
+                                <dt>ACToR snaid</dt>
+                                <dd>
+                                    {{ extracted_text.cpcat_code }}
+                                </dd>
+                            {% endif %}
+
+                            {% if extracted_text.cpcat_sourcetype %}
+                                <dt>CPCat source</dt>
+                                <dd>
+                                    {{ extracted_text.cpcat_sourcetype }}
+                                </dd>
+                            {% endif %}
+
                             <dt>Extraction Script</dt>
                             <dd>
                                 <a href="{{ extracted_text.extraction_script.url| default_if_none:'' }}" target="_blank">

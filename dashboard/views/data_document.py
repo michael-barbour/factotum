@@ -45,10 +45,6 @@ def data_document_detail(request, pk):
              'detail_formset': child_formset}
         )
 
-        colors = ['#d6d6a6', '#dfcaa9', '#d8e5bf'] * 47
-        color = (hex for hex in colors)
-        for form in child_formset.forms:
-            form.color = next(color)
     else:
         context['edit_text_form'] = ParentForm()
     return render(request, template_name, context)

@@ -389,3 +389,18 @@ def create_detail_formset(document, extra=1, can_delete=False, exclude=[]):
     }
     func = dg_types.get(group_type, lambda: None)
     return func()
+
+class DataDocumentForm(forms.ModelForm):
+    required_css_class = 'required'
+
+    class Meta:
+        model = DataDocument
+        fields = ['title', 'document_type', 'note']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['document_type'].queryset = (
+            self.fields['document_type']
+            .queryset
+            .filter(group_type=self.instance.data_group.group_type)
+        )

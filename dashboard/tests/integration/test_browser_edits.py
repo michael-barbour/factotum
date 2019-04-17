@@ -139,14 +139,6 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
             doc_type_select.select_by_visible_text("ingredient disclosure")
             self.assertIn(doc_qa_link, self.browser.current_url)
 
-            # Data Document Detail Page
-            doc_detail_link = f'/datadocument/%s/' % doc_id
-            self.browser.get(self.live_server_url + doc_detail_link)
-            doc_type_select = Select(self.browser.find_element_by_xpath(
-                '//*[@id="id_document_type"]'))
-            doc_type_select.select_by_visible_text("MSDS")
-            self.assertIn(doc_detail_link, self.browser.current_url)
-
     def test_qa_approval(self):
         '''
         Test the QA process in the browser

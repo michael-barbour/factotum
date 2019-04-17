@@ -112,21 +112,16 @@ def dg_dd_csv_view(request, pk):
 
 
 @login_required
-def data_document_edit(request, pk):
-
-    referer = request.POST['referer'] if request.POST['referer'] else 'data_document'
-    doc = get_object_or_404(DataDocument, pk=pk)
-    ParentForm, _ = create_detail_formset(doc, extra=0, can_delete=False)
-    model = ParentForm.Meta.model
-    script = Script.objects.get(title__icontains='Manual (dummy)')
-    exttext, _ = model.objects.get_or_create(extraction_script=script,
-                                             data_document_id=pk)
-    form = ParentForm(request.POST, instance=exttext)
+def data_document_edit(request, pk, template_name=('data_document/'
+                                                    'data_document_form.html')):
+    datadocument = get_object_or_404(DataDocument, pk=pk)
+    form = DataDocumentForm(request.POST or None, instance=datadocument)
     if form.is_valid():
-        form.save()
-        return redirect(referer, pk=doc.pk)
-    else:
-        return HttpResponse("Houston, we have a problem.")
+        if form.has_changed():
+            form.save()
+        return redirect('data_document', pk=pk)
+    form.referer = request.META.get('HTTP_REFERER', None)
+    return render(request, template_name, {'form': form})
 
 
 @login_required

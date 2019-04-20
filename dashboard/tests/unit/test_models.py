@@ -179,12 +179,40 @@ class ModelsTest(TestCase):
         self.assertIn(u, dg_response.content, (
                                     'link to PDF should be in HTML!'))
 
+    def test_script_fields(self):
+        fields = ['title','url','qa_begun','script_type','confidence']
+        for fld in fields:
+            self.assertIn(fld, Script.__dict__, (f'{fld} '
+                                                'should be in Script model.'))
+        url = next(f for f in Script._meta.fields if f.name == 'url')
+        self.assertTrue(url.max_length == 225, ("'url' field should be of "
+                                                                "length 225"))
+
+    def test_taxonomy_fields(self):
+        fields = ['title','description','parent','source', 'category_code', 
+                    'last_edited_by','created_at','updated_at']
+        taxonomy_fields = [f.name for f in Taxonomy._meta.fields]   
+        for fld in fields:
+            self.assertIn(fld, taxonomy_fields, (f'{fld} '
+                                                'should be in Taxonomy model.'))
+        title = next(f for f in Taxonomy._meta.fields if f.name == 'title')
+        self.assertTrue(title.max_length == 250, ("'title' field should have "
+                                                        "max length of 250"))
 
 class PUCModelTest(TestCase):
 
     fixtures = fixtures_standard
 
+    def test_puc_fields(self):
+        fields = ['kind','gen_cat','prod_fam','prod_type','description',
+                'last_edited_by','products','extracted_habits_and_practices',
+                'tags']
+        for fld in fields:
+            self.assertIn(fld, PUC.__dict__, f'{fld} should be in PUC model.')
+
     def test_get_the_kids(self):
+        '''Level 1 and 2 PUCs should accumulate lower level PUCs.
+        '''
         puc = PUC.objects.get(pk=20) # PUC w/ only gen_cat value
         self.assertGreater(len(puc.get_the_kids()),1, ('PUC should have more'
                                                         'than one child PUCs'))

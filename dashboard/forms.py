@@ -228,8 +228,7 @@ class ExtractedCPCatForm(ExtractedTextForm):
 
     class Meta:
         model = ExtractedCPCat
-        fields = ['doc_date', 'cat_code',
-                  'description_cpcat', 'cpcat_sourcetype']
+        fields = ['doc_date', 'cat_code', 'description_cpcat', 'cpcat_code', 'cpcat_sourcetype']
 
 
 class ExtractedCPCatEditForm(ExtractedCPCatForm):
@@ -340,10 +339,9 @@ def create_detail_formset(document, extra=1, can_delete=False, exclude=[]):
                      formset=BaseInlineFormSet,
                      form=forms.ModelForm,
                      exclude=exclude):
+        formset_fields = model.detail_fields()
         if exclude:
-            formset_fields = list(set(model.detail_fields()) - set(exclude))
-        else:
-            formset_fields = model.detail_fields()
+            formset_fields = [in_field for in_field in formset_fields if not in_field in exclude]
         return forms.inlineformset_factory(parent_model=parent_model,
                                            model=model,
                                            fields=formset_fields,
@@ -372,6 +370,8 @@ def create_detail_formset(document, extra=1, can_delete=False, exclude=[]):
     def four():  # for extracted_list_presence
         ListPresenceFormSet = make_formset(parent, child)
         ParentForm = ExtractedCPCatForm if extracted else ExtractedCPCatEditForm
+
+
         return (ParentForm, ListPresenceFormSet)
 
     def five():  # for extracted_hh_rec
@@ -388,3 +388,18 @@ def create_detail_formset(document, extra=1, can_delete=False, exclude=[]):
     }
     func = dg_types.get(group_type, lambda: None)
     return func()
+
+class DataDocumentForm(forms.ModelForm):
+    required_css_class = 'required'
+
+    class Meta:
+        model = DataDocument
+        fields = ['title', 'document_type', 'note']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['document_type'].queryset = (
+            self.fields['document_type']
+            .queryset
+            .filter(group_type=self.instance.data_group.group_type)
+        )

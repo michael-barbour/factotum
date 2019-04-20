@@ -9,6 +9,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth.models import User
 from django.test import Client
 from importlib import import_module
+from django.db.models import Max
 
 from dashboard.forms import *
 
@@ -60,9 +61,10 @@ class DataGroupDetailTest(TestCase):
                 'ingredient_rank', 'raw_central_comp'],
                 "Fieldnames passed are incorrect!")
         self.objects.gt.title = 'Functional use'
+        self.objects.gt.code = 'FU'
         self.objects.gt.save()
         self.assertEqual(str(self.objects.dg.group_type),'Functional use',
-            'Type of DataGroup needs to be "Functional_use" for this test.')
+            'Type of DataGroup needs to be "FU" for this test.')
         response = self.client.get(f'/datagroup/{pk}/')
         self.assertEqual(response.context['extract_fields'],
                 ['data_document_id','data_document_filename',
@@ -117,6 +119,7 @@ class DataGroupDetailTest(TestCase):
         response = self.client.get(f'/datagroup/{self.objects.dg.pk}/')
         self.assertEqual(response.context['bulk'], 1,
                 'Not all DataDocuments linked to Product, bulk_create needed')
+        new_stub_id = Product.objects.all().aggregate(Max('id'))["id__max"] + 1
         response = self.client.post(f'/datagroup/{self.objects.dg.pk}/',
                                                                 {'bulk':1})
         self.assertEqual(response.context['bulk'], 0,
@@ -124,7 +127,8 @@ class DataGroupDetailTest(TestCase):
         product = ProductDocument.objects.get(document=doc).product
         self.assertEqual(product.title, 'unknown',
                                         'Title should be unknown in bulk_create')
-        self.assertEqual(product.upc, 'stub_2',
+        
+        self.assertEqual(product.upc, f'stub_%s' % new_stub_id,
                                     'UPC should be created for second Product')
 
     def test_upload_note(self):
@@ -203,10 +207,6 @@ class DataGroupDetailTestWithFixtures(TestCase):
         dg_co = DataGroup.objects.filter(group_type__code = 'CO').first()
         resp = self.client.get(f'/datagroup/%s/' % dg_co.id)
         self.assertIn(b'Download Raw', resp.content)
-
-        dg_un = DataGroup.objects.filter(group_type__code = 'UN').first()
-        resp = self.client.get(f'/datagroup/%s/' % dg_un.id)
-        self.assertNotIn(b'Download Raw', resp.content)
 
         # Test download on all data groups with ExtractedChemicals, whether
         # they are CO or UN

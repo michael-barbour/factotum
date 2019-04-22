@@ -11,7 +11,6 @@ from django.conf import settings
                                               
                           
 # Name of the Elasticsearch index
-# Name of the Elasticsearch index
 INDEX = Index(settings.ELASTICSEARCH_INDEX_NAMES[__name__])
 # See Elasticsearch Indices API reference for available settings
 INDEX.settings(
@@ -20,17 +19,24 @@ INDEX.settings(
 )
 
 @INDEX.doc_type
-class ChemicalDocument(DocType):
+class FactotumChemicalDocument(DocType):
 
     facet_model_name = fields.KeywordField()
+    data_document_id = fields.IntegerField()
+    product_count = fields.IntegerField()
+    raw_cas = fields.KeywordField()
 
     def prepare_facet_model_name(self, instance):
         return "Chemical"
 
-    raw_cas = fields.KeywordField()
-
     def prepare_raw_cas(self, instance):
         return instance.raw_cas
+
+    def prepare_data_document_id(self, instance):
+        return instance.extracted_text.data_document.id
+    
+    def prepare_product_count(self, instance):
+        return instance.extracted_text.data_document.product_set.count()
 
     dsstox = fields.ObjectField(properties={
         'true_cas': fields.KeywordField(),
@@ -46,7 +52,7 @@ class ChemicalDocument(DocType):
 
     def get_queryset(self):
         """Not mandatory but to improve performance we can select related in one sql request"""
-        return super(ChemicalDocument, self).get_queryset().select_related(
+        return super(FactotumChemicalDocument, self).get_queryset().select_related(
             'dsstox'
         )
 

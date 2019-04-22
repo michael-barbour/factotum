@@ -1,9 +1,6 @@
-from .datadocument import DataDocumentDocument
-from .chemical import ChemicalDocument
-from .product import ProductDocument
+from .factotum_chemicals import FactotumChemicalDocument
 
 __all___ = (
-    'DataDocumentDocument',
-    'ChemicalDocument',
-    'ProductDocument',
+
+    'FactotumChemicalsDocument',
 )

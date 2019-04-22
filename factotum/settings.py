@@ -136,7 +136,5 @@ ELASTICSEARCH_DSL={
 
 # Name of the Elasticsearch indexes
 ELASTICSEARCH_INDEX_NAMES = {
-    'dashboard.search_indexes.documents.datadocument': 'datadocument',
-    'dashboard.search_indexes.documents.chemical': 'chemical',
-    'dashboard.search_indexes.documents.product': 'product',
+    'dashboard.search_indexes.documents.factotum_chemicals': 'factotum_chemicals',
 }

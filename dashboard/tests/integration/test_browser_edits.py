@@ -1,17 +1,6 @@
-from lxml import html
-
-from django.test import TestCase
-from dashboard.tests.loader import load_model_objects, fixtures_standard
+from dashboard.tests.loader import *
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-
 from dashboard.models import *
-from selenium import webdriver
-from django.conf import settings
-from selenium.webdriver.support.select import Select
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as ec
-
 
 def log_karyn_in(object):
     '''
@@ -31,10 +20,7 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
     fixtures = fixtures_standard
 
     def setUp(self):
-        if settings.TEST_BROWSER == 'firefox':
-            self.browser = webdriver.Firefox()
-        else:
-            self.browser = webdriver.Chrome()
+        self.browser = load_browser()
         log_karyn_in(self)
 
     def tearDown(self):

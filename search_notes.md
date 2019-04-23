@@ -92,3 +92,17 @@ Cleanup:
 ```
 DELETE /factotum_chemicals_fake
 ```
+
+## Logstash
+
+If you installed with Homebrew, the logstash config directory is 
+`/usr/local/etc/logstash/`
+
+Make sure the `logstash-input-jdbc` plugin is installed
+
+`/usr/local/bin/logstash-plugin list`
+
+https://www.elastic.co/guide/en/logstash/current/plugins-inputs-jdbc.html
+
+MySQL Connector/J:
+https://dev.mysql.com/downloads/connector/j/5.1.html

@@ -101,6 +101,17 @@ class DataDocumentDetailTest(TestCase):
         hhe_no = page.xpath('//dd[contains(@class, "hh-report-no")]')[0].text
         self.assertIn('47', hhe_no)
 
+    def test_delete(self):
+        '''Checks if data document is deleted after POSTing to
+        /datadocument/delete/<pk>
+        '''
+        post_uri = "/datadocument/delete/"
+        pk = 354784
+        doc_exists = lambda: DataDocument.objects.filter(pk=pk).exists()
+        self.assertTrue(doc_exists(), "Document does not exist prior to delete attempt.")
+        self.client.post(post_uri + str(pk) + "/")
+        self.assertTrue(not doc_exists(), "Document still exists after delete attempt.")
+
 
 class TestDynamicDetailFormsets(TestCase):
     fixtures = fixtures_standard

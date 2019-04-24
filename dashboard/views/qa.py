@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.core.exceptions import ValidationError, MultipleObjectsReturned, ObjectDoesNotExist
 from django.urls import reverse
 from django.utils import timezone

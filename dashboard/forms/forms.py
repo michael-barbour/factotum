@@ -7,7 +7,6 @@ from django.forms import BaseInlineFormSet
 from django.utils.translation import ugettext_lazy as _
 
 from dashboard.models import *
-from django.db.models import F
 from dashboard.utils import get_extracted_models
 
 
@@ -222,7 +221,6 @@ class ExtractedTextForm(forms.ModelForm):
             'data_document': forms.HiddenInput(),
             'extraction_script': forms.HiddenInput(),
         }
-
 
 class ExtractedCPCatForm(ExtractedTextForm):
 

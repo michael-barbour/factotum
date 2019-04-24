@@ -1,12 +1,7 @@
-from itertools import chain
-from datetime import datetime
 from model_utils.managers import InheritanceManager
 
 from django.db import models
-from django.core.exceptions import ValidationError
-from django import forms
 from django.urls import reverse
-
 
 from .common_info import CommonInfo
 
@@ -70,21 +65,8 @@ class ExtractedText(CommonInfo):
         else:
             return reverse('qa_extractionscript_index')
 
-
-    def fetch_extracted_records(self):
+    def get_extracted_records(self):
         return self.rawchem.all()
-
-    def pull_out_cp(self):
-        if hasattr(self, 'extractedcpcat'):
-            return self.extractedcpcat
-        else:
-            return self
-
-    def pull_out_hh(self):
-        if hasattr(self, 'extractedhhdoc'):
-            return self.extractedhhdoc
-        else:
-            return self
 
     def one_to_one_check(self, odict):
         '''
@@ -96,8 +78,6 @@ class ExtractedText(CommonInfo):
             return self.cat_code != odict['cat_code']
         else:
             return self.prod_name != odict['prod_name']
-
-
 
 
 def get_next_or_prev(models, item, direction):

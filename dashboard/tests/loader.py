@@ -11,13 +11,22 @@ fixtures_standard = [ '00_superuser',
                       '05_product',
                       '06_datadocument',
                       '07_rawchem_etc',
-                       '08_script',
-                    '09_productdocument',  
-                    '10_habits_and_practices',
-                     '11_habits_and_practices_to_puc',
+                      '08_script',
+                      '09_productdocument',
+                      '10_habits_and_practices',
+                      '11_habits_and_practices_to_puc',
                       '12_product_to_puc',
-                        '13_puc_tag'
-                        ]
+                      '13_puc_tag'
+                      ]
+
+datadocument_models = {
+                        'CO': ExtractedChemical,
+                        'FU': ExtractedFunctionalUse,
+                        'HP': ExtractedHabitsAndPractices,
+                        'CP': ExtractedListPresence,
+                        'HH': ExtractedHHRec
+                    }
+
 
 class dotdict(dict):
     """dot.notation access to dictionary attributes"""

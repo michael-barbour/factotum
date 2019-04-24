@@ -78,6 +78,35 @@ class ExtractedText(CommonInfo):
             return self.cat_code != odict['cat_code']
         else:
             return self.prod_name != odict['prod_name']
+    
+    def is_approvable(self):
+        '''
+        Returns true or false to indicate whether the ExtractedText object
+        can be approved. If the object has been edited, then there must be
+        some related QA Notes.
+        
+        Note that if the ExtractedText object is missing a related QANotes
+        record, self.qanotes will not return None. Instead it returns an 
+        ObjectDoesNotExist error.
+        https://stackoverflow.com/questions/3463240/check-if-onetoonefield-is-none-in-django
+        
+        The hasattr() method is the correct way to test for the presence of 
+        a related record.
+
+        It is not enough to test for the related record, though, because an empty
+        qa_notes field is functionally equivalent to a missing QANotes record.
+        
+        '''
+
+        if not self.qa_edited:
+            return True
+        elif self.qa_edited and not hasattr(self, 'qanotes'):
+            return False
+        elif self.qa_edited and hasattr(self, 'qanotes') and not bool(self.qanotes.qa_notes):
+            return False
+        else:
+            return True
+        
 
 
 def get_next_or_prev(models, item, direction):

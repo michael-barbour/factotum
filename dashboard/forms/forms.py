@@ -99,7 +99,9 @@ class QANotesForm(forms.ModelForm):
         model = QANotes
         fields = ['qa_notes']
         widgets = {
-            'qa_notes': forms.Textarea,
+            'qa_notes': forms.Textarea(attrs={
+                'id': 'qa-notes-textarea', 
+            }),
         }
         labels = {
             'qa_notes': _('QA Notes (required if approving edited records)'),

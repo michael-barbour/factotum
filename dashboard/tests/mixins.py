@@ -62,7 +62,7 @@ class DashboardFormFieldTestMixin(object):
             elif key + "_id" in obj.__dict__:
                 value = obj.__dict__[key + "_id"]
             # don't include nulls
-            if value is not None:
+            if (value is not None) or (value is None and key == field):
                 post_data[key] = value
         self.assertTrue(post_data[field] != data,
                         f'Bad attempt to update "{type(obj).__name__}" with identical data on field "{field}"')

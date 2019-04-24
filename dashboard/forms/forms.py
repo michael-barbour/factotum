@@ -392,12 +392,22 @@ class DataDocumentForm(forms.ModelForm):
 
     class Meta:
         model = DataDocument
-        fields = ['title', 'document_type', 'note']
+        fields = ['title', 'subtitle', 'document_type', 'note']
+
+    @staticmethod
+    def label_from_instance(obj):
+        return f"{obj.title} (in Group Type: {obj.group_type})"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        qs_hotfix = (
+            self.fields['document_type']
+            .queryset
+            .filter(pk=1)
+        )
         self.fields['document_type'].queryset = (
             self.fields['document_type']
             .queryset
             .filter(group_type=self.instance.data_group.group_type)
-        )
+        ) | qs_hotfix
+        self.fields['document_type'].label_from_instance = self.label_from_instance

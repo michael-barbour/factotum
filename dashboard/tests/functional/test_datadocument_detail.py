@@ -211,6 +211,7 @@ class TestDynamicDetailFormsets(TestCase):
                                                         ' of forms as instances')
                     self.assertEqual(num_forms, children, error)
 
+
     def test_listpresence_tags_form(self):
         ''''Assure that the list presence keywords appear for correct doc types and tags save
         '''
@@ -237,5 +238,6 @@ class TestDynamicDetailFormsets(TestCase):
                 else:
                     self.assertFalse(response_html.xpath('string(//*[@id="id_tags"])'),
                               'Tag input should only exist for Chemical Presence doc type')
+
 
 

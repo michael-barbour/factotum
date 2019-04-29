@@ -37,6 +37,9 @@ class RawChem(models.Model):
         except AttributeError:
             return False
 
+    @property
+    def data_group_id(self):
+        return str(self.extracted_text.data_document.data_group_id)
 
     def get_data_document(self):
         '''Find the child object by trying each of the classes, then return the 

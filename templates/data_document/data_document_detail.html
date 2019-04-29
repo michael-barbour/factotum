@@ -301,7 +301,11 @@
                                 {{ form.rawchem_ptr.as_hidden }}
                                 <dl class="row col-lg-12">
                                     {% for field in form.visible_fields %}
-                                        <dt class="col-lg-6">{{ field.label_tag }}</dt>
+                                        {% if "Unit" in field.label_tag %}
+                                            <dt class="col-lg-6">Unit type (required):</dt>
+                                        {% else %}
+                                            <dt class="col-lg-6">{{ field.label_tag }}</dt>
+                                        {% endif %}
                                         <dd class="col-lg-6 small form-group {% if field.errors %}alert-danger{% endif %}"
                                             style="max-width: 100%;max-height: 100%;">
                                             {{ field }}

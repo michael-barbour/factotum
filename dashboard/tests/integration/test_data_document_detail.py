@@ -32,19 +32,28 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
     def test_list_presence_keywords(self):
         # testing Select2 functionality
         doc = DataDocument.objects.get(pk=254781)
+        wait = WebDriverWait(self.browser, 10)
         response = self.browser.get(self.live_server_url + reverse('data_document', kwargs={'pk': doc.pk}))
         # If Select2 widget is firing, we should start with 2 tags for this document
-        dropdown = self.browser.find_element_by_xpath('//*[@id="id_tags"][count(option) = 2]')
-        self.assertTrue(dropdown,
+        tags = self.browser.find_element_by_xpath('//*[@id="id_tags"][count(option) = 2]')
+        self.assertTrue(tags,
                         'Listpresence records for this doc should begin with 2 associated keywords')
         input = self.browser.find_element_by_xpath('//*[@id="id_tags"]/following-sibling::span[1]/descendant::input[1]')
-        input.send_keys('pesticide' + Keys.ENTER)
-        # input.send_keys()
-        # dropdown = self.browser.find_element_by_xpath('//*[@id="id_tags"][count(option) = 3]')
-        # self.assertTrue(dropdown,
-        #                 'Listpresence records for this doc should now have 3 associated keywords')
-        button = self.browser.find_element_by_xpath('//*[@id="id_tags"]/following-sibling::button[1]')
-        button.click()
+        input.send_keys('pesticide')
+        option = wait.until(
+            ec.element_to_be_clickable(
+                (By.XPATH, "//*[@id='select2-id_tags-results']/li[1]")
+            )
+        )
+        option.click()
+        wait.until_not(
+            ec.visibility_of_element_located(
+                (By.XPATH, "//*[@id='select2-id_tags-results']/li[1]")
+            )
+        )
+        tags = self.browser.find_element_by_xpath('//*[@id="id_tags"][count(option) = 3]')
+        self.assertTrue(tags,
+                        'Listpresence records for this doc should now have 3 associated keywords')
 
 
     def test_datadoc_add_extracted(self):

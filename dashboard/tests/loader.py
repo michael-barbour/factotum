@@ -25,7 +25,8 @@ fixtures_standard = [ '00_superuser',
                       '10_habits_and_practices',
                       '11_habits_and_practices_to_puc',
                       '12_product_to_puc',
-                      '13_puc_tag'
+                      '13_puc_tag',
+                      '14_list_presence_tag'
                       ]
 
 datadocument_models = {
@@ -46,7 +47,7 @@ class dotdict(dict):
 
 def load_browser():
     chrome_options = Options()
-    chrome_options.add_argument("--headless")
+    # chrome_options.add_argument("--headless")
     if settings.TEST_BROWSER == 'firefox':
         return webdriver.Firefox()
     else:

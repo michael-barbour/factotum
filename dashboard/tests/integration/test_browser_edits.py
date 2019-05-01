@@ -273,4 +273,3 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
             self.assertEqual('Fake Product', et.prod_name,
                              "The prod_name of the new object should match what was entered")
 
-

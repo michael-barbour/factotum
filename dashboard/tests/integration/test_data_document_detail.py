@@ -40,20 +40,33 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
                         'Listpresence records for this doc should begin with 2 associated keywords')
         input = self.browser.find_element_by_xpath('//*[@id="id_tags"]/following-sibling::span[1]/descendant::input[1]')
         input.send_keys('pesticide')
-        option = wait.until(
-            ec.element_to_be_clickable(
-                (By.XPATH, "//*[@id='select2-id_tags-results']/li[1]")
-            )
-        )
+
+        option_ready = wait.until(
+            ec.text_to_be_present_in_element(
+                    (By.XPATH, "//*[@id='select2-id_tags-results']/li[1]"),
+                    "pesticide")
+            ) 
+        option = self.browser.find_element_by_xpath("//*[@id='select2-id_tags-results']/li[1]")
         option.click()
-        wait.until_not(
-            ec.visibility_of_element_located(
-                (By.XPATH, "//*[@id='select2-id_tags-results']/li[1]")
-            )
-        )
+
+        btn_save = self.browser.find_element_by_xpath('/html/body/div[1]/div[4]/form/button')
+        btn_save.click()
+        # wait.until_not(
+        #     ec.visibility_of_element_located(
+        #         (By.XPATH, "//*[@id='select2-id_tags-results']/li[1]")
+        #     )
+        # )
+
+        # Check in the ORM to see if the keyword has been associated with
+        # the ExtractedListPresence records
+        elp_id = RawChem.objects.filter(extracted_text_id=254781).first().id
+        elp_keyword_count = ExtractedListPresenceToTag.objects.filter(content_object_id = elp_id).count()
+        self.assertEqual(elp_keyword_count , 3)
+
         tags = self.browser.find_element_by_xpath('//*[@id="id_tags"][count(option) = 3]')
         self.assertTrue(tags,
                         'Listpresence records for this doc should now have 3 associated keywords')
+        
 
 
     def test_datadoc_add_extracted(self):

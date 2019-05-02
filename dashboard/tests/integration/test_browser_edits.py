@@ -148,6 +148,7 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
             self.browser.find_element_by_xpath(
                 '//*[@id="btn-toggle-edit"]').click()
 
+
             # Wait for the field to be editable
             wait = WebDriverWait(self.browser, 10)
             raw_chem_name_field = wait.until(ec.element_to_be_clickable(

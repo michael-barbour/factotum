@@ -6,13 +6,13 @@ from django.shortcuts import redirect
 from django.db.models import Count, Q
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-
 from dashboard.models import *
 from dashboard.forms import (ProductPUCForm, ProductLinkForm, ProductTagForm,
                                    BulkProductPUCForm, BulkProductTagForm,
                                    BulkPUCForm, ProductForm)
 from django.core.paginator import Paginator
 from django.db.models import Max
+
 
 
 @login_required()

@@ -3,8 +3,6 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from dashboard.models import *
 from django.urls import reverse
 
-from selenium.webdriver.common.keys import Keys
-
 def log_karyn_in(object):
     '''
     Log user in for further testing.
@@ -30,52 +28,41 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
         self.browser.quit()
 
     def test_list_presence_keywords(self):
-        # testing Select2 functionality
+        '''
+        Test that a CP datadocument has a functioning keyword/tag input box, which uses the
+        Select2 widget and AJAX to retrieve matching keywords from the server
+        '''
         doc = DataDocument.objects.get(pk=254781)
         wait = WebDriverWait(self.browser, 10)
-        response = self.browser.get(self.live_server_url + reverse('data_document', kwargs={'pk': doc.pk}))
-        # If Select2 widget is firing, we should start with 2 tags for this document
+        self.browser.get(self.live_server_url + reverse('data_document', kwargs={'pk': doc.pk}))
+        # We should start with 2 tags for this document
         tags = self.browser.find_element_by_xpath('//*[@id="id_tags"][count(option) = 2]')
         self.assertTrue(tags,
                         'Listpresence records for this doc should begin with 2 associated keywords')
         input = self.browser.find_element_by_xpath('//*[@id="id_tags"]/following-sibling::span[1]/descendant::input[1]')
         input.send_keys('pesticide')
-
-        option_ready = wait.until(
+        wait.until(
             ec.text_to_be_present_in_element(
                     (By.XPATH, "//*[@id='select2-id_tags-results']/li[1]"),
                     "pesticide")
             ) 
         option = self.browser.find_element_by_xpath("//*[@id='select2-id_tags-results']/li[1]")
         option.click()
-
         btn_save = self.browser.find_element_by_xpath('/html/body/div[1]/div[4]/form/button')
         btn_save.click()
-        # wait.until_not(
-        #     ec.visibility_of_element_located(
-        #         (By.XPATH, "//*[@id='select2-id_tags-results']/li[1]")
-        #     )
-        # )
-
         # Check in the ORM to see if the keyword has been associated with
         # the ExtractedListPresence records
         elp_id = RawChem.objects.filter(extracted_text_id=254781).first().id
         elp_keyword_count = ExtractedListPresenceToTag.objects.filter(content_object_id = elp_id).count()
         self.assertEqual(elp_keyword_count , 3)
-
         tags = self.browser.find_element_by_xpath('//*[@id="id_tags"][count(option) = 3]')
         self.assertTrue(tags,
                         'Listpresence records for this doc should now have 3 associated keywords')
-        
-
 
     def test_datadoc_add_extracted(self):
         '''
-        Test that when a datadocument has no ExtractedText,
-        the user can add one in the browser
-        1.
+        Test that when a datadocument has no ExtractedText, the user can add one in the browser
         '''
-
         for doc_id in [155324   # CO record with no ExtractedText
                        ]:
             # QA Page

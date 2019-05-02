@@ -125,7 +125,7 @@
                 <div class="row wrap">
                     <div class="pl-1 col-6">
                         <dl>
-                            <dt>Product Name</dt>
+                            <dt>Product name</dt>
                             <dd>
                                 {{ extracted_text.prod_name }}
                             </dd>
@@ -135,13 +135,13 @@
                                 {{ extracted_text.doc_date }}
                             </dd>
     
-                            <dt>Rev Num</dt>
+                            <dt>Rev num</dt>
                             <dd>
                                 {{ extracted_text.rev_num }}
                             </dd>
 
                             {% if extracted_text.cat_code %}
-                                <dt>cat_code</dt>
+                                <dt>Cat code</dt>
                                 <dd>
                                     {{ extracted_text.cat_code }}
                                 </dd>
@@ -168,13 +168,13 @@
                                 </dd>
                             {% endif %}
 
-                            <dt>Extraction Script</dt>
+                            <dt>Extraction script</dt>
                             <dd>
                                 <a href="{{ extracted_text.extraction_script.url| default_if_none:'' }}" target="_blank">
                                     {{ extracted_text.extraction_script.title }}
                                 </a>
                             </dd>
-                            <dt>QA Approved</dt>
+                            <dt>QA approved</dt>
                             <dd>{{ extracted_text.qa_checked | yesno | capfirst }}
                                 {% if not extracted_text.qa_checked %}
                                     <div class="btn-group float-lg-right" role="group">

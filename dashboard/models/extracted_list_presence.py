@@ -8,11 +8,9 @@ from .raw_chem import RawChem
 
 
 class ExtractedListPresence(CommonInfo, RawChem):
-    raw_cas_old = models.CharField("Raw CAS", max_length=100,
-                                        null=True, blank=True)
-    raw_chem_name_old = models.CharField("Raw chemical name", max_length=500,
-                                        null=True, blank=True)
+    
     qa_flag = models.BooleanField(default=False)
+
     tags = TaggableManager(through='dashboard.ExtractedListPresenceToTag',
                            to='dashboard.ExtractedListPresenceTag',
                            blank=True)

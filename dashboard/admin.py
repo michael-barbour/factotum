@@ -73,11 +73,24 @@ class PUCToTagAdmin(admin.ModelAdmin):
         return obj.assumed
 
 
+class GroupTypeInline(admin.TabularInline):
+    model = DocumentType.group_types.through
+    extra = 0
+    can_delete = False
+    verbose_name = "Compatible Group Type"
+    verbose_name_plural = "Compatible Group Types"
+
+class DocumentTypeAdmin(admin.ModelAdmin):
+    inlines = [
+        GroupTypeInline,
+    ]
+
+
 # Register your models here.
 admin.site.register(DataSource)
 admin.site.register(GroupType)
 admin.site.register(DataGroup)
-admin.site.register(DocumentType)
+admin.site.register(DocumentType, DocumentTypeAdmin)
 admin.site.register(DataDocument)
 admin.site.register(Script, ScriptAdmin)
 admin.site.register(Product)

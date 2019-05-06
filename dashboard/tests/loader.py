@@ -80,7 +80,7 @@ def load_model_objects():
                                         csv='register_records_matching.csv',
                                         url='https://www.epa.gov')
     dt = DocumentType.objects.create(title='MSDS',
-                                    code='MS', group_type=gt)
+                                     code='MS')
 
     doc = DataDocument.objects.create(title='test document',
                                             data_group=dg,

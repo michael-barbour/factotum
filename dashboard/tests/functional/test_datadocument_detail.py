@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.test import TestCase, override_settings
 from django.core.exceptions import ObjectDoesNotExist
 
+from dashboard.models import *
 from dashboard.forms import *
 from factotum.settings import EXTRA
 from dashboard.tests.loader import *

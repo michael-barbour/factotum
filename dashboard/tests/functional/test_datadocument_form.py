@@ -18,5 +18,5 @@ class DataDocumentDetailFormTest(TestCase, DashboardFormFieldTestMixin):
     def test_post_fields(self):
         self.post_field('/datadocument/edit/', 'title', 'lol', pk=354784)
         self.post_field('/datadocument/edit/', 'subtitle', 'lol', pk=354784)
-        self.post_field('/datadocument/edit/', 'document_type', 7, pk=5)
+        self.post_field('/datadocument/edit/', 'document_type', 5, pk=5)
         self.post_field('/datadocument/edit/', 'note', 'lol', pk=354784)

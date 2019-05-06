@@ -51,7 +51,7 @@ class DataDocumentDetailTest(TestCase):
         self.assertContains(response, '/link_product_form/167497/')
         data = {'title'        : ['New Product'],
                 'upc'          : ['stub_1860'],
-                'document_type': [1],
+                'document_type': [''],
                 'return_url'   : ['/datadocument/167497/']}
         response = self.client.post('/link_product_form/167497/', data=data)
         self.assertRedirects(response,'/datadocument/167497/')
@@ -64,7 +64,7 @@ class DataDocumentDetailTest(TestCase):
         # Add a new Product
         data = {'title'        : ['Product Title'],
                 'upc'          : ['stub_9100'],
-                'document_type': [1],
+                'document_type': [''],
                 'return_url'   : ['/datadocument/245401/']}
         response = self.client.post('/link_product_form/245401/', data=data)
         self.assertRedirects(response,'/datadocument/245401/')
@@ -75,7 +75,7 @@ class DataDocumentDetailTest(TestCase):
         # Add another new Product with the same title
         data = {'title'        : ['Product Title'],
                 'upc'          : ['stub_9101'],
-                'document_type': [1],
+                'document_type': [''],
                 'return_url'   : ['/datadocument/245401/']}
         response = self.client.post('/link_product_form/245401/', data=data)
         self.assertRedirects(response,'/datadocument/245401/')
@@ -186,12 +186,12 @@ class TestDynamicDetailFormsets(TestCase):
         '''
         for code, model in datadocument_models.items():
             if DataDocument.objects.filter(
-                                document_type__group_type__code=code,
+                                data_group__group_type__code=code,
                                 extractedtext__isnull=False
             ):
 
                 doc = DataDocument.objects.filter(
-                                    document_type__group_type__code=code,
+                                    data_group__group_type__code=code,
                                     extractedtext__isnull=False
                 ).first()
                 response = self.client.get(
@@ -217,26 +217,26 @@ class TestDynamicDetailFormsets(TestCase):
         '''
         for code, model in datadocument_models.items():
             if DataDocument.objects.filter(
-                                document_type__group_type__code=code,
+                                data_group__group_type__code=code,
                                 extractedtext__isnull=False
             ):
                 doc = DataDocument.objects.filter(
-                                    document_type__group_type__code=code,
+                                    data_group__group_type__code=code,
                                     extractedtext__isnull=False
                 ).first()
                 response = self.client.get(reverse('data_document',kwargs={'pk': doc.pk}))
                 response_html = html.fromstring(response.content.decode('utf8'))
                 if code=='CP':
-                    self.assertTrue(response_html.xpath('string(//*[@id="id_tags"])'),
+                    self.assertTrue(response_html.xpath('boolean(//*[@id="id_tags"])'),
                               'Tag input should exist for Chemical Presence doc type')
                     self.assertEqual(ExtractedListPresenceTag.objects.count(), 0)
                     self.assertEqual(ExtractedListPresenceToTag.objects.count(), 0)
                     req = self.client.post(path=reverse('save_list_presence_tag_form',kwargs={'pk': doc.pk}),
                                            data={'tags':'pesticide,flavoring'})
                     self.assertEqual(ExtractedListPresenceTag.objects.count(), 2)
-                    self.assertEqual(ExtractedListPresenceToTag.objects.count(), 2 * doc.extractedtext.objects.count())
+                    self.assertEqual(ExtractedListPresenceToTag.objects.count(), 2*doc.extractedtext.rawchem.select_subclasses('extractedlistpresence').count())
                 else:
-                    self.assertFalse(response_html.xpath('string(//*[@id="id_tags"])'),
+                    self.assertFalse(response_html.xpath('boolean(//*[@id="id_tags"])'),
                               'Tag input should only exist for Chemical Presence doc type')
 
 

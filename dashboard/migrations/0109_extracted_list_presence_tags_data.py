@@ -4,7 +4,7 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('dashboard', '0105_document_subtitle'),
+        ('dashboard', '0108_rm_old_chem_fields'),
     ]
     operations = [
         migrations.RunSQL("""

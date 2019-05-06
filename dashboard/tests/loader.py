@@ -26,7 +26,7 @@ fixtures_standard = [ '00_superuser',
                       '11_habits_and_practices_to_puc',
                       '12_product_to_puc',
                       '13_puc_tag',
-                      '15_list_presence_to_tag'
+                      '14_list_presence_to_tag'
                       ]
 
 datadocument_models = {

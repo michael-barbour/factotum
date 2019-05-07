@@ -76,6 +76,14 @@
         <dd class="col-lg-9">
             {{ doc.note }}
         </dd>
+        {% if doc.url %}
+            <dt class="col-lg-3">Url</dt>
+            <dd class="col-lg-9">
+                <a title="URL"
+                    href="{{ doc.url }}">{{ doc.url }}
+                </a>
+             </dd>
+        {% endif %}
     </dl>
 
     <div class="row col-lg-12">

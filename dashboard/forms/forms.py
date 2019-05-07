@@ -394,7 +394,7 @@ class DataDocumentForm(forms.ModelForm):
 
     class Meta:
         model = DataDocument
-        fields = ['title', 'subtitle', 'document_type', 'note']
+        fields = ['title', 'subtitle', 'document_type', 'note', 'url']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

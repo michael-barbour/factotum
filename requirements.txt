@@ -12,6 +12,7 @@ django-widget-tweaks>=1.4.1
 docutils>=0.12
 elasticsearch-dsl>=2.0.0,<3.0.0
 elasticsearch>=2.0.0,<3.0.0
+elasticsearch6>=6.0.0,<7.0.0
 fuzzywuzzy>=0.17.0
 lxml>=4.2.2
 mysqlclient==1.4.2.post1

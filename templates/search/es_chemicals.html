@@ -1,0 +1,42 @@
+{% extends 'core/base.html' %}
+{% load staticfiles %}
+{% load humanize %}
+{% load proper_paginate %}
+
+{% block title %}
+    "{{ q }}" | {{ block.super }}
+{% endblock %}
+
+{% block content %}
+
+<div class="col-md-9">
+    <div class="row">
+        <div class="col-md-5 col-xs-5">
+              Search result for: <label> {{q}} </label>
+       </div>
+       <div class="col-md-6 col-xs-6 align-right">
+
+        {{results.hits.total}}
+       </div>
+    </div>
+    <div class="results-wrapper">
+
+        {% if  results %}
+        {% for result in results.hits.hits %}
+        <div>
+            {{ result }} 
+        </div>
+        {% endfor %}
+    </div>
+
+    </div>
+
+    
+
+{% else %}
+<p> Sorry, no result found for the search term  <strong>{{q}} </strong></p>
+{% endif %}
+</div>
+</div>
+
+{% endblock %}

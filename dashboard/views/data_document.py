@@ -22,12 +22,8 @@ def data_document_detail(request, pk):
     # a time...
     ParentForm, ChildFormSet = create_detail_formset(
         doc, extra=edit, can_delete=bool(edit))
-    document_type_form = DocumentTypeForm(request.POST or None, instance=doc)
-    qs = DocumentType.objects.filter(group_type=doc.data_group.group_type)
-    document_type_form.fields['document_type'].queryset = qs
     context = {'doc': doc,
-               'edit': edit,
-               'document_type_form': document_type_form}
+               'edit': edit}
     if code == 'CP':
         # although keywords display as if at the datadocument level, they are
         # attached to each list_presence record. To display, we're getting the

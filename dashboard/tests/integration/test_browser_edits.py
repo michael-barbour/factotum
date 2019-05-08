@@ -282,4 +282,4 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
         self.assertTrue(num_pucs > 0, "Need more than one PUC")
         self.assertTrue(len(bubbles) > 0, "Need more than one bubble")
         self.assertEqual(num_pucs, len(bubbles), ('There should be a circle'
-                                                  'drawn for every PUC')) 
+                                                  'drawn for every PUC'))

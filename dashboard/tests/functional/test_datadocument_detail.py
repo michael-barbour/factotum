@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.test import TestCase, override_settings
 from django.core.exceptions import ObjectDoesNotExist
 
+from dashboard.models import *
 from dashboard.forms import *
 from factotum.settings import EXTRA
 from dashboard.tests.loader import *
@@ -229,12 +230,16 @@ class TestDynamicDetailFormsets(TestCase):
                 if code=='CP':
                     self.assertTrue(response_html.xpath('boolean(//*[@id="id_tags"])'),
                               'Tag input should exist for Chemical Presence doc type')
-                    self.assertEqual(ExtractedListPresenceTag.objects.count(), 0)
-                    self.assertEqual(ExtractedListPresenceToTag.objects.count(), 0)
+                    elpt_count = ExtractedListPresenceTag.objects.count()
+                    # seed data contains 2 tags for the 50 objects in this document
+                    elp2t_count = ExtractedListPresenceToTag.objects.count()
+                    # This post should preseve the 2 existing tags and add 2 more
                     req = self.client.post(path=reverse('save_list_presence_tag_form',kwargs={'pk': doc.pk}),
-                                           data={'tags':'pesticide,flavoring'})
-                    self.assertEqual(ExtractedListPresenceTag.objects.count(), 2)
-                    self.assertEqual(ExtractedListPresenceToTag.objects.count(), 2*doc.extractedtext.rawchem.select_subclasses('extractedlistpresence').count())
+                                           data={'tags':'after_shave,agrochemical,flavor,slimicide'})
+                    # Total number of tags should not have changed
+                    self.assertEqual(ExtractedListPresenceTag.objects.count(), elpt_count)
+                    # But the tagged relationships should have increased by 2 * the number of list presence objects
+                    self.assertEqual(ExtractedListPresenceToTag.objects.count(), elp2t_count + (2 * doc.extractedtext.rawchem.select_subclasses('extractedlistpresence').count()))
                 else:
                     self.assertFalse(response_html.xpath('boolean(//*[@id="id_tags"])'),
                               'Tag input should only exist for Chemical Presence doc type')

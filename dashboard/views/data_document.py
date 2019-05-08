@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from djqscsv import render_to_csv_response
+from django.contrib import messages
 
 from dashboard.forms import *
 from dashboard.forms import ExtractedListPresenceTagForm
@@ -92,15 +93,24 @@ def save_ext_form(request, pk):
         ext_text_form.save()
     return redirect(referer, pk=pk)
 
+
 @login_required()
 def save_list_presence_tag_form(request, pk):
     referer = request.POST.get('referer', 'data_document')
     extracted_text = get_object_or_404(ExtractedText, pk=pk)
+    tag_form = None
     for extracted_list_presence in extracted_text.rawchem.select_subclasses('extractedlistpresence'):
         tag_form = ExtractedListPresenceTagForm(request.POST or None, instance=extracted_list_presence)
         if tag_form.is_valid():
             tag_form.save()
+        else:
+            messages.error(request,tag_form.errors['tags'])
+            break
+    if not len(tag_form.errors):
+        messages.success(request,
+            "The following keywords are now associated with these list presence objects: %s" % tag_form['tags'].data)
     return redirect(referer, pk=pk)
+
 
 @login_required()
 def data_document_delete(request, pk, template_name='data_source/datasource_confirm_delete.html'):
@@ -111,11 +121,13 @@ def data_document_delete(request, pk, template_name='data_source/datasource_conf
         return redirect('data_group_detail', pk=datagroup_id)
     return render(request, template_name, {'object': doc})
 
+
 @login_required
 def dg_dd_csv_view(request, pk):
     qs = DataDocument.objects.filter(data_group_id=pk)
     filename = DataGroup.objects.get(pk=pk).name
     return render_to_csv_response(qs, filename=filename, append_datestamp=True)
+
 
 @login_required
 def data_document_edit(request, pk, template_name=('data_document/'

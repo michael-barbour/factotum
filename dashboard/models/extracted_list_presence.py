@@ -13,8 +13,7 @@ class ExtractedListPresence(CommonInfo, RawChem):
 
     tags = TaggableManager(through='dashboard.ExtractedListPresenceToTag',
                            to='dashboard.ExtractedListPresenceTag',
-                           blank=True,
-                           help_text='A set of keywords applicable to this Extracted List Presence')
+                           blank=True)
 
     @classmethod
     def detail_fields(cls):
@@ -39,6 +38,11 @@ class ExtractedListPresenceToTag(TaggedItemBase, CommonInfo):
     tag = models.ForeignKey('ExtractedListPresenceTag', on_delete=models.CASCADE,
                             related_name="%(app_label)s_%(class)s_items")
 
+    class Meta:
+        verbose_name = _("Extracted list presence to keyword")
+        verbose_name_plural = _("Extracted list presence to keywords")
+        ordering = ('content_object',)
+
     def __str__(self):
         return str(self.content_object)
 
@@ -46,8 +50,8 @@ class ExtractedListPresenceToTag(TaggedItemBase, CommonInfo):
 class ExtractedListPresenceTag(TagBase, CommonInfo):
 
     class Meta:
-        verbose_name = _("ExtractedListPresence Keyword")
-        verbose_name_plural = _("ExtractedListPresence Keywords")
+        verbose_name = _("Extracted list presence keyword")
+        verbose_name_plural = _("Extracted list presence keywords")
         ordering = ('name',)
 
     def __str__(self):

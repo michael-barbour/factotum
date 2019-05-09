@@ -1,8 +1,10 @@
+
 from dashboard.models import ExtractedListPresence, ExtractedListPresenceTag
 from dal import autocomplete
 
 
 class ExtractedListPresenceTagForm(autocomplete.FutureModelForm):
+
 
     class Meta:
         model = ExtractedListPresence
@@ -11,6 +13,7 @@ class ExtractedListPresenceTagForm(autocomplete.FutureModelForm):
         widgets = {
             'tags': autocomplete.TaggitSelect2(
                 'list_presence_tags_autocomplete')
+
         }
 
     def __init__(self, *args, **kwargs):

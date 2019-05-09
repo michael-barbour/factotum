@@ -28,6 +28,7 @@ fixtures_standard = [ '00_superuser',
                       '13_puc_tag',
                       '14_list_presence_tag',
                       '15_list_presence_to_tag'
+
                       ]
 
 datadocument_models = {

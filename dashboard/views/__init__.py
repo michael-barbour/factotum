@@ -16,3 +16,4 @@ from .puc import *
 from .diagnostics import *
 from .chemical_curation import *
 from .search_chemicals import *
+from .list_presence_tag_autocomplete import *

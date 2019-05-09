@@ -122,6 +122,7 @@ class ProductLinkForm(forms.ModelForm):
         queryset=DocumentType.objects.all(),
         label="Data Document Type",
         required=False)
+
     return_url = forms.CharField()
 
     class Meta:
@@ -394,7 +395,7 @@ class DataDocumentForm(forms.ModelForm):
 
     class Meta:
         model = DataDocument
-        fields = ['title', 'subtitle', 'document_type', 'note']
+        fields = ['title', 'subtitle', 'document_type', 'note', 'url']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -403,3 +404,4 @@ class DataDocumentForm(forms.ModelForm):
             .objects
             .compatible(self.instance)
         )
+

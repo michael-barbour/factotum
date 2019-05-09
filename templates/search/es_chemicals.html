@@ -4,7 +4,7 @@
 {% load proper_paginate %}
 
 {% block title %}
-    "{{ q }}" | {{ block.super }}
+"{{ q }}" | {{ block.super }}
 {% endblock %}
 
 {% block content %}
@@ -12,30 +12,62 @@
 <div class="col-md-9">
     <div class="row">
         <div class="col-md-5 col-xs-5">
-              Search result for: <label> {{q}} </label>
-       </div>
-       <div class="col-md-6 col-xs-6 align-right">
-
-        {{results.hits.total}}
-       </div>
-    </div>
-    <div class="results-wrapper">
-
-        {% if  results %}
-        {% for result in results.hits.hits %}
-        <div>
-            {{ result }} 
+            Search result for: <label> {{q}} </label>
         </div>
-        {% endfor %}
+        <div class="col-md-6 col-xs-6 align-right">
+
+            {{results.hits.total}}
+        </div>
     </div>
 
-    </div>
+    <div class="row">
+        <div class="col-sm">
+            <h4>JSON:</h4>
+            {% if  results %}
+            {% for result in results.hits.hits %}
+            <div>
+                <h4>JSON result:</h4>
+                <code>{{ result }}</code>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p> Sorry, no result found for the search term <strong>{{q}} </strong></p>
+            {% endif %}
+        </div> <!-- end col -->
 
-    
 
-{% else %}
-<p> Sorry, no result found for the search term  <strong>{{q}} </strong></p>
-{% endif %}
+        <div class="col-sm">
+            <h4>Django objects:</h4>
+            {% if  obj_results %}
+            {% for obj_result in obj_results %}
+            <dl class="row"></dl>
+            <h5><a href="/datadocument/{{ obj_result.dd.id }}"> {{ obj_result.dd.title }} </a></h5>
+            <a href="{{ obj_result.dd.get_absolute_url }}" title="Link to document detail">{{ doc.title }}</a>
+            <a href="{{ obj_result.dd.pdf_url }}" title="Link to {{ obj_result.dd.get_abstract_filename }}"
+                target="_blank"><span class="oi oi-document"></span></a>
+            <br />
+            <dt>Raw chem name and CAS:</dt>{{ obj_result.raw_chem_name }} {{ obj_result.raw_cas }}</dd>
+            {% if  obj_result.true_cas %}
+            <dt>True chem name and CAS:</dt>
+            <dd>{{ obj_result.true_chemname }} {{ obj_result.true_cas }}</dd>
+            {% endif %}
+            <dt>True chem name and CAS:</dt>
+            <dd>{{ obj_result.product_count }}</dd>
+            </dl>
+            {% endfor %}
+            {% else %}
+            <p> Sorry, no result found for the search term <strong>{{q}} </strong></p>
+            {% endif %}
+        </div> <!-- end col -->
+    </div> <!-- end row -->
+</div>
+</div>
+
+</div>
+
+
+
+
 </div>
 </div>
 

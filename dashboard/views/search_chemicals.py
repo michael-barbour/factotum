@@ -42,7 +42,7 @@ def search_chemicals(request, template_name='search/es_chemicals.html'):
         obj_results.append(obj_hit)
 
     context = {'results': results,
-               'obj_results': obj_hits,
+               'obj_results': obj_results,
                'q': q,
                }
     return render(request, template_name, context)

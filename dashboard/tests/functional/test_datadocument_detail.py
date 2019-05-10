@@ -51,7 +51,7 @@ class DataDocumentDetailTest(TestCase):
         response = self.client.get('/datadocument/167497/')
         self.assertContains(response, '/link_product_form/167497/')
         data = {'title'        : ['New Product'],
-                'upc'          : ['stub_1860'],
+                'upc'          : ['stub_9860'],
                 'document_type': [''],
                 'return_url'   : ['/datadocument/167497/']}
         response = self.client.post('/link_product_form/167497/', data=data)

@@ -114,7 +114,7 @@ def download_PUCs(request):
     response['Content-Disposition'] = 'attachment; filename="PUCs.csv"'
     bubbles = request.GET.get('bubbles')
     writer = csv.writer(response)
-    cols = ['General category','Product family','Product type','Allowed attributes','Assumed attributes','Description','PUC type','PUC level','Product count']
+    cols = ['General category','Product family','Product type','Allowed attributes','Assumed attributes','Description','PUC type','PUC level','Product count','Cumulative product count']
     writer.writerow(cols)
     pucs = PUC.objects.filter(kind='FO') if bubbles else PUC.objects.all()
     for puc in pucs:
@@ -127,7 +127,8 @@ def download_PUCs(request):
                 puc.description, 
                 puc.kind,
                 puc.get_level(), 
-                puc.product_count
+                puc.product_count,
+                puc.cumulative_product_count
                 ]
         writer.writerow(row)
 

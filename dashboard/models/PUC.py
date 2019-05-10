@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from .common_info import CommonInfo
+from django.apps import apps
 
 
 class PUC(CommonInfo):
@@ -82,6 +83,16 @@ class PUC(CommonInfo):
         '''Don't use this in large querysets. It uses a SQL query for each 
         PUC record. '''
         return self.products.count()
+
+    @property
+    def cumulative_product_count(self):
+        ProductToPUC = apps.get_model('dashboard','ProductToPUC')
+        if self.is_level_one:
+            return ProductToPUC.objects.filter(puc__gen_cat=self.gen_cat).count()
+        if self.is_level_two:
+            return ProductToPUC.objects.filter(puc__prod_fam=self.prod_fam).count()
+        if self.is_level_three:
+            return ProductToPUC.objects.filter(puc=self).count()
 
     @property
     def admin_url(self):

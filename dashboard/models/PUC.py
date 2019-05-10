@@ -105,7 +105,7 @@ class PUCToTag(TaggedItemBase, CommonInfo):
 
 class PUCTag(TagBase, CommonInfo):
 
-    definition = models.TextField(null=False, blank=False,max_length=255)
+    definition = models.TextField(null=True, blank=True,max_length=255)
 
     class Meta:
         verbose_name = _("PUC Attribute")

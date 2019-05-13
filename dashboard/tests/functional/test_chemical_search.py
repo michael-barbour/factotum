@@ -1,9 +1,5 @@
 from django.test import Client
 from dashboard.tests.loader import *
-from dashboard import views
-from django.test import TestCase, override_settings, RequestFactory
-from dashboard.models import DataDocument, Script, ExtractedText, ExtractedChemical, QAGroup
-from django.db.models import Count
 import requests
 
 class TestChemicalSearch(TestCase):

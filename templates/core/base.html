@@ -71,6 +71,14 @@
                     <a class="dropdown-item" href="{% url 'qa_chemicalpresence_index' %}">Chemical Presence</a>
                 </div>
             </li>
+            <li class="nav-item {% if 'search' in request.resolver_match.url_name %}active{% endif %}">
+                    <!-- TODO: the input form should contain the search query string -->
+                    <form class="search-form-container" action="/search/es_chemicals/" method="get" >
+                        <div class="icon-addon addon-lg">
+                        <input type="text" placeholder="Search by chemical" class="form-control" name="q" id="q" autocomplete="off">
+                        </div>
+                    </form>
+                </li>
             {% block nav %}{% endblock %}
         </ul>
         <ul class="nav navbar-nav navbar-right ml-auto">

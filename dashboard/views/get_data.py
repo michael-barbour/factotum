@@ -57,7 +57,7 @@ def stats_by_dtxsids(dtxs):
 
     # The number of unique PUCs (product categories) the chemical is associated with
     pucs_n = DSSToxLookup.objects.filter(sid__in=dtxs).\
-        annotate(pucs_n=Count('curated_chemical__extracted_text__data_document__product__puc')).\
+        annotate(pucs_n=Count('curated_chemical__extracted_text__data_document__product__puc',distinct=True)).\
         values('sid','pucs_n').order_by()
 
     # "The number of data documents (e.g.  MSDS, SDS, ingredient list, product label)

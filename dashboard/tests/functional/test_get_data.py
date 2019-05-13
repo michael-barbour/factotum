@@ -33,9 +33,10 @@ class TestGetData(TestCase):
         stats = stats_by_dtxsids(dtxs)
         # select out the stats for one DTXSID, ethylparaben
         ethylparaben_stats = stats.get(sid='DTXSID9022528')
-        puc_count = DSSToxLookup.objects.get(sid='DTXSID9022528').puc_count
-        self.assertEqual(puc_count, ethylparaben_stats['pucs_n'], 
-                        f'There should be {puc_count} PUC associated with ethylparaben')
+        dsstox = DSSToxLookup.objects.get(sid='DTXSID9022528')
+        self.assertEqual(dsstox.puc_count, ethylparaben_stats['pucs_n'], 
+                        (f'There should be {dsstox.puc_count}) '
+                        'PUC associated with ethylparaben'))
 
         self.client.login(username='Karyn', password='specialP@55word')
         # get the associated documents for linking to products
@@ -59,10 +60,11 @@ class TestGetData(TestCase):
                                            puc=puc,
                                            puc_assigned_usr=User.objects.get(username='Karyn'))
         ppuc.refresh_from_db()
+        dsstox.refresh_from_db()
         stats = stats_by_dtxsids(dtxs)
         # select out the stats for one DTXSID, ethylparaben
         ethylparaben_stats = stats.get(sid='DTXSID9022528')
-        self.assertEqual(2, ethylparaben_stats['pucs_n'])
+        self.assertEqual(dsstox.puc_count, ethylparaben_stats['pucs_n'])
 
     def test_dtxsid_dds_n(self):
         dtxs = ["DTXSID9022528", "DTXSID1020273",

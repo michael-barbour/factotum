@@ -33,7 +33,9 @@ class TestGetData(TestCase):
         stats = stats_by_dtxsids(dtxs)
         # select out the stats for one DTXSID, ethylparaben
         ethylparaben_stats = stats.get(sid='DTXSID9022528')
-        self.assertEqual(0, ethylparaben_stats['pucs_n'])
+        puc_count = DSSToxLookup.objects.get(sid='DTXSID9022528').puc_count
+        self.assertEqual(puc_count, ethylparaben_stats['pucs_n'], 
+                        f'There should be {puc_count} PUC associated with ethylparaben')
 
         self.client.login(username='Karyn', password='specialP@55word')
         # get the associated documents for linking to products
@@ -60,7 +62,7 @@ class TestGetData(TestCase):
         stats = stats_by_dtxsids(dtxs)
         # select out the stats for one DTXSID, ethylparaben
         ethylparaben_stats = stats.get(sid='DTXSID9022528')
-        self.assertEqual(1, ethylparaben_stats['pucs_n'])
+        self.assertEqual(2, ethylparaben_stats['pucs_n'])
 
     def test_dtxsid_dds_n(self):
         dtxs = ["DTXSID9022528", "DTXSID1020273",
@@ -122,7 +124,7 @@ class TestGetData(TestCase):
             if e['sid'] == 'DTXSID9022528':
                 ethylparaben_stats = e
 
-        self.assertEqual(0, ethylparaben_stats['products_n'], 'There should be 0 products \
+        self.assertEqual(3, ethylparaben_stats['products_n'], 'There should be 3 products \
         associated with ethylparaben')
         self.client.login(username='Karyn', password='specialP@55word')
         # get the associated documents for linking to products
@@ -141,7 +143,7 @@ class TestGetData(TestCase):
         for e in stats:
             if e['sid'] == 'DTXSID9022528':
                 ethylparaben_stats = e
-        self.assertEqual(1, ethylparaben_stats['products_n'], 'There should now be 1 product \
+        self.assertEqual(4, ethylparaben_stats['products_n'], 'There should now be 4 products \
         associated with ethylparaben')
 
     def test_habits_and_practices_cards(self):

@@ -133,7 +133,7 @@ def data_group_detail(request, pk,
                 return render(request, template_name, context)
             if not context['ext_err']:  # no saving until all errors are removed
                 for doc,text,record in good_records:
-                    doc.extracted = True
+                    #doc.extracted = True
                     doc.save()
                     text.save()
                     record.save()
@@ -399,7 +399,7 @@ def habitsandpractices(request, pk,
             hp_formset.save()
         if ext_form.is_valid():
             ext_form.save()
-        doc.extracted = True
+        doc.is_extracted = True
         doc.save()
         context = {   'doc'         : doc,
                       'ext_form'    : ext_form,

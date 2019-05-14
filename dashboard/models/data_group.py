@@ -105,7 +105,7 @@ class DataGroup(CommonInfo):
         return self.datadocument_set.count()
 
     def extracted_docs(self):
-        return self.datadocument_set.filter(extracted=True).count()
+        return self.datadocument_set.filter(extractedtext__isnull=False).count()
 
     def __str__(self):
         return self.name

@@ -165,4 +165,18 @@ def upload_dtxsid_csv(request):
     #print(resp)
     return resp
 
+def download_PUCTags(request):
+    '''respond with a CSV of PUCTags, name and definition
+    '''
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="PUCTags.csv"'
+    writer = csv.writer(response)
+    cols = ['Name','Definition']
+    writer.writerow(cols)
+    tags = PUCTag.objects.all()
+    for tag in tags:
+        row = [ tag.name,
+                tag.definition]
+        writer.writerow(row)
 
+    return response

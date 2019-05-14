@@ -203,8 +203,17 @@ class PUCModelTest(TestCase):
         fields = ['kind','gen_cat','prod_fam','prod_type','description',
                 'last_edited_by','products','extracted_habits_and_practices',
                 'tags']
+        model_fields = [f.name for f in PUC._meta.get_fields()]
         for fld in fields:
-            self.assertIn(fld, PUC.__dict__, f'{fld} should be in PUC model.')
+            self.assertIn(fld, model_fields,
+                            f'"{fld}"" field should be in PUC model.')
+
+    def test_puctag_fields(self):
+        fields = ['name','slug','definition']
+        model_fields = [f.name for f in PUCTag._meta.get_fields()]
+        for fld in fields:
+            self.assertIn(fld, model_fields,
+                            f'"{fld}"" field should be in PUCTag model.')
 
     def test_get_the_kids(self):
         '''Level 1 and 2 PUCs should accumulate lower level PUCs.

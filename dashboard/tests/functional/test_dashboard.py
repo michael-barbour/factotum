@@ -55,7 +55,6 @@ class DashboardTest(TestCase):
 
     def test_PUC_download(self):
         puc = self.objects.puc
-        # import pdb; pdb.set_trace()
 
         allowedTag = PUCTag.objects.create(name='aerosol')
         PUCToTag.objects.create(tag=allowedTag,content_object=puc,assumed=False)
@@ -82,6 +81,18 @@ class DashboardTest(TestCase):
         self.assertEqual(row1[6], 'FO')
         self.assertEqual(row1[7], '3')
         self.assertEqual(row1[8], '0')
+
+    def test_PUCTag_download(self):
+        '''check the PUCTag that would be downloaded from the loader
+        '''
+        pt = self.objects.pt
+        response = self.client.get('/dl_puctags/')
+        self.assertEqual(response.status_code, 200)
+        csv_lines = response.content.decode('ascii').split('\r\n')
+        self.assertEqual(csv_lines[0], ('Name,Definition'), "Check yo header.")
+        row1 = csv_lines[1].split(',')
+        self.assertEqual(row1[0], pt.name)
+        self.assertEqual(row1[1], pt.definition)
 
 class DashboardTestWithFixtures(TestCase):
     fixtures = fixtures_standard

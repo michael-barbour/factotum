@@ -112,5 +112,6 @@ class DataDocument(CommonInfo):
         # the document_type must be one of the children types
         # of the datadocument's parent datagroup or null
         if self.document_type and self.document_type not in DocumentType.objects.compatible(self):
+
             raise ValidationError(('The document type must be allowed by '
                                    'the parent data group.'))

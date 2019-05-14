@@ -218,11 +218,13 @@ class TestDynamicDetailFormsets(TestCase):
         '''
         for code, model in datadocument_models.items():
             if DataDocument.objects.filter(
+
                                 data_group__group_type__code=code,
                                 extractedtext__isnull=False
             ):
                 doc = DataDocument.objects.filter(
                                     data_group__group_type__code=code,
+
                                     extractedtext__isnull=False
                 ).first()
                 response = self.client.get(reverse('data_document',kwargs={'pk': doc.pk}))
@@ -242,6 +244,7 @@ class TestDynamicDetailFormsets(TestCase):
                     self.assertEqual(ExtractedListPresenceToTag.objects.count(), elp2t_count + (2 * doc.extractedtext.rawchem.select_subclasses('extractedlistpresence').count()))
                 else:
                     self.assertFalse(response_html.xpath('boolean(//*[@id="id_tags"])'),
+
                               'Tag input should only exist for Chemical Presence doc type')
 
 

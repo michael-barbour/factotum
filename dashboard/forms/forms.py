@@ -122,6 +122,7 @@ class ProductLinkForm(forms.ModelForm):
         queryset=DocumentType.objects.all(),
         label="Data Document Type",
         required=False)
+
     return_url = forms.CharField()
 
     class Meta:
@@ -403,3 +404,4 @@ class DataDocumentForm(forms.ModelForm):
             .objects
             .compatible(self.instance)
         )
+

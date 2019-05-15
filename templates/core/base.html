@@ -75,7 +75,7 @@
                     <!-- TODO: the input form should contain the search query string -->
                     <form class="search-form-container" action="/search/es_chemicals/" method="get" >
                         <div class="icon-addon addon-lg">
-                        <input type="text" placeholder="Search by chemical" class="form-control" name="q" id="q" autocomplete="off">
+                        <input type="text" placeholder="{% if q %}{{q}}{% else %}Search by chemical{% endif %}" class="form-control" name="q" id="q" autocomplete="off">
                         </div>
                     </form>
                 </li>

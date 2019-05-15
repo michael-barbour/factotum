@@ -43,10 +43,25 @@ class DashboardTest(TestCase):
         response_html = html.fromstring(response)
         extracted_doc_count = response_html.xpath(
             '/html/body/div[1]/div[1]/div[4]/div/div')[0].text
-        self.assertEqual('0%', extracted_doc_count)
+        self.assertEqual('100%', extracted_doc_count)
 
-        self.objects.doc.extracted = True
-        self.objects.doc.save()
+        # Add a Data Document with no related extracted record
+        dd = DataDocument.objects.create(title='New Document',
+                                            data_group=self.objects.dg,
+                                            document_type=self.objects.dt,
+                                            filename='new_example.pdf')
+        dd.save()
+        
+        response = self.client.get('/').content.decode('utf8')
+        response_html = html.fromstring(response)
+        extracted_doc_count = response_html.xpath(
+            '/html/body/div[1]/div[1]/div[4]/div/div')[0].text
+        self.assertEqual('50%', extracted_doc_count)
+
+        # Add an ExtractedText object
+        et = ExtractedText.objects.create(data_document_id = dd.id, 
+            extraction_script=self.objects.exscript)
+        et.save()
         response = self.client.get('/').content.decode('utf8')
         response_html = html.fromstring(response)
         extracted_doc_count = response_html.xpath(

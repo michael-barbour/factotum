@@ -23,7 +23,7 @@ def index(request):
 
     stats['datadocument_count'] = DataDocument.objects.count()
     stats['datadocument_with_extracted_text_percent'] =\
-        DataDocument.objects.filter(extracted = True).count()/DataDocument.objects.count()*100
+        DataDocument.objects.filter(extractedtext__isnull=False).count() / DataDocument.objects.count()*100
     stats['datadocument_count_by_date'] = datadocument_count_by_date()
     stats['datadocument_count_by_month'] = datadocument_count_by_month()
     stats['product_count'] = Product.objects.count()

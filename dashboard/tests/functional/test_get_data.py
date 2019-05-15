@@ -48,7 +48,6 @@ class TestGetData(TestCase):
         p = Product.objects.create(data_source=ds, title='Test Product',
                                    upc='Test UPC for ProductToPUC')
         pd = ProductDocument.objects.create(document=dd, product=p)
-        pd.save()
         dd.refresh_from_db()
 
         # get one of the products that was just linked to a data document with DTXSID9022528 in its extracted chemicals
@@ -60,7 +59,6 @@ class TestGetData(TestCase):
                                            puc=puc,
                                            puc_assigned_usr=User.objects.get(username='Karyn'))
         ppuc.refresh_from_db()
-        dsstox.refresh_from_db()
         stats = stats_by_dtxsids(dtxs)
         # select out the stats for one DTXSID, ethylparaben
         ethylparaben_stats = stats.get(sid='DTXSID9022528')

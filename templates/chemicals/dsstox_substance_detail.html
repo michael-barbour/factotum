@@ -2,6 +2,8 @@
 {% load staticfiles %}
 {% load humanize %}
 
+{% block title %}DSSTox Chemical Detail{% endblock %}
+
 {% block content %}
 
 <h1>
@@ -29,29 +31,30 @@
 <div class="p-3"></div>
 <div class="container">
     <div class="row">
-        <div class="col-4 text-center p-0">
+        <div class="col-5 p-0">
                 <div class="card">
-                        <div class="card-header">
+                        <div class="card-header text-center">
                           <h5><b>PUCs</b></h5>
                           <small class="card-text font-italic">
                               General Category - Product Family - Product Type
                           </small>
                         </div>
-                        <div class="card-body p-0">
+                        <div class="card-body p-0 list-group d-flex">
                             {% for puc in pucs %}
-                            <h5 class="card-title"
-                                data-toggle="tooltip" 
-                                data-placement="top"    
-                                title="{{ puc }}">
-                                {{ puc|truncatechars:38 }}
-                            </h5>
+                            <a href="#" class="list-group-item
+                                                list-group-item-action
+                                                align-items-start">
+                                <small> {{ puc }} </small>
+                            </a>
                             {% empty %}
-                            <h5>No PUCs are linked to this chemical</h5>
+                            <li class="list-group-item">
+                                No PUCs are linked to this chemical
+                            </li>
                             {% endfor %}
                         </div>
                       </div>
         </div>
-        <div class="col-8 text-center pl-4 pr-0">
+        <div class="col-7 text-center pl-4 pr-0">
             <!-- <h1>BUBBLE PLOT GOES HERE</h1> -->
             <svg class="bg-light"viewBox="0 0 1000 420">
                 <a href="https://www.google.com"><circle r="60" cy="97" cx="447"

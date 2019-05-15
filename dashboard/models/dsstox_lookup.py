@@ -23,9 +23,7 @@ class DSSToxLookup(CommonInfo):
 
     @property
     def puc_count(self):
-        pdocs = ProductDocument.objects.filter(
-            document__extractedtext__rawchem__in=self.curated_chemical.all()
-            )
+        pdocs = ProductDocument.objects.from_chemical(self)
         return PUC.objects.filter(products__in=pdocs.values('product')).count()
 
  

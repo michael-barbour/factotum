@@ -13,10 +13,10 @@ class TestChemicalSearch(TestCase):
         """
         The correct JSON comes back from the elasticsearch server
         """
-        response = requests.get('http://127.0.0.1:9400/')
+        response = requests.get('http://127.0.0.1:9200/')
         self.assertTrue(response.ok)
         
-        response = requests.get('http://127.0.0.1:9400/factotum_chemicals/_search?q=ethylparaben')
+        response = requests.get('http://127.0.0.1:9200/factotum_chemicals/_search?q=ethylparaben')
         #print(response.content)
         self.assertIn('DTXSID9022528', str(response.content))
 

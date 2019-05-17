@@ -1,6 +1,7 @@
 from django.test import Client
 from dashboard.tests.loader import *
 import requests
+from django.test import TestCase, RequestFactory
 
 class TestChemicalSearch(TestCase):
     fixtures = fixtures_standard

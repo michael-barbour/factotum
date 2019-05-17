@@ -30,5 +30,5 @@ class TestChemicalSearch(TestCase):
         self.assertIn(pdf_url, str(response.content))
         #print(response.content)
         
-        prod_count_html = "<dt>Product count:</dt>\n<dd>2</dd>"
+        prod_count_html = "<dt>Product count:</dt>\\n            <dd>1</dd>"
         self.assertIn(prod_count_html, str(response.content))

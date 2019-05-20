@@ -8,10 +8,10 @@
         <span name="title">{{ product.title }}</span>
         <div class="btn-group float-lg-right" role="group" aria-label="Manage Product">
             <a class="btn btn-success btn-sm" role="button" title="edit" href="{% url 'product_edit' pk=product.pk %}">
-                <span class="oi oi-pencil"></span> </a>
+                <span class="fa fa-fs fa-edit"></span> </a>
             <a class="btn btn-danger btn-sm" role="button" title="delete"
                href="{% url "product_delete" pk=product.pk %}">
-                <span class="oi oi-trash"></span> </a>
+                <span class="fa fa-fs fa-trash"></span> </a>
         </div>
     </h1>
     <h2>
@@ -26,10 +26,10 @@
                     {% if puc.id %}
                         <a class="btn btn-success btn-sm" role="button" title="Edit PUC Relationship"
                            href="{% url 'product_puc' pk=product.pk %}">
-                            <span class="oi oi-pencil"></span> </a>
+                            <span class="fa fa-fs fa-edit"></span> </a>
                         <a class="btn btn-danger btn-sm" role="button" title="Delete PUC Relationship"
                            href="{% url 'product_puc_delete' pk=product.pk %}">
-                            <span class="oi oi-trash"></span> </a>
+                            <span class="fa fa-fs fa-trash"></span> </a>
                     {% else %}
                         <a class="btn btn-success btn-sm" role="button" title="edit" id="button_assign_puc"
                            href="{% url 'product_puc' pk=product.pk %}">Assign PUC</a>
@@ -127,12 +127,12 @@
                         <td align="center">{{ doc.document_type }}</td>
                         <td align="center">
                             {% if doc.extracted %}
-                                <span class="oi oi-circle-check" style="color:green;"></span>
+                                <span class="fa fa-check-circle" style="color:green;"></span>
                                 <p style="display:none;">{{ doc.extracted }}</p>
                             {% else %}
                                 <a class="btn btn-danger btn-sm" role="button" title="delete"
                                    href="{% url "data_document_delete" doc.id %}">
-                                    <span class="oi oi-trash"></span>
+                                    <span class="fa fa-fs fa-trash"></span>
                                 </a><p style="display:none;">{{ doc.extracted }}</p>
                             {% endif %}
                         </td>
@@ -140,7 +140,7 @@
                             <div class="btn-group">
                                 <a href="{{ doc.pdf_url }}" title="Link to {{ doc.get_abstract_filename }}"
                                    target="_blank">
-                                    <img src="{% static 'images/PDF_32.png' %}" height="32px" width="32px">
+                                   <span class="fa fa-fs fa-file-pdf"></span>
                                 </a>
                             </div>
                         </td>

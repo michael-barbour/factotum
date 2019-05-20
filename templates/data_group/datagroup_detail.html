@@ -45,13 +45,13 @@
         <span name="title">{{ datagroup.name }}</span>
         <div class="btn-group float-lg-right" role="group" aria-label="Data Group Modification">
             <a class="btn btn-info btn-sm" role="button" title="list" href="{% url "data_group_list" %}">
-                <span class="oi oi-list"></span> </a>
+                <span class="fa fa-fw fa-list"></span> </a>
             <a class="btn btn-success btn-sm" role="button" title="edit"
                href="{% url "data_group_edit" datagroup.id %}">
-                <span class="oi oi-pencil"></span> </a>
+                <span class="fa fa-fw fa-edit"></span> </a>
             <a class="btn btn-danger btn-sm" role="button" title="delete"
                href="{% url "data_group_delete" datagroup.id %}">
-                <span class="oi oi-trash"></span> </a>
+                <span class="fa fa-trash"></span> </a>
         </div>
     </h1>
     <dl class="row col-sm-12">
@@ -89,21 +89,21 @@
 
     <div class="col-sm-12">
         <a href="{% url 'registered_records.csv' datagroup.pk  %}" class="btn btn-secondary">
-            <span class="oi oi-spreadsheet
+            <span class="fa fa-file-csv
             {% if datagroup.registered_docs == 0 %}disabled{% endif %}">
         </span>&nbsp;Download Registered Records CSV</a>
         <a href = "{%url 'dg_pdfs_zip_view' datagroup.pk %}" class="btn btn-secondary
               {% if not datagroup.zip_url or datagroup.matched_docs == 0  %}disabled{% endif %}">
-          <span class="oi oi-data-transfer-download"></span> Download All PDF Documents 
+          <span class="fa fa-download"></span> Download All PDF Documents 
         </a>
         {% if datagroup.group_type.code in "CO" %}
             <a href="{% url 'dg_raw_extracted_records' datagroup.pk  %}" class="btn btn-secondary">
-                <span class="oi oi-spreadsheet"></span>&nbsp;Download Raw Composition Records</a>
+                <span class="fa fa-file-csv"></span>&nbsp;Download Raw Composition Records</a>
         {% endif %}
         {% if clean_comp_data_form %}
             <br><br>
             <a class="btn btn-secondary" data-toggle="collapse" id="btn_clean_comp_data_form" href="#clean_comp_data_form">
-              <span class="oi oi-data-transfer-upload"></span>&nbsp;Upload Clean Composition Data
+              <span class="fa fa-upload"></span>&nbsp;Upload Clean Composition Data
             </a>
             <div id="clean_comp_data_form" class="col-md-12 border rounded {% if clean_comp_data_form.collapsed %}collapse{% endif %}">
                 <form method="post" enctype="multipart/form-data">
@@ -116,7 +116,7 @@
         <br><br>
         {% if extract_form %}
             <a class="btn btn-secondary" data-toggle="collapse" id="btn_extract_text_form" href="#extract_form">
-              <span class="oi oi-data-transfer-upload"></span>&nbsp;Upload Extracted Text
+              <span class="fa fa-upload"></span>&nbsp;Upload Extracted Text
             </a>
             <div id="extract_form" class="col-md-12 border rounded {% if extract_form.collapsed %}collapse{% endif %}">
                 <form method="post" enctype="multipart/form-data">
@@ -124,7 +124,7 @@
                     {% include 'core/bs4_form.html' with form=extract_form %}
                     <input type="submit" class="btn btn-primary" name="extract_button" value="Submit" disabled>
                     <a id="xx" href="" class="btn btn-secondary"
-                       {% if not doc.matched %}disabled{% endif %}><span class="oi oi-spreadsheet"></span>&nbsp;Download Extracted Text CSV Template
+                       {% if not doc.matched %}disabled{% endif %}><span class="fa fa-file-csv"></span>&nbsp;Download Extracted Text CSV Template
                     </a>
                 </form>
             </div>
@@ -149,7 +149,7 @@
 
         {% if not datagroup.all_matched %}
             <a class="btn btn-secondary" data-toggle="collapse" href="#upload_form">
-                <span class="oi oi-data-transfer-upload"></span>&nbsp;Upload Data Group PDFs
+                <span class="fa fa-upload"></span>&nbsp;Upload Data Group PDFs
             </a>
             <p class="text-muted">Please limit upload to <600 documents at one time</p>
             <div id="upload_form" class="col-md-12 border rounded collapse">
@@ -179,7 +179,7 @@
       {% endif %}
       <p>
         <a class="btn btn-secondary" href="{%  url 'dg_dd_csv_view' datagroup.id %}">
-          <span class="oi oi-spreadsheet"></span>
+          <span class="fa fa-file-csv"></span>
           &nbsp;Export all records in {{ datagroup.name }} to csv</a>
       </p>
     </div>
@@ -206,32 +206,32 @@
               <a href="{{ doc.get_absolute_url }}"
                  title="Link to document detail">{{ doc.title }}</a>
               <a href="{{ doc.pdf_url }}"
-                 title="Link to {{ doc.get_abstract_filename }}" target="_blank"><span class="oi oi-document"></span></a>
+                 title="Link to {{ doc.get_abstract_filename }}" target="_blank"><span class="fa fa-file-o"></span></a>
             </td>
           {% else %}
             <td>{{ doc.title }}</td>
           {% endif %}
             <td align="center">
           {% if doc.matched %}
-            <span class="oi oi-circle-check" style="color:green;"></span>
+            <span class="fa fa-check-circle" style="color:green;"></span>
             <p style="display:none;">{{doc.matched}}</p>
           {% else %}
           <a class="btn btn-danger btn-sm" role="button" title="delete"
              href="{% url "data_document_delete" doc.id %}">
-              <span class="oi oi-trash"></span> </a>
+              <span class="fa fa-trash"></span> </a>
               <p style="display:none;">{{doc.matched}}</p>
           {% endif %}
             </td>
             <td align="center">
           {% if doc.extracted and not datagroup.is_habits_and_practices %}
-            <span class="oi oi-circle-check" style="color:green;"></span>
+            <span class="fa fa-check-circle" style="color:green;"></span>
               <p style="display:none;">{{doc.extracted}}</p>
           {% elif datagroup.is_habits_and_practices %}
             <a class="btn btn-info btn-sm" role="button" title="Edit/Inspect Habits and practices"
              href='{% url 'habitsandpractices' doc.id %}'>Edit / Inspect Habits and practices</a>
               <p style="display:none;">{{doc.extracted}}</p>
           {% else %}
-            <span class="oi oi-circle-x" style="color:red;">
+            <span class="fa fa-times-circle" style="color:red;">
               <p style="display:none;">{{doc.extracted}}</p>
             </span>
           {% endif %}
@@ -244,7 +244,7 @@
              href='{% url 'product_detail' doc.products.first.pk %}'>{{doc.products.first}}</a>
               <p style="display:none;">{{ doc.products.exists }}</p>
             {% else %}
-            <span class="oi oi-circle-x" style="color:red;">
+            <span class="fa fa-times-circle" style="color:red;">
               <p style="display:none;">{{ doc.products.exists }}</p>
           </td>
             {% endif %}

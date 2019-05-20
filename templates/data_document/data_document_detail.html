@@ -9,7 +9,7 @@
     <div class="row" style="display: flex; align-items: center;">
         <div class="col-lg-1" style="padding-left:30px;">
             <a href="{{ doc.pdf_url }}" title="Link to {{ doc.get_abstract_filename }}" target="_blank">
-            <span class="oi oi-file" style="font-size: 50px"></span></a>
+            <span class="fa fa-file" style="font-size: 50px"></span></a>
         </div>
         <div class="col-lg-10">
             <div class="row col-lg-12">
@@ -24,9 +24,9 @@
         <div class="col-lg-1">
             <div class="btn-group float-lg-right" role="group" aria-label="Data Document Modification">
                 <a class="btn btn-success btn-sm" role="button" title="edit" href="{% url 'data_document_edit' doc.id %}">
-                    <span class="oi oi-pencil"></span></a>
+                    <span class="fa fa-fs fa-edit"></span></a>
                 <a class="btn btn-danger btn-sm" role="button" title="delete" href="{% url 'data_document_delete' doc.id %}">
-                    <span class="oi oi-trash"></span></a>
+                    <span class="fa fa-fs fa-trash"></span></a>
             </div>
         </div>
     </div>
@@ -95,9 +95,9 @@
                         data-toggle="modal"
                         data-target="#extextModal">
                         {% if doc.extracted %}
-                            <span class="oi oi-pencil">
+                            <span class="fa fa-fs fa-edit">
                         {% else %}
-                            <span class="oi oi-plus">
+                            <span class="fa fa-plus-square">
                         {% endif %}</span> </a>
                     {% endif %}
                 </h4>

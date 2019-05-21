@@ -387,7 +387,7 @@ def habitsandpractices(request, pk,
     if created:
         extext.doc_date = 'please add...'
     ExtractedTextForm, HPFormSet = create_detail_formset(doc)
-    # print(extext.pk)
+    # print(f'running habitsandpractices() on %s inside views/data_group.py' % doc)
     ext_form = ExtractedTextForm(request.POST or None, instance=extext)
     hp_formset = HPFormSet(request.POST or None, instance=extext, prefix='habits')
     context = {   'doc'         : doc,
@@ -399,7 +399,6 @@ def habitsandpractices(request, pk,
             hp_formset.save()
         if ext_form.is_valid():
             ext_form.save()
-        doc.is_extracted = True
         doc.save()
         context = {   'doc'         : doc,
                       'ext_form'    : ext_form,

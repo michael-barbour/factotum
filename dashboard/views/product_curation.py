@@ -12,7 +12,7 @@ from dashboard.forms import (ProductPUCForm, ProductLinkForm, ProductTagForm,
                                    BulkPUCForm, ProductForm)
 from django.core.paginator import Paginator
 from django.db.models import Max
-
+from django.urls import reverse
 
 
 @login_required()
@@ -204,7 +204,7 @@ def category_assign_puc_to_product(request, ds_pk, pk, template_name=('product_c
             p2p = ProductToPUC.objects.create(puc=puc, product=p, classification_method='MA',
                                         puc_assigned_usr=request.user)
         return redirect('category_assignment', pk=ds_pk)
-    form.return_url = request.META.get('HTTP_REFERER') or None
+    form.return_url = reverse('category_assignment', kwargs={'pk': ds_pk})
     return render(request, template_name,{'product': p, 'form': form})
 
 
@@ -222,7 +222,7 @@ def product_assign_puc_to_product(request, pk, template_name=('product_curation/
             p2p = ProductToPUC.objects.create(puc=puc, product=p, classification_method='MA',
                                         puc_assigned_usr=request.user)
         return redirect('product_detail', pk=pk)
-    form.return_url = request.META.get('HTTP_REFERER') or None
+    form.return_url = reverse('product_detail', kwargs={'pk': pk})
     return render(request, template_name,{'product': p, 'form': form})
 
 

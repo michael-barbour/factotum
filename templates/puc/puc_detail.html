@@ -21,7 +21,7 @@
     </div>
     <br>
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-6" id="assumed_attributes">
         <h5 class="">
             <span>Assumed Attributes</span>
         </h5>
@@ -33,7 +33,7 @@
                 No assumed attributes are associated with this PUC
             {% endif %}
         </div>
-        <div class="col-lg-6">
+        <div class="col-lg-6" id="allowed_attributes">
             <h5 class="">
                 <span>Allowed Attributes</span>
             </h5>
@@ -48,17 +48,15 @@
     </div>
     <br>
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-6" id="puc_stats">
             {{ puc.product_count }} Products<br>
             {{ puc.cumulative_product_count }} Cumulative Products<br>
             {{ puc.curated_chemical_count }} Curated Chemicals<br>
             {{ puc.document_count }} Documents
-        <br><br>
+        <br><br><br>
         {% if referer %}
             <a class="btn btn-secondary" href="{{ referer }}">Back</a>
         {%  endif %}
-
-
         </div>
     </div>
 {% endblock %}

@@ -101,7 +101,7 @@ class PUC(CommonInfo):
         return ProductDocument.objects.filter(
             product__in=self.products.all()).annotate(
             doc_chem_count=Count('document__extractedtext__rawchem__dsstox')).aggregate(
-            chem_count=Sum('doc_chem_count'))['chem_count']
+            chem_count=Sum('doc_chem_count'))['chem_count'] or 0
 
     @property
     def document_count(self):

@@ -53,8 +53,6 @@ With the "full" composition, replace your `python manage.py` command with `docke
 
 #### "elk" composition
 
-* **MySQL:** `localhost:3306`
-* **MySQL Test:** n/a *(config'd for faster testing)*
 * **Elasticsearch v2:** `localhost:9202`, `localhost:9302`
 * **Elasticsearch v6:** `localhost:9200`, `localhost:9300`
 * **Logstash:** n/a

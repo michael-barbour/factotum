@@ -6,9 +6,9 @@ A collection of `docker-compose` scripts for running the Factotum service stack.
 
 There are three Docker compositions you can use:
 
-* ["elk"](#"elk"-composition)
-* ["elk_sql"](#"elk_sql"-composition)
-* ["full"](#"full"-composition)
+* ["elk"](#elk-composition)
+* ["elk_sql"](#elk_sql-composition)
+* ["full"](#full-composition)
 
 ### Setup
 

@@ -47,7 +47,8 @@ RUN apk add --no-cache \
         python3-dev
 WORKDIR /wheels/
 COPY --from=pybuild /wheels/dev/ /wheels/
-RUN pip3 install --no-cache-dir /wheels/* \
+RUN ln -s /usr/bin/python3 /usr/bin/python \
+ && pip3 install --no-cache-dir /wheels/* \
  && rm -rf /wheels
 COPY --from=npmbuild /node_modules /node_modules
 RUN addgroup -g 1000 factotum && \
@@ -69,7 +70,8 @@ RUN apk add --no-cache \
         python3-dev
 WORKDIR /wheels
 COPY --from=pybuild /wheels/prod /wheels
-RUN pip3 install --no-cache-dir /wheels/* \
+RUN ln -s /usr/bin/python3 /usr/bin/python \
+ && pip3 install --no-cache-dir /wheels/* \
  && rm -rf /wheels
 COPY . /app/.
 ENTRYPOINT ["python3", "/app/manage.py"]

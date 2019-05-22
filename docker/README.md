@@ -62,7 +62,7 @@ With the "full" composition, replace your `python manage.py` command with `docke
 
 * all of the above
 * **MySQL:** `localhost:3306`
-* **MySQL Test:** n/a *(config'd for faster testing)*
+* **MySQL Test:** `localhost:3307` *(config'd for faster testing)*
 
 #### "full" composition
 

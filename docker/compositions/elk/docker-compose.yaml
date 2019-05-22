@@ -21,7 +21,6 @@ services:
     ports:
       - 9202:9202
       - 9302:9302
-    network_mode: host
     volumes:
       - type: volume
         source: es2data
@@ -52,7 +51,6 @@ services:
     ports:
       - 9200:9200
       - 9300:9300
-    network_mode: host
     volumes:
       - type: volume
         source: esdata
@@ -62,11 +60,10 @@ services:
     image: kibana:6.7.2
     restart: unless-stopped
     environment:
-      ELASTICSEARCH_HOSTS: http://127.0.0.1:9200
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
       XPACK_MONITORING_ENABLED: "false"
     ports:
       - 5601:5601
-    network_mode: host
     volumes:
       - type: volume
         source: kibanadata
@@ -81,16 +78,15 @@ services:
     image: factotum-logstash
     restart: "no"
     environment:
-      ELASTICSEARCH_HOST: 127.0.0.1:9200
+      ELASTICSEARCH_HOST: elasticsearch:9200
       SQL_DATABASE: "${SQL_DATABASE}"
       SQL_USER: "${SQL_USER}"
       SQL_PASSWORD: "${SQL_PASSWORD}"
-      SQL_HOST: 127.0.0.1
+      SQL_HOST: host.docker.internal
       SQL_PORT: 3306
       JDBC_DRIVER_LIBRARY: "/opt/mysql-connector.jar"
       XPACK_MONITORING_ENABLED: "false"
       LS_JAVA_OPTS: "-Xms${LS_MEMORY_LIMIT} -Xmx${LS_MEMORY_LIMIT}"
-    network_mode: host
     volumes:
       - type: volume
         source: lsdata

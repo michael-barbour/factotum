@@ -53,6 +53,8 @@ services:
     environment:
       MYSQL_DATABASE: "${SQL_DATABASE}"
       MYSQL_ROOT_PASSWORD: "${SQL_ROOT_PASSWORD}"
+    ports:
+      - 3307:3306
     volumes:
       - type: "${SQL_TEST_VOL_TYPE}"
         target: /var/lib/mysql

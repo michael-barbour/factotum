@@ -14,8 +14,8 @@ class TestProductPuc(TestCase):
         self.client.login(username='Karyn', password='specialP@55word')
 
     def test_admin_puc_tag_column_exists(self):
-        self.assertEqual(PUCTag.objects.count(), 19,
-                         "There should be 19 PUC tags defined in the system.")
+        self.assertEqual(PUCTag.objects.count(), 24,
+                         "There should be 24 PUC tags defined in the system.")
         response_url = reverse('admin:dashboard_puc_changelist')
         response = self.client.get(response_url)
         response_html = html.fromstring(response.content.decode('utf8'))
@@ -56,8 +56,8 @@ class TestProductPuc(TestCase):
             product_response.content.decode('utf8'))
         self.assertIn('selected',
                       product_response_html.xpath(
-                          'string(//*[@id="id_tags"]/li[@data-tag-name="aerosol"]/@class)'),
-                      'The tag aerosol should exist and be selected for this product')
+                          'string(//*[@id="id_tags"]/li[@data-tag-name="pump spray"]/@class)'),
+                      'The tag pump spray should exist and be selected for this product')
         self.assertFalse(product_response_html.xpath('string(//*[@id="id_tags"]/li[@data-tag-name="cartridge"]/@class)'),
                          'The tag cartridge should not exist for this product')
         response = self.client.post(puc_response_url,
@@ -88,7 +88,7 @@ class TestProductPuc(TestCase):
             '//button[contains(@class, "assumed")]')
         self.assertEqual(
             len(assumed), 2, "There should be 2 assumed attributes")
-        self.assertEqual([ass.text for ass in assumed], ['gel', 'powder|spray'],
+        self.assertEqual([ass.text for ass in assumed], ['aerosol', 'gel'],
                          "Assumed attributes are incorrect.")
 
     def test_bulk_product_puc_ui(self):
@@ -150,7 +150,7 @@ class TestProductPuc(TestCase):
                                     {'puc': '6'})
         p2p.refresh_from_db()
         self.assertEqual(
-            p2p.puc.id, 6, "Product 11 should noe be assigned to PUC 6")
+            p2p.puc.id, 6, "Product 11 should now be assigned to PUC 6")
         self.assertNotEqual(p2p.updated_at, updated_at,
                             "ProductToPuc should have an new updated_at date")
 
@@ -165,13 +165,13 @@ class TestProductPuc(TestCase):
         product_response_url = reverse('bulk_product_tag')
         response = self.client.post(product_response_url,
                                     {'puc': 1,
-                                     'tag': '9',
+                                     'tag': '6',
                                      'id_pks': '11,1845',
                                      'save': 'save'})
 
         self.assertIn('The &quot;paste&quot; Attribute was assigned to 2 Product(s)', response.content.decode('utf-8'),
-                      'The "aerosol" tag message should be displayed in the response')
-        self.assertIn('Along with the assumed tags: gel | powder|spray', response.content.decode('utf-8'),
+                      'The "paste" tag message should be displayed in the response')
+        self.assertIn('Along with the assumed tags: aerosol | gel | liquid', response.content.decode('utf-8'),
                       'The assumed tags should be displayed in the response')
         product = Product.objects.get(pk=11)
         tag_count = product.producttotag_set.count()
@@ -207,7 +207,7 @@ class TestProductPuc(TestCase):
         puc_attrs = PUCToTag.objects.filter(content_object_id=1)
         assumed_attrs = [
             attr.tag.name for attr in puc_attrs.filter(assumed=True)]
-        self.assertEqual(['gel', 'powder|spray'], assumed_attrs)
+        self.assertEqual(['liquid', 'aerosol', 'gel'], assumed_attrs)
         product_response_url = reverse('bulk_product_tag')
         response = self.client.post(product_response_url,
                                     {'puc': 1})

@@ -120,12 +120,7 @@ class ModelsTest(TestCase):
         self.objects.doc.matched = True
         self.objects.doc.save()
         self.assertTrue(self.objects.dg.all_matched())
-        doc.extracted = True
-        doc.save()
-        self.assertFalse(self.objects.dg.all_extracted())
-        self.objects.doc.extracted = True
-        self.objects.doc.save()
-        self.assertTrue(self.objects.dg.all_extracted())
+
 
     def test_extracted_habits_and_practices(self):
         puc2 = PUC.objects.create(gen_cat='Test General Category',

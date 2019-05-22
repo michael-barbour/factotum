@@ -13964,3 +13964,143 @@
       long description of the product that is described on this page and it tells
       me all kinds of information that I need to know about this given product, thumb_image: null,
     medium_image: null, large_image: null}
+- model: dashboard.product
+  pk: 1851
+  fields: {created_at: ! '2019-05-10 13:52:39.161635', updated_at: ! '2019-05-10 13:52:39.183068',
+    data_source: 10, source_category: null, title: Almay Smart Shade Primer, manufacturer: '',
+    upc: stub_1851, url: null, brand_name: '', size: '', model_number: null, color: '',
+    item_id: null, parent_item_id: null, short_description: null, long_description: null,
+    thumb_image: null, medium_image: null, large_image: null}
+- model: dashboard.product
+  pk: 1852
+  fields: {created_at: ! '2019-05-10 13:52:52.606180', updated_at: ! '2019-05-10 13:52:52.612948',
+    data_source: 10, source_category: null, title: Visor Care Kit, manufacturer: '',
+    upc: stub_1852, url: null, brand_name: '', size: '', model_number: null, color: '',
+    item_id: null, parent_item_id: null, short_description: null, long_description: null,
+    thumb_image: null, medium_image: null, large_image: null}
+- model: dashboard.product
+  pk: 1853
+  fields: {created_at: ! '2019-05-10 13:53:03.411953', updated_at: ! '2019-05-10 13:53:03.419418',
+    data_source: 10, source_category: null, title: 'SHINING MONKEY FABRIC PROTECTOR ',
+    manufacturer: '', upc: stub_1853, url: null, brand_name: '', size: '', model_number: null,
+    color: '', item_id: null, parent_item_id: null, short_description: null, long_description: null,
+    thumb_image: null, medium_image: null, large_image: null}
+- model: dashboard.product
+  pk: 1854
+  fields: {created_at: ! '2019-05-10 13:53:12.878624', updated_at: ! '2019-05-10 13:53:12.897396',
+    data_source: 10, source_category: null, title: Calgon Vanilla Passion Body Cream,
+    manufacturer: '', upc: stub_1854, url: null, brand_name: '', size: '', model_number: null,
+    color: '', item_id: null, parent_item_id: null, short_description: null, long_description: null,
+    thumb_image: null, medium_image: null, large_image: null}
+- model: dashboard.product
+  pk: 1855
+  fields: {created_at: ! '2019-05-10 13:53:59.748116', updated_at: ! '2019-05-10 13:53:59.754873',
+    data_source: 10, source_category: null, title: Advanced Extra Protection Shave
+      Gel, manufacturer: '', upc: stub_1855, url: null, brand_name: '', size: '',
+    model_number: null, color: '', item_id: null, parent_item_id: null, short_description: null,
+    long_description: null, thumb_image: null, medium_image: null, large_image: null}
+- model: dashboard.product
+  pk: 1856
+  fields: {created_at: ! '2019-05-10 13:54:10.016707', updated_at: ! '2019-05-10 13:54:10.023365',
+    data_source: 10, source_category: null, title: 'Oyster White Aerosol Paint ',
+    manufacturer: '', upc: stub_1856, url: null, brand_name: '', size: '', model_number: null,
+    color: '', item_id: null, parent_item_id: null, short_description: null, long_description: null,
+    thumb_image: null, medium_image: null, large_image: null}
+- model: dashboard.product
+  pk: 1857
+  fields: {created_at: ! '2019-05-10 13:54:21.623669', updated_at: ! '2019-05-10 13:54:21.640299',
+    data_source: 10, source_category: null, title: Moco de Gorila Punk, manufacturer: '',
+    upc: stub_1857, url: null, brand_name: '', size: '', model_number: null, color: '',
+    item_id: null, parent_item_id: null, short_description: null, long_description: null,
+    thumb_image: null, medium_image: null, large_image: null}
+- model: dashboard.product
+  pk: 1858
+  fields: {created_at: ! '2019-05-10 13:55:19.460582', updated_at: ! '2019-05-10 13:55:19.467647',
+    data_source: 10, source_category: null, title: Halston Ladies Cologne, manufacturer: '',
+    upc: stub_1858, url: null, brand_name: '', size: '', model_number: null, color: '',
+    item_id: null, parent_item_id: null, short_description: null, long_description: null,
+    thumb_image: null, medium_image: null, large_image: null}
+- model: dashboard.product
+  pk: 1859
+  fields: {created_at: ! '2019-05-10 13:55:33.500694', updated_at: ! '2019-05-10 13:55:33.507286',
+    data_source: 10, source_category: null, title: Orange Petalooza Body Wash, manufacturer: '',
+    upc: stub_1859, url: null, brand_name: '', size: '', model_number: null, color: '',
+    item_id: null, parent_item_id: null, short_description: null, long_description: null,
+    thumb_image: null, medium_image: null, large_image: null}
+- model: dashboard.product
+  pk: 1860
+  fields: {created_at: ! '2019-05-10 13:55:42.473229', updated_at: ! '2019-05-10 13:55:42.483119',
+    data_source: 10, source_category: null, title: HAND SANITIZER, manufacturer: '',
+    upc: stub_1860, url: null, brand_name: '', size: '', model_number: null, color: '',
+    item_id: null, parent_item_id: null, short_description: null, long_description: null,
+    thumb_image: null, medium_image: null, large_image: null}
+- model: dashboard.product
+  pk: 1861
+  fields: {created_at: ! '2019-05-10 13:55:52.484176', updated_at: ! '2019-05-10 13:55:52.493752',
+    data_source: 10, source_category: null, title: Aim Tartar Control Toothpaste,
+    manufacturer: '', upc: stub_1861, url: null, brand_name: '', size: '', model_number: null,
+    color: '', item_id: null, parent_item_id: null, short_description: null, long_description: null,
+    thumb_image: null, medium_image: null, large_image: null}
+- model: dashboard.product
+  pk: 1862
+  fields: {created_at: ! '2019-05-10 13:56:00.331882', updated_at: ! '2019-05-10 13:56:00.338555',
+    data_source: 10, source_category: null, title: body butter, manufacturer: '',
+    upc: stub_1862, url: null, brand_name: '', size: '', model_number: null, color: '',
+    item_id: null, parent_item_id: null, short_description: null, long_description: null,
+    thumb_image: null, medium_image: null, large_image: null}
+- model: dashboard.product
+  pk: 1863
+  fields: {created_at: ! '2019-05-10 13:56:13.483936', updated_at: ! '2019-05-10 13:56:13.493157',
+    data_source: 10, source_category: null, title: Floral Gardenia Body Lotion, manufacturer: '',
+    upc: stub_1863, url: null, brand_name: '', size: '', model_number: null, color: '',
+    item_id: null, parent_item_id: null, short_description: null, long_description: null,
+    thumb_image: null, medium_image: null, large_image: null}
+- model: dashboard.product
+  pk: 1864
+  fields: {created_at: ! '2019-05-10 13:56:28.170858', updated_at: ! '2019-05-10 13:56:28.179198',
+    data_source: 10, source_category: null, title: Baby Magic Creamy Baby Oil, manufacturer: '',
+    upc: stub_1864, url: null, brand_name: '', size: '', model_number: null, color: '',
+    item_id: null, parent_item_id: null, short_description: null, long_description: null,
+    thumb_image: null, medium_image: null, large_image: null}
+- model: dashboard.product
+  pk: 1865
+  fields: {created_at: ! '2019-05-10 13:56:38.904564', updated_at: ! '2019-05-10 13:56:38.913361',
+    data_source: 10, source_category: null, title: Kera Care Shampoos, manufacturer: '',
+    upc: stub_1865, url: null, brand_name: '', size: '', model_number: null, color: '',
+    item_id: null, parent_item_id: null, short_description: null, long_description: null,
+    thumb_image: null, medium_image: null, large_image: null}
+- model: dashboard.product
+  pk: 1866
+  fields: {created_at: ! '2019-05-10 13:56:55.586747', updated_at: ! '2019-05-10 13:56:55.596200',
+    data_source: 10, source_category: null, title: Rose Whipped Body Lotion, manufacturer: '',
+    upc: stub_1866, url: null, brand_name: '', size: '', model_number: null, color: '',
+    item_id: null, parent_item_id: null, short_description: null, long_description: null,
+    thumb_image: null, medium_image: null, large_image: null}
+- model: dashboard.product
+  pk: 1867
+  fields: {created_at: ! '2019-05-10 13:57:08.767842', updated_at: ! '2019-05-10 13:57:08.776947',
+    data_source: 10, source_category: null, title: Mama Bee Soothing Leg & Foot Creme,
+    manufacturer: '', upc: stub_1867, url: null, brand_name: '', size: '', model_number: null,
+    color: '', item_id: null, parent_item_id: null, short_description: null, long_description: null,
+    thumb_image: null, medium_image: null, large_image: null}
+- model: dashboard.product
+  pk: 1868
+  fields: {created_at: ! '2019-05-10 13:57:26.068417', updated_at: ! '2019-05-10 13:57:26.077203',
+    data_source: 10, source_category: null, title: Lemon Clarifying Shampoo, manufacturer: '',
+    upc: stub_1868, url: null, brand_name: '', size: '', model_number: null, color: '',
+    item_id: null, parent_item_id: null, short_description: null, long_description: null,
+    thumb_image: null, medium_image: null, large_image: null}
+- model: dashboard.product
+  pk: 1869
+  fields: {created_at: ! '2019-05-10 14:43:48.103709', updated_at: ! '2019-05-10 14:43:48.120074',
+    data_source: 10, source_category: null, title: Coty Deodorant, manufacturer: '',
+    upc: stub_1869, url: null, brand_name: '', size: '', model_number: null, color: '',
+    item_id: null, parent_item_id: null, short_description: null, long_description: null,
+    thumb_image: null, medium_image: null, large_image: null}
+- model: dashboard.product
+  pk: 1870
+  fields: {created_at: ! '2019-05-10 14:44:09.404734', updated_at: ! '2019-05-10 14:44:09.413538',
+    data_source: 10, source_category: null, title: HAIRepair Anti-Breakage Creme,
+    manufacturer: '', upc: stub_1870, url: null, brand_name: '', size: '', model_number: null,
+    color: '', item_id: null, parent_item_id: null, short_description: null, long_description: null,
+    thumb_image: null, medium_image: null, large_image: null}

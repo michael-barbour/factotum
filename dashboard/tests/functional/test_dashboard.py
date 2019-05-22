@@ -68,10 +68,10 @@ class DashboardTest(TestCase):
         csv_lines = response.content.decode('ascii').split('\r\n')
         # check header
         self.assertEqual(csv_lines[0], ('General category,Product family,Product type,'
-            'Allowed attributes,Assumed attributes,Description,PUC type,PUC level,Product count'))
+            'Allowed attributes,Assumed attributes,Description,PUC type,PUC level,Product count,Cumulative product count'))
         # check the PUC from loader
         row1 = csv_lines[1].split(',')
-        self.assertEqual(len(row1), 9)
+        self.assertEqual(len(row1), 10)
         self.assertEqual(row1[0], 'Test General Category')
         self.assertEqual(row1[1], 'Test Product Family')
         self.assertEqual(row1[2], 'Test Product Type')

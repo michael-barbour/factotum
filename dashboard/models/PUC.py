@@ -8,6 +8,8 @@ from django.utils.translation import ugettext_lazy as _
 from .common_info import CommonInfo
 from django.apps import apps
 
+from dashboard.models import ProductDocument
+from django.db.models import Count, Sum
 
 class PUC(CommonInfo):
     KIND_CHOICES = (
@@ -95,12 +97,29 @@ class PUC(CommonInfo):
             return ProductToPUC.objects.filter(puc=self).count()
 
     @property
+    def curated_chemical_count(self):
+        return ProductDocument.objects.filter(
+            product__in=self.products.all()).annotate(
+            doc_chem_count=Count('document__extractedtext__rawchem__dsstox')).aggregate(
+            chem_count=Sum('doc_chem_count'))['chem_count'] or 0
+
+    @property
+    def document_count(self):
+       return ProductDocument.objects.filter(
+            product__in=self.products.all()).distinct().count()
+
+    @property
     def admin_url(self):
         return reverse('admin:dashboard_puc_change', args=(self.pk,))
         
     def get_assumed_tags(self):
         '''Queryset of used to filter which PUCs a Product can have '''
         qs = PUCToTag.objects.filter(content_object=self, assumed=True)
+        return PUCTag.objects.filter(dashboard_puctotag_items__in=qs)
+
+    def get_allowed_tags(self):
+        '''Queryset of used to filter which PUCs a Product can have '''
+        qs = PUCToTag.objects.filter(content_object=self, assumed=False)
         return PUCTag.objects.filter(dashboard_puctotag_items__in=qs)
 
 

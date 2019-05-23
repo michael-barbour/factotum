@@ -25,6 +25,10 @@
         <div class="col-9"><a class="btn btn-outline-primary btn-sm" role="button"
                               href="{% url "download_raw_chems" %}">Download Uncurated Chemicals</a>
         </div>
+        <form action="{% url "download_raw_chems" %}" method="get">
+            {% csrf_token %}
+            {{ dg_picker }}
+        </form>
     </div>
     <hr>
     <div class="row mb-2">

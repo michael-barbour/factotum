@@ -3,6 +3,8 @@ from django.shortcuts import render, reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import messages
 from dashboard.models import *
+from django import forms
+from dashboard.forms import DataGroupSelector
 import datetime
 import csv
 
@@ -12,7 +14,9 @@ def chemical_curation_index(request, template_name='chemical_curation/chemical_c
     uncurated_chemical_count = RawChem.objects.filter(dsstox_id=None).count()
     records_processed = 0
 
-    data = {'uncurated_chemical_count': uncurated_chemical_count, 'records_processed': records_processed}
+    dg_picker_form = DataGroupSelector()
+
+    data = {'dg_picker_form': dg_picker_form , 'uncurated_chemical_count': uncurated_chemical_count, 'records_processed': records_processed}
     # if not GET, then proceed
     if "POST" == request.method:
         try:

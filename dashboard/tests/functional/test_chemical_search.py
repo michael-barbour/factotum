@@ -2,6 +2,7 @@ from django.test import Client
 from dashboard.tests.loader import *
 import requests
 from django.test import TestCase, RequestFactory
+from factotum import settings
 
 class TestChemicalSearch(TestCase):
     fixtures = fixtures_standard
@@ -9,15 +10,16 @@ class TestChemicalSearch(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
         self.client.login(username='Karyn', password='specialP@55word')
+        self.esurl = f'http://{settings.ELASTIC_HOST}:{settings.ELASTIC_PORT}'
 
     def test_search_api(self):
         """
         The correct JSON comes back from the elasticsearch server
         """
-        response = requests.get('http://127.0.0.1:9200/')
+        response = requests.get(self.esurl)
         self.assertTrue(response.ok)
         
-        response = requests.get('http://127.0.0.1:9200/factotum_chemicals/_search?q=ethylparaben')
+        response = requests.get(f'{self.esurl}/factotum_chemicals/_search?q=ethylparaben')
         #print(response.content)
         self.assertIn('DTXSID9022528', str(response.content))
 

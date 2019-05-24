@@ -6,6 +6,7 @@ volumes:
   esdata:
   lsdata:
   kibanadata:
+  kibanaoptdata:
 
 
 services:
@@ -68,6 +69,9 @@ services:
       - type: volume
         source: kibanadata
         target: /usr/share/kibana/data
+      - type: volume
+        source: kibanaoptdata
+        target: /usr/share/kibana/optimize
     depends_on:
       - elasticsearch
 

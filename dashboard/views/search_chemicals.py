@@ -15,7 +15,7 @@ def search_chemicals(request, template_name='search/es_chemicals.html'):
 
     q = request.GET.get('q', '')
     es = Elasticsearch([
-        {'host': 'localhost', 'port': settings.ELASTIC_PORT, 'use_ssl': False},
+        {'host': settings.ELASTIC_HOST, 'port': settings.ELASTIC_PORT, 'use_ssl': False},
     ])
     results = es.search(index='factotum_chemicals', body={
         "query": {

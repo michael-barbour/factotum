@@ -101,6 +101,8 @@ urlpatterns = [
     path('dl_puctags/', views.download_PUCTags,   name='download_PUCTags'),
     path('dl_raw_chems/', views.download_raw_chems,  
                                             name='download_raw_chems'),
+    path('dl_raw_chems_dg/<int:pk>/', views.download_raw_chems_dg,  
+                                            name='download_raw_chems_dg'),
     path('dsstox/<str:sid>/', views.dsstox_lookup_detail,
                                             name='dsstox_lookup'),
     path('habitsandpractices/<int:pk>/', views.habitsandpractices,

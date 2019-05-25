@@ -95,3 +95,16 @@ def download_raw_chems(stats):
     for rc in RawChem.objects.filter(dsstox_id=None):
         writer.writerow([rc.id, rc.raw_cas, rc.raw_chem_name, rc.rid if rc.rid else '',rc.data_group_id])
     return response
+
+@login_required()
+def download_raw_chems_dg(request, pk):
+    dg = DataGroup.objects.get(pk=pk)
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="uncurated_chemicals_%s_%s.csv"' % \
+                                      (pk, datetime.datetime.now().strftime("%Y%m%d"))
+
+    writer = csv.writer(response)
+    writer.writerow(['dashboard_rawchem_id', 'raw_cas', 'raw_chem_name', 'rid','datagroup_id'])
+    for rc in RawChem.objects.filter(dsstox_id=None).filter(extracted_text__data_document__data_group=dg):
+        writer.writerow([rc.id, rc.raw_cas, rc.raw_chem_name, rc.rid if rc.rid else '',rc.data_group_id])
+    return response

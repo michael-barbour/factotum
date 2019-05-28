@@ -21,7 +21,9 @@
     <div class="row">
         <form action="{% url "download_raw_chems"  %}">
             {% csrf_token %}
-            {{ dg_picker_form }}
+            <label for="{{ form.data_group.id_for_label }}">{{ dg_picker_form.data_group.label }}: </label>
+            <br/>
+            {{ dg_picker_form.data_group }}
         </form>
     </div>
     <hr>

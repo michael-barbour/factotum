@@ -10,7 +10,7 @@ class DGChoiceField(forms.ModelChoiceField):
 class DataGroupSelector(forms.ModelForm):
     data_group = DGChoiceField(
         queryset=DataGroup.objects.all(),
-        label="Download Uncurated Chemicals",
+        label="Download uncurated chemicals for a Data Group",
         required=False)
 
     class Meta:

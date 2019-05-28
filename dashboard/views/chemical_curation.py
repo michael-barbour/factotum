@@ -1,12 +1,14 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, reverse
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, StreamingHttpResponse
 from django.contrib import messages
 from dashboard.models import *
 from django import forms
 from dashboard.forms import DataGroupSelector
 import datetime
 import csv
+from django.db.models import Value, IntegerField
+
 
 
 @login_required()
@@ -16,7 +18,8 @@ def chemical_curation_index(request, template_name='chemical_curation/chemical_c
 
     dg_picker_form = DataGroupSelector()
 
-    data = {'dg_picker_form': dg_picker_form , 'uncurated_chemical_count': uncurated_chemical_count, 'records_processed': records_processed}
+    data = {'dg_picker_form': dg_picker_form, 'uncurated_chemical_count':
+            uncurated_chemical_count, 'records_processed': records_processed}
     # if not GET, then proceed
     if "POST" == request.method:
         try:
@@ -27,7 +30,8 @@ def chemical_curation_index(request, template_name='chemical_curation/chemical_c
                 return render(request, template_name, data)
             # if file is too large, return
             if csv_file.multiple_chunks():
-                error = "Uploaded file is too big (%.2f MB)." % (csv_file.size / (1000 * 1000))
+                error = "Uploaded file is too big (%.2f MB)." % (
+                    csv_file.size / (1000 * 1000))
                 data.update({'error_message': error})
                 return render(request, template_name, data)
 
@@ -49,7 +53,8 @@ def chemical_curation_index(request, template_name='chemical_curation/chemical_c
                     if (data_dict["raw_chemical_id"] != "external_id") or (data_dict['sid'] != 'sid') or \
                             (data_dict['true_chemical_name'] != "true_chemical_name") or \
                             (data_dict['true_cas'] != 'true_cas'):
-                        data.update({"error_message": "Check to ensure your column headers are in order."})
+                        data.update(
+                            {"error_message": "Check to ensure your column headers are in order."})
                         return render(request, template_name, data)
                 else:
                     try:
@@ -66,7 +71,8 @@ def chemical_curation_index(request, template_name='chemical_curation/chemical_c
                                                                sid=data_dict["sid"])
                             chem.save()
                         # ensure link back to DSSToxLookup
-                        sid_id = DSSToxLookup.objects.filter(sid=data_dict['sid'])
+                        sid_id = DSSToxLookup.objects.filter(
+                            sid=data_dict['sid'])
                         RawChem.objects.filter(id=data_dict["raw_chemical_id"]).update(rid=data_dict['rid'],
                                                                                        dsstox_id=sid_id[0].id)
                     except Exception as e:
@@ -91,20 +97,47 @@ def download_raw_chems(stats):
                                       (datetime.datetime.now().strftime("%Y%m%d"))
 
     writer = csv.writer(response)
-    writer.writerow(['dashboard_rawchem_id', 'raw_cas', 'raw_chem_name', 'rid','datagroup_id'])
+    writer.writerow(['dashboard_rawchem_id', 'raw_cas',
+                     'raw_chem_name', 'rid', 'datagroup_id'])
     for rc in RawChem.objects.filter(dsstox_id=None):
-        writer.writerow([rc.id, rc.raw_cas, rc.raw_chem_name, rc.rid if rc.rid else '',rc.data_group_id])
+        writer.writerow([rc.id, rc.raw_cas, rc.raw_chem_name,
+                         rc.rid if rc.rid else '', rc.data_group_id])
     return response
+
+# This clever way to combine writing the headers
+# with writing the rows, including the "yield" keyword, is from
+# https://stackoverflow.com/questions/45578196/adding-rows-manually-to-streaminghttpresponse-django
+
+class Echo:
+    """An object that implements just the write method of the file-like
+    interface.
+    """
+
+    def write(self, value):
+        """Write the value by returning it, instead of storing in a buffer."""
+        return value
+
+def iterate_rawchems(rows, pseudo_buffer):
+    writer = csv.writer(pseudo_buffer)
+    yield pseudo_buffer.write("id, raw_cas,raw_chem_name, rid, datagroup_id\n")
+    for row in rows:
+        yield writer.writerow([row['id'], row['raw_cas'], row['raw_chem_name'],
+        row['rid']  if row['rid'] else '',
+                         row['dg_id']])
 
 @login_required()
 def download_raw_chems_dg(request, pk):
     dg = DataGroup.objects.get(pk=pk)
-    response = HttpResponse(content_type='text/csv')
+
+    # Limit the response to 10,000 records
+    uncurated_chems = RawChem.objects.filter(dsstox_id=None).filter(extracted_text__data_document__data_group=dg).annotate(dg_id = Value(pk, IntegerField())).values('id', 'raw_cas', 'raw_chem_name', 'rid', 'dg_id')[0:10000]
+    pseudo_buffer = Echo()
+    writer = csv.writer(pseudo_buffer)
+    response = StreamingHttpResponse(
+        streaming_content=(iterate_rawchems(uncurated_chems, pseudo_buffer)),
+        content_type='text/csv'
+    )
+    
     response['Content-Disposition'] = 'attachment; filename="uncurated_chemicals_%s_%s.csv"' % \
                                       (pk, datetime.datetime.now().strftime("%Y%m%d"))
-
-    writer = csv.writer(response)
-    writer.writerow(['dashboard_rawchem_id', 'raw_cas', 'raw_chem_name', 'rid','datagroup_id'])
-    for rc in RawChem.objects.filter(dsstox_id=None).filter(extracted_text__data_document__data_group=dg):
-        writer.writerow([rc.id, rc.raw_cas, rc.raw_chem_name, rc.rid if rc.rid else '',rc.data_group_id])
     return response

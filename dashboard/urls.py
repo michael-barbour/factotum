@@ -128,6 +128,8 @@ urlpatterns = [
                                             name='save_qa_notes'),
     path('extractedtext/approve/<int:pk>/',   views.approve_extracted_text,
                                             name='approve_extracted_text'),
+    path('search/es_chemicals/', views.search_chemicals,
+                                            name='search_chemicals'),
 ]
 
 if settings.DEBUG is True:

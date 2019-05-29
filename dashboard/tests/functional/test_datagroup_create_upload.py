@@ -101,7 +101,6 @@ class RegisterRecordsTest(TestCase):
 
         # test whether the "Download Registered Records" link is like this example
         # <a href="/datagroup/a9c7f5a7-5ad4-4f75-b877-a3747f0cc081/registered_records.csv" class="btn btn-secondary">
-        # <span class="oi oi-spreadsheet"></span>&nbsp;Download Registered Records CSV</a>
         csv_href = f'/datagroup/{dg.pk}/registered_records.csv'
         self.assertIn(csv_href, str(resp._container),
                         "The data group detail page must contain the right download link")

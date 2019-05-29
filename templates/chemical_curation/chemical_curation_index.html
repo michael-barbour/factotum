@@ -19,7 +19,7 @@
 {% block content %}
     <h1 class="mb-5"><span class="oi oi-beaker" title="factotum" aria-hidden="true"></span> Chemical Curation</h1>
     <div class="row">
-        <form action="{% url "download_raw_chems"  %}">
+        <form id='frm_dwownload_rawchem_by_data_group'}">
             {% csrf_token %}
             <label for="{{ form.data_group.id_for_label }}">{{ dg_picker_form.data_group.label }}: </label>
             <br/>

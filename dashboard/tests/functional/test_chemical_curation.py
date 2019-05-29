@@ -22,13 +22,23 @@ class ChemicalCurationTests(TestCase):
         # confirm that the downloaded file excludes and includes them,
         # respectively.
         rc = RawChem.objects.filter(dsstox_id__isnull=True).first()
-        response = self.client.get('/dl_raw_chems/')
-        header = 'dashboard_rawchem_id,raw_cas,raw_chem_name,rid,datagroup_id'
-        self.assertEqual(header, str(response.content,'utf-8').split('\r\n')[0], "header fields should match")
+        dg = rc.extracted_text.data_document.data_group
+        response = self.client.get(f'/dl_raw_chems_dg/{dg.id}', follow=True)
+        header = 'id,raw_cas,raw_chem_name,rid,datagroup_id\n'
+        #for resp in response.streaming_content:
+        #    print(resp)
+        resp = list(response.streaming_content)
+        response_header = resp[0].decode("utf-8")
+        self.assertEqual(header, response_header.split('\r\n')[0], "header fields should match")
+
         rc_row = f'{rc.id},{rc.raw_cas},{rc.raw_chem_name},{rc.rid if rc.rid else ""},{rc.data_group_id}'
-        rc_row = bytes(rc_row, 'utf-8')
-        self.assertIn(rc_row, response.content, 'The non-curated row should appear')
+        self.assertIn(bytes(rc_row, 'utf-8'), b'\t'.join(resp), 'The non-curated row should appear')
+
+        rc = RawChem.objects.filter(dsstox_id__isnull=False).first()
+        dg = rc.extracted_text.data_document.data_group
+        response = self.client.get(f'/dl_raw_chems_dg/{dg.id}/', follow=True)
+        resp = list(response.streaming_content)
         rc = RawChem.objects.filter(dsstox_id__isnull=False).first()
         rc_row = f'{rc.id},{rc.raw_cas},{rc.raw_chem_name},{rc.rid if rc.rid else ""},{rc.data_group_id}'
-        rc_row = bytes(rc_row, 'utf-8')
-        self.assertNotIn(rc_row, response.content, 'The curated row should not appear')
+        self.assertNotIn(bytes(rc_row, 'utf-8'), b'\t'.join(resp), 'The curated row should not appear')
+

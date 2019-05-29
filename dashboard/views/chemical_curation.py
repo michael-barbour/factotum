@@ -89,21 +89,9 @@ def chemical_curation_index(request, template_name='chemical_curation/chemical_c
         data.update({"records_processed": records_processed})
     return render(request, template_name, data)
 
-
-@login_required()
-def download_raw_chems(stats):
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="uncurated_chemicals_%s.csv"' % \
-                                      (datetime.datetime.now().strftime("%Y%m%d"))
-
-    writer = csv.writer(response)
-    writer.writerow(['dashboard_rawchem_id', 'raw_cas',
-                     'raw_chem_name', 'rid', 'datagroup_id'])
-    for rc in RawChem.objects.filter(dsstox_id=None):
-        writer.writerow([rc.id, rc.raw_cas, rc.raw_chem_name,
-                         rc.rid if rc.rid else '', rc.data_group_id])
-    return response
-
+#
+# Downloading uncurated raw chemical records by Data Group
+# 
 # This clever way to combine writing the headers
 # with writing the rows, including the "yield" keyword, is from
 # https://stackoverflow.com/questions/45578196/adding-rows-manually-to-streaminghttpresponse-django
@@ -119,7 +107,7 @@ class Echo:
 
 def iterate_rawchems(rows, pseudo_buffer):
     writer = csv.writer(pseudo_buffer)
-    yield pseudo_buffer.write("id, raw_cas,raw_chem_name, rid, datagroup_id\n")
+    yield pseudo_buffer.write("id,raw_cas,raw_chem_name,rid,datagroup_id\n")
     for row in rows:
         yield writer.writerow([row['id'], row['raw_cas'], row['raw_chem_name'],
         row['rid']  if row['rid'] else '',

@@ -10,8 +10,14 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <!-- FontAwesome CSS-->
+
+    <link rel="stylesheet" href="{% static 'fontawesome/css/all.css' %}">
+    <script defer src="{% static 'fontawesome/js/all.js' %}"></script> <!--load all styles -->
+
     <!-- Open Iconic CSS -->
     <link rel="stylesheet" href="{% static "font/open-iconic-master/font/css/open-iconic-bootstrap.css" %}">
+    
     <!-- DataTables -->
     <link rel="stylesheet" href="{% static "DataTables/datatables.min.css" %}">
     <!-- Custom CSS -->
@@ -71,20 +77,28 @@
                     <a class="dropdown-item" href="{% url 'qa_chemicalpresence_index' %}">Chemical Presence</a>
                 </div>
             </li>
+            <li class="nav-item {% if 'search' in request.resolver_match.url_name %}active{% endif %}">
+                    <!-- TODO: the input form should contain the search query string -->
+                    <form class="search-form-container" action="/search/es_chemicals/" method="get" >
+                        <div class="icon-addon addon-lg">
+                        <input type="text" {% if q %}value="{{q}}"{% endif %} {% if not q %}placeholder="Search by chemical"{% endif %} class="form-control" name="q" id="q" autocomplete="off">
+                        </div>
+                    </form>
+                </li>
             {% block nav %}{% endblock %}
         </ul>
         <ul class="nav navbar-nav navbar-right ml-auto">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="oi oi-person" title="factotum" aria-hidden="true"></span> {{ user.first_name }}
+                    <span class="fa fa-user" title="factotum" aria-hidden="true"></span> {{ user.first_name }}
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                     {% if user.is_superuser %}
-                      <a class="dropdown-item" href="{% url 'admin:index' %}"><span class="oi oi-cog" title="Admin settings"
+                      <a class="dropdown-item" href="{% url 'admin:index' %}"><span class="fa fa-cog" title="Admin settings"
                       aria-hidden="true"></span> Admin</a>
                     {% endif %}
-                    <a class="dropdown-item" href="{% url 'logout' %}"><span class="oi oi-account-logout" title="factotum"
+                    <a class="dropdown-item" href="{% url 'logout' %}"><span class="fa fa-sign-out-alt" title="factotum"
                                                                              aria-hidden="true"></span> Logout</a>
                 </div>
             </li>

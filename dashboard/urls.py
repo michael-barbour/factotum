@@ -53,6 +53,8 @@ urlpatterns = [
                                             name='qa_extractionscript_index'),
     path('qa/extractionscript/<int:pk>/', dashboard.views.qa.qa_extraction_script,
                                             name='qa_extraction_script'),
+    path('qa/extractionscript/<int:pk>/summary', dashboard.views.qa.qa_extraction_script_summary,
+                                            name='qa_extraction_script_summary'),
     path('qa/extractedtext/<int:pk>/', dashboard.views.qa.extracted_text_qa,
                                             name='extracted_text_qa'),
     path('extractionscript/<int:pk>/', views.extraction_script_detail,

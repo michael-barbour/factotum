@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'haystack',
     'haystack_elasticsearch',
     'taggit',
-    'taggit_labels'
+    'taggit_labels',
+    'django_extensions'
 ]
 
 MIDDLEWARE = [

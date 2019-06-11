@@ -19,6 +19,11 @@ class DSSToxDetail(TestCase):
         self.assertEqual(dss.puc_count, len(response.context['pucs']),
                             f'DSSTox pk={dss.pk} should have {dss.puc_count} '
                              'PUCs in the context')
+        
+        pdocs = ProductDocument.objects.from_chemical(dss)
+        first_puc_id = PUC.objects.filter(products__in=pdocs.values('product')).first().id
+
+        self.assertContains(response, f'a href="/puc/{first_puc_id}')
         link = ('https://comptox.epa.gov/dashboard/dsstoxdb/results?search='
                 f'{dss.sid}')
         self.assertContains(response, link)

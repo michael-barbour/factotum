@@ -20,7 +20,6 @@ class TestChemicalSearch(TestCase):
         self.assertTrue(response.ok)
         
         response = requests.get(f'{self.esurl}/factotum_chemicals/_search?q=ethylparaben')
-        #print(response.content)
         self.assertIn('DTXSID9022528', str(response.content))
 
     def test_results_page(self):
@@ -28,9 +27,12 @@ class TestChemicalSearch(TestCase):
         The result page returns the correct content
         """
         response = self.client.get('/search/es_chemicals/?q=ethylparaben')
-        pdf_url = "/media/3dada08f-91aa-4e47-9556-e3e1a23b1d7e/pdf/document_127870.pdf"
-        self.assertIn(pdf_url, str(response.content))
-        #print(response.content)
         
-        prod_count_html = "<dt>Product count:</dt>\\n            <dd>1</dd>"
+        prod_count_html = "2 products associated with this document"
         self.assertIn(prod_count_html, str(response.content))
+
+        document_count_html = "2 documents returned in"
+        self.assertIn(document_count_html, str(response.content))
+
+        puc_count_html = "2 PUCs returned in"
+        self.assertIn(puc_count_html, str(response.content))

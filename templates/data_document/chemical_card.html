@@ -5,7 +5,10 @@
     <div class="row">
         <div class="col-6 text-center">
                 <small class="text-muted">
+                        <a  title="go to substance"
+                        href={% url 'dsstox_lookup' form.instance.dsstox.sid %}>
                     True Name: {{ form.instance.dsstox.true_chemname }}
+                    </a>
                 </small>
         </div>
         <div class="col-6 text-center">
@@ -47,12 +50,11 @@
                     {{ form.raw_cas.value }}
                 </h4>
                 {% if form.instance.dsstox %}
-                <a  title="go to substance"
-                    href={% url 'dsstox_lookup' form.instance.dsstox.sid %}>
+                
                     <h4 class="float-right">
                         {{ form.instance.dsstox.sid }}
                     </h4>
-                </a>
+
                 {% endif %}
             </div>
         </div>

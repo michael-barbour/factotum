@@ -192,7 +192,7 @@ class DataGroup(CommonInfo):
             return extract_fields + ['raw_min_comp','raw_max_comp', 'unit_type',
                                         'ingredient_rank', 'raw_central_comp']
         if self.type == 'CP':
-            for name in ['prod_name','rev_num','report_funcuse']:
+            for name in ['prod_name','rev_num']:
                 extract_fields.remove(name)
             return extract_fields + ['cat_code','description_cpcat',
                                     'cpcat_code','cpcat_sourcetype']

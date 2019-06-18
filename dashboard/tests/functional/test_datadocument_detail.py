@@ -112,6 +112,15 @@ class DataDocumentDetailTest(TestCase):
         self.client.post(post_uri + str(pk) + "/")
         self.assertTrue(not doc_exists(), "Document still exists after delete attempt.")
 
+    def test_ingredient_rank(self):
+        response = self.client.get('/datadocument/254643/')
+        html = response.content.decode('utf-8')
+        first_idx = html.index('name="rawchem-0-ingredient_rank" value="1"')
+        second_idx = html.index('name="rawchem-1-ingredient_rank" value="2"')
+        self.assertTrue(second_idx > first_idx, ('Ingredient rank 1 comes before ' 
+                                        'Ingredient rank 2'))
+
+
 
 class TestDynamicDetailFormsets(TestCase):
     fixtures = fixtures_standard

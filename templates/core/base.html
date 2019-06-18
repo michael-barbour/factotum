@@ -11,12 +11,10 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <!-- FontAwesome CSS-->
-    <link rel="stylesheet" href="{% static 'fontawesome/css/all.css' %}">
-    <script defer src="fontawesome/js/all.js"></script> <!--load all styles -->
 
-    <!-- Open Iconic CSS -->
-    <link rel="stylesheet" href="{% static "font/open-iconic-master/font/css/open-iconic-bootstrap.css" %}">
-    
+    <link rel="stylesheet" href="{% static 'fontawesome/css/all.css' %}">
+    <script defer src="{% static 'fontawesome/js/all.js' %}"></script> <!--load all styles -->
+
     <!-- DataTables -->
     <link rel="stylesheet" href="{% static "DataTables/datatables.min.css" %}">
     <!-- Custom CSS -->
@@ -76,6 +74,14 @@
                     <a class="dropdown-item" href="{% url 'qa_chemicalpresence_index' %}">Chemical Presence</a>
                 </div>
             </li>
+            <li class="nav-item {% if 'search' in request.resolver_match.url_name %}active{% endif %}">
+                    <!-- TODO: the input form should contain the search query string -->
+                    <form class="search-form-container" action="/search/es_chemicals/" method="get" >
+                        <div class="icon-addon addon-lg">
+                        <input type="text" {% if q %}value="{{q}}"{% endif %} {% if not q %}placeholder="Search by chemical"{% endif %} class="form-control" name="q" id="q" autocomplete="off">
+                        </div>
+                    </form>
+                </li>
             {% block nav %}{% endblock %}
         </ul>
         <ul class="nav navbar-nav navbar-right ml-auto">

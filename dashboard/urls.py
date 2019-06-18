@@ -53,6 +53,8 @@ urlpatterns = [
                                             name='qa_extractionscript_index'),
     path('qa/extractionscript/<int:pk>/', dashboard.views.qa.qa_extraction_script,
                                             name='qa_extraction_script'),
+    path('qa/extractionscript/<int:pk>/summary', dashboard.views.qa.qa_extraction_script_summary,
+                                            name='qa_extraction_script_summary'),
     path('qa/extractedtext/<int:pk>/', dashboard.views.qa.extracted_text_qa,
                                             name='extracted_text_qa'),
     path('extractionscript/<int:pk>/', views.extraction_script_detail,
@@ -99,8 +101,8 @@ urlpatterns = [
     path('puc/<int:pk>/', views.puc_detail, name='puc_detail'),
     path('dl_pucs/', views.download_PUCs,   name='download_PUCs'),
     path('dl_puctags/', views.download_PUCTags,   name='download_PUCTags'),
-    path('dl_raw_chems/', views.download_raw_chems,  
-                                            name='download_raw_chems'),
+    path('dl_raw_chems_dg/<int:pk>/', views.download_raw_chems_dg,  
+                                            name='download_raw_chems_dg'),
     path('dsstox/<str:sid>/', views.dsstox_lookup_detail,
                                             name='dsstox_lookup'),
     path('habitsandpractices/<int:pk>/', views.habitsandpractices,
@@ -128,6 +130,8 @@ urlpatterns = [
                                             name='save_qa_notes'),
     path('extractedtext/approve/<int:pk>/',   views.approve_extracted_text,
                                             name='approve_extracted_text'),
+    path('search/es_chemicals/', views.search_chemicals,
+                                            name='search_chemicals'),
 ]
 
 if settings.DEBUG is True:

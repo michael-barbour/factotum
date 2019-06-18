@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from .unit_type import UnitType
 from .weight_fraction_type import WeightFractionType
 from .raw_chem import RawChem
-
+from django.db.models import F
 
 def validate_ingredient_rank(value):
     if value < 1 or value > 999:
@@ -26,6 +26,10 @@ class ExtractedChemical(CommonInfo, RawChem):
     ingredient_rank = models.PositiveIntegerField("Ingredient rank", null=True, blank=True,
                                                   validators=[validate_ingredient_rank])
     raw_central_comp = models.CharField("Raw central composition", max_length=100, null=True, blank=True)
+
+    class Meta:
+        ordering = (F('ingredient_rank').asc(nulls_last=True), )
+
 
     def __str__(self):
         return str(self.raw_chem_name) if self.raw_chem_name else ''

@@ -24,12 +24,20 @@ class DataGroupDetailTest(TestCase):
                     ('ExtractForm should not be included in the page!'))
         self.objects.doc.matched = True
         self.objects.doc.save()
+        self.objects.doc.extractedtext.delete()
+        self.assertFalse(self.objects.dg.all_extracted())
         response = self.client.get(f'/datagroup/{pk}/')
         self.assertTrue(response.context['datagroup'].all_matched(), (
                     'UploadForm should not be included in the page!'))
         self.assertIsInstance(response.context['extract_form'],
                                             ExtractionScriptForm,
                     ('ExtractForm should be included in the page!'))
+        ExtractedText.objects.create(data_document=self.objects.doc,
+                                    extraction_script=self.objects.exscript)
+        self.assertTrue(self.objects.dg.all_extracted())
+        response = self.client.get(f'/datagroup/{pk}/')
+        self.assertFalse(response.context['extract_form'],
+                        'ExtractForm should NOT be included in the page!')
 
 
     def test_detail_template_fieldnames(self):
@@ -60,6 +68,7 @@ class DataGroupDetailTest(TestCase):
         pk = self.objects.dg.pk
         self.objects.doc.matched = True
         self.objects.doc.save()
+        self.objects.extext.delete()
         response = self.client.get(f'/datagroup/{pk}/')
         self.assertIsInstance(response.context['extract_form'],
                                             ExtractionScriptForm,

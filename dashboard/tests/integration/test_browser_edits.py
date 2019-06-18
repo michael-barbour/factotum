@@ -30,6 +30,7 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
         '''
         Changing the raw_cas or raw_chemname on a RawChem record with a related DssToxLookup should cause
         the relationship to be deleted.
+        The RID should also be removed.
         '''
         # currently uses a single data document
         ets_with_curation = ExtractedText.objects.filter(
@@ -54,6 +55,8 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
             rc = RawChem.objects.get(pk=rc_id)   # reload the rawchem record
             self.assertEqual(
                 None, rc.dsstox, 'The same rawchem record should now have nothing in its dsstox link')
+            self.assertEqual(
+                None, rc.rid, 'The same rawchem record should now have no RID')
 
     def test_new_chem(self):
         '''

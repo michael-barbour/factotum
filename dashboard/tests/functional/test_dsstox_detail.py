@@ -2,7 +2,7 @@ from lxml import html
 
 from django.test import TestCase
 
-from dashboard.models import DSSToxLookup, ProductDocument, PUC
+from dashboard.models import DSSToxLookup, ProductDocument, PUC, ProductToPUC
 from dashboard.tests.loader import fixtures_standard
 
 
@@ -36,5 +36,19 @@ class DSSToxDetail(TestCase):
                             f'DSSTox pk={dss.pk} should have {dss.puc_count} '
                              'PUCs in the context')
         self.assertContains(response, 'No PUCs are linked to this chemical')
+        
+        # Confirm that the list is displaying unique PUCs:
+        # Set all the Ethylparaben-linked ProductToPuc relationships to a single PUC
+        dss = DSSToxLookup.objects.get(sid='DTXSID9022528')
+        ep_prods = ProductDocument.objects.from_chemical(dss).values_list('product_id')
+        ProductToPUC.objects.filter(product_id__in=ep_prods).update(puc_id=210)
+
+        response = self.client.get(f'/dsstox/{dss.sid}/')
+        self.assertEqual(1, len(response.context['pucs']),
+                            f'DSSTox pk={dss.pk} should return 1 '
+                             'PUC in the context')
+
+
+
 
 

@@ -42,7 +42,7 @@ urlpatterns = [
     path('product_curation/', views.product_curation_index,
                                             name='product_curation'),
     path('chemical_curation/', views.chemical_curation_index,
-         name='chemical_curation'),
+                                            name='chemical_curation'),
     path('category_assignment/<int:pk>/', views.category_assignment,
                                             name='category_assignment'),
     path('link_product_list/<int:pk>/', views.link_product_list,
@@ -122,8 +122,6 @@ urlpatterns = [
                                             name='data_group_diagnostics'),
     path('extractedtext/edit/<int:pk>/',   views.extracted_text_edit,
                                             name='extracted_text_edit'),
-    path('extractedchild/edit/<int:pk>/',   views.extracted_child_edit,
-                                            name='extracted_child_edit'),
     path('datadocument/edit/<int:pk>/',   views.data_document_edit,
                                             name='data_document_edit'),
     path('qanotes/save/<int:pk>/',   views.save_qa_notes,
@@ -132,6 +130,8 @@ urlpatterns = [
                                             name='approve_extracted_text'),
     path('search/es_chemicals/', views.search_chemicals,
                                             name='search_chemicals'),
+    path('chemical/delete/<int:doc_pk>/<int:chem_pk>/', views.chemical_delete,
+                                            name='chemical_delete'),
 ]
 
 if settings.DEBUG is True:

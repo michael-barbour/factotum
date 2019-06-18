@@ -1,6 +1,6 @@
 from django.test import TestCase
 from dashboard.tests.loader import fixtures_standard
-from dashboard.models import RawChem
+from dashboard.models import RawChem, DSSToxLookup
 
 
 class ChemicalCurationTests(TestCase):
@@ -25,8 +25,6 @@ class ChemicalCurationTests(TestCase):
         dg = rc.extracted_text.data_document.data_group
         response = self.client.get(f'/dl_raw_chems_dg/{dg.id}', follow=True)
         header = 'id,raw_cas,raw_chem_name,rid,datagroup_id\n'
-        #for resp in response.streaming_content:
-        #    print(resp)
         resp = list(response.streaming_content)
         response_header = resp[0].decode("utf-8")
         self.assertEqual(header, response_header.split('\r\n')[0], "header fields should match")
@@ -42,3 +40,12 @@ class ChemicalCurationTests(TestCase):
         rc_row = f'{rc.id},{rc.raw_cas},{rc.raw_chem_name},{rc.rid if rc.rid else ""},{rc.data_group_id}'
         self.assertNotIn(bytes(rc_row, 'utf-8'), b'\t'.join(resp), 'The curated row should not appear')
 
+
+    def test_chemical_curation_upload(self):
+        true_chemname = 'Terpenes and Terpenoids, mixed sour and sweet Orange-oil'
+        self.assertEqual(0, DSSToxLookup.objects.filter(true_chemname = true_chemname).count(),
+                         'No matching true_chemname should exist')
+        with open('./sample_files/chemical_curation_upload.csv') as csv_file:
+            response = self.client.post('/chemical_curation/', {'csv_file': csv_file})
+        self.assertEqual(1, DSSToxLookup.objects.filter(true_chemname = true_chemname).count(),
+                         'Now a matching true_chemname should exist')

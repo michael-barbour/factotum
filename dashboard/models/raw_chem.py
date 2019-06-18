@@ -70,14 +70,3 @@ class RawChem(models.Model):
         if whitespace(self.raw_chem_name):
             self.raw_chem_name = self.raw_chem_name.strip()
 
-    @staticmethod
-    def pre_save(sender, **kwargs):
-        instance = kwargs.get('instance')
-        previous_raw_cas = instance.tracker.previous('raw_cas')
-        previous_raw_chem_name = instance.tracker.previous('raw_chem_name')
-       
-        if instance.tracker.has_changed('raw_cas') or \
-        instance.tracker.has_changed('raw_chem_name'):
-            instance.dsstox = None
-
-pre_save.connect(RawChem.pre_save, sender=RawChem)

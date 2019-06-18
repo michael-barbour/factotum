@@ -1,16 +1,18 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, reverse
-from django.http import HttpResponseRedirect, HttpResponse, StreamingHttpResponse
-from django.contrib import messages
-from dashboard.models import *
-from django import forms
-from dashboard.forms import DataGroupSelector
-import datetime
 import csv
+import datetime
 from django.db.models import Value, IntegerField
 # from djqscsv import render_to_csv_response
 
+from django import forms
+from django.contrib import messages
+from django.db.models import Value, IntegerField
+from django.shortcuts import render, reverse, redirect
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect, HttpResponse, StreamingHttpResponse
 
+from dashboard.models import *
+from dashboard.forms import (DataGroupSelector, get_extracted_models, 
+                                                create_detail_formset)
 
 @login_required()
 def chemical_curation_index(request, template_name='chemical_curation/chemical_curation_index.html'):
@@ -108,3 +110,13 @@ def download_raw_chems_dg(request, pk):
     response['Content-Disposition'] = 'attachment; filename="uncurated_chemicals_%s_%s.csv"' % \
                                       (pk, datetime.datetime.now().strftime("%Y%m%d"))
     return response
+
+@login_required()
+def chemical_delete(request, doc_pk, chem_pk):
+    doc = DataDocument.objects.get(pk=doc_pk)
+    Chemical = get_extracted_models(doc.data_group.group_type.code)[1]
+    chem = Chemical.objects.get(pk=chem_pk)
+    chem.delete()
+    url = reverse('data_document', args=[doc.pk])
+    url += f'#chem-{chem.pk}'
+    return redirect(url)

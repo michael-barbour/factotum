@@ -41,13 +41,8 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
 
             rc_id = self.browser.find_element_by_xpath(
                 '//*[@id="id_rawchem-0-rawchem_ptr"]').get_attribute('value')
-            true_cas = self.browser.find_element_by_xpath(
-                '//*[@id="id_rawchem-0-true_cas"]').get_attribute('value')
-            rc = RawChem.objects.get(pk=rc_id)
-            self.assertEqual(true_cas, rc.dsstox.true_cas,
-                             'The displayed True CAS should match the object attribute')
             self.browser.find_element_by_xpath(
-                '//*[@id="btn-toggle-edit"]').click()
+                '//*[@id="btn-toggle-edit"]').send_keys('\n')
             raw_cas_input = self.browser.find_element_by_xpath(
                 '//*[@id="id_rawchem-0-raw_cas"]')
             raw_cas_input.send_keys('changed cas')
@@ -70,7 +65,7 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
             self.browser.get(self.live_server_url + doc_qa_link)
 
             self.browser.find_element_by_xpath(
-                '//*[@id="btn-toggle-edit"]').click()
+                '//*[@id="btn-toggle-edit"]').send_keys('\n')
             # wait for the Save button to be clickable
             wait = WebDriverWait(self.browser, 10)
             save_button = wait.until(
@@ -92,7 +87,7 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
 
             # Try editing a new record correctly
             self.browser.find_element_by_xpath(
-                '//*[@id="btn-toggle-edit"]').click()
+                '//*[@id="btn-toggle-edit"]').send_keys('\n')
             # wait for the Save button to be clickable
             wait = WebDriverWait(self.browser, 10)
             save_button = wait.until(
@@ -149,7 +144,7 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
             self.browser.get(qa_url)
             # Activate the edit mode
             self.browser.find_element_by_xpath(
-                '//*[@id="btn-toggle-edit"]').click()
+                '//*[@id="btn-toggle-edit"]').send_keys('\n')
 
 
             # Wait for the field to be editable
@@ -178,7 +173,7 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
                 et.qa_edited, 'The qa_edited attribute should be True')
 
             # Click Approve without any notes and confirm that approval fails
-            self.browser.find_element_by_xpath('//*[@id="approve"]').click()
+            self.browser.find_element_by_xpath('//*[@id="approve"]').send_keys('\n')
 
             # The page should include an error message like this one:
             '''
@@ -226,13 +221,17 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
             dd_url = self.live_server_url + f'/datadocument/{doc_id}/'
             self.browser.get(dd_url)
             # Activate the edit mode
-            self.browser.find_element_by_xpath(
-                '//*[@id="btn-add-or-edit-extracted-text"]').click()
+            wait = WebDriverWait(self.browser, 10)
+            add_button = wait.until(
+                ec.element_to_be_clickable(
+                    (By.XPATH, '//*[@id="btn-add-or-edit-extracted-text"]')
+                )
+            )
+            add_button.click()
 
             # Verify that the modal window appears by finding the Cancel button
             # The modal window does not immediately appear, so the browser
-            # should wait for the button to be clickable
-            wait = WebDriverWait(self.browser, 10)
+            # should wait for the button to be clickable      
             cancel_button = wait.until(
                 ec.element_to_be_clickable(
                     (By.XPATH, "//*[@id='extracted-text-modal-cancel']")

@@ -21,7 +21,7 @@ class ExtractedListPresence(CommonInfo, RawChem):
 
     @classmethod
     def detail_fields(cls):
-        return ['raw_cas','raw_chem_name']
+        return ['raw_chem_name', 'raw_cas']
 
     def __str__(self):
         return str(self.raw_chem_name) if self.raw_chem_name else ''

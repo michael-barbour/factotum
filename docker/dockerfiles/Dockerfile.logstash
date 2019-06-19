@@ -2,13 +2,14 @@ FROM logstash:6.7.2
 
 ENV MYSQL_CONNECTOR_VERSION="5.1.47"
 
-ADD --chown=logstash "https://repo1.maven.org/maven2/mysql/mysql-connector-java/${MYSQL_CONNECTOR_VERSION}/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}.jar" /opt/mysql-connector.jar
-ADD --chown=logstash ./pipelines/* /usr/share/logstash/pipeline/
 
 RUN rm /usr/share/logstash/pipeline/logstash.conf
 
 USER root
-RUN yum install -y \
+RUN mkdir /usr/share/logstash/lastrun \
+&& chown logstash:logstash /usr/share/logstash/lastrun \
+&& yum install -y \
+
     iproute \
     sudo \
  && yum clean all \
@@ -17,4 +18,9 @@ RUN yum install -y \
  && sed -i '3 i \ \ echo -e "\`/sbin/ip route | awk '\''/default/ { print $3 }'\''\`\\thost.docker.internal" | sudo tee -a /etc/hosts > /dev/null' /usr/local/bin/docker-entrypoint \
  && sed -i '4 i fi' /usr/local/bin/docker-entrypoint
 
+ADD --chown=logstash "https://repo1.maven.org/maven2/mysql/mysql-connector-java/${MYSQL_CONNECTOR_VERSION}/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}.jar" /opt/mysql-connector.jar
+ADD --chown=logstash ./pipelines/* /usr/share/logstash/pipeline/
+ADD --chown=logstash ./queries /usr/share/logstash/queries
+
 USER logstash
+

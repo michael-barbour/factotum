@@ -17,33 +17,153 @@ def search_chemicals(request, template_name='search/es_chemicals.html'):
     es = Elasticsearch([
         {'host': settings.ELASTIC_HOST, 'port': settings.ELASTIC_PORT, 'use_ssl': False},
     ])
-    results = es.search(index='factotum_chemicals', body={
-        "query": {
-            "query_string": {
-                "query": q
+    es_return = es.search(index='factotum_chemicals', body={
+        'aggs': {
+            'data_documents': {
+                'terms' : {
+                    'field': 'data_document_id',
+                    'order': {
+                        'score_sum': 'desc'
+                    },
+                    'size': 10
+                },
+                'aggs': {
+                    'top_data_document': {
+                        'top_hits': {
+                            '_source': [
+                                'data_document_id',
+                                'data_document_title'
+                            ],
+                            'size': 1
+                        }
+                    },
+                    'score_sum': {
+                        'sum': {
+                            'script': {
+                                'source': '_score'
+                            }
+                        }
+                    },
+                    'num_products': {
+                        'cardinality': {
+                            'field': 'product_id'
+                        }
+                    }
+                }
+            },
+            'pucs': {
+                'terms' : {
+                    'field': 'puc_id',
+                    'order': {
+                        'score_sum': 'desc'
+                    },
+                    'size': 10
+                },
+                'aggs': {
+                    'top_puc': {
+                        'top_hits': {
+                            '_source': [
+                                'puc_id',
+                                'puc_gen_cat',
+                                'puc_prod_fam',
+                                'puc_prod_type'
+                            ],
+                            'size': 1
+                        }
+                    },
+                    'score_sum': {
+                        'sum': {
+                            'script': {
+                                'source': '_score'
+                            }
+                        }
+                    },
+                    'num_products': {
+                        'cardinality': {
+                            'field': 'product_id'
+                        }
+                    }
+                }
             }
-        }
+        },
+        'query': {
+            'dis_max': {
+                'tie_breaker' : 0.0,
+                'boost' : 1.0,
+                'queries': [
+                    {
+                        'term': {
+                            'kind': {
+                                'value': 'FO',
+                                'boost': 0.0
+                            }
+                        }
+                    },
+                    {
+                        'wildcard': {
+                            'raw_cas': {
+                                'value': q.lower(),
+                                'boost': 1.0
+                            }
+                        }
+                    },
+                    {
+                        'wildcard': {
+                            'raw_chem_name': {
+                                'value': q.lower(),
+                                'boost': 1.0
+                            }
+                        }
+                    },
+                    {
+                        'wildcard': {
+                            'true_cas': {
+                                'value': q.lower(),
+                                'boost': 1.0
+                            }
+                        }
+                    },
+                    {
+                        'wildcard': {
+                            'true_chemname': {
+                                'value': q.lower(),
+                                'boost': 1.0
+                            }
+                        }
+                    },
+                    {
+                        'wildcard': {
+                            'dtxsid': {
+                                'value': q.lower(),
+                                'boost': 1.0
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        'size': 0
+    })
+    data_documents = []
+    pucs = []
+    for r in es_return["aggregations"]["data_documents"]["buckets"]:
+        d = r["top_data_document"]["hits"]["hits"][0]["_source"]
+        data_documents.append({
+            "title": d["data_document_title"],
+            "link": "/datadocument/" + str(d["data_document_id"]),
+            "num_products": r["num_products"]["value"]
+        })
+    for r in es_return["aggregations"]["pucs"]["buckets"]:
+        d = r["top_puc"]["hits"]["hits"][0]["_source"]
+        pucs.append({
+            "title": " / ".join([d[k] for k in ["puc_gen_cat", "puc_prod_fam", "puc_prod_type"] if d[k]]),
+            "link": "/puc/" + str(d["puc_id"]),
+            "num_products": r["num_products"]["value"]
+        })
+    results = {
+        'time': es_return['took']/1000,
+        'pucs': pucs,
+        'data_documents': data_documents
     }
-    )
-
-    obj_results = []
-
-    for hit in results['hits']['hits']:
-        # print("%(raw_cas)s: %(raw_chem_name)s" % hit["_source"])
-        # Reconstitute the django objects from the elasticsearch
-        # json results
-        obj_hit = {}
-        obj_hit["dd"] = DataDocument.objects.get(
-            pk=hit["_source"]["data_document_id"])
-        obj_hit["raw_chem_name"] = hit["_source"]["raw_chem_name"]
-        obj_hit["raw_cas"] = hit["_source"]["raw_cas"]
-        obj_hit["true_cas"] = hit["_source"]["true_cas"]
-        obj_hit["true_chemname"] = hit["_source"]["true_chemname"]
-        obj_hit["product_count"] = hit["_source"]["product_count"]
-        obj_results.append(obj_hit)
-
-    context = {'results': results,
-               'obj_results': obj_results,
-               'q': q,
-               }
+    context = {'results': results, 'q': q}
     return render(request, template_name, context)

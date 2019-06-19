@@ -10,54 +10,84 @@
 {% block content %}
 
 <div class="col-md-9">
-    <div class="row">
-        <div class="col-md-5 col-xs-5">
-            Search result for: <label> {{q}} </label>
+    <ul class="nav nav-tabs" id="searchTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="data-documents-tab" data-toggle="tab" href="#data-documents" role="tab" aria-controls="data-documents" aria-selected="true">Data Documents</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="puc-tab" data-toggle="tab" href="#pucs" role="tab" aria-controls="pucs" aria-selected="false">PUCs</a>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane show active" id="data-documents" role="tabpanel" aria-labelledby="data-documents-tab">
+            <div class="row pt-1 pb-3">
+                <div class="col-sm">
+                    <p style="color:gray; font-size: small;">
+                        {{ results.data_documents|length }} documents returned in {{ results.time }} seconds.
+                    </p>
+                </div>
+            </div>
+            {% for hit in results.data_documents %}
+            <div class="row pt-2">
+                <div class="col-sm">
+                    <h5>
+                        <a href="{{ hit.link }}">
+                            <span 
+                                class="pr-1"
+                                data-toggle="tooltip" 
+                                data-placement="right"
+                                title="{{ hit.title }}"
+                            >
+                                {{ hit.title|truncatechars:60 }}
+                            </span>
+                        </a>
+                    </h5>
+                    {% if hit.num_products == 0 %}
+                    <p>No products associated with this document</p>
+                    {% elif hit.num_products == 1 %}
+                    <p>{{hit.num_products}} product associated with this document</p>
+                    {% else %}
+                    <p>{{hit.num_products}} products associated with this document</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
         </div>
-        <div class="col-md-6 col-xs-6 align-right">
-
-            {{results.hits.total}}
+        <div class="tab-pane" id="pucs" role="tabpanel" aria-labelledby="puc-tab">
+            <div class="row pt-1 pb-3">
+                <div class="col-sm">
+                    <p style="color:gray; font-size: small;">
+                        {{ results.pucs|length }} PUCs returned in {{ results.time }} seconds.
+                    </p>
+                </div>
+            </div>
+            {% for hit in results.pucs %}
+            <div class="row pt-2">
+                <div class="col-sm">
+                    <h5>
+                        <a href="{{ hit.link }}">
+                            <span 
+                                class="pr-1"
+                                data-toggle="tooltip" 
+                                data-placement="right"
+                                title="{{ hit.title }}"
+                            >
+                                {{ hit.title|truncatechars:60 }}
+                            </span>
+                        </a>
+                    </h5>
+                    {% if hit.num_products == 0 %}
+                    <p>No products associated with this PUC</p>
+                    {% elif hit.num_products == 1 %}
+                    <p>{{hit.num_products}} product associated with this PUC</p>
+                    {% else %}
+                    <p>{{hit.num_products}} products associated with this PUC</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
         </div>
     </div>
-
-    <div class="row">
-        <div class="col-sm">
-            {% if  obj_results %}
-            {% for obj_result in obj_results %}
-            <dl class="row"></dl>
-            <h5><a href="/datadocument/{{ obj_result.dd.id }}"> 
-                <span class='pr-1'data-toggle="tooltip" 
-                data-placement="right"    
-                title="{{obj_result.dd.title}}">{{ obj_result.dd.title }} 
-                </span>
-            </a></h5>
-            <a href="{{ obj_result.dd.get_absolute_url }}" title="{{ doc.title}}">{{ doc.title|truncatechars:60 }}</a>
-            <a href="{{ obj_result.dd.pdf_url }}" title="Link to {{ obj_result.dd.get_abstract_filename }}"
-                target="_blank"><span class="oi oi-document"></span></a>
-            <br />
-            <dt>Raw chem name and CAS:</dt>{{ obj_result.raw_chem_name }} {{ obj_result.raw_cas }}</dd>
-            {% if  obj_result.true_cas %}
-            <dt>True chem name and CAS:</dt>
-            <dd>{{ obj_result.true_chemname }} {{ obj_result.true_cas }}</dd>
-            {% endif %}
-            <dt>Product count:</dt>
-            <dd>{{ obj_result.product_count }}</dd>
-            </dl>
-            {% endfor %}
-            {% else %}
-            <p> Sorry, no result found for the search term <strong>{{q}} </strong></p>
-            {% endif %}
-        </div> <!-- end col -->
-    </div> <!-- end row -->
-</div>
-</div>
-
-</div>
-
-
-
-
-</div>
 </div>
 
 {% endblock %}

@@ -2,6 +2,7 @@ from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
 
+import dashboard.views.data_group
 import dashboard.views.qa
 from . import views
 
@@ -15,22 +16,29 @@ urlpatterns = [
                                             name='data_source_new'),
     path('datasource/edit/<int:pk>/', views.data_source_update,
                                             name='data_source_edit'),
-    path('datasource/delete/<int:pk>/', views.data_source_delete,
+    path('datasource/delete/<int:pk>/',     views.data_source_delete,
                                             name='data_source_delete'),
-    path('datagroups/', views.data_group_list,
-                                            name='data_group_list'),
-    path('datagroup/<int:pk>/', views.data_group_detail,
-                                            name='data_group_detail'),
-    path('datagroup/docs_csv/<int:pk>/', views.dg_dd_csv_view,
-                                            name='dg_dd_csv_view'),
-    path('datagroup/pdfs_zipped/<int:pk>/', views.dg_pdfs_zip_view,
-                                            name='dg_pdfs_zip_view'),
-    path('datagroup/raw_extracted_records/<int:pk>/', views.dg_raw_extracted_records,
-                                            name='dg_raw_extracted_records'),
     path('datasource/<int:pk>/datagroup_new/', views.data_group_create,
                                             name='data_group_new'),
-    path('datagroup/<int:pk>/registered_records.csv', views.data_group_registered_records_csv,
-                                            name="registered_records.csv"),
+    path('datagroups/',                     views.data_group_list,
+                                            name='data_group_list'),
+    path('datagroup/<int:pk>/',             views.data_group_detail,
+                                            name='data_group_detail'),
+    path('datagroup/<int:pk>/download_documents/',
+                                            views.download_datadocuments,
+                                            name='download_datadocuments'),
+    path('datagroup/<int:pk>/download_document_zip/',
+                                            views.download_datadocument_zip_file,
+                                            name='download_datadocument_zip_file'),
+    path('datagroup/<int:pk>/download_raw_extracted_records/',
+                                            views.download_raw_extracted_records,
+                                            name='download_raw_extracted_records'),
+    path('datagroup/<int:pk>/download_registered_documents/',
+                                            views.download_registered_datadocuments,
+                                            name="download_registered_datadocuments"),
+    path('datagroup/<int:pk>/download_unextracted_documents/',
+                                            views.download_unextracted_datadocuments,
+                                            name="download_unextracted_datadocuments"),
     path('datagroup/edit/<int:pk>/', views.data_group_update,
                                             name='data_group_edit'),
     path('datagroup/delete/<int:pk>/', views.data_group_delete,
@@ -42,7 +50,7 @@ urlpatterns = [
     path('product_curation/', views.product_curation_index,
                                             name='product_curation'),
     path('chemical_curation/', views.chemical_curation_index,
-         name='chemical_curation'),
+                                            name='chemical_curation'),
     path('category_assignment/<int:pk>/', views.category_assignment,
                                             name='category_assignment'),
     path('link_product_list/<int:pk>/', views.link_product_list,
@@ -53,6 +61,8 @@ urlpatterns = [
                                             name='qa_extractionscript_index'),
     path('qa/extractionscript/<int:pk>/', dashboard.views.qa.qa_extraction_script,
                                             name='qa_extraction_script'),
+    path('qa/extractionscript/<int:pk>/summary', dashboard.views.qa.qa_extraction_script_summary,
+                                            name='qa_extraction_script_summary'),
     path('qa/extractedtext/<int:pk>/', dashboard.views.qa.extracted_text_qa,
                                             name='extracted_text_qa'),
     path('extractionscript/<int:pk>/', views.extraction_script_detail,
@@ -120,8 +130,6 @@ urlpatterns = [
                                             name='data_group_diagnostics'),
     path('extractedtext/edit/<int:pk>/',   views.extracted_text_edit,
                                             name='extracted_text_edit'),
-    path('extractedchild/edit/<int:pk>/',   views.extracted_child_edit,
-                                            name='extracted_child_edit'),
     path('datadocument/edit/<int:pk>/',   views.data_document_edit,
                                             name='data_document_edit'),
     path('qanotes/save/<int:pk>/',   views.save_qa_notes,
@@ -130,6 +138,9 @@ urlpatterns = [
                                             name='approve_extracted_text'),
     path('search/es_chemicals/', views.search_chemicals,
                                             name='search_chemicals'),
+    path('chemical/delete/<int:doc_pk>/<int:chem_pk>/', views.chemical_delete,
+                                            name='chemical_delete'),
+
 ]
 
 if settings.DEBUG is True:

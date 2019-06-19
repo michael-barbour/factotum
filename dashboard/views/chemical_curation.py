@@ -1,15 +1,18 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, reverse
-from django.http import HttpResponseRedirect, HttpResponse, StreamingHttpResponse
-from django.contrib import messages
-from dashboard.models import *
-from django import forms
-from dashboard.forms import DataGroupSelector
-import datetime
 import csv
+import datetime
 from django.db.models import Value, IntegerField
+# from djqscsv import render_to_csv_response
 
+from django import forms
+from django.contrib import messages
+from django.db.models import Value, IntegerField
+from django.shortcuts import render, reverse, redirect
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect, HttpResponse, StreamingHttpResponse
 
+from dashboard.models import *
+from dashboard.forms import (DataGroupSelector, get_extracted_models, 
+                                                create_detail_formset)
 
 @login_required()
 def chemical_curation_index(request, template_name='chemical_curation/chemical_curation_index.html'):
@@ -20,14 +23,20 @@ def chemical_curation_index(request, template_name='chemical_curation/chemical_c
 
     data = {'dg_picker_form': dg_picker_form, 'uncurated_chemical_count':
             uncurated_chemical_count, 'records_processed': records_processed}
-    # if not GET, then proceed
+
     if "POST" == request.method:
         try:
-            # if not a csv file
             csv_file = request.FILES["csv_file"]
-            if not csv_file.name.endswith('.csv'):
-                data.update({'error_message': 'File is not CSV type'})
+            info = [x.decode('ascii','ignore') for x in csv_file.readlines()]
+            records_processed = len(info) - 1
+            table = csv.DictReader(info)
+
+            missing = list(set(['external_id','rid','sid','true_chemical_name','true_cas']) - set(table.fieldnames))
+            if missing:
+                data.update({'error_message': 'File must be a CSV file with the following rows:'
+                                              ' external_id, rid, sid, true_chemical_name, true_cas'})
                 return render(request, template_name, data)
+
             # if file is too large, return
             if csv_file.multiple_chunks():
                 error = "Uploaded file is too big (%.2f MB)." % (
@@ -35,56 +44,28 @@ def chemical_curation_index(request, template_name='chemical_curation/chemical_c
                 data.update({'error_message': error})
                 return render(request, template_name, data)
 
-            file_data = csv_file.read().decode("utf-8")
-            lines = file_data.split("\n")
-
-            # loop over the lines and save them in db. If error , store as string and then display
-            records_processed = len(lines) - 1
-            for line in lines:
-                fields = line.split(",")
-                data_dict = {}
-                data_dict["raw_chemical_id"] = fields[0].strip()
-                data_dict["rid"] = fields[1].strip()
-                data_dict["sid"] = fields[2].strip()
-                data_dict["true_chemical_name"] = fields[3].strip()
-                data_dict["true_cas"] = fields[4].strip()
-                # If it is the header row check to see that the columns are in order.
-                if data_dict["raw_chemical_id"] == "external_id":
-                    if (data_dict["raw_chemical_id"] != "external_id") or (data_dict['sid'] != 'sid') or \
-                            (data_dict['true_chemical_name'] != "true_chemical_name") or \
-                            (data_dict['true_cas'] != 'true_cas'):
-                        data.update(
-                            {"error_message": "Check to ensure your column headers are in order."})
-                        return render(request, template_name, data)
-                else:
-                    try:
-                        # Check to see of SID exists,
-                        if DSSToxLookup.objects.filter(sid=data_dict['sid']).exists():
-                            # if is does exist Overwrite the existing True CAS and Chemname
-                            DSSToxLookup.objects.filter(sid=data_dict['sid']). \
-                                update(true_cas=data_dict["true_cas"],
-                                       true_chemname=data_dict["true_chemical_name"])
-                        # if not create it in DSSToxLookup
-                        else:
-                            chem = DSSToxLookup.objects.create(true_cas=data_dict["true_cas"],
-                                                               true_chemname=data_dict["true_chemical_name"],
-                                                               sid=data_dict["sid"])
-                            chem.save()
-                        # ensure link back to DSSToxLookup
-                        sid_id = DSSToxLookup.objects.filter(
-                            sid=data_dict['sid'])
-                        RawChem.objects.filter(id=data_dict["raw_chemical_id"]).update(rid=data_dict['rid'],
-                                                                                       dsstox_id=sid_id[0].id)
-                    except Exception as e:
-                        print(e)
-                        pass
+            for i, row in enumerate(table):
+                try:
+                    if DSSToxLookup.objects.filter(sid=row['sid']).exists():
+                        DSSToxLookup.objects.filter(sid=row['sid']). \
+                            update(true_cas=row["true_cas"],
+                                   true_chemname=row["true_chemical_name"])
+                    else:
+                        chem = DSSToxLookup.objects.create(true_cas=row["true_cas"],
+                                                           true_chemname=row["true_chemical_name"],
+                                                           sid=row["sid"])
+                        chem.save()
+                    sid = DSSToxLookup.objects.filter(sid=row['sid']).first()
+                    RawChem.objects.filter(id=row["external_id"]).update(rid=row['rid'], dsstox_id=sid.id)
+                except Exception as e:
+                    print(e)
+                    pass
 
         except Exception as e:
             # This is the catchall - MySQL database has went away, etc....
             error = "Something is seriously wrong with this csv - %s" % repr(e)
             data.update({"error_messasage": error})
             return render(request, template_name, data)
-            messages.error(request, "Unable to upload file. " + repr(e))
     if records_processed > 0:
         data.update({"records_processed": records_processed})
     return render(request, template_name, data)
@@ -129,3 +110,13 @@ def download_raw_chems_dg(request, pk):
     response['Content-Disposition'] = 'attachment; filename="uncurated_chemicals_%s_%s.csv"' % \
                                       (pk, datetime.datetime.now().strftime("%Y%m%d"))
     return response
+
+@login_required()
+def chemical_delete(request, doc_pk, chem_pk):
+    doc = DataDocument.objects.get(pk=doc_pk)
+    Chemical = get_extracted_models(doc.data_group.group_type.code)[1]
+    chem = Chemical.objects.get(pk=chem_pk)
+    chem.delete()
+    url = reverse('data_document', args=[doc.pk])
+    url += f'#chem-{chem.pk}'
+    return redirect(url)

@@ -55,7 +55,17 @@
                 </h5>
                 <div class="flex border border-secondary border-2 border-top-0 border-left-0 rounded-bottom">
                     {% for assumed in assumed_tags %}
-                        <button type="button" class="flex-1 mb-1 ml-1 assumed btn btn-primary" disabled>{{ assumed.name }}</button>
+                        <button type="button" 
+                                class="flex-1 mb-1 ml-1 assumed btn btn-primary"
+                                data-tag-name="{{ assumed.name }}"
+                                {% if assumed.definition %}
+                                    title="{{ assumed.definition }}"
+                                {% else %}
+                                    title="No definition"
+                                {% endif %}
+                                disabled>
+                                {{ assumed.name }}
+                        </button>
                     {% endfor %}
                 </div>
                 </br>
@@ -68,7 +78,11 @@
                         {% if product.get_puc_tag_list|length > 1 %}
                             <button type="submit" 
                                     id="tag_submit" 
-                                    class="btn btn-sm btn-success rounded-0 ml-auto"><small>Submit</small></button>
+                                    class="btn btn-sm btn-success rounded-0 ml-auto">
+                                    <small>
+                                        Submit
+                                    </small>
+                                </button>
                         </h5>
                         {{ tagform }}
                     </form>

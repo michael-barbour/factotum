@@ -42,6 +42,13 @@
       </form>
 
       <tr>
+        <th>Subtitle</th>
+        <td>
+          {{ doc.subtitle }}
+        </td>
+      </tr>
+
+      <tr>
         <th>Raw Category</th>
         <td>
           {{ doc.raw_category }}
@@ -52,6 +59,12 @@
         <th>URL</th>
         <td>
           {{ doc.url }}
+        </td>
+      </tr>
+      <tr>
+        <th>Note</th>
+        <td>
+          {{ doc.note }}
         </td>
       </tr>
       {% if doc.matched %}

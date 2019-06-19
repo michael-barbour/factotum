@@ -140,6 +140,7 @@ urlpatterns = [
                                             name='search_chemicals'),
     path('chemical/delete/<int:doc_pk>/<int:chem_pk>/', views.chemical_delete,
                                             name='chemical_delete'),
+
 ]
 
 if settings.DEBUG is True:

@@ -88,7 +88,9 @@
     </dl>
 
     <div class="col-sm-12">
+
         <a href="{% url 'download_registered_datadocuments' datagroup.pk  %}" class="btn btn-secondary">
+
             <span class="fa fa-file-csv
             {% if datagroup.registered_docs == 0 %}disabled{% endif %}">
         </span>&nbsp;Download Registered Records CSV</a>
@@ -97,7 +99,9 @@
           <span class="fa fa-download"></span> Download All PDF Documents 
         </a>
         {% if datagroup.group_type.code in "CO" %}
+
             <a href="{% url 'download_raw_extracted_records' datagroup.pk  %}" class="btn btn-secondary">
+
                 <span class="fa fa-file-csv"></span>&nbsp;Download Raw Composition Records</a>
         {% endif %}
         {% if clean_comp_data_form %}
@@ -125,6 +129,7 @@
                     <input type="submit" class="btn btn-primary" name="extract_button" value="Submit" disabled>
                     <a href="{% url "download_unextracted_datadocuments" datagroup.id %}" class="btn btn-secondary">
                        <span class="fa fa-file-csv"></span>&nbsp;Download Extracted Text CSV Template
+
                     </a>
                 </form>
             </div>
@@ -161,6 +166,7 @@
       </form>
       {% endif %}
       <p>
+
         <a class="btn btn-secondary" href="{%  url 'download_datadocuments' datagroup.id %}">
           <span class="fa fa-file-csv"></span>
           &nbsp;Export all records in {{ datagroup.name }} to csv</a>
@@ -188,7 +194,9 @@
             <td>
               <a href="{{ doc.get_absolute_url }}"
                  title="Link to document detail">{{ doc.title }}</a>
+
               <a href="/media/{{ datagroup.fs_id }}/pdf/{{ doc.get_abstract_filename }}"
+
                  title="Link to {{ doc.get_abstract_filename }}" target="_blank"><span class="fa fa-file-o"></span></a>
             </td>
           {% else %}
@@ -206,7 +214,9 @@
           {% endif %}
             </td>
             <td align="center">
+
           {% if doc.extracted and not datagroup.is_habits_and_practices %}
+
             <span class="fa fa-check-circle" style="color:green;"></span>
               <p style="display:none;">{{doc.extracted}}</p>
           {% elif datagroup.is_habits_and_practices %}
@@ -215,7 +225,9 @@
               <p style="display:none;">{{doc.extracted}}</p>
           {% else %}
             <span class="fa fa-times-circle" style="color:red;">
+
               <p style="display:none;">{{doc.extracted}}</p>
+
             </span>
           {% endif %}
             </td>
@@ -226,7 +238,9 @@
                 <a title="Go to Product Detail" href="{% url 'product_detail' doc.product_id %}">
                     {{doc.product_title}}</a>
             {% else %}
+
                 <span class="fa fa-times-circle" style="color:red;"></span>
+
             {% endif %}
           </td>
           {% endif %}

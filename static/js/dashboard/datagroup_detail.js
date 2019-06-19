@@ -1,16 +1,9 @@
   $(document).ready(function () {
     var table = $('#docs').DataTable({
       "serverSide": false,
-      "paging": false,
+      "paging": true,
       "searching": false,
-      "ordering": true,
-      "dom": 't'
-    });
-
-    var dg_name = document.getElementById("dg_name").value;
-
-    $("#xx").on('click', function (event) {
-        exportTableToCSV.apply(this, [$('#extract'), dg_name + '_extract_template.csv']);
+      "ordering": true
     });
 
     // make submit button active when file selected

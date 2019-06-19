@@ -50,6 +50,12 @@ class TestQaPage(TestCase):
         self.assertIn(
             f"'/qa/extractionscript/15/\'> Continue QA".encode(), response.content)
 
+    def test_doc_fields(self):
+        ''' The subtitle and note field should appear on the page '''
+        response = self.client.get(f'/qa/extractedtext/254780/')
+        self.assertIn('Lorem ipsum dolor'.encode(), response.content)
+        self.assertIn('A list of chemicals with a subtitle'.encode(), response.content)
+
     def test_qa_script_without_ext_text(self):
         # Begin from the QA index page
         response = self.client.get(f'/qa/extractionscript/')

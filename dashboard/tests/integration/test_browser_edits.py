@@ -133,6 +133,16 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
 
         5. Approve
         '''
+        # Start off by testing the "Percent QA Checked" stat shown in the table
+        # on the QA index page
+        self.browser.get(self.live_server_url + '/qa/chemicalpresence/')
+        td_pct_checked = self.browser.find_element_by_xpath(
+                '//*[@id="chemical_presence_table"]/tbody/tr[2]/td[3]')
+        self.assertEqual(td_pct_checked.text, "0%", 
+            'Percent QA Checked for the second row on the Chemical Presence QA index should be zero')
+        
+
+
         for doc_id in [7,      # Composition
                        5,      # Functional Use
                        254781,  # Chemical Presence List
@@ -206,6 +216,15 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
             et.refresh_from_db()
             self.assertTrue(
                 et.qa_checked, 'The qa_checked attribute should be True')
+
+        # Return to the index page and confirm that the "Percent QA Checked"
+        # stat has gone up
+        self.browser.get(self.live_server_url + '/qa/chemicalpresence/')
+        td_pct_checked = self.browser.find_element_by_xpath(
+                '//*[@id="chemical_presence_table"]/tbody/tr[2]/td[3]')
+        self.assertEqual(td_pct_checked.text, "33%", 
+            'Percent QA Checked for the second row on the Chemical Presence QA index should be 33%')
+        
 
 
     def test_datadoc_add_extracted(self):

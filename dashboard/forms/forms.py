@@ -267,18 +267,6 @@ class DocumentTypeForm(forms.ModelForm):
         })
 
 
-def include_extract_form(dg):
-    '''Returns the ExtractionScriptForm based on conditions of DataGroup
-    type as well as whether all records are matched, but not extracted
-    '''
-    if not dg.type in ['FU', 'CO', 'CP']:
-        return False
-    if dg.all_matched() and not dg.all_extracted():
-        return ExtractionScriptForm(dg_type=dg.type)
-    else:
-        return False
-
-
 class ExtractedChemicalFormSet(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -289,18 +277,6 @@ class ExtractedChemicalForm(forms.ModelForm):
     class Meta:
         model = ExtractedChemical
         exclude = ('extracted_text',)
-
-
-def include_clean_comp_data_form(dg):
-    '''Returns the CleanCompDataForm based on conditions of DataGroup
-    type = Composition and at least 1 document extracted
-    '''
-    if not dg.type in ['CO']:
-        return False
-    if dg.extracted_docs() > 0:
-        return CleanCompDataForm()
-    else:
-        return False
 
 
 def create_detail_formset(document, extra=1, can_delete=False, exclude=[]):

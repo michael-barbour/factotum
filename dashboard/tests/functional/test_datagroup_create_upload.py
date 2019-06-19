@@ -100,6 +100,7 @@ class RegisterRecordsTest(TestCase):
         self.assertEqual(len(docs), 2, "there should be two associated documents")
 
         # test whether the "Download Registered Records" link is like this example
+
         # <a href="/datagroup/a9c7f5a7-5ad4-4f75-b877-a3747f0cc081/download_registered_documents" class="btn btn-secondary">
         csv_href = f'/datagroup/{dg.pk}/download_registered_documents/'
         self.assertIn(csv_href, str(resp._container),

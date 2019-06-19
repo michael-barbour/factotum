@@ -25,6 +25,7 @@ class ChemicalCurationTests(TestCase):
         dg = rc.extracted_text.data_document.data_group
         response = self.client.get(f'/dl_raw_chems_dg/{dg.id}', follow=True)
         header = 'id,raw_cas,raw_chem_name,rid,datagroup_id\n'
+
         resp = list(response.streaming_content)
         response_header = resp[0].decode("utf-8")
         self.assertEqual(header, response_header.split('\r\n')[0], "header fields should match")
@@ -49,3 +50,4 @@ class ChemicalCurationTests(TestCase):
             response = self.client.post('/chemical_curation/', {'csv_file': csv_file})
         self.assertEqual(1, DSSToxLookup.objects.filter(true_chemname = true_chemname).count(),
                          'Now a matching true_chemname should exist')
+

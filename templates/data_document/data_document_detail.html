@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="{% static 'css/dashboard/datadocument_detail.css' %}">
 {% endblock %}
 {% block content %}
+
 <div class="row"><!-- DataDocument title -->
     <div class="col-lg-10 border-bottom"
          id="title">
@@ -40,6 +41,7 @@
                href="{% url 'data_document_delete' doc.id %}">
                 <span class="fa fa-fs fa-trash"></span>
             </a>
+
         </div>
     </div>
 </div>
@@ -300,6 +302,7 @@
                     tabindex="-1" 
                     role="dialog" 
                     aria-labelledby="extextModalLabel"
+
                     aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">

@@ -11,6 +11,9 @@
 
 <div class="row"><!-- DataDocument title -->
     <div class="col-lg-10 border-bottom"
+         data-toggle="tooltip"
+         data-placement="bottom" 
+         title="{{ doc.title }}"
          id="title">
         <h1>{{ doc.title|truncatechars:45 }}</h1>
         {% if doc.subtitle %}

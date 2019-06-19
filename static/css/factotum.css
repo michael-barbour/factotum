@@ -53,6 +53,12 @@ div.search-result-main{
 	max-width: 100%; 
 }
 
+.bubble-chart {
+    border-radius: 25px;
+    border: 2px solid;
+    background-color: #d9ffcc;
+}
+
 /* -----datadocument_detail----- */
 .scroll-div {
     overflow-y: scroll;

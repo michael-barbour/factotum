@@ -48,7 +48,10 @@ class DSSToxDetail(TestCase):
                             f'DSSTox pk={dss.pk} should return 1 '
                              'PUC in the context')
 
-
-
-
+    def test_puc_bubble_query(self):
+        dss = next(dss for dss in DSSToxLookup.objects.all() if dss.puc_count>0)
+        response = self.client.get(f'/dl_pucs/?bubbles=True&dtxsid={dss.sid}')
+        self.assertEqual(dss.puc_count, sum(1 for line in response) - 2,
+                            f'DSSTox pk={dss.pk} should have {dss.puc_count} '
+                             'PUCs in the CSV')
 

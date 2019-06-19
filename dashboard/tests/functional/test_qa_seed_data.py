@@ -244,6 +244,22 @@ class TestQaPage(TestCase):
         response = self.client.get(f'/qa/chemicalpresence/')
         self.assertIn(
             f"/qa/chemicalpresencegroup/49/\'> View Chemical Presence Lists".encode(), response.content)
+        #print(response.content)
+        # Check the "Percent QA Checked" column
+        zero_pct_string = '<td><a href="www.chemicals_in_the_wild.com" title="Link to SIRI Chemical Presence" id="49">SIRI Chemical Presence</a></td><td>3</td><td>0%</td>'
+        raw_zero_pct_string = '<td>\n            \n            <a href="www.chemicals_in_the_wild.com" title="Link to SIRI Chemical Presence" id="49">SIRI Chemical Presence</a>\n            \n        </td>\n        <td>3</td>\n        \n        <td>0%</td>'
+        
+        self.assertInHTML(zero_pct_string , raw_zero_pct_string)
+        self.assertInHTML(zero_pct_string, '<td>\n            \n            <a href="www.chemicals_in_the_wild.com" title="Link to SIRI Chemical Presence" id="49">SIRI Chemical Presence</a>\n            \n        </td>\n        <td>3</td>\n        \n        <td>0%</td>')
+        #print(response.content.decode('utf-8'))
+
+
+        self.assertInHTML('<td>3</td>\n        \n        <td>0%</td>', response.content.decode('utf-8'))
+        self.assertInHTML(zero_pct_string, response.content.decode('utf-8'))
+
+        
+
+
 
         response = self.client.get(
             f'/qa/chemicalpresencegroup/49', follow=True)

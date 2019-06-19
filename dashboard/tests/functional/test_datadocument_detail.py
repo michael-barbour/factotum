@@ -31,6 +31,15 @@ class DataDocumentDetailTest(TestCase):
                 self.assertContains(resp, 'No Extracted Text exists for this Data Document')
             else:
                 self.assertContains(resp, '<b>Extracted Text</b>')
+    
+    def test_curated_chemical(self):
+        '''
+        Confirm that the correct values appear on the page for 
+        RawChem records that have been matched to DSSToxLookup records
+        '''
+        ddid = 7
+        resp = self.client.get(f'/datadocument/%s/' % ddid)
+        self.assertIn('href=/dsstox/DTXSID2021781/', resp.content.decode('utf-8'))
 
     def test_script_links(self):
         doc = DataDocument.objects.first()

@@ -2,14 +2,10 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.core.exceptions import ObjectDoesNotExist
-from djqscsv import render_to_csv_response
 from django.contrib import messages
 
-from dashboard.forms import *
-from dashboard.forms import ExtractedListPresenceTagForm
-# if this goes to 0, tests will fail because of what num form we search for
-from factotum.settings import EXTRA
-from dashboard.models import *
+from dashboard.forms import ExtractedListPresenceTagForm, create_detail_formset, DataDocumentForm, DocumentTypeForm
+from dashboard.models import DataDocument, ExtractedListPresence, ExtractedText, Script
 
 
 @login_required()
@@ -116,11 +112,6 @@ def data_document_delete(request, pk, template_name='data_source/datasource_conf
         return redirect('data_group_detail', pk=datagroup_id)
     return render(request, template_name, {'object': doc})
 
-@login_required
-def dg_dd_csv_view(request, pk):
-    qs = DataDocument.objects.filter(data_group_id=pk)
-    filename = DataGroup.objects.get(pk=pk).name
-    return render_to_csv_response(qs, filename=filename, append_datestamp=True)
 
 @login_required
 def data_document_edit(request, pk, template_name=('data_document/'
@@ -151,5 +142,5 @@ def extracted_text_edit(request, pk):
         doc.save()
         return redirect('data_document', pk=doc.pk)
     else:
-        extext.delete()
+        exttext.delete()
         return HttpResponse("Houston, we have a problem.")

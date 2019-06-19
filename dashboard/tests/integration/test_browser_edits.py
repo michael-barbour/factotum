@@ -304,3 +304,11 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
         self.assertTrue(len(bubbles) > 0, "Need more than one bubble")
         self.assertEqual(num_pucs, len(bubbles), ('There should be a circle'
                                                   'drawn for every PUC'))
+    def test_dtxsid_bubble_plot(self):
+        dss = next(dss for dss in DSSToxLookup.objects.all() if dss.puc_count>0)
+        self.browser.get(self.live_server_url + f'/dsstox/{dss.sid}/')
+        import time
+        time.sleep(3)
+        bubbles = self.browser.find_elements_by_class_name('bubble')
+        self.assertEqual(dss.puc_count, len(bubbles), ('There should be a circle'
+                                                       'drawn for every PUC'))

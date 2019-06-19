@@ -36,9 +36,18 @@
                     {% for puc in pucs %}
                     <a href="/puc/{{puc.id}}" class="list-group-item
                                                 list-group-item-action
-                                                align-items-start"
-                                                id="puc-link-{{puc.id}}">
+                                                align-items-start
+                                                puc-link"
+                                                id="puc-link-{{puc.id}}"
+                                                style="float: left;">
                         <small> {{ puc }} </small>
+                        <div class="puc-legend" 
+                             style="height: 20px; 
+                             width: 20px; 
+                             background-color: #ffffff; 
+                             float: right; 
+                             border-radius: 10%;">
+                        </div>
                     </a>
                     {% empty %}
                     <li class="list-group-item">
@@ -48,47 +57,33 @@
                 </div>
             </div>
         </div>
-        <div class="col-7 text-center pl-4 pr-0">
-            <!-- <h1>BUBBLE PLOT GOES HERE</h1> -->
-            <svg class="bg-light" viewBox="0 0 1000 420">
-                <a href="https://www.google.com">
-                    <circle r="60" cy="97" cx="447" stroke-width="2" stroke="#E4AF4C" fill="#F4D37D"
-                        fill-opacity="0.47"> />
-                </a>
-                <a href="https://www.google.com">
-                    <circle r="60" cy="97" cx="547" stroke-width="2" stroke="#a020f0" fill="#a020f0"
-                        fill-opacity="0.47"> />
-                </a>
-                <a href="https://www.google.com">
-                    <circle r="47" cy="217" cx="347" stroke-width="2" stroke="#a020f0" fill="#a020f0"
-                        fill-opacity="0.47"> />
-                </a>
-                <a href="https://www.google.com">
-                    <circle r="47" cy="217" cx="647" stroke-width="2" stroke="#E4AF4C" fill="#F4D37D"
-                        fill-opacity="0.47"> />
-                </a>
-                <a href="https://www.google.com">
-                    <circle r="60" cy="347" cx="547" stroke-width="2" stroke="#a020f0" fill="#a020f0"
-                        fill-opacity="0.47">
-                        <animate attributeName="r" dur="1s" repeatCount="indefinite" values="60;47;60" />
-                    </circle>
-                </a>
-                <a href="https://www.google.com">
-                    <circle r="60" cy="347" cx="447" stroke-width="2" stroke="#E4AF4C" fill="#F4D37D"
-                        fill-opacity="0.47">
-                        <animate attributeName="r" dur="1s" repeatCount="indefinite" values="60;47;60" />
-                    </circle>
-                    <text x="447" y="217">
-                        ¡bubbles!
-                        <animate attributeName="x" dur="3s" repeatCount="indefinite" values="387;540;387" />
-                    </text>
-                </a>
-            </svg>
+        <div class="col-7 pl-4 pr-0">
+            <div class="bubble-chart" id="chart">
+                <svg></svg>
+            </div>
+            <div class="row">
+                <div class="btn-group p-2 ml-2" role="group" aria-label="Basic example">
+                    <button type="button" class="btn btn-secondary" id="split">Split</button>
+                    <button type="button" class="btn btn-secondary" id="combine">Combine</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 {% endblock %}
 {% block js %}
-<script src="{% static 'js/dsstox_detail.js' %}"></script>
+<script src="{% static 'js/d3_rick.min.js' %}"></script>
+<script src="{% static 'js/dashboard/dsstox_detail.js' %}"></script>
+<script src="{% static 'js/bubble_chart.js' %}"></script>
+<script>
+    d3v4.csv("{% url 'download_PUCs' %}?bubbles=True&dtxsid={{ substance.sid }}", function (error, data) {
+      if (error) {
+        console.error('Error getting or parsing the data.');
+        throw error;
+      }
+      var chart = bubbleChart(625, 500, showLegend=false);
+      d3v4.select('#chart').datum(data).call(chart);
+    });
+</script>
 {% endblock %}

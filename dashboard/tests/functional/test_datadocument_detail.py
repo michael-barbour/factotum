@@ -130,6 +130,20 @@ class DataDocumentDetailTest(TestCase):
         self.assertTrue(second_idx > first_idx, ('Ingredient rank 1 comes before ' 
                                         'Ingredient rank 2'))
 
+    def test_title_ellipsis(self):
+        '''Check that DataDocument title gets truncated'''
+        trunc_length = 45
+        doc = (DataDocument
+            .objects
+            .filter(title__iregex=('.{%i,}' % (trunc_length + 1)))
+            .first())
+        self.assertIsNotNone(doc, ('No DataDocument found with a title greater'
+                                   ' than %i characters.') % trunc_length)
+        response = self.client.get('/datadocument/%i/' % doc.id)
+        response_html = html.fromstring(response.content)
+        trunc_title = doc.title[:trunc_length - 1] + '…'
+        html_title = response_html.xpath('//*[@id="title"]/h1')[0].text
+        self.assertEqual(trunc_title, html_title, 'DataDocument title not truncated.')
 
 
 class TestDynamicDetailFormsets(TestCase):

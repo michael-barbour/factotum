@@ -35,6 +35,16 @@ class DataGroupFormTest(TestCase):
         self.assertEqual(dg.url, 'http://www.epa.gov',
                      f'DataDocument {dg.pk} should have the url "http://www.epa.gov"')
 
+        # URL needs to include a schema (e.g., "http://" to be valid)
+        response = self.client.post(f'/datagroup/edit/{dg.pk}/',
+                                    {'name': dg.name,
+                                     'url': 'www.epa.gov',
+                                     'group_type': dg.group_type_id,
+                                     'downloaded_by': dg.downloaded_by_id,
+                                     'downloaded_at': dg.downloaded_at,
+                                     'data_source': dg.data_source_id})
+        self.assertContains(response,'Enter a valid URL')
+
     def test_detail_form_group_type(self):
         # DG 6 has extracted docs, so group_type should be disabled, and a forced update should fail
         dg = DataGroup.objects.get(pk=6)

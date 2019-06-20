@@ -190,6 +190,12 @@ class ModelsTest(TestCase):
         self.assertTrue(title.max_length == 250, ("'title' field should have "
                                                         "max length of 250"))
 
+    def test_LP_keyword_fields(self):
+        fields = [fld.name for fld in ExtractedListPresenceTag._meta.fields]
+        for fld in ['name','slug','definition','kind']:
+            self.assertIn(fld, fields, 
+                        f'{fld} should be in ExtractedListPresenceTag model.')
+
 class PUCModelTest(TestCase):
 
     fixtures = fixtures_standard

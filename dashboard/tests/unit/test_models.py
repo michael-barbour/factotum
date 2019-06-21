@@ -1,6 +1,6 @@
 import csv
 from django.utils import timezone
-from django.test import TestCase
+from django.test import TestCase, tag
 from django.db.utils import IntegrityError
 from django.db.models import Count
 from dashboard.models import *
@@ -46,7 +46,7 @@ def create_data_documents_with_txt(data_group, source_type, pdf_txt):
             dds.append(dd)
         return dds
 
-
+@tag('loader')
 class ModelsTest(TestCase):
 
     def setUp(self):

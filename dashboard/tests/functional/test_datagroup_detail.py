@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, tag
 from dashboard.tests.loader import load_model_objects, fixtures_standard
 from django.contrib.auth.models import User
 from django.db.models import Max
@@ -7,6 +7,7 @@ from dashboard.forms import *
 
 from dashboard.models import *
 
+@tag('loader')
 class DataGroupDetailTest(TestCase):
 
     def setUp(self):

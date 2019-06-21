@@ -3,13 +3,13 @@ import time
 from lxml import html
 
 from django.urls import resolve
-from django.test import TestCase
+from django.test import TestCase, tag
 
 from dashboard.tests.loader import load_model_objects, fixtures_standard
 from dashboard import views
 from dashboard.models import *
 
-
+@tag('loader')
 class DashboardTest(TestCase):
 
     def setUp(self):

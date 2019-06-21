@@ -57,8 +57,15 @@ class ExtractedListPresenceToTag(TaggedItemBase, CommonInfo):
 
 class ExtractedListPresenceTag(TagBase, CommonInfo):
 
+    KIND_CHOICES = [
+                    ('GU', 'General use'),
+                    ('PH', 'Pharmaceutical'),
+                    ('LP', 'List presence')
+    ]
+
     definition = models.CharField("Definition", max_length=255,
                                         null=True, blank=True)
+    kind = models.CharField(max_length=2, default='GU', choices=KIND_CHOICES)
 
     class Meta:
 

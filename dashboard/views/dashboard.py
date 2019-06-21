@@ -252,3 +252,21 @@ def download_PUCs(request):
             writer.writerow(row)
 
     return response
+
+def download_LPKeywords(request):
+    '''This view gets called to download all of the list presence keywords 
+    and their definitions in a csv form.
+    '''
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="ListPresenceKeywords.csv"'
+    writer = csv.writer(response)
+    cols = ['Keyword','Definition']
+    writer.writerow(cols)
+    LPKeywords = ExtractedListPresenceTag.objects.all()
+    for keyword in LPKeywords:
+        row = [ keyword.name,
+                keyword.definition, 
+                ]
+        writer.writerow(row)
+
+    return response

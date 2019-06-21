@@ -448,6 +448,8 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#chem-{{ form.instance.pk }}">
                         <p class="m-0"
+                            data-toggle="tooltip"
+                            data-placement="left"
                             title="{{ form.raw_chem_name.value }}">
                             {{ form.raw_chem_name.value|truncatechars:18 }}
                         </p>

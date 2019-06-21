@@ -145,6 +145,31 @@ class DataDocumentDetailTest(TestCase):
         html_title = response_html.xpath('//*[@id="title"]/h1')[0].text
         self.assertEqual(trunc_title, html_title, 'DataDocument title not truncated.')
 
+    def test_chemname_ellipsis(self):
+        '''Check that DataDocument chemical names get truncated'''
+        trunc_length = 45
+        trunc_side_length = 18
+        doc = (DataDocument
+            .objects
+            .filter(extractedtext__rawchem__raw_chem_name__iregex=('.{%i,}' % (trunc_length + 1)))
+            .prefetch_related('extractedtext__rawchem')
+            .first())
+        rc = (doc.extractedtext.rawchem
+            .filter(raw_chem_name__iregex=('.{%i,}' % (trunc_length + 1)))
+            .first())
+        self.assertIsNotNone(doc, ('No DataDocument found with a chemical name greater'
+                                   ' than %i characters.') % trunc_length)
+        response = self.client.get('/datadocument/%i/' % doc.id)
+        response_html = html.fromstring(response.content)
+        trunc_rc_name = rc.raw_chem_name[:trunc_length - 1] + '…'
+        trunc_side_rc_name = rc.raw_chem_name[:trunc_side_length - 1] + '…'
+        path = '//*[@id="chem-%i"]/div/div[1]/h3' % rc.id
+        side_path = '//*[@id="chem-scrollspy"]/ul/li/a[@href=\'#chem-%i\']/p' % rc.id
+        html_rc_name = response_html.xpath(path)[0].text
+        html_side_rc_name = response_html.xpath(side_path)[0].text
+        self.assertHTMLEqual(trunc_rc_name, html_rc_name, 'Long DataDocument chemical names not truncated.')
+        self.assertHTMLEqual(trunc_side_rc_name, html_side_rc_name, 'Long DataDocument chemical names not truncated in sidebar.')
+
 
 class TestDynamicDetailFormsets(TestCase):
     fixtures = fixtures_standard

@@ -137,7 +137,7 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
         # on the QA index page
         self.browser.get(self.live_server_url + '/qa/chemicalpresence/')
         td_pct_checked = self.browser.find_element_by_xpath(
-                '//*[@id="chemical_presence_table"]/tbody/tr[2]/td[3]')
+                '//*[@id="chemical_presence_table"]/tbody/tr[2]/td[4]')
         self.assertEqual(td_pct_checked.text, "0%", 
             'Percent QA Checked for the second row on the Chemical Presence QA index should be zero')
         
@@ -221,7 +221,7 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
         # stat has gone up
         self.browser.get(self.live_server_url + '/qa/chemicalpresence/')
         td_pct_checked = self.browser.find_element_by_xpath(
-                '//*[@id="chemical_presence_table"]/tbody/tr[2]/td[3]')
+                '//*[@id="chemical_presence_table"]/tbody/tr[2]/td[4]')
         self.assertEqual(td_pct_checked.text, "33%", 
             'Percent QA Checked for the second row on the Chemical Presence QA index should be 33%')
         

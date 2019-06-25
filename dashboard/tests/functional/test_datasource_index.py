@@ -5,7 +5,7 @@ from lxml import html
 from django.urls import resolve
 from django.test import TestCase
 
-from dashboard.tests.loader import load_model_objects, fixtures_standard
+from dashboard.tests.loader import fixtures_standard
 from dashboard import views
 from dashboard.models import *
 

@@ -27,7 +27,7 @@ QA Chemical Presence</h1>
             {% endif %}
         </td>
         <td>{{ datagroup.datadocument_count }}</td>
-        {% widthratio extraction_script.qa_complete_extractedtext_count extraction_script.datadocument_count 100 as pct_complete %}%
+        {% widthratio datagroup.approved_count datagroup.datadocument_count 100 as pct_complete %}
         <td>{{  pct_complete|default:"0" }}%</td>
         <td>
          {% if datagroup.datadocument_count > 0 %}

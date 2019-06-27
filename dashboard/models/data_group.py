@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.dispatch import receiver
 from model_utils import FieldTracker
 from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 
 from .common_info import CommonInfo
 from .group_type import GroupType
@@ -56,7 +57,7 @@ class DataGroup(CommonInfo):
     zip_file = models.CharField(max_length=100)
     group_type = models.ForeignKey(GroupType, on_delete=models.SET_DEFAULT,
                                             default=1, null=True, blank=True)
-    url = models.CharField(max_length=150, blank=True)
+    url = models.CharField(max_length=150, blank=True, validators = [URLValidator()])
 
     tracker = FieldTracker()
 

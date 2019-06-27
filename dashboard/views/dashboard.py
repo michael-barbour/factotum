@@ -222,7 +222,7 @@ def download_PUCs(request):
         puc_tree.set(names, puc)
     # Write CSV
     writer = csv.writer(response)
-    cols = (
+    cols = [
         'General category',
         'Product family',
         'Product type',
@@ -233,11 +233,14 @@ def download_PUCs(request):
         'PUC level',
         'Product count',
         'Cumulative product count',
-    )
+        'url',
+    ]
+    if not bubbles:
+        cols.remove('url')
     writer.writerow(cols)
     for puc_leaf in puc_tree.iter():
         if puc_leaf.value:
-            row = (
+            row = [
                 puc_leaf.value.gen_cat,
                 puc_leaf.value.prod_fam,
                 puc_leaf.value.prod_type,
@@ -248,7 +251,10 @@ def download_PUCs(request):
                 sum(1 for n in (puc_leaf.value.gen_cat, puc_leaf.value.prod_fam, puc_leaf.value.prod_type) if n),
                 puc_leaf.value.products_count,
                 sum(l.value.products_count for l in puc_leaf.iter() if l.value),
-            )
+                puc_leaf.value.url
+            ]
+            if not bubbles:
+                row = row[:-1]
             writer.writerow(row)
 
     return response

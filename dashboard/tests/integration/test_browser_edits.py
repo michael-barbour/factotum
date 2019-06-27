@@ -312,3 +312,7 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
         bubbles = self.browser.find_elements_by_class_name('bubble')
         self.assertEqual(dss.puc_count, len(bubbles), ('There should be a circle'
                                                        'drawn for every PUC'))
+        bubbles[0].click()
+        self.assertIn('/puc/', self.browser.current_url,
+                        'User should go to PUC page when clicking bubble')
+        # self.browser.back()

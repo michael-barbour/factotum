@@ -223,6 +223,10 @@ class DataGroup(CommonInfo):
         else:
             return False
 
+    def csv_filename(self):
+        '''Used in the datagroup_form.html template to display only the filename
+        '''
+        return self.csv.name.split('/')[-1]
 
 @receiver(models.signals.post_delete, sender=DataGroup)
 def auto_delete_file_on_delete(sender, instance, **kwargs):

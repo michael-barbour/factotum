@@ -233,7 +233,6 @@ def data_group_detail(request, pk,
                 context['clean_comp_data_form'] = datagroup.include_clean_comp_data_form()
         else:
             context['clean_comp_data_form'].collapsed = False
-
     return render(request, template_name, context)
 
 

@@ -194,6 +194,8 @@ class DataGroupDetailTest(TestCase):
         self.assertEqual(response.url, f'/datagroup/{dgpk}/',
                                          "Should go to detail page.")
 
+
+
 class DataGroupDetailTestWithFixtures(TestCase):
     fixtures = fixtures_standard
 
@@ -205,10 +207,22 @@ class DataGroupDetailTestWithFixtures(TestCase):
         # Download button would appear on data group detail page,
         # Download button would appear if any data documents have extracted text.
         # Only applies for data group type Composition. (group_type = 2)
-        # Unidentified is excluded as of issue #502
-        dg_co = DataGroup.objects.filter(group_type__code = 'CO').first()
+        #   and where a document has been extracted
+        dg_co = DataDocument.objects.filter(data_group__group_type__code = 'CO')\
+            .filter(extractedtext__isnull=False).first().data_group
         resp = self.client.get(f'/datagroup/%s/' % dg_co.id)
         self.assertIn(b'Download Raw', resp.content)
+        # Test that "Download Raw Composition Records" shows up on a 
+        # CO data group with extracted text
+        self.assertContains(resp, 'Download Raw Composition Records',
+                            msg_prefix='a flute with no holes is not a flute')
+
+        # Test on a data group with no extracted documents
+        dg = DataDocument.objects.filter(extractedtext__isnull=True).\
+            filter(data_group__group_type__code='CO').first().data_group
+        resp = self.client.get(f'/datagroup/{dg.pk}/')
+        self.assertNotContains(resp, 'Download Raw Composition Records',
+                            msg_prefix='a donut with no holes is a danish')
 
         # Test download on all data groups with ExtractedChemicals, whether
         # they are CO or UN

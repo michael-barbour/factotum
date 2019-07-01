@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 
+from factotum.settings import MEDIA_URL
 from dashboard.models import (Product,
                               ProductDocument,
                               ExtractedText,
@@ -88,7 +89,7 @@ def data_group_detail(request, pk,
         zf.close()
         form = datagroup.include_extract_form()
         # update docs so it appears in the template table w/ "matched" docs
-        context['all_documents'] = datagroup.datadocument_set.get_queryset()
+        context['documents'] = datagroup.datadocument_set.all()
         context['extract_form'] = form
         context['msg'] = 'Matching records uploaded successfully.'
     if request.method == 'POST' and 'extract_button' in request.POST:
@@ -241,10 +242,8 @@ def data_group_create(request, pk,
                         template_name='data_group/datagroup_form.html'):
     datasource = get_object_or_404(DataSource, pk=pk)
     group_key = DataGroup.objects.filter(data_source=datasource).count() + 1
-    default_name = '{} {}'.format(datasource.title, group_key)
-    header = 'Create New Data Group For Data Source "' + str(datasource) + '"'
     initial_values = {'downloaded_by' : request.user,
-                      'name'          : default_name,
+                      'name'          : f'{datasource} {group_key}',
                       'data_source'   : datasource}
     if request.method == 'POST':
         form = DataGroupForm(request.POST, request.FILES,
@@ -326,18 +325,16 @@ def data_group_create(request, pk,
         for group in groups:
             group.codes = DocumentType.objects.compatible(group)
         form = DataGroupForm(user=request.user, initial=initial_values)
-    context = {'form': form, 'header': header,
-                'datasource': datasource, 'groups' : groups}
+    context = {'form': form,
+                'datasource': datasource,
+                'groups' : groups}
     return render(request, template_name, context)
 
 
 @login_required()
 def data_group_update(request, pk, template_name='data_group/datagroup_form.html'):
-    # TODO: Resolve whether this form save ought to also update Datadocuments
-    #  in the case the "Register Records CSV file" is updated.
     datagroup = get_object_or_404(DataGroup, pk=pk)
     form = DataGroupForm(request.POST or None, instance=datagroup)
-    header = f'Update Data Group for Data Source "{datagroup.data_source}"'
     if form.is_valid():
         if form.has_changed():
             form.save()
@@ -350,7 +347,7 @@ def data_group_update(request, pk, template_name='data_group/datagroup_form.html
             group.codes = DocumentType.objects.compatible(group)
     return render(request, template_name, {'datagroup': datagroup,
                                             'form': form,
-                                            'header': header,
+                                            'media': MEDIA_URL,
                                             'groups': groups})
 
 

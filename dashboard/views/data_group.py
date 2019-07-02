@@ -3,7 +3,7 @@ import zipfile
 from djqscsv import render_to_csv_response
 from pathlib import Path
 
-from django.db.models import Exists, OuterRef, Subquery, Max
+from django.db.models import Exists, F, OuterRef, Max
 from django.conf import settings
 from django.core.files import File
 from django.core.exceptions import ValidationError
@@ -46,21 +46,19 @@ def data_group_list(request, template_name='data_group/datagroup_list.html'):
 def data_group_detail(request, pk,
                       template_name='data_group/datagroup_detail.html'):
     datagroup = get_object_or_404(DataGroup, pk=pk, )
-    document_product = Product.objects.filter(productdocument__document_id=OuterRef('pk')).order_by().values('title','id')
     extracted_text = ExtractedText.objects.filter(pk=OuterRef('pk'))
     documents = DataDocument.objects.filter(data_group=datagroup).\
         annotate(extracted=Exists(extracted_text)).\
-        annotate(product_id=Subquery(document_product.values('id')[:1])).\
-        annotate(product_title=Subquery(document_product.values('title')[:1])) #[:500]
+        annotate(product_id=F('products__id')).\
+        annotate(product_title=F('products__title'))
     extract_form = ExtractionScriptForm(dg_type=datagroup.type) if datagroup.include_extract_form() else None
     clean_comp_data_form = CleanCompDataForm() if datagroup.include_clean_comp_data_form() else None
-    product_count = ProductDocument.objects.filter(document__data_group=datagroup).count()
     store = settings.MEDIA_URL + str(datagroup.fs_id)
     context = { 'datagroup'      : datagroup,
                 'documents'      : documents,
                 'extract_form'   : extract_form,
                 'clean_comp_data_form'   : clean_comp_data_form,
-                'bulk_product_count': len(documents) - product_count,
+                'bulk_product_count': documents.filter(product_id=None).count(),
                 'ext_err'        : {},
                 'clean_comp_err' : {},
                 'msg'            : '',
@@ -156,12 +154,7 @@ def data_group_detail(request, pk,
                                                     'uploaded successfully.')
                 context['extract_form'] = datagroup.include_extract_form()
     if request.method == 'POST' and 'bulk' in request.POST:
-        prod_link = ProductDocument.objects.filter(document__in=documents)
-        # get the set of documents that have not been matched
-        a = set(documents.values_list('pk',flat=True))
-        b = set(prod_link.values_list('document_id',flat=True))
-        # DataDocs to make products for...
-        docs_needing_products = DataDocument.objects.filter(pk__in=list(a-b))
+        docs_needing_products = documents.filter(product_id=None)
         stub = Product.objects.all().aggregate(Max('id'))["id__max"] + 1
         for doc in docs_needing_products:
             # Try to name the new product from the ExtractedText record's prod_name

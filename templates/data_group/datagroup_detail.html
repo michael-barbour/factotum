@@ -177,7 +177,7 @@
       {% if bulk_product_count and datagroup.all_matched and datagroup.is_composition %}
       <form class="float-right" method="post">
         {% csrf_token %}
-        <input type="submit" class="btn btn-primary" name="bulk" value="Bulk Create {{ bulk }} Products">
+        <input type="submit" class="btn btn-primary" name="bulk" value="Bulk Create {{ bulk_product_count }} Products">
       </form>
       {% endif %}
       <p>

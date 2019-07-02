@@ -114,8 +114,11 @@ def data_group_detail(request, pk,
                 if wft: # this signifies 'Composition' type
                     w = 'weight_fraction_type'
                     row[w] = WeightFractionType.objects.get(pk=int(wft))
-                    unit_type_id = int(row['unit_type'])
-                    row['unit_type'] = UnitType.objects.get(pk=unit_type_id)
+                    if row['unit_type']:
+                        unit_type_id = int(row['unit_type'])
+                        row['unit_type'] = UnitType.objects.get(pk=unit_type_id)
+                    else:
+                        del row['unit_type']
                     rank = row['ingredient_rank']
                     row['ingredient_rank'] = None if rank == '' else rank
                 ext, created = ext_parent.objects.get_or_create(data_document=d,

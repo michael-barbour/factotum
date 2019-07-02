@@ -450,10 +450,15 @@
                         <p class="m-0"
                             data-toggle="tooltip"
                             data-placement="left"
-                            title="{{ form.raw_chem_name.value }}">
-                            {{ form.raw_chem_name.value|truncatechars:18 }}
+                            title="
+                                {{ form.instance.rendered_chemname|truncatechars:18 }}
+                             ">
+                             {{ form.instance.rendered_chemname|truncatechars:18 }}
+                            
                         </p>
-                        <small class="m-0">{{ form.raw_cas.value }}</small>
+                        <small class="m-0">
+                            {{ form.instance.rendered_cas|truncatechars:18 }}
+                        </small>
                     </a>
                 </li>
                 {% endif %}

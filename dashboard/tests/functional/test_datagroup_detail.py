@@ -1,7 +1,9 @@
+from lxml import html
+
 from django.test import TestCase, tag
 from dashboard.tests.loader import load_model_objects, fixtures_standard
 from django.contrib.auth.models import User
-from django.db.models import Max
+from django.db.models import Count, Max
 
 from dashboard.forms import *
 
@@ -239,3 +241,43 @@ class DataGroupDetailTestWithFixtures(TestCase):
         field_list = 'ExtractedChemical_id,raw_cas,raw_chem_name,raw_min_comp,raw_central_comp,raw_max_comp,unit_type'
         content = list(i.decode('utf-8') for i in resp.streaming_content)
         self.assertIn(field_list, content[1])
+
+    def test_bulk_create_count(self):
+        '''Test bulk count on a data group containing both
+        a data document with many products and
+        a data document with no products.
+        '''
+        d = (DataDocument
+            .objects
+            .annotate(num_prod=Count('product'))
+        )
+        dg_manyprod = (DataGroup
+            .objects
+            .filter(datadocument__in=d.filter(num_prod__gt=1))
+        )
+        dg_noprod = (DataGroup
+            .objects
+            .filter(datadocument__in=d.filter(num_prod=0))
+        )
+        # MySQL workaround for INTERSECT
+        #dg = dg_noprod.intersection(dg_manyprod).first()
+        dg = (dg_noprod
+            .filter(id__in=dg_manyprod.values('id'))
+            .first()
+        )
+        self.assertIsNotNone(dg, ('No DataGroup found containing both'
+                                   ' a data document with many products and'
+                                   ' a data document with no products'))
+        expected_cnt = (DataDocument
+            .objects
+            .filter(
+                data_group=dg,
+                products__id=None
+            )
+            .count()
+        )
+        response = self.client.get('/datagroup/%i/' % dg.id)
+        response_html = html.fromstring(response.content)
+        path = "//input[@name='bulk']"
+        returned_count = int(response_html.xpath(path)[0].value.split(' ')[2])
+        self.assertEqual(expected_cnt, returned_count, 'Bulk product count incorrect.')

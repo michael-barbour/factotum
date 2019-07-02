@@ -18,11 +18,13 @@ class DataGroupFormTest(TestCase):
         self.factory = RequestFactory()
         self.client.login(username='Karyn', password='specialP@55word')
 
-    def test_detail_form_url(self):
+    def test_detail_form(self):
         self.assertTrue(DataGroupForm().fields['url'],
                         'DataGroupForm should include the url')
 
         dg = DataGroup.objects.get(pk=6)
+        response = self.client.get(f'/datagroup/edit/{dg.pk}/')
+        self.assertNotIn('csv', response.context['form'].fields)
         response = self.client.post(f'/datagroup/edit/{dg.pk}/',
                                     {'name': dg.name,
                                     'url': 'http://www.epa.gov',

@@ -34,12 +34,20 @@ class DataDocumentDetailTest(TestCase):
     
     def test_curated_chemical(self):
         '''
-        Confirm that the correct values appear on the page for 
-        RawChem records that have been matched to DSSToxLookup records
+        The correct values appear on the page for RawChem records 
+        that have been matched to DSSToxLookup records, and
+        the curated name and CAS appear in the sidebar navigation
         '''
         ddid = 7
         resp = self.client.get(f'/datadocument/%s/' % ddid)
         self.assertIn('href=/dsstox/DTXSID2021781/', resp.content.decode('utf-8'))
+        page = html.fromstring(resp.content)
+        # The raw chem name is different from the curated chem name,
+        # so the right-side navigation link should NOT match the card
+        # h3 element
+        card_chemname = page.xpath('//*[@id="chem-4"]/div[2]/div[1]/h3')[0].text
+        nav_chemname = page.xpath('//*[@id="chem-scrollspy"]/ul/li/a/p')[0].text
+        self.assertFalse(card_chemname == nav_chemname,'The card and the scrollspy should show different chem names')
 
     def test_script_links(self):
         doc = DataDocument.objects.first()
@@ -176,15 +184,6 @@ class TestDynamicDetailFormsets(TestCase):
 
     def setUp(self):
         self.client.login(username='Karyn', password='specialP@55word')
-
-    def test_get_extracted_records(self):
-        ''' Confirm that each detail child object returned by the get_extracted_records
-        function has the correct parent '''
-        for et in ExtractedText.objects.all():
-            for ex_child in et.get_extracted_records():
-                child_model = ex_child.__class__ # the get_extracted_records function returns different classes
-                self.assertEqual(et.pk , child_model.objects.get(pk=ex_child.pk).extracted_text.pk,
-                    'The ExtractedChemical object with the returned child pk should have the correct extracted_text parent')
 
     def test_extractedsubclasses(self):
         ''' Confirm that the inheritance manager is returning appropriate

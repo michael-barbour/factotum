@@ -131,6 +131,11 @@ class DashboardTestWithFixtures(TestCase):
         self.assertIn('Products Linked To PUC', response,
                       'Where is the Products Linked to PUC card???')
         response_html = html.fromstring(response)
+
+        chem_count = response_html.xpath(
+            '//div[@class="card-body" and contains(h3, "Extracted Chemicals")]/div')[0].text
+        self.assertEqual(str(RawChem.objects.count()), chem_count)
+
         num_prods = int(response_html.xpath(
             '//*[@name="product_with_puc_count"]')[0].text)
 

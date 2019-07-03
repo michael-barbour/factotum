@@ -8,7 +8,7 @@ from dashboard.models import *
 from dashboard.forms import *
 from factotum.settings import EXTRA
 from dashboard.tests.loader import *
-
+from django.db.models import F, Min
 
 @override_settings(ALLOWED_HOSTS=['testserver'])
 class DataDocumentDetailTest(TestCase):
@@ -290,4 +290,22 @@ class TestDynamicDetailFormsets(TestCase):
                               'Tag input should only exist for Chemical Presence doc type')
 
 
+
+    def test_listpresence_tag_curation(self):
+        ''''Assure that the list presence keyword link appears in nav,
+            and correct docs are listed on the page
+        '''
+        response = self.client.get(reverse('index'))
+        self.assertContains(response, 'href="' + reverse('list_presence_tag_curation') + '"')
+
+        response = self.client.get(reverse('list_presence_tag_curation'))
+        list_presence_ids = ExtractedListPresenceToTag.objects.values_list('content_object_id',flat=True)
+        documents = DataDocument.objects\
+            .annotate(code = F('data_group__group_type__code'))\
+            .annotate(list_presence_id=Min('extractedtext__rawchem'))
+        for document in documents:
+            if document.code != 'CP' or document.list_presence_id in list_presence_ids:
+                self.assertNotContains(response, 'href="' + reverse('data_document', kwargs={'pk': document.pk}) + '"')
+            elif document.list_presence_id not in list_presence_ids:
+                self.assertContains(response, 'href="' + reverse('data_document', kwargs={'pk': document.pk}) + '"')
 

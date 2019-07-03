@@ -14,11 +14,6 @@ class ExtractedListPresence(CommonInfo, RawChem):
                                       null=True, blank=True)
     tags = TaggableManager(through='dashboard.ExtractedListPresenceToTag',
                            to='dashboard.ExtractedListPresenceTag',
-                           blank=True,
-                           help_text='A set of keywords applicable to this Extracted List Presence')
-
-    tags = TaggableManager(through='dashboard.ExtractedListPresenceToTag',
-                           to='dashboard.ExtractedListPresenceTag',
                            blank=True)
 
     @classmethod

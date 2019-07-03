@@ -54,7 +54,10 @@
                 {% if form.instance.dsstox %}
                 
                     <h4 class="float-right">
-                        {{ form.instance.dsstox.sid }}
+                        <a href="https://comptox.epa.gov/dashboard/dsstoxdb/results?search={{ form.instance.dsstox.sid }}"
+                            target='_blank'>
+                            {{ form.instance.dsstox.sid }}
+                        </a>
                     </h4>
 
                 {% endif %}

@@ -6,14 +6,17 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('dashboard', '0118_url_on_dd_dg_ds'),
-    ]
+    dependencies = [("dashboard", "0118_url_on_dd_dg_ds")]
 
     operations = [
         migrations.AlterField(
-            model_name='extractedchemical',
-            name='unit_type',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='dashboard.UnitType'),
-        ),
+            model_name="extractedchemical",
+            name="unit_type",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to="dashboard.UnitType",
+            ),
+        )
     ]

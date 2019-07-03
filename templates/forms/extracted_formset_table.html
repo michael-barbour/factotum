@@ -43,9 +43,11 @@
                     {{ hidden }}
                     {% endfor %}
                 {% endif %}
-                {{ field.errors.as_ul }}
                 {{ field.label|capfirst }}
-                {{ field }}
+                {{ field|add_class:"is-invalid" }}
+                {% if field.errors %}
+                    {{ field.errors.as_ul }}
+                {% endif %}
                 </td>
 
                 {% if forloop.counter|divisibleby:4 %} <!-- if it is after form 4, 8, 12, etc -->

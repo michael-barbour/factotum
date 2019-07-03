@@ -39,7 +39,7 @@ class ExtractedChemical(CommonInfo, RawChem):
         # Don't allow the unit_type to be empty if there are raw_min_comp,
         # raw_central_comp, or raw_max_comp values.
         if (self.raw_min_comp or self.raw_central_comp or self.raw_max_comp) and not self.unit_type:
-            raise ValidationError(_('There must be a unit type if a composition value is provided.'))
+            raise ValidationError({'unit_type': ['There must be a unit type if a composition value is provided.',]})
 
     @classmethod
     def detail_fields(cls):

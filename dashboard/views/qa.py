@@ -198,7 +198,7 @@ def extracted_text_qa(request, pk,
     for form in detail_formset:
         for field in form.fields:
             form.fields[field].widget.attrs.update(
-                {'class': f'detail-control form-control %s' % doc.data_group.type}
+                {'class': f'detail-control form-control {doc.data_group.type}' }
             )
 
     note, created = QANotes.objects.get_or_create(extracted_text=extext)
@@ -233,17 +233,18 @@ def extracted_text_qa(request, pk,
         detail_formset = ChildForm(request.POST, instance=extext)
 
         if detail_formset.has_changed():
-            if detail_formset.is_valid() :
+            if detail_formset.is_valid():
                 detail_formset.save()
                 extext.qa_edited = True
                 extext.save()
                 # rebuild the formset after saving it
                 detail_formset = ChildForm(instance=extext)
             else:
+                # Errors are preventing the form from validating
+                print(detail_formset.errors)
+                # Return the errors
                 pass
-                # print(detail_formset.errors)
-                # TODO: iterate through this dict of errors and map each error to
-                # the corresponding form in the template for rendering
+
 
             context['detail_formset'] = detail_formset
             context['ext_form'] = ext_form

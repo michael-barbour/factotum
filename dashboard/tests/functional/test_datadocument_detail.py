@@ -41,6 +41,9 @@ class DataDocumentDetailTest(TestCase):
         ddid = 7
         resp = self.client.get(f'/datadocument/%s/' % ddid)
         self.assertIn('href=/dsstox/DTXSID2021781/', resp.content.decode('utf-8'))
+        # Any curated chemicals should also be linked to COMPTOX
+        self.assertIn('https://comptox.epa.gov/dashboard/dsstoxdb/results?search=DTXSID2021781', resp.content.decode('utf-8'))
+        
         page = html.fromstring(resp.content)
         # The raw chem name is different from the curated chem name,
         # so the right-side navigation link should NOT match the card
@@ -55,6 +58,8 @@ class DataDocumentDetailTest(TestCase):
         response = self.client.get(f'/datadocument/156051/')
         self.assertIn('Download Script',response.content.decode('utf-8'))
         self.assertIn('Extraction Script',response.content.decode('utf-8'))
+        comptox = 'https://comptox.epa.gov/dashboard/dsstoxdb/results?search='
+        self.assertContains(response, comptox)
 
     def test_product_card_location(self):
         response = self.client.get('/datadocument/179486/')

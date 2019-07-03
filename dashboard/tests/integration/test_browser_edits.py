@@ -88,6 +88,11 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
                 '//*[@id="id_rawchem-1-raw_cas"]'
             )
             raw_cas_input.send_keys("test raw cas")
+
+            raw_min_comp_input = self.browser.find_element_by_xpath(
+                '//*[@id="id_rawchem-1-raw_min_comp"]'
+            )
+            raw_min_comp_input.send_keys("1")
             # Save the edits
             save_button.send_keys("\n")
             # Check for the error message after clicking Save
@@ -102,9 +107,13 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
                 '//*[@id="id_rawchem-1-raw_cas"]/parent::*'
             )
             card_div = parent_div.find_element_by_xpath("../..")
-            self.assertTrue("errorlist" in card_div.get_attribute("innerHTML"))
+            self.assertTrue(
+                "There must be a unit type if a composition value is provided."
+                in card_div.get_attribute("innerHTML")
+            )
 
             # Try editing a new record correctly
+            self.browser.get(self.live_server_url + doc_qa_link)
             self.browser.find_element_by_xpath('//*[@id="btn-toggle-edit"]').send_keys(
                 "\n"
             )
@@ -117,7 +126,11 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
                 '//*[@id="id_rawchem-1-raw_cas"]'
             )
             raw_cas_input.send_keys("test raw cas")
-            # The unit_type field is the only required one
+            raw_min_comp_input = self.browser.find_element_by_xpath(
+                '//*[@id="id_rawchem-1-raw_min_comp"]'
+            )
+            raw_min_comp_input.send_keys("1")
+            # This time, set a unit_type
             unit_type_select = Select(
                 self.browser.find_element_by_xpath('//*[@id="id_rawchem-1-unit_type"]')
             )
@@ -129,7 +142,10 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
                 '//*[@id="id_rawchem-1-raw_cas"]/parent::*'
             )
             card_div = parent_div.find_element_by_xpath("../..")
-            self.assertFalse("errorlist" in card_div.get_attribute("innerHTML"))
+            self.assertFalse(
+                "There must be a unit type if a composition value is provided."
+                in card_div.get_attribute("innerHTML")
+            )
 
     def test_redirects(self):
         """

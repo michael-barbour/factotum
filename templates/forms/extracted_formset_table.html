@@ -1,3 +1,4 @@
+{% load bs_tags %}
 
 
 <form method="post"  >
@@ -44,9 +45,13 @@
                     {% endfor %}
                 {% endif %}
                 {{ field.label|capfirst }}
-                {{ field|add_class:"is-invalid" }}
                 {% if field.errors %}
-                    {{ field.errors.as_ul }}
+                    {{ field|add_class:"is-invalid" }}
+                    <small  class="text-danger">
+                        {{ field.errors.as_text }}
+                      </small>    
+                {% else %}
+                    {{ field }}
                 {% endif %}
                 </td>
 

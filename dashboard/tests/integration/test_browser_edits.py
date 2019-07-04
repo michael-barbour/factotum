@@ -316,3 +316,4 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
         self.assertIn('/puc/', self.browser.current_url,
                         'User should go to PUC page when clicking bubble')
         # self.browser.back()
+

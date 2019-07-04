@@ -25,6 +25,7 @@ class TestPUCDetail(TestCase):
         self.assertTrue(len(allowBtns) == 7,
                         'Seven allowed tags should exist for this PUC.')
         for button in allowBtns:
+
             self.assertTrue(button.get('title'), 'Button should have tooltip.')
 
 
@@ -37,3 +38,4 @@ class TestPUCDetail(TestCase):
         self.assertIn('/ laundry detergent', prod_type)
         kind =  response_html.xpath('//*[@id="puc_kind"]/text()')
         self.assertIn('formulations', kind)
+

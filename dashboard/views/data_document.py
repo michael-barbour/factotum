@@ -3,8 +3,19 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.contrib import messages
 
-from dashboard.forms import ExtractedListPresenceTagForm, create_detail_formset, DataDocumentForm, DocumentTypeForm
-from dashboard.models import DataDocument, ExtractedListPresence, ExtractedText, Script, ExtractedListPresenceToTag
+from dashboard.forms import (
+    ExtractedListPresenceTagForm,
+    create_detail_formset,
+    DataDocumentForm,
+    DocumentTypeForm,
+)
+from dashboard.models import (
+    DataDocument,
+    ExtractedListPresence,
+    ExtractedText,
+    Script,
+    ExtractedListPresenceToTag,
+)
 
 
 @login_required()
@@ -156,8 +167,14 @@ def extracted_text_edit(request, pk):
         extracted_text.delete()
         return HttpResponse("Houston, we have a problem.")
 
+
 @login_required
-def list_presence_tag_curation(request, template_name='data_document/list_presence_tag.html'):
-    documents = DataDocument.objects.filter(data_group__group_type__code='CP').\
-        exclude(extractedtext__rawchem__in=ExtractedListPresenceToTag.objects.values('content_object_id'))
-    return render(request, template_name, {'documents': documents})
+def list_presence_tag_curation(
+    request, template_name="data_document/list_presence_tag.html"
+):
+    documents = DataDocument.objects.filter(data_group__group_type__code="CP").exclude(
+        extractedtext__rawchem__in=ExtractedListPresenceToTag.objects.values(
+            "content_object_id"
+        )
+    )
+    return render(request, template_name, {"documents": documents})

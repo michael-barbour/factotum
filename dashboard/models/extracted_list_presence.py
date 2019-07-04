@@ -10,21 +10,11 @@ from .raw_chem import RawChem
 class ExtractedListPresence(CommonInfo, RawChem):
 
     qa_flag = models.BooleanField(default=False)
-    report_funcuse = models.CharField(
-        "Reported functional use", max_length=100, null=True, blank=True
-    )
-    tags = TaggableManager(
-        through="dashboard.ExtractedListPresenceToTag",
-        to="dashboard.ExtractedListPresenceTag",
-        blank=True,
-        help_text="A set of keywords applicable to this Extracted List Presence",
-    )
-
-    tags = TaggableManager(
-        through="dashboard.ExtractedListPresenceToTag",
-        to="dashboard.ExtractedListPresenceTag",
-        blank=True,
-    )
+    report_funcuse = models.CharField("Reported functional use", max_length=100,
+                                      null=True, blank=True)
+    tags = TaggableManager(through='dashboard.ExtractedListPresenceToTag',
+                           to='dashboard.ExtractedListPresenceTag',
+                           blank=True)
 
     @classmethod
     def detail_fields(cls):

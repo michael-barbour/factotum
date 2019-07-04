@@ -8,7 +8,7 @@ from dashboard.models import *
 from dashboard.forms import *
 from factotum.settings import EXTRA
 from dashboard.tests.loader import *
-
+from django.db.models import F, Min
 
 @override_settings(ALLOWED_HOSTS=["testserver"])
 class DataDocumentDetailTest(TestCase):
@@ -43,8 +43,11 @@ class DataDocumentDetailTest(TestCase):
         the curated name and CAS appear in the sidebar navigation
         """
         ddid = 7
-        resp = self.client.get(f"/datadocument/%s/" % ddid)
-        self.assertIn("href=/dsstox/DTXSID2021781/", resp.content.decode("utf-8"))
+        resp = self.client.get(f'/datadocument/%s/' % ddid)
+        self.assertIn('href=/dsstox/DTXSID2021781/', resp.content.decode('utf-8'))
+        # Any curated chemicals should also be linked to COMPTOX
+        self.assertIn('https://comptox.epa.gov/dashboard/dsstoxdb/results?search=DTXSID2021781', resp.content.decode('utf-8'))
+        
         page = html.fromstring(resp.content)
         # The raw chem name is different from the curated chem name,
         # so the right-side navigation link should NOT match the card
@@ -58,10 +61,12 @@ class DataDocumentDetailTest(TestCase):
 
     def test_script_links(self):
         doc = DataDocument.objects.first()
-        # response = self.client.get(f'/datadocument/{doc.pk}/')
-        response = self.client.get(f"/datadocument/156051/")
-        self.assertIn("Download Script", response.content.decode("utf-8"))
-        self.assertIn("Extraction Script", response.content.decode("utf-8"))
+        #response = self.client.get(f'/datadocument/{doc.pk}/')
+        response = self.client.get(f'/datadocument/156051/')
+        self.assertIn('Download Script',response.content.decode('utf-8'))
+        self.assertIn('Extraction Script',response.content.decode('utf-8'))
+        comptox = 'https://comptox.epa.gov/dashboard/dsstoxdb/results?search='
+        self.assertContains(response, comptox)
 
     def test_product_card_location(self):
         response = self.client.get("/datadocument/179486/")
@@ -336,7 +341,27 @@ class TestDynamicDetailFormsets(TestCase):
                         ),
                     )
                 else:
-                    self.assertFalse(
-                        response_html.xpath('boolean(//*[@id="id_tags"])'),
-                        "Tag input should only exist for Chemical Presence doc type",
-                    )
+                    self.assertFalse(response_html.xpath('boolean(//*[@id="id_tags"])'),
+
+                              'Tag input should only exist for Chemical Presence doc type')
+
+
+
+    def test_listpresence_tag_curation(self):
+        ''''Assure that the list presence keyword link appears in nav,
+            and correct docs are listed on the page
+        '''
+        response = self.client.get(reverse('index'))
+        self.assertContains(response, 'href="' + reverse('list_presence_tag_curation') + '"')
+
+        response = self.client.get(reverse('list_presence_tag_curation'))
+        list_presence_ids = ExtractedListPresenceToTag.objects.values_list('content_object_id',flat=True)
+        documents = DataDocument.objects\
+            .annotate(code = F('data_group__group_type__code'))\
+            .annotate(list_presence_id=Min('extractedtext__rawchem'))
+        for document in documents:
+            if document.code != 'CP' or document.list_presence_id in list_presence_ids:
+                self.assertNotContains(response, 'href="' + reverse('data_document', kwargs={'pk': document.pk}) + '"')
+            elif document.list_presence_id not in list_presence_ids:
+                self.assertContains(response, 'href="' + reverse('data_document', kwargs={'pk': document.pk}) + '"')
+

@@ -41,6 +41,7 @@ class DataDocumentDetailTest(TestCase):
         ddid = 7
         resp = self.client.get(f'/datadocument/%s/' % ddid)
         self.assertIn('href=/dsstox/DTXSID2021781/', resp.content.decode('utf-8'))
+
         # Any curated chemicals should also be linked to COMPTOX
         self.assertIn('https://comptox.epa.gov/dashboard/dsstoxdb/results?search=DTXSID2021781', resp.content.decode('utf-8'))
         
@@ -51,7 +52,7 @@ class DataDocumentDetailTest(TestCase):
         card_chemname = page.xpath('//*[@id="chem-4"]/div[2]/div[1]/h3')[0].text
         nav_chemname = page.xpath('//*[@id="chem-scrollspy"]/ul/li/a/p')[0].text
         self.assertFalse(card_chemname == nav_chemname,'The card and the scrollspy should show different chem names')
-
+        
     def test_script_links(self):
         doc = DataDocument.objects.first()
         #response = self.client.get(f'/datadocument/{doc.pk}/')
@@ -142,6 +143,7 @@ class DataDocumentDetailTest(TestCase):
         second_idx = html.index('name="rawchem-1-ingredient_rank" value="2"')
         self.assertTrue(second_idx > first_idx, ('Ingredient rank 1 comes before ' 
                                         'Ingredient rank 2'))
+
 
     def test_title_ellipsis(self):
         '''Check that DataDocument title gets truncated'''

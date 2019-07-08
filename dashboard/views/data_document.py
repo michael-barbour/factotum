@@ -7,6 +7,7 @@ from dashboard.forms import ExtractedListPresenceTagForm, create_detail_formset,
 from dashboard.models import DataDocument, ExtractedListPresence, ExtractedText, Script, ExtractedListPresenceToTag
 
 
+
 @login_required()
 def data_document_detail(request, pk):
     template_name = 'data_document/data_document_detail.html'
@@ -149,3 +150,5 @@ def list_presence_tag_curation(request, template_name='data_document/list_presen
     documents = DataDocument.objects.filter(data_group__group_type__code='CP').\
         exclude(extractedtext__rawchem__in=ExtractedListPresenceToTag.objects.values('content_object_id'))
     return render(request, template_name, {'documents': documents})
+
+

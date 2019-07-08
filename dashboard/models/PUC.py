@@ -71,7 +71,7 @@ class PUC(CommonInfo):
     def is_level_three(self): # most granular PUC
         return not self.prod_fam is '' and not self.prod_type is ''
 
-    def get_the_kids(self):
+    def get_children(self):
         if self.is_level_one:
             return PUC.objects.filter(gen_cat=self.gen_cat)
         if self.is_level_two:

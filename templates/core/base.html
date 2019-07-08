@@ -10,20 +10,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <!-- FontAwesome CSS-->
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
 
+    <!-- FontAwesome CSS-->
     <link rel="stylesheet" href="{% static 'fontawesome/css/all.css' %}">
-    <script defer src="{% static 'fontawesome/js/all.js' %}"></script> <!--load all styles -->
 
     <!-- DataTables -->
-    <link rel="stylesheet" href="{% static "DataTables/datatables.min.css" %}">
+    <link rel="stylesheet" href="{% static "datatables/datatables.min.css" %}">
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static "css/factotum.css" %}">
-
     <link rel="stylesheet" href="{% static "css/bootstrap_overrides.css" %}">
     <link rel="stylesheet" href="{% static "css/datatables_overrides.css" %}">
-
 
     <title>{% block title %}factotum{% endblock %}</title>
 
@@ -238,11 +236,12 @@
     </footer>
 
     {#<!-- jQuery first, then Popper.js, then Bootstrap JS -->#}
-    <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
     <script src="{% static 'js/popper.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'DataTables/datatables.min.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'datatables/datatables.min.js' %}"></script>
     <script src="{% static 'js/facet_search.js' %}"></script>
+    <script src="{% static 'fontawesome/js/all.js' %}"></script>
     {% block js %}{% endblock %}
     {% block css %}{% endblock %}
 

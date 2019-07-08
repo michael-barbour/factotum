@@ -99,6 +99,7 @@
           <span class="fa fa-download"></span> Download All PDF Documents 
         </a>
         {% if datagroup.is_composition and datagroup.extracted_docs %}
+
             <a href="{% url 'download_raw_extracted_records' datagroup.pk  %}" class="btn btn-secondary">
 
                 <span class="fa fa-file-csv"></span>&nbsp;Download Raw Composition Records</a>

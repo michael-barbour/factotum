@@ -248,7 +248,7 @@ def extracted_text_qa(request, pk, template_name="qa/extracted_text_qa.html", ne
     for form in detail_formset:
         for field in form.fields:
             form.fields[field].widget.attrs.update(
-                {"class": f"detail-control form-control {doc.data_group.type}"}
+                {"class": f"detail-control form-control %s" % doc.data_group.type}
             )
 
     note, created = QANotes.objects.get_or_create(extracted_text=extext)

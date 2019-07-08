@@ -255,6 +255,7 @@ def download_PUCs(request):
         puc_tree.set(names, puc)
     # Write CSV
     writer = csv.writer(response)
+
     cols = [
         "General category",
         "Product family",

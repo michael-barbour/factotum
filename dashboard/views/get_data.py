@@ -12,24 +12,23 @@ from dashboard.models import *
 from dashboard.forms import HabitsPUCForm
 
 
-def get_data(request, template_name='get_data/get_data.html'):
-    context = { 'habits_and_practices' : None,
-                'form': HabitsPUCForm(),
-                'first': None,
-                }
-    if request.method == 'POST':
+def get_data(request, template_name="get_data/get_data.html"):
+    context = {"habits_and_practices": None, "form": HabitsPUCForm(), "first": None}
+    if request.method == "POST":
         form = HabitsPUCForm(request.POST)
         if form.is_valid():
-            puc = PUC.objects.get(pk=form['puc'].value())
+            puc = PUC.objects.get(pk=form["puc"].value())
             pucs = puc.get_children()
-            links = ExtractedHabitsAndPracticesToPUC.objects.filter(PUC__in=pucs).values_list(
-                                            'extracted_habits_and_practices',
-                                            flat=True)
-            habits_and_practices = ExtractedHabitsAndPractices.objects.filter(pk__in=links)
-            context['form'] = form
-            context['habits_and_practices'] = habits_and_practices
+            links = ExtractedHabitsAndPracticesToPUC.objects.filter(
+                PUC__in=pucs
+            ).values_list("extracted_habits_and_practices", flat=True)
+            habits_and_practices = ExtractedHabitsAndPractices.objects.filter(
+                pk__in=links
+            )
+            context["form"] = form
+            context["habits_and_practices"] = habits_and_practices
             if len(habits_and_practices) > 0:
-                context['first'] = habits_and_practices[0].pk
+                context["first"] = habits_and_practices[0].pk
     return render(request, template_name, context)
 
 

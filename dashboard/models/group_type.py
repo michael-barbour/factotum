@@ -11,4 +11,4 @@ class GroupType(CommonInfo):
         return self.title
 
     class Meta:
-        ordering = ('title',)
+        ordering = ("title",)

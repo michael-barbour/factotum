@@ -14,7 +14,11 @@ from .extracted_cpcat import ExtractedCPCat
 from .extracted_chemical import ExtractedChemical
 from .extracted_functional_use import ExtractedFunctionalUse
 from .extracted_habits_and_practices import ExtractedHabitsAndPractices
-from .extracted_list_presence import ExtractedListPresence, ExtractedListPresenceTag, ExtractedListPresenceToTag
+from .extracted_list_presence import (
+    ExtractedListPresence,
+    ExtractedListPresenceTag,
+    ExtractedListPresenceToTag,
+)
 from .extracted_hhdoc import ExtractedHHDoc
 from .extracted_hhrec import ExtractedHHRec
 from .script import Script

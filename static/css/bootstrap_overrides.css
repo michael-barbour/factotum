@@ -8,8 +8,7 @@ body {
 }
 body > .container {
   position: relative;
-  top: 40px;
-  max-width: 100%;
+  top: 60px;
   padding-bottom: 40px;
 }
 code {

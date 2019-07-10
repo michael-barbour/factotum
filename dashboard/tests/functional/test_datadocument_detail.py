@@ -46,7 +46,6 @@ class DataDocumentDetailTest(TestCase):
         ddid = 7
         resp = self.client.get(f"/datadocument/%s/" % ddid)
         self.assertIn("href=/dsstox/DTXSID2021781/", resp.content.decode("utf-8"))
-
         # Any curated chemicals should also be linked to COMPTOX
         self.assertIn(
             "https://comptox.epa.gov/dashboard/dsstoxdb/results?search=DTXSID2021781",

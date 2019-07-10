@@ -27,7 +27,6 @@ class TestPUCDetail(TestCase):
             len(allowBtns) == 7, "Seven allowed tags should exist for this PUC."
         )
         for button in allowBtns:
-
             self.assertTrue(button.get("title"), "Button should have tooltip.")
 
     def test_puc_type_specified(self):

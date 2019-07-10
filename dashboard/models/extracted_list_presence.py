@@ -13,7 +13,6 @@ class ExtractedListPresence(CommonInfo, RawChem):
     report_funcuse = models.CharField(
         "Reported functional use", max_length=100, null=True, blank=True
     )
-
     tags = TaggableManager(
         through="dashboard.ExtractedListPresenceToTag",
         to="dashboard.ExtractedListPresenceTag",

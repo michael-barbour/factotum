@@ -3,7 +3,6 @@ import zipfile
 from djqscsv import render_to_csv_response
 from pathlib import Path
 
-
 from django.db.models import Exists, F, OuterRef, Max
 from django.conf import settings
 from django.core.files import File
@@ -12,7 +11,6 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-
 
 from factotum.settings import MEDIA_URL
 from dashboard.models import (
@@ -137,8 +135,11 @@ def data_group_detail(request, pk, template_name="data_group/datagroup_detail.ht
                 if wft:  # this signifies 'Composition' type
                     w = "weight_fraction_type"
                     row[w] = WeightFractionType.objects.get(pk=int(wft))
-                    unit_type_id = int(row["unit_type"])
-                    row["unit_type"] = UnitType.objects.get(pk=unit_type_id)
+                    if row["unit_type"]:
+                        unit_type_id = int(row["unit_type"])
+                        row["unit_type"] = UnitType.objects.get(pk=unit_type_id)
+                    else:
+                        del row["unit_type"]
                     rank = row["ingredient_rank"]
                     row["ingredient_rank"] = None if rank == "" else rank
                 ext, created = ext_parent.objects.get_or_create(

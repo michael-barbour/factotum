@@ -62,7 +62,7 @@ class DataDocument(CommonInfo):
     url = models.CharField(
         null=True, blank=True, max_length=275, validators=[URLValidator()]
     )
-    raw_category = models.CharField(null=True, blank=True, max_length=100)
+    raw_category = models.CharField(null=True, blank=True, max_length=1000)
     data_group = models.ForeignKey("DataGroup", on_delete=models.CASCADE)
     products = models.ManyToManyField("Product", through="ProductDocument")
     matched = models.BooleanField(default=False)

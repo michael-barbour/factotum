@@ -287,7 +287,7 @@ def data_group_create(request, pk, template_name="data_group/datagroup_form.html
         )
         if form.is_valid():
             datagroup = form.save()
-            info = re.split(r"[\n\r]+", datagroup.csv.read().decode())
+            info = datagroup.csv.open("rU")
             table = csv.DictReader(info)
             good_fields = ["filename", "title", "document_type", "url", "organization"]
             if not table.fieldnames == good_fields:

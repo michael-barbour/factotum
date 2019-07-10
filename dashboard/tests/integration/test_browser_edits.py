@@ -137,7 +137,7 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
         # on the QA index page
         self.browser.get(self.live_server_url + '/qa/chemicalpresence/')
         td_pct_checked = self.browser.find_element_by_xpath(
-                '//*[@id="chemical_presence_table"]/tbody/tr[2]/td[3]')
+                '//*[@id="chemical_presence_table"]/tbody/tr[2]/td[4]')
         self.assertEqual(td_pct_checked.text, "0%", 
             'Percent QA Checked for the second row on the Chemical Presence QA index should be zero')
         
@@ -221,7 +221,7 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
         # stat has gone up
         self.browser.get(self.live_server_url + '/qa/chemicalpresence/')
         td_pct_checked = self.browser.find_element_by_xpath(
-                '//*[@id="chemical_presence_table"]/tbody/tr[2]/td[3]')
+                '//*[@id="chemical_presence_table"]/tbody/tr[2]/td[4]')
         self.assertEqual(td_pct_checked.text, "33%", 
             'Percent QA Checked for the second row on the Chemical Presence QA index should be 33%')
         
@@ -297,8 +297,8 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
     def test_bubble_plot(self):
         num_pucs = len(PUC.objects.filter(kind='FO'))
         self.browser.get(self.live_server_url)
-        import time
-        time.sleep(3)
+        wait = WebDriverWait(self.browser, 10)
+        wait.until(ec.presence_of_element_located((By.CLASS_NAME, "bubble")))
         bubbles = self.browser.find_elements_by_class_name('bubble')
         self.assertTrue(num_pucs > 0, "Need more than one PUC")
         self.assertTrue(len(bubbles) > 0, "Need more than one bubble")
@@ -312,3 +312,8 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
         bubbles = self.browser.find_elements_by_class_name('bubble')
         self.assertEqual(dss.puc_count, len(bubbles), ('There should be a circle'
                                                        'drawn for every PUC'))
+        bubbles[0].click()
+        self.assertIn('/puc/', self.browser.current_url,
+                        'User should go to PUC page when clicking bubble')
+        # self.browser.back()
+

@@ -26,3 +26,12 @@ class DataSourceTestWithFixtures(TestCase):
         self.assertEqual(ext_table_count, ext_orm_count,
                          'The number of extracted records shown for Airgas should match what the ORM returns')
 
+    def test_registered_extracted_detail_counts(self):
+        response = self.client.get('/datasource/25').content.decode('utf8')
+        response_html = html.fromstring(response)
+        reg_table_count = int(response_html.xpath("//*[@id='groups']/tbody/tr[contains(., 'Airgas_HardGoods')]/td[3]")[0].text)
+        ext_table_count = int(response_html.xpath("//*[@id='groups']/tbody/tr[contains(., 'Airgas_HardGoods')]/td[3]")[0].text)
+        self.assertTrue(reg_table_count > 0,
+                         'There should be registered documents in the table')
+        self.assertTrue(ext_table_count > 0,
+                         'There should be extracted documents in the table')

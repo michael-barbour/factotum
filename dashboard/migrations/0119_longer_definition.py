@@ -5,14 +5,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('dashboard', '0118_url_on_dd_dg_ds'),
-    ]
+    dependencies = [("dashboard", "0118_url_on_dd_dg_ds")]
 
     operations = [
         migrations.AlterField(
-            model_name='extractedlistpresencetag',
-            name='definition',
-            field=models.CharField(blank=True, max_length=750, null=True, verbose_name='Definition'),
-        ),
+            model_name="extractedlistpresencetag",
+            name="definition",
+            field=models.CharField(
+                blank=True, max_length=750, null=True, verbose_name="Definition"
+            ),
+        )
     ]

@@ -63,7 +63,7 @@ class ExtractedListPresenceTag(TagBase, CommonInfo):
         ("LP", "List presence"),
     ]
 
-    definition = models.CharField("Definition", max_length=255, null=True, blank=True)
+    definition = models.CharField("Definition", max_length=750, null=True, blank=True)
     kind = models.CharField(max_length=2, default="GU", choices=KIND_CHOICES)
 
     class Meta:

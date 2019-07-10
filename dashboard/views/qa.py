@@ -272,6 +272,7 @@ def extracted_text_qa(request, pk, template_name="qa/extracted_text_qa.html", ne
         "ext_form": ext_form,
         "referer": referer,
         "document_type_form": document_type_form,
+        "unsaved": "false",
     }
 
     if request.method == "POST" and "save" in request.POST:
@@ -288,13 +289,14 @@ def extracted_text_qa(request, pk, template_name="qa/extracted_text_qa.html", ne
                 detail_formset.save()
                 extext.qa_edited = True
                 extext.save()
+                context["unsaved"] = "false"
                 # rebuild the formset after saving it
                 detail_formset = ChildForm(instance=extext)
             else:
+                # Errors are preventing the form from validating
+                context["unsaved"] = "true"
+                # Return the errors
                 pass
-                # print(detail_formset.errors)
-                # TODO: iterate through this dict of errors and map each error to
-                # the corresponding form in the template for rendering
 
             context["detail_formset"] = detail_formset
             context["ext_form"] = ext_form

@@ -106,9 +106,13 @@ class DocumentTypeAdmin(admin.ModelAdmin):
     inlines = [GroupTypeInline]
 
 
+class GroupTypeAdmin(admin.ModelAdmin):
+    list_display = ("__str__", "code")
+
+
 # Register your models here.
 admin.site.register(DataSource)
-admin.site.register(GroupType)
+admin.site.register(GroupType, GroupTypeAdmin)
 admin.site.register(DataGroup)
 admin.site.register(DocumentType, DocumentTypeAdmin)
 admin.site.register(DataDocument)
@@ -126,7 +130,7 @@ admin.site.register(DSSToxLookup)
 admin.site.register(QAGroup)
 admin.site.register(UnitType)
 admin.site.register(WeightFractionType)
-admin.site.register(PUCTag)  # ,ProductTagAdmin
+admin.site.register(PUCTag)
 admin.site.register(Taxonomy)
 admin.site.register(TaxonomySource)
 admin.site.register(TaxonomyToPUC)

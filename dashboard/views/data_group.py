@@ -285,9 +285,8 @@ def data_group_create(request, pk, template_name="data_group/datagroup_form.html
             request.POST, request.FILES, user=request.user, initial=initial_values
         )
         if form.is_valid():
-            # what's the pk of the newly created datagroup?
             datagroup = form.save()
-            info = [x.decode("ascii", "ignore") for x in datagroup.csv.readlines()]
+            info = datagroup.csv.open("rU")
             table = csv.DictReader(info)
             good_fields = ["filename", "title", "document_type", "url", "organization"]
             if not table.fieldnames == good_fields:
@@ -352,23 +351,10 @@ def data_group_create(request, pk, template_name="data_group/datagroup_form.html
             with open(datagroup.csv.path, "w") as f:
                 myfile = File(f)
                 myfile.write("".join(text))
-            # Let's explicitly use the full path for the actually writing of the zipfile
-            new_zip_name = Path(
-                settings.MEDIA_URL
-                + "/"
-                + str(datagroup.fs_id)
-                + "/"
-                + str(datagroup.fs_id)
-                + ".zip"
-            )
-            new_zip_path = Path(
-                settings.MEDIA_ROOT
-                + "/"
-                + str(datagroup.fs_id)
-                + "/"
-                + str(datagroup.fs_id)
-                + ".zip"
-            )
+            # Let's explicitly use the full path for writing of the zipfile
+            uid = str(datagroup.fs_id)
+            new_zip_name = Path(settings.MEDIA_URL) / uid / (uid + ".zip")
+            new_zip_path = Path(settings.MEDIA_ROOT) / uid / (uid + ".zip")
             zf = zipfile.ZipFile(str(new_zip_path), "w", zipfile.ZIP_DEFLATED)
             datagroup.zip_file = new_zip_name
             zf.close()

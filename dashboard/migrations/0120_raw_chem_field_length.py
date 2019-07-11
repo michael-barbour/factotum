@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('dashboard', '0119_longer_definition'),
-    ]
+    dependencies = [("dashboard", "0119_longer_definition")]
 
     operations = [
         migrations.AlterField(
-            model_name='datadocument',
-            name='raw_category',
+            model_name="datadocument",
+            name="raw_category",
             field=models.CharField(blank=True, max_length=1000, null=True),
-        ),
+        )
     ]

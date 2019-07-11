@@ -160,27 +160,21 @@ class RegisterRecordsTest(TestCase):
         resp_zip = self.client.get(dg_zip_href)
 
         # test uploading one pdf that matches a registered record
-        f = TemporaryUploadedFile(
-            name="0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf",
-            content_type="application/pdf",
-            size=47,
-            charset=None,
+        doc = DataDocument.objects.filter(data_group_id=dg.pk).first()
+        pdf = TemporaryUploadedFile(
+            name=doc.filename, content_type="application/pdf", size=47, charset=None
         )
         request = self.factory.post(
             path="/datagroup/%s" % dg.pk, data={"upload": "Submit"}
         )
-        request.FILES["multifiles"] = f
+        request.FILES["multifiles"] = pdf
         request.user = User.objects.get(username="Karyn")
         resp = views.data_group_detail(request=request, pk=dg.pk)
-        doc = DataDocument.objects.get(title="NUTRA NAIL")
-        fn = doc.get_abstract_filename()
-        folder_name = str(dg.fs_id)
-        stored_file = f"{folder_name}/pdf/{fn}"
-        pdf_path = f"{settings.MEDIA_ROOT}{stored_file}"
+        pdf_path = f"{settings.MEDIA_ROOT}{dg.fs_id}/pdf/{doc.get_abstract_filename()}"
         self.assertTrue(
             os.path.exists(pdf_path), "the stored file should be in MEDIA_ROOT/dg.fs_id"
         )
-        f.close()
+        pdf.close()
 
     def test_datagroup_create_dupe_filename(self):
         csv_string = (
@@ -215,3 +209,36 @@ class RegisterRecordsTest(TestCase):
         resp = views.data_group_create(request=request, pk=10)
 
         self.assertContains(resp, "Duplicate filename found")
+
+    def test_csv_line_endings(self):
+        csv_string = (
+            "filename,title,document_type,url,organization\r"
+            "0bf5755e-3a08-4024-9d2f-0ea155a9bd17.pdf,NUTRA NAIL,,, \r"
+            "0c68ab16-2065-4d9b-a8f2-e428eb192465.pdf,Body Cream,,, \r\n"
+        )
+        data = io.StringIO(csv_string)
+        sample_csv = InMemoryUploadedFile(
+            data,
+            field_name="csv",
+            name="register_records.csv",
+            content_type="text/csv",
+            size=len(csv_string),
+            charset="utf-8",
+        )
+        form_data = {
+            "name": ["Walmart MSDS Test Group"],
+            "description": ["test data group"],
+            "group_type": ["1"],
+            "downloaded_by": [f"{User.objects.first().pk}"],
+            "downloaded_at": ["08/02/2018"],
+            "download_script": ["1"],
+            "data_source": ["10"],
+        }
+        request = self.factory.post(path="/datagroup/new/", data=form_data)
+        request.FILES["csv"] = sample_csv
+        request.user = User.objects.get(username="Karyn")
+        request.session = {"datasource_title": "Walmart", "datasource_pk": 10}
+        resp = views.data_group_create(request=request, pk=10)
+        dg = DataGroup.objects.filter(name="Walmart MSDS Test Group")
+        self.assertTrue(resp.status_code == 302, "Redirect to detail page")
+        self.assertTrue(dg.exists(), "Group should be created")

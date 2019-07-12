@@ -78,7 +78,6 @@ class ExtractedListPresenceToTagAdmin(admin.ModelAdmin):
     def tag(self, obj):
         return obj.tag
 
-
 class ExtractedListPresenceTagAdmin(admin.ModelAdmin):
     list_filter = ("kind",)
 
@@ -93,6 +92,12 @@ class PUCToTagAdmin(admin.ModelAdmin):
     def assumed(self, obj):
         return obj.assumed
 
+class DataGroupAdmin(admin.ModelAdmin):
+    def get_readonly_fields(self, request, obj=None):
+        if obj: # editing an existing object
+            # All model fields as read_only
+            return self.readonly_fields + tuple(['group_type'])
+        return self.readonly_fields
 
 class GroupTypeInline(admin.TabularInline):
     model = DocumentType.group_types.through
@@ -100,16 +105,14 @@ class GroupTypeInline(admin.TabularInline):
     can_delete = False
     verbose_name = "Compatible Group Type"
     verbose_name_plural = "Compatible Group Types"
-
-
+    
 class DocumentTypeAdmin(admin.ModelAdmin):
     inlines = [GroupTypeInline]
-
 
 # Register your models here.
 admin.site.register(DataSource)
 admin.site.register(GroupType)
-admin.site.register(DataGroup)
+admin.site.register(DataGroup, DataGroupAdmin)
 admin.site.register(DocumentType, DocumentTypeAdmin)
 admin.site.register(DataDocument)
 admin.site.register(Script, ScriptAdmin)
@@ -126,7 +129,7 @@ admin.site.register(DSSToxLookup)
 admin.site.register(QAGroup)
 admin.site.register(UnitType)
 admin.site.register(WeightFractionType)
-admin.site.register(PUCTag)  # ,ProductTagAdmin
+admin.site.register(PUCTag)
 admin.site.register(Taxonomy)
 admin.site.register(TaxonomySource)
 admin.site.register(TaxonomyToPUC)

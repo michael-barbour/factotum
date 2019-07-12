@@ -18,9 +18,11 @@ class ExtractedChemical(CommonInfo, RawChem):
 
     raw_min_comp = models.CharField("Minimum", max_length=100, null=True, blank=True)
     raw_max_comp = models.CharField("Maximum", max_length=100, null=True, blank=True)
-    unit_type = models.ForeignKey(UnitType, on_delete=models.PROTECT)
+    unit_type = models.ForeignKey(
+        UnitType, on_delete=models.PROTECT, null=True, blank=True
+    )
     report_funcuse = models.CharField(
-        "Functional use", max_length=100, null=True, blank=True
+        "Functional use", max_length=255, null=True, blank=True
     )
     weight_fraction_type = models.ForeignKey(
         WeightFractionType, on_delete=models.PROTECT, null=True, default="1"
@@ -37,6 +39,20 @@ class ExtractedChemical(CommonInfo, RawChem):
 
     def __str__(self):
         return str(self.raw_chem_name) if self.raw_chem_name else ""
+
+    def clean(self):
+        # Don't allow the unit_type to be empty if there are raw_min_comp,
+        # raw_central_comp, or raw_max_comp values.
+        if (
+            self.raw_min_comp or self.raw_central_comp or self.raw_max_comp
+        ) and not self.unit_type:
+            raise ValidationError(
+                {
+                    "unit_type": [
+                        "There must be a unit type if a composition value is provided."
+                    ]
+                }
+            )
 
     @classmethod
     def detail_fields(cls):

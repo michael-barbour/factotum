@@ -90,6 +90,23 @@ class DataGroupFormTest(TestCase):
             "Changing the group_type when extracted_docs exists should raise a ValidationError",
         )
 
+        # Updated 07/03/2019 - Added a similar test for group type without extracted docs - now none of the group
+        # types are allowed to change
+
+        # DG 52 does not have extracted docs, so group_type should be disabled, and a forced update should fail
+        dg = DataGroup.objects.get(pk=52)
+        response = self.client.get(f'/datagroup/edit/{str(dg.pk)}/').content.decode('utf8')
+        response_html = html.fromstring(response)
+        self.assertTrue(response_html.xpath('//*[@id="id_group_type"][@disabled]'),
+                      'The group_type select box should be disabled')
+        response = self.client.post(f'/datagroup/edit/{dg.pk}/',
+                                    {'name': dg.name,
+                                    'group_type_id': 2,})
+
+        response_html = html.fromstring(response.content.decode('utf8'))
+        self.assertTrue(response_html.xpath('//*[@id="id_group_type"]/following::div[@class="invalid-feedback"]'),
+                      'Changing the group_type should raise a ValidationError')
+
     def test_register_records_header(self):
         ds_pk = DataSource.objects.first().pk
         csv_string = (

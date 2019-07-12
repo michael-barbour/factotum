@@ -3,7 +3,6 @@ import zipfile
 from djqscsv import render_to_csv_response
 from pathlib import Path
 
-
 from django.db.models import Exists, F, OuterRef, Max
 from django.conf import settings
 from django.core.files import File
@@ -12,7 +11,6 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-
 
 from factotum.settings import MEDIA_URL
 from dashboard.models import (
@@ -137,8 +135,11 @@ def data_group_detail(request, pk, template_name="data_group/datagroup_detail.ht
                 if wft:  # this signifies 'Composition' type
                     w = "weight_fraction_type"
                     row[w] = WeightFractionType.objects.get(pk=int(wft))
-                    unit_type_id = int(row["unit_type"])
-                    row["unit_type"] = UnitType.objects.get(pk=unit_type_id)
+                    if row["unit_type"]:
+                        unit_type_id = int(row["unit_type"])
+                        row["unit_type"] = UnitType.objects.get(pk=unit_type_id)
+                    else:
+                        del row["unit_type"]
                     rank = row["ingredient_rank"]
                     row["ingredient_rank"] = None if rank == "" else rank
                 ext, created = ext_parent.objects.get_or_create(
@@ -284,9 +285,8 @@ def data_group_create(request, pk, template_name="data_group/datagroup_form.html
             request.POST, request.FILES, user=request.user, initial=initial_values
         )
         if form.is_valid():
-            # what's the pk of the newly created datagroup?
             datagroup = form.save()
-            info = [x.decode("ascii", "ignore") for x in datagroup.csv.readlines()]
+            info = datagroup.csv.open("rU")
             table = csv.DictReader(info)
             good_fields = ["filename", "title", "document_type", "url", "organization"]
             if not table.fieldnames == good_fields:
@@ -351,23 +351,10 @@ def data_group_create(request, pk, template_name="data_group/datagroup_form.html
             with open(datagroup.csv.path, "w") as f:
                 myfile = File(f)
                 myfile.write("".join(text))
-            # Let's explicitly use the full path for the actually writing of the zipfile
-            new_zip_name = Path(
-                settings.MEDIA_URL
-                + "/"
-                + str(datagroup.fs_id)
-                + "/"
-                + str(datagroup.fs_id)
-                + ".zip"
-            )
-            new_zip_path = Path(
-                settings.MEDIA_ROOT
-                + "/"
-                + str(datagroup.fs_id)
-                + "/"
-                + str(datagroup.fs_id)
-                + ".zip"
-            )
+            # Let's explicitly use the full path for writing of the zipfile
+            uid = str(datagroup.fs_id)
+            new_zip_name = Path(settings.MEDIA_URL) / uid / (uid + ".zip")
+            new_zip_path = Path(settings.MEDIA_ROOT) / uid / (uid + ".zip")
             zf = zipfile.ZipFile(str(new_zip_path), "w", zipfile.ZIP_DEFLATED)
             datagroup.zip_file = new_zip_name
             zf.close()
@@ -389,10 +376,10 @@ def data_group_update(request, pk, template_name="data_group/datagroup_form.html
     if form.is_valid():
         if form.has_changed():
             form.save()
-        return redirect("data_group_detail", pk=datagroup.id)
-    form.referer = request.META.get("HTTP_REFERER", None)
-    if datagroup.extracted_docs():
-        form.fields["group_type"].disabled = True
+        return redirect('data_group_detail', pk=datagroup.id)
+    form.referer = request.META.get('HTTP_REFERER', None)
+    # updated 07/03/2019 - now none of the group types should be allowed to change (was ones with extracted docs only)
+    form.fields['group_type'].disabled = True
     groups = GroupType.objects.all()
     for group in groups:
         group.codes = DocumentType.objects.compatible(group)

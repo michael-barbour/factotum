@@ -1,12 +1,10 @@
-import math
-from random import shuffle
-
 from django.db import models
 from django.urls import reverse
 from django.core.validators import URLValidator, MaxValueValidator, MinValueValidator
 
 from .common_info import CommonInfo
 from .data_document import DataDocument
+from .extracted_text import ExtractedText
 
 
 class Script(CommonInfo):
@@ -53,23 +51,16 @@ class Script(CommonInfo):
             extractedtext__qa_checked=True, extractedtext__extraction_script=self.pk
         ).count()
 
-    def get_pct_checked(self):
+    def get_pct_checked(self, numeric=False):
         count = self.get_datadocument_count()
         pct = (
             0
             if count == 0
             else (self.get_qa_complete_extractedtext_count() / count * 100)
         )
-        return "{0:.0f}%".format(pct)
-
-    def get_pct_checked_numeric(self):
-        count = self.get_datadocument_count()
-        pct = (
-            0
-            if count == 0
-            else (self.get_qa_complete_extractedtext_count() / count * 100)
-        )
-        return pct
+        if numeric:
+            return pct
+        return f"{pct:.0f} %"
 
     def qa_button_text(self):
         if self.get_qa_status():
@@ -84,81 +75,66 @@ class Script(CommonInfo):
         Compare the derived percent checked against the threshold constant
         Return true when the percent checked is above the threshold
         """
-        return self.get_pct_checked_numeric() >= self.QA_COMPLETE_PERCENTAGE * 100
+        return self.get_pct_checked(numeric=True) >= self.QA_COMPLETE_PERCENTAGE * 100
 
     def get_or_create_qa_group(self):
-        from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
-        from .qa_group import QAGroup
-
-        try:
-            qa_group = QAGroup.objects.get(extraction_script=self, qa_complete=False)
-        except MultipleObjectsReturned:
-            qa_group = QAGroup.objects.filter(
-                extraction_script=self, qa_complete=False
-            ).first()
-        except ObjectDoesNotExist:
+        qa_group = QAGroup.objects.filter(
+            extraction_script=self, qa_complete=False
+        ).first()
+        if not qa_group:
             qa_group = self.create_qa_group()
             self.qa_begun = True
             self.save()
         return qa_group
 
-    def create_qa_group(self, force_doc_id=None):
+    def create_qa_group(self):
         """
         Creates a QA Group for the specified Script object;
         Use all the related ExtractedText records or, if there are more than 100,
         select 20% of them. 
         """
-        from .qa_group import QAGroup
-        from .extracted_text import ExtractedText
-
-        es = self
-        # Handle cases where a QA group already exists for the script
-        if QAGroup.objects.filter(extraction_script=es).count() == 1:
-            # This is a valid state
-            return QAGroup.objects.get(extraction_script=es)
-        elif QAGroup.objects.filter(extraction_script=es).count() > 1:
-            # this is a failure mode induced by the system's allowing
-            # duplicate QA Groups to be created for a single script
-            return QAGroup.objects.filter(extraction_script=es).first()
-
-        # Create a new QA Group for the ExtractionScript es
-        qa_group = QAGroup.objects.create(extraction_script=es)
-        # Collect all the ExtractedText object keys that are related
-        # to the Script being QA'd and have not yet been checked
-        doc_text_ids = list(
-            ExtractedText.objects.filter(
-                extraction_script=es, qa_checked=False
-            ).values_list("pk", flat=True)
-        )
-        # If there are fewer than 100 related records, they make up the entire QA Group
-        if len(doc_text_ids) < 100 and len(doc_text_ids) > 0:
-            texts = ExtractedText.objects.filter(pk__in=doc_text_ids)
-        # Otherwise sample 20 percent
-        elif len(doc_text_ids) >= 100:
-            # Otherwise sample 20% of them
-            random_20 = math.ceil(len(doc_text_ids) / 5)
-            shuffle(doc_text_ids)  # this is used to make random selection of texts
-            texts = ExtractedText.objects.filter(pk__in=doc_text_ids[:random_20])
-        else:
-            # If there are no related ExtractedText records, something has gone wrong
-            # Don't make a new QA Group with zero ExtractedTexts
-            # print('The Script has no related ExtractedText records')
-            texts = None
-
+        qa_group = QAGroup.objects.create(extraction_script=self)
         # Set the qa_group attribute of each ExtractedText record to the new QA Group
-        if texts is not None:
-            for text in texts:
-                text.qa_group = qa_group
-                text.save()
+        texts = ExtractedText.objects.filter(extraction_script=self, qa_checked=False)
+        # If fewer than 100 related records, they make up the entire QA Group
+        if len(texts) >= 100:
+            import math
 
-        # If the force_doc_id argument was populated, make sure it gets assigned
-        # to the new QA Group
-        if (
-            force_doc_id is not None
-            and ExtractedText.objects.filter(pk=force_doc_id).exists()
-        ):
-            text = ExtractedText.objects.get(pk=force_doc_id)
-            text.qa_group = qa_group
-            text.save()
+            # Otherwise sample 20% of them
+            random_20 = math.ceil(len(texts) * 0.2)
+            pks = list(
+                texts.values_list("pk", flat=True).order_by("?")[:random_20]
+            )  # ? used for random selection
+            texts = ExtractedText.objects.filter(pk__in=pks)
+
+        if texts:
+            texts.update(qa_group=qa_group)
 
         return qa_group
+
+    def add_to_qa_group(self, force_doc_id):
+        """this method will always create a QAGroup and add the document to it.
+        """
+        qa_group = self.get_or_create_qa_group()
+        text = ExtractedText.objects.get(pk=force_doc_id)
+        text.qa_group = qa_group
+        text.save()
+        return qa_group
+
+
+class QAGroup(CommonInfo):
+    extraction_script = models.ForeignKey(
+        Script,
+        on_delete=models.CASCADE,
+        related_name="qa_group",
+        blank=False,
+        null=False,
+        limit_choices_to={"script_type": "EX"},
+    )
+    qa_complete = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.extraction_script) + "_" + str(self.pk)
+
+    def get_approved_doc_count(self):
+        return ExtractedText.objects.filter(qa_group=self, qa_checked=True).count()

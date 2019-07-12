@@ -77,7 +77,7 @@ class TestQaPage(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_data_document_qa(self):
-        # Open the QA page for a Composition ExtractedText record that has no QA group
+        # Open the QA page for a Composition ExtractedText record w/ no QA group
         # and is in a Script with < 100 documents
         scr = (
             Script.objects.annotate(num_ets=Count("extractedtext"))
@@ -108,9 +108,7 @@ class TestQaPage(TestCase):
         self.assertTrue(et.qa_group == new_group)
         # The link on the QA index page should now say "Continue QA"
         response = self.client.get(f"/qa/extractionscript/")
-        self.assertIn(
-            f"'/qa/extractionscript/{scr.pk}/'> Continue QA".encode(), response.content
-        )
+        self.assertContains(response, f"'/qa/extractionscript/{scr.pk}/'> Continue QA")
 
         # Open the QA page for an ExtractedText record that has no QA group and
         # is related to a script with over 100 documents
@@ -127,18 +125,17 @@ class TestQaPage(TestCase):
         # One new QA group should be created
         new_group = QAGroup.objects.get(extraction_script=scr)
 
-        # There should be a lot of ExtractedText records assigned to the QA Group
+        # There should be a lot of ExtractedText records assigned to the QAGroup
         initial_qa_count = ExtractedText.objects.filter(qa_group=new_group).count()
         self.assertTrue(initial_qa_count > 100)
 
         # Select a document that shares a Script with the
         # QA Group created above BUT DOES NOT BELONG TO THE QA GROUP
         pk = (
-            ExtractedText.objects.filter(extraction_script_id=scr.id)
+            ExtractedText.objects.filter(extraction_script=scr)
             .filter(qa_group=None)
             .first()
-            .pk
-        )
+        ).pk
         # Open its QA page via the /datdocument/qa path
         response = self.client.get(f"/qa/extractedtext/{pk}/")
         # Make sure that the number of documents in the QA Group has increased
@@ -170,6 +167,7 @@ class TestQaPage(TestCase):
         """
 
         resp = self.client.get("/qa/extractedtext/7/")
+        # import pdb; pdb.set_trace()
         self.assertContains(resp, 'value="dibutyl_phthalate"', status_code=200)
 
         post_context = {

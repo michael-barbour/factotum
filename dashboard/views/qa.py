@@ -27,15 +27,16 @@ from django.utils.http import is_safe_url
 @login_required()
 def qa_extractionscript_index(request, template_name="qa/extraction_script_index.html"):
     datadocument_count = Count("extractedtext__extraction_script")
-    qa_complete_extractedtext_count = Count(
-        "extractedtext", filter=Q(extractedtext__qa_checked=True)
-    )
+    qa_complete_count = Count("extractedtext", filter=Q(extractedtext__qa_checked=True))
+    percent_complete = (qa_complete_count / datadocument_count) * 100
+    texts = ExtractedText.objects.exclude(
+        data_document__data_group__group_type__code="CP"
+    )  # remove the scripts with CP texts that are associated
     extraction_scripts = (
-        Script.objects.annotate(datadocument_count=datadocument_count)
-        .annotate(qa_complete_extractedtext_count=qa_complete_extractedtext_count)
-        .filter(script_type="EX")
+        Script.objects.filter(extractedtext__in=texts, script_type="EX")
+        .annotate(datadocument_count=datadocument_count)
+        .annotate(percent_complete=percent_complete)
     )
-
     return render(request, template_name, {"extraction_scripts": extraction_scripts})
 
 
@@ -66,43 +67,6 @@ def qa_chemicalpresence_group(request, pk, template_name="qa/chemical_presence.h
         template_name,
         {"datagroup": datagroup, "extractedcpcats": extractedcpcats},
     )
-
-
-def prep_cp_for_qa(extractedcpcat):
-    """
-    Given an ExtractedCPCat object, select a sample of its ExtractedListPresence children
-    for QA review.
-    """
-    from random import shuffle
-
-    QA_RECORDS_PER_DOCUMENT = 30
-
-    if extractedcpcat.rawchem.count() > 0:
-        list_presence_count = extractedcpcat.rawchem.count()
-    else:
-        return
-    elps = extractedcpcat.rawchem.select_subclasses()
-    non_qa_list_presence_ids = list(
-        elps.filter(extractedlistpresence__qa_flag=False).values_list("pk", flat=True)
-    )
-
-    # total number of qa-flagged listpresence objects
-    list_presence_qa_count = elps.filter(extractedlistpresence__qa_flag=True).count()
-
-    # if less than 30 records (or all records in set) flagged for QA, make up the difference
-    if (
-        list_presence_qa_count < QA_RECORDS_PER_DOCUMENT
-        and list_presence_qa_count < list_presence_count
-    ):
-        random_x = QA_RECORDS_PER_DOCUMENT - list_presence_qa_count
-        shuffle(non_qa_list_presence_ids)
-        list_presence = ExtractedListPresence.objects.filter(
-            pk__in=non_qa_list_presence_ids[:random_x]
-        )
-        for lp in list_presence:
-            lp.qa_flag = True
-            lp.save()
-    return
 
 
 @login_required()
@@ -150,14 +114,6 @@ def qa_extraction_script_summary(
     )
 
 
-def hide_dsstox_fields(formset):
-    # Hide the curated DSSToxLookup fields in the formset if they appear
-    for form in formset:
-        for dssfield in ["true_cas", "true_chemname", "SID"]:
-            if dssfield in form.fields:
-                form.fields[dssfield].widget = forms.HiddenInput()
-
-
 @login_required()
 def extracted_text_qa(request, pk, template_name="qa/extracted_text_qa.html", nextid=0):
     """
@@ -174,22 +130,19 @@ def extracted_text_qa(request, pk, template_name="qa/extracted_text_qa.html", ne
     doc = DataDocument.objects.get(pk=pk)
     exscript = extext.extraction_script
     group_type_code = extext.data_document.data_group.group_type.code
-
-    if group_type_code in ["CP", "HH"]:
+    stats = ""
+    qa_focus = "script"
+    if group_type_code in ["CP"]:
         qa_focus = "doc"
         #
         # Document-focused QA process
         #
         # If the object is an ExtractedCPCat record, there will be no Script
         # associated with it and no QA Group
-        prep_cp_for_qa(extext)
-
-        stats = ""
-        qa_home_page = (
-            f"qa/chemicalpresencegroup/%s/" % extext.data_document.data_group.id
-        )
+        flagged_qs = extext.prep_cp_for_qa()
+    elif group_type_code in ["HH"]:
+        pass
     else:
-        qa_focus = "script"
         #
         # Extraction Script-focused QA process
         #
@@ -199,7 +152,7 @@ def extracted_text_qa(request, pk, template_name="qa/extracted_text_qa.html", ne
             # create the qa group with the optional ExtractedText pk argument
             # so that the ExtractedText gets added to the QA group even if the
             # group uses a random sample
-            qa_group = exscript.create_qa_group(pk)
+            qa_group = exscript.add_to_qa_group(pk)
             exscript.qa_begun = True
             exscript.save()
             extext.qa_group = qa_group
@@ -235,14 +188,12 @@ def extracted_text_qa(request, pk, template_name="qa/extracted_text_qa.html", ne
 
     # If the document is CPCat or HHE type, the display should only show the
     # child records where qa_flag = True
-    if qa_focus == "doc" and hasattr(detail_formset.get_queryset().model, "qa_flag"):
-        qs = detail_formset.get_queryset().filter(qa_flag=True)
-        detail_formset._queryset = qs
+    if qa_focus == "doc":
+        # qs = detail_formset.get_queryset().filter(qa_flag=True)
+        # print(detail_formset._queryset)
+        detail_formset._queryset = flagged_qs
 
     # This code is being repeated in the GET and POST blocks
-    #
-    # Hide all the DSSToxLookup fields
-    hide_dsstox_fields(detail_formset)
 
     # Add CSS selector classes to each form
     for form in detail_formset:
@@ -302,9 +253,6 @@ def extracted_text_qa(request, pk, template_name="qa/extracted_text_qa.html", ne
             context["ext_form"] = ext_form
 
         # This code is being repeated in the GET and POST blocks
-        #
-        # Hide all the DSSToxLookup fields
-        hide_dsstox_fields(detail_formset)
 
         # Add CSS selector classes to each form
         for form in detail_formset:

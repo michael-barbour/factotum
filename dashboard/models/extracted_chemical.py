@@ -22,7 +22,7 @@ class ExtractedChemical(CommonInfo, RawChem):
         UnitType, on_delete=models.PROTECT, null=True, blank=True
     )
     report_funcuse = models.CharField(
-        "Functional use", max_length=100, null=True, blank=True
+        "Functional use", max_length=255, null=True, blank=True
     )
     weight_fraction_type = models.ForeignKey(
         WeightFractionType, on_delete=models.PROTECT, null=True, default="1"

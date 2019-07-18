@@ -217,6 +217,11 @@ urlpatterns = [
         views.approve_extracted_text,
         name="approve_extracted_text",
     ),
+    path(
+        "extractedtext/delete/<int:pk>/",
+        views.delete_extracted_text,
+        name="delete_extracted_text",
+    ),
     path("search/es_chemicals/", views.search_chemicals, name="search_chemicals"),
     path(
         "chemical/delete/<int:doc_pk>/<int:chem_pk>/",

@@ -15,8 +15,8 @@ from dashboard.models import (
     DataDocument,
     ExtractedCPCat,
     ExtractedText,
-    ExtractedListPresence,
     QANotes,
+    QAGroup,
     DocumentType,
 )
 from factotum.settings import EXTRA
@@ -36,6 +36,7 @@ def qa_extractionscript_index(request, template_name="qa/extraction_script_index
         Script.objects.filter(extractedtext__in=texts, script_type="EX")
         .annotate(datadocument_count=datadocument_count)
         .annotate(percent_complete=percent_complete)
+        # .annotate(extractedtext_count=extractedtext__count)
     )
     return render(request, template_name, {"extraction_scripts": extraction_scripts})
 
@@ -289,6 +290,27 @@ def save_qa_notes(request, pk):
             json.dumps({"not a POST request": "this will not happen"}),
             content_type="application/json",
         )
+
+
+@login_required()
+def delete_extracted_text(request, pk):
+    """
+    This is an endpoint that deletes ExtractedText objected associated with the provided Script pk
+    It performs the following actions:
+        a. delete all extracted text associated with the extraction script
+            (e.g. the extracted text for the document and the raw chem record)
+        b. if any raw chem records have been associated with dsstox records,
+            the linkage to the dsstoxsubstance table must be removed and the rid must be deleted
+        c. reset the QA status of the extraction script to 'QA not begun'
+        d. delete the QA group associated with the extraction script
+
+    """
+    script = get_object_or_404(Script, pk=pk)
+    ExtractedText.objects.filter(script=script).delete()
+    QAGroup.objects.filter(extraction_script = script).delete()
+    script.qa_begun = False
+    script.save()
+    return HttpResponseRedirect(reverse("qa_extractionscript_index"))
 
 
 @login_required()

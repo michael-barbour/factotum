@@ -55,6 +55,10 @@ class TestProductDetail(TestCase):
             else:
                 self.assertEqual(elem[0].get("title"), "No definition")
 
+    def test_link_to_puc(self):
+        response = self.client.get(f"/product/1862/")
+        self.assertIn(b"/puc/185", response.content)
+
     def test_add_puc(self):
         p = Product.objects.get(pk=14)
         response = self.client.get(f"/product/{str(p.pk)}/").content.decode("utf8")

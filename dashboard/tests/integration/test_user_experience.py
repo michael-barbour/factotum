@@ -1,7 +1,8 @@
-from dashboard.tests.loader import *
+from dashboard.tests.loader import load_browser, load_model_objects
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from dashboard.models import *
+from dashboard.models import DataSource, DataGroup, PUCToTag, ProductToPUC
 from django.test import tag
+from selenium.common.exceptions import NoSuchElementException
 
 
 def log_karyn_in(object):

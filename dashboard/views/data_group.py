@@ -376,10 +376,10 @@ def data_group_update(request, pk, template_name="data_group/datagroup_form.html
     if form.is_valid():
         if form.has_changed():
             form.save()
-        return redirect('data_group_detail', pk=datagroup.id)
-    form.referer = request.META.get('HTTP_REFERER', None)
+        return redirect("data_group_detail", pk=datagroup.id)
+    form.referer = request.META.get("HTTP_REFERER", None)
     # updated 07/03/2019 - now none of the group types should be allowed to change (was ones with extracted docs only)
-    form.fields['group_type'].disabled = True
+    form.fields["group_type"].disabled = True
     groups = GroupType.objects.all()
     for group in groups:
         group.codes = DocumentType.objects.compatible(group)

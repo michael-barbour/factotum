@@ -1,3 +1,7 @@
-body > .container {
-    padding-bottom: 0px;
-  }
+body>.container {
+  padding-bottom: 0px;
+}
+
+#lowzy {
+  display: none;
+}

@@ -20,6 +20,9 @@ from dashboard.models import (
     Product,
     ProductToPUC,
     PUCTag,
+    ExtractedFunctionalUse,
+    ExtractedListPresence,
+    ExtractedHHRec
 )
 
 

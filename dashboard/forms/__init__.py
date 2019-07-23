@@ -21,6 +21,9 @@ from .forms import (
     ExtractedChemicalForm,
     create_detail_formset,
     DataDocumentForm,
+    ExtractedFunctionalUseForm,
+    ExtractedHHRecForm,
+    ExtractedListPresenceForm
 )
 from dashboard.forms.list_presence_tag_form import ExtractedListPresenceTagForm
 from dashboard.forms.product_tag_form import ProductTagForm

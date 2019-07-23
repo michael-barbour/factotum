@@ -1,6 +1,5 @@
 from django.contrib import messages
 from django.http import HttpResponse
-from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import CreateView, UpdateView
@@ -23,8 +22,6 @@ from dashboard.models import (
     ExtractedText,
     Script,
     ExtractedListPresenceToTag,
-    ExtractedChemical,
-    ExtractedFunctionalUse,
     RawChem,
 )
 

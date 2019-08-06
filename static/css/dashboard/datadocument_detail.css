@@ -1,7 +1,4 @@
-body>.container {
-  padding-bottom: 0px;
-}
-
-#lowzy {
-  display: none;
-}
+body > .container {
+    padding-bottom: 0px;
+    max-width: 100%;
+  }

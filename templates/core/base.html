@@ -196,25 +196,7 @@
                         </a>
                     </div>
                 </li>
-                <li class="nav-item 
-                    {% if 'find' in request.resolver_match.url_name %}
-                        active
-                    {% endif %}">
-    <!-- TODO: the input form should contain the search query string -->
-                    <form   class="search-form-container" 
-                            action="/find/" 
-                            method="get">
-                        <div class="icon-addon addon-lg">
-                            <input  type="text" 
-                                    placeholder="Search" 
-                                    class="form-control" 
-                                    name="q" 
-                                    id="q" 
-                                    autocomplete="off">
-                            <div id="selction-ajax"></div>
-                        </div>
-                    </form>
-                </li>
+
                 {% endif %}
             </ul>
         </div>
@@ -242,7 +224,6 @@
     <script src="{% static 'js/popper.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'DataTables/datatables.min.js' %}"></script>
-    <script src="{% static 'js/facet_search.js' %}"></script>
     {% block js %}{% endblock %}
     {% block css %}{% endblock %}
 

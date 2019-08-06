@@ -244,9 +244,12 @@ def data_group_detail(request, pk, template_name="data_group/datagroup_detail.ht
                     )
                 except Ingredient.DoesNotExist as e:
                     ingredient = Ingredient(rawchem_ptr=extracted_chemical.rawchem_ptr)
-                ingredient.lower_wf_analysis = row["lower_wf_analysis"]
-                ingredient.central_wf_analysis = row["central_wf_analysis"]
-                ingredient.upper_wf_analysis = row["upper_wf_analysis"]
+                if row["lower_wf_analysis"] != "":
+                    ingredient.lower_wf_analysis = row["lower_wf_analysis"]
+                if row["central_wf_analysis"] != "":
+                    ingredient.central_wf_analysis = row["central_wf_analysis"]
+                if row["upper_wf_analysis"] != "":
+                    ingredient.upper_wf_analysis = row["upper_wf_analysis"]
                 ingredient.script = script
                 try:
                     ingredient.full_clean()

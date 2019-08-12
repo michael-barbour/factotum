@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "taggit",
     "taggit_labels",
     "django_extensions",
+    "bulkformsets.apps.BulkFormSetsConfig",
 ]
 
 MIDDLEWARE = [
@@ -129,3 +130,5 @@ MESSAGE_TAGS = {
     messages.WARNING: "alert-warning",
     messages.ERROR: "alert-danger",
 }
+
+CRISPY_TEMPLATE_PACK = "bootstrap4"

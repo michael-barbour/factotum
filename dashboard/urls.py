@@ -1,4 +1,4 @@
-from django.urls import include, path
+from django.urls import include, path, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -25,11 +25,21 @@ urlpatterns = [
         name="data_group_new",
     ),
     path("datagroups/", views.data_group_list, name="data_group_list"),
+    re_path(
+        r"datagroups/(?P<code>[A-Z]{2})/$",
+        views.data_group_list,
+        name="data_group_list",
+    ),
     path("datagroup/<int:pk>/", views.data_group_detail, name="data_group_detail"),
     path(
         "datagroup/<int:pk>/download_documents/",
         views.download_datadocuments,
         name="download_datadocuments",
+    ),
+    path(
+        "datagroup/<int:pk>/documents_table/",
+        views.data_group_documents_table,
+        name="documents_table",
     ),
     path(
         "datagroup/<int:pk>/download_document_zip/",

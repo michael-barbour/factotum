@@ -100,10 +100,7 @@ services:
       -Des.http.port=9202
 
   elasticsearch:
-    build:
-      context: "${FACTOTUM_ELASTIC_DIR}"
-      dockerfile: "${FACTOTUM_DIR}/docker/dockerfiles/Dockerfile.elasticsearch"
-    image: factotum-elasticsearch
+    image: elasticsearch:7.3.0
     restart: unless-stopped
     environment:
       discovery.type: single-node
@@ -123,7 +120,7 @@ services:
         target: /usr/share/elasticsearch/data
 
   kibana:
-    image: kibana:6.7.2
+    image: kibana:7.3.0
     restart: unless-stopped
     environment:
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200

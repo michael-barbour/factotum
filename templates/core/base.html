@@ -138,20 +138,21 @@
                         </a>
                     </div>
                 </li>
-                <li class="nav-item
+                {% block nav %}{% endblock %}
+            </ul>
+            <ul class="nav navbar-nav navbar-right ml-auto">
+                <li class="nav-item ml-5
                     {% if 'search' in request.resolver_match.url_name %}
                         active
                     {% endif %}">
-    <!-- TODO: the input form should contain the search query string -->
-                    <form class="search-form-container"
-                        action="/search/es_chemicals/"
-                        method="get" >
+                    <!-- TODO: the input form should contain the search query string -->
+                    <form class="search-form-container" id="factotum-search-form" action="javascript:void(0);">
                         <div class="icon-addon addon-lg">
                             <input type="text"
-                            {% if q %}
-                                value="{{q}}"
+                            {% if decoded_q %}
+                                value="{{ decoded_q }}"
                             {% else %}
-                                placeholder="Search by chemical"
+                                placeholder="Search"
                             {% endif %}
                             class="form-control"
                             name="q"
@@ -160,9 +161,6 @@
                         </div>
                     </form>
                 </li>
-                {% block nav %}{% endblock %}
-            </ul>
-            <ul class="nav navbar-nav navbar-right ml-auto">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle"
                     href="#"
@@ -225,6 +223,7 @@
      <script src="{% static 'datatables/datatables.min.js' %}"></script>
     <script src="{% static 'fontawesome/js/all.js' %}"></script>
     <script src="{% static 'bootstrap-confirmation/bootstrap-confirmation.min.js' %}"></script>
+    <script src="{% static 'js/dashboard/search.js' %}"></script>
     {% block js %}{% endblock %}
     {% block css %}{% endblock %}
 

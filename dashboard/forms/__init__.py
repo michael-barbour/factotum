@@ -1,7 +1,6 @@
 from .forms import (
     DataGroupForm,
     ExtractionScriptForm,
-    CleanCompDataForm,
     DataSourceForm,
     PriorityForm,
     QANotesForm,

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "taggit",
     "taggit_labels",
     "django_extensions",
+    "elastic.apps.ElasticConfig",
     "bulkformsets.apps.BulkFormSetsConfig",
 ]
 

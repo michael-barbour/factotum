@@ -225,7 +225,6 @@ urlpatterns = [
         views.approve_extracted_text,
         name="approve_extracted_text",
     ),
-    path("search/es_chemicals/", views.search_chemicals, name="search_chemicals"),
     path(
         "chemical/delete/<int:doc_pk>/<int:chem_pk>/",
         views.chemical_delete,
@@ -235,6 +234,7 @@ urlpatterns = [
         "chemical/<int:doc>/create/", views.ChemCreateView.as_view(), name="chem-create"
     ),
     path("chemical/<pk>/edit/", views.ChemUpdateView.as_view(), name="chem-update"),
+    path("search/<str:model>/", views.search_model, name="search-model"),
 ]
 
 if settings.DEBUG is True:

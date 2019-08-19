@@ -20,23 +20,21 @@ from dashboard.models import (
     DocumentType,
 )
 from factotum.settings import EXTRA
-from django import forms
 from django.utils.http import is_safe_url
 
 
 @login_required()
 def qa_extractionscript_index(request, template_name="qa/extraction_script_index.html"):
-    datadocument_count = Count("extractedtext__extraction_script")
+    extractedtext_count = Count("extractedtext__extraction_script")
     qa_complete_count = Count("extractedtext", filter=Q(extractedtext__qa_checked=True))
-    percent_complete = (qa_complete_count / datadocument_count) * 100
+    percent_complete = (qa_complete_count / extractedtext_count) * 100
     texts = ExtractedText.objects.exclude(
         data_document__data_group__group_type__code="CP"
     )  # remove the scripts with CP texts that are associated
     extraction_scripts = (
         Script.objects.filter(extractedtext__in=texts, script_type="EX")
-        .annotate(datadocument_count=datadocument_count)
+        .annotate(extractedtext_count=extractedtext_count)
         .annotate(percent_complete=percent_complete)
-        # .annotate(extractedtext_count=extractedtext__count)
     )
     return render(request, template_name, {"extraction_scripts": extraction_scripts})
 
@@ -305,11 +303,11 @@ def delete_extracted_text(request, pk):
         d. delete the QA group associated with the extraction script
 
     """
-    script = get_object_or_404(Script, pk=pk)
-    ExtractedText.objects.filter(script=script).delete()
-    QAGroup.objects.filter(extraction_script = script).delete()
-    script.qa_begun = False
-    script.save()
+    extraction_script = get_object_or_404(Script, pk=pk)
+    ExtractedText.objects.filter(extraction_script=extraction_script).delete()
+    QAGroup.objects.filter(extraction_script=extraction_script).delete()
+    extraction_script.qa_begun = False
+    extraction_script.save()
     return HttpResponseRedirect(reverse("qa_extractionscript_index"))
 
 

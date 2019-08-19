@@ -1,4 +1,4 @@
-from django.urls import include, path, re_path
+from django.urls import path, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -230,7 +230,6 @@ urlpatterns = [
         views.delete_extracted_text,
         name="delete_extracted_text",
     ),
-    path("search/es_chemicals/", views.search_chemicals, name="search_chemicals"),
     path(
         "chemical/delete/<int:doc_pk>/<int:chem_pk>/",
         views.chemical_delete,

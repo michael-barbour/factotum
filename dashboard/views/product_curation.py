@@ -340,6 +340,7 @@ def product_update(
 @login_required()
 def product_delete(request, pk):
     p = Product.objects.get(pk=pk)
+    print(p)
     p.delete()
     return redirect("product_curation")
 

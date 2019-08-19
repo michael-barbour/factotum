@@ -98,7 +98,7 @@ class SimpleTree:
             root = next(l for l in root.leaves if l.name == name)
         return root
 
-
+      
 def get_extracted_models(t):
     """Returns the parent model function and and the associated child model
     based on datagroup type"""

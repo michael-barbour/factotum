@@ -21,3 +21,4 @@ $("#chem-scrollspy").ready(function () {
     location.href = location.href
   }
 });
+

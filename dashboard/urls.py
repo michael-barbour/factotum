@@ -235,6 +235,7 @@ urlpatterns = [
     ),
     path("chemical/<pk>/edit/", views.ChemUpdateView.as_view(), name="chem-update"),
     path("search/<str:model>/", views.search_model, name="search-model"),
+
 ]
 
 if settings.DEBUG is True:

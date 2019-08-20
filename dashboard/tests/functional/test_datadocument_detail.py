@@ -4,11 +4,20 @@ from django.urls import reverse
 from django.test import TestCase, override_settings
 from django.core.exceptions import ObjectDoesNotExist
 
-from dashboard.models import *
-from dashboard.forms import *
+from dashboard.models import (
+    DataDocument,
+    ExtractedText,
+    ExtractedCPCat,
+    ExtractedHHDoc,
+    ExtractedListPresenceTag,
+    ExtractedListPresenceToTag,
+    Product,
+)
+from dashboard.forms import create_detail_formset
 from factotum.settings import EXTRA
-from dashboard.tests.loader import *
+from dashboard.tests.loader import fixtures_standard, datadocument_models
 from django.db.models import F, Min
+from dashboard.utils import get_extracted_models
 
 
 @override_settings(ALLOWED_HOSTS=["testserver"])
@@ -28,9 +37,8 @@ class DataDocumentDetailTest(TestCase):
                 resp.status_code, 200, "The page must return a 200 status code"
             )
             try:
-                extracted_text = ExtractedText.objects.get(data_document=dd)
+                ExtractedText.objects.get(data_document=dd)
             except ExtractedText.DoesNotExist:
-                # print(dd.id)
                 self.assertContains(
                     resp, "No Extracted Text exists for this Data Document"
                 )
@@ -64,8 +72,6 @@ class DataDocumentDetailTest(TestCase):
         )
 
     def test_script_links(self):
-        doc = DataDocument.objects.first()
-        # response = self.client.get(f'/datadocument/{doc.pk}/')
         response = self.client.get(f"/datadocument/156051/")
         self.assertIn("Download Script", response.content.decode("utf-8"))
         self.assertIn("Extraction Script", response.content.decode("utf-8"))
@@ -296,7 +302,7 @@ class TestDynamicDetailFormsets(TestCase):
                     # seed data contains 2 tags for the 50 objects in this document
                     elp2t_count = ExtractedListPresenceToTag.objects.count()
                     # This post should preseve the 2 existing tags and add 2 more
-                    req = self.client.post(
+                    self.client.post(
                         path=reverse(
                             "save_list_presence_tag_form", kwargs={"pk": doc.pk}
                         ),

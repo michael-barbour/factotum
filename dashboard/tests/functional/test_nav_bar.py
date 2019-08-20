@@ -49,7 +49,7 @@ class NavBarTest(TestCase):
         response = self.client.get("/")
         self.assertContains(response, "Get Data")
         response = self.client.get("/get_data/")
-        self.assertContains(response, "Summary metrics by chemical")
+        self.assertContains(response, "Summary Metrics by Chemical")
 
     def test_data_curation(self):
         self.client.login(username="Karyn", password="specialP@55word")

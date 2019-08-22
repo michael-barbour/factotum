@@ -192,6 +192,7 @@ urlpatterns = [
         name="link_habitsandpractices",
     ),
     path("get_data/", views.get_data, name="get_data"),
+    path("bulk_documents/", views.BulkDocuments.as_view(), name="bulk_documents"),
     path("dl_chem_summary/", views.download_chem_stats, name="download_chem_stats"),
     path("upload/dtxsid_csv/", views.upload_dtxsid_csv, name="upload_dtxsid_csv"),
     path(

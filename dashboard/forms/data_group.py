@@ -189,20 +189,12 @@ class CleanCompFormSet(DGFormSet):
             Ingredient,
             fields=fields,
             translations={"id": "rawchem_ptr"},
+            required=fields,
             formfieldkwargs={
                 "script": {"queryset": Script.objects.filter(script_type="DC")}
             },
         )
         super().__init__(*args, **kwargs)
-
-    def clean(self):
-        csv_headers = set(self.data.bulk.fieldnames)
-        required_fields = set(self.dg.get_clean_comp_data_fieldnames())
-        missing_fields = required_fields - csv_headers
-        if missing_fields:
-            raise forms.ValidationError(
-                "The following CSV headers are missing: " + ", ".join(missing_fields)
-            )
 
     def save(self):
         rawchem_ptr_map = {
@@ -212,10 +204,8 @@ class CleanCompFormSet(DGFormSet):
             for f in self.forms
         }
         # The upd_fieldnames are the fields we are upating, so we'll
-        # again add our header fields, but also remove the id
+        # remove the id
         upd_fieldnames = set(self.dg.get_clean_comp_data_fieldnames())
-        for f in self.header_fields:
-            upd_fieldnames.add(f)
         upd_fieldnames.remove("id")
         with transaction.atomic():
             # Updates
@@ -226,14 +216,13 @@ class CleanCompFormSet(DGFormSet):
                 )
             ]
             for obj in ing_upd:
-                params = dict(rawchem_ptr_map[obj.rawchem_ptr_id])
-                params.pop("rawchem_ptr")
+                params = rawchem_ptr_map[obj.pk]
                 for key, value in params.items():
                     if key in upd_fieldnames:
                         setattr(obj, key, value)
             Ingredient.objects.bulk_update(ing_upd, list(upd_fieldnames))
             # Creates
-            upd_rawchem_ptr = set(i.rawchem_ptr_id for i in ing_upd)
+            upd_rawchem_ptr = set(i.rawchem_ptr for i in ing_upd)
             ing_new = []
             for f in self.forms:
                 rawchem_ptr = f.cleaned_data["id"].pk

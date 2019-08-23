@@ -5,7 +5,6 @@ volumes:
   es2data:
   esdata:
   lsdata:
-  lslastrun:
   kibanadata:
   kibanaoptdata:
 
@@ -90,7 +89,6 @@ services:
       SQL_HOST: host.docker.internal
       SQL_PORT: 3306
       QUERIES_DIR: /usr/share/logstash/queries
-      LASTRUN_DIR: /usr/share/logstash/lastrun
       JDBC_DRIVER_LIBRARY: "/opt/mysql-connector.jar"
       XPACK_MONITORING_ENABLED: "false"
       LS_JAVA_OPTS: "-Xms${LS_MEMORY_LIMIT} -Xmx${LS_MEMORY_LIMIT}"
@@ -98,8 +96,5 @@ services:
       - type: volume
         source: lsdata
         target: /usr/share/logstash/data
-      - type: volume
-        source: lslastrun
-        target: /usr/share/logstash/lastrun
     depends_on:
       - elasticsearch

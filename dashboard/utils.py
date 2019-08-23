@@ -169,8 +169,6 @@ def get_form_for_models(
                             queryset=modelfield.target_field.model.objects.all(), **k
                         )
                 apply_limit_choices_to_to_formfield(formfield)
-                if modelfield.validators != formfield.validators:
-                    formfield.validators = modelfield.validators
                 if f in required:
                     formfield.required = True
                 break
@@ -210,9 +208,7 @@ def gather_errors(form_instance, values=False):
                 except KeyError:
                     uniq = set()
             else:
-                uniq = list(set(row + 1 for row in i))
-                uniq.sort()
-                uniq = [str(i) for i in uniq]
+                uniq = set(str(row + 1) for row in i)
             if len(uniq) > 1:
                 i_str = "values" if values else "rows"
             elif len(uniq) == 1:

@@ -6,10 +6,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from dashboard.models import PUC, Product, ProductToPUC, ProductDocument, DSSToxLookup
 from dashboard.views.get_data import *
-from django.test import TestCase
-from django.test.client import Client
 
-from dashboard.views.get_data import *
 from dashboard.tests.loader import fixtures_standard
 
 

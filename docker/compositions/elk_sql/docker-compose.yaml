@@ -3,7 +3,6 @@ version: '3.5'
 
 volumes:
   sqldata:
-  es2data:
   esdata:
   lsdata:
   kibanadata:
@@ -48,30 +47,6 @@ services:
       --innodb_sort_buffer_size=${SQL_CONF_INNODB_SORT_BUFFER_SIZE:-1M}
       --binlog_cache_size=${SQL_CONF_BINLOG_CACHE_SIZE:-32K}
       --binlog_stmt_cache_size=${SQL_CONF_BINLOG_STMT_CACHE_SIZE:-32K}
-
-  elasticsearch2:
-    image: elasticsearch:2
-    restart: unless-stopped
-    environment:
-      ES_HEAP_SIZE: "${ES_MEMORY_LIMIT:-1g}"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    ports:
-      - 9202:9202
-      - 9302:9302
-    volumes:
-      - type: volume
-        source: es2data
-        target: /usr/share/elasticsearch/data
-    command: >
-      -Des.index.number_of_shards=1
-      -Des.index.number_of_replicas=0
-      -Des.node.local=true
-      -Des.bootstrap.memory_lock=true
-      -Des.xpack.monitoring.enabled=false
-      -Des.http.port=9202
 
   elasticsearch:
     build:

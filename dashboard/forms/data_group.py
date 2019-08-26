@@ -1,3 +1,4 @@
+import sys
 import uuid
 import zipfile
 
@@ -18,8 +19,8 @@ class DGFormSet(BaseBulkFormSet):
     can_order = False
     can_delete = False
     min_num = 1
-    max_num = 600
-    absolute_max = 1600
+    max_num = sys.maxsize
+    absolute_max = sys.maxsize
     validate_min = True
     validate_max = True
 

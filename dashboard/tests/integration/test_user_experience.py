@@ -37,7 +37,7 @@ class TestIntegration(StaticLiveServerTestCase):
         row_count = len(
             self.browser.find_elements_by_xpath("//table[@id='sources']/tbody/tr")
         )
-        self.assertEqual(row_count, 25, "Should be 25 datasources in the table")
+        self.assertEqual(row_count, 25, "Should only be 25 datasources in the table, due to paging")
         # go to edit page from datasource list
         self.browser.find_element_by_xpath('//*[@title="edit"]').click()
         btn = self.browser.find_element_by_name("cancel")

@@ -180,7 +180,7 @@ urlpatterns = [
         views.download_raw_chems_dg,
         name="download_raw_chems_dg",
     ),
-    path("dsstox/<str:sid>/", views.dsstox_lookup_detail, name="dsstox_lookup"),
+    path("chemical/<str:sid>/", views.dsstox_lookup_detail, name="dsstox_lookup"),
     path(
         "habitsandpractices/<int:pk>/",
         views.habitsandpractices,
@@ -236,7 +236,6 @@ urlpatterns = [
     ),
     path("chemical/<pk>/edit/", views.ChemUpdateView.as_view(), name="chem-update"),
     path("search/<str:model>/", views.search_model, name="search-model"),
-
 ]
 
 if settings.DEBUG is True:

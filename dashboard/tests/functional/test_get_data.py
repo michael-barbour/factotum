@@ -51,7 +51,7 @@ class TestGetData(TestCase):
 
         ds = dd.data_group.data_source
         p = Product.objects.create(
-            data_source=ds, title="Test Product", upc="Test UPC for ProductToPUC"
+            title="Test Product", upc="Test UPC for ProductToPUC"
         )
         pd = ProductDocument.objects.create(document=dd, product=p)
         dd.refresh_from_db()
@@ -163,7 +163,7 @@ class TestGetData(TestCase):
 
         ds = dd.data_group.data_source
         p = Product.objects.create(
-            data_source=ds, title="Test Product", upc="Test UPC for ProductToPUC"
+            title="Test Product", upc="Test UPC for ProductToPUC"
         )
         pd = ProductDocument.objects.create(document=dd, product=p)
         pd.save()

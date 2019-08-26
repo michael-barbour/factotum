@@ -1,3 +1,4 @@
+import sys
 import uuid
 import zipfile
 
@@ -18,8 +19,8 @@ class DGFormSet(BaseBulkFormSet):
     can_order = False
     can_delete = False
     min_num = 1
-    max_num = 600
-    absolute_max = 1600
+    max_num = sys.maxsize
+    absolute_max = sys.maxsize
     validate_min = True
     validate_max = True
 
@@ -243,7 +244,7 @@ class BulkAssignProdForm(forms.Form):
 
     def save(self):
         docs = DataDocument.objects.filter(data_group=self.dg, products=None).values(
-            "pk", "title", "extractedtext__prod_name", "data_group__data_source_id"
+            "pk", "title", "extractedtext__prod_name"
         )
         tmp_uuid = str(uuid.uuid4())
         prods = []
@@ -258,8 +259,7 @@ class BulkAssignProdForm(forms.Form):
                 title = doc["title"] + " stub"
             else:
                 title = "unknown"
-            data_source_id = doc["data_group__data_source_id"]
-            prods.append(Product(title=title, data_source_id=data_source_id, upc=upc))
+            prods.append(Product(title=title, upc=upc))
         with transaction.atomic():
             Product.objects.bulk_create(prods)
             created_prods = Product.objects.select_for_update().filter(

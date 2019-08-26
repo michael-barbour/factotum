@@ -235,6 +235,11 @@ urlpatterns = [
         "chemical/<int:doc>/create/", views.ChemCreateView.as_view(), name="chem-create"
     ),
     path("chemical/<pk>/edit/", views.ChemUpdateView.as_view(), name="chem-update"),
+    path(
+        "list_presence_tag/delete/<int:doc_pk>/<int:chem_pk>/<int:tag_pk>/",
+        views.list_presence_tag_delete,
+        name="list_presence_tag_delete",
+    ),
     path("search/<str:model>/", views.search_model, name="search-model"),
 ]
 

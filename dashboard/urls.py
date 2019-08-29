@@ -169,6 +169,8 @@ urlpatterns = [
         views.ListPresenceTagAutocomplete.as_view(),
         name="list_presence_tags_autocomplete",
     ),
+    path("search/", include("haystack.urls")),
+    path("find/", views.search.FacetedSearchView.as_view(), name="haystack_search"),
     path("p_json/", views.product_ajax, name="p_ajax_url"),
     path("pucs/", views.puc_list, name="puc_list"),
     path("puc/<int:pk>/", views.puc_detail, name="puc_detail"),

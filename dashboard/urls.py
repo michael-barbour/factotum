@@ -169,8 +169,6 @@ urlpatterns = [
         views.ListPresenceTagAutocomplete.as_view(),
         name="list_presence_tags_autocomplete",
     ),
-    path("search/", include("haystack.urls")),
-    path("find/", views.search.FacetedSearchView.as_view(), name="haystack_search"),
     path("p_json/", views.product_ajax, name="p_ajax_url"),
     path("pucs/", views.puc_list, name="puc_list"),
     path("puc/<int:pk>/", views.puc_detail, name="puc_detail"),
@@ -242,11 +240,6 @@ urlpatterns = [
         "chemical/<int:doc>/create/", views.ChemCreateView.as_view(), name="chem-create"
     ),
     path("chemical/<pk>/edit/", views.ChemUpdateView.as_view(), name="chem-update"),
-    path(
-        "list_presence_tag/delete/<int:doc_pk>/<int:chem_pk>/<int:tag_pk>/",
-        views.list_presence_tag_delete,
-        name="list_presence_tag_delete",
-    ),
     path("search/<str:model>/", views.search_model, name="search-model"),
 ]
 

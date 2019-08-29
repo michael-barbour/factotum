@@ -306,12 +306,7 @@ class TestDynamicDetailFormsets(TestCase):
                         path=reverse(
                             "save_list_presence_tag_form", kwargs={"pk": doc.pk}
                         ),
-                        data={
-                            "tags": "after_shave,agrochemical,flavor,slimicide",
-                            "chems": doc.extractedtext.rawchem.values_list(
-                                "pk", flat=True
-                            ),
-                        },
+                        data={"tags": "after_shave,agrochemical,flavor,slimicide"},
                     )
                     # Total number of tags should not have changed
                     self.assertEqual(

@@ -10,7 +10,13 @@ volumes:
 
 services:
   elasticsearch:
-    image: elasticsearch:6.7.2
+    build:
+      context: .
+      dockerfile: ../../dockerfiles/Dockerfile.elasticsearch
+      args:
+        MYSQL_CONNECTOR_VERSION: ${MYSQL_CONNECTOR_VERSION:-8.0.17}
+        BRANCH: ${FACTOTUM_ELASTIC_BRANCH:-dev}
+    image: factotum-elasticsearch
     restart: unless-stopped
     environment:
       discovery.type: single-node

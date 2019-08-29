@@ -49,13 +49,7 @@ services:
       --binlog_stmt_cache_size=${SQL_CONF_BINLOG_STMT_CACHE_SIZE:-32K}
 
   elasticsearch:
-    build:
-      context: .
-      dockerfile: ../../dockerfiles/Dockerfile.elasticsearch
-      args:
-        MYSQL_CONNECTOR_VERSION: ${MYSQL_CONNECTOR_VERSION:-8.0.17}
-        BRANCH: ${FACTOTUM_ELASTIC_BRANCH:-dev}
-    image: factotum-elasticsearch
+    image: elasticsearch:6.7.2
     restart: unless-stopped
     environment:
       discovery.type: single-node

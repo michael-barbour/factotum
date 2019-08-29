@@ -5,6 +5,6 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [("dashboard", "0120_auto_20190712_1054")]
+    dependencies = [("dashboard", "0121_remove_blank_dsstoxlookup_record")]
 
     operations = [migrations.RemoveField(model_name="product", name="data_source")]

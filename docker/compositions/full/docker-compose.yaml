@@ -7,7 +7,6 @@ volumes:
   lsdata:
   kibanadata:
   kibanaoptdata:
-  factotumstatic:
   factotumwsstatic:
 
 
@@ -51,13 +50,7 @@ services:
       --binlog_stmt_cache_size=${SQL_CONF_BINLOG_STMT_CACHE_SIZE:-32K}
 
   elasticsearch:
-    build:
-      context: .
-      dockerfile: ../../dockerfiles/Dockerfile.elasticsearch
-      args:
-        MYSQL_CONNECTOR_VERSION: ${MYSQL_CONNECTOR_VERSION:-8.0.17}
-        BRANCH: ${FACTOTUM_ELASTIC_BRANCH:-dev}
-    image: factotum-elasticsearch
+    image: elasticsearch:6.7.2
     restart: unless-stopped
     environment:
       discovery.type: single-node
@@ -120,51 +113,24 @@ services:
       - elasticsearch
       - mysql
 
-  factotum:
-    build:
-      context: .
-      dockerfile: ../../dockerfiles/Dockerfile.factotum
-      args:
-        BRANCH: ${FACTOTUM_BRANCH:-dev}
-    image: factotum
-    restart: unless-stopped
-    environment:
-      DJANGO_SECRET_KEY: "${SECRET_KEY}"
-      SQL_DATABASE: "${SQL_DATABASE:-factotum}"
-      SQL_USER: "${SQL_USER:-factotum}"
-      SQL_PASSWORD: "${SECRET_KEY}"
-      SQL_HOST: mysql
-      ELASTICSEARCH_HOST: elasticsearch
-      ELASTICSEARCH_PORT: 9200
-      GUNICORN_CMD_ARGS: ${FACTOTUM_GUNICORN_CMD_ARGS:---bind=0.0.0.0:8000 --workers=3 --forwarded-allow-ips="*"}
-    ports:
-      - 8000:8000
-    volumes:
-      - type: volume
-        source: factotumstatic
-        target: /app/static_collect
-    depends_on:
-      - mysql
-      - elasticsearch2
-      - elasticsearch
-
   factotum-ws:
     build:
       context: .
       dockerfile: ../../dockerfiles/Dockerfile.factotum_ws
       args:
-        BUILD_TYPE: ${FACTOTUM_WS_BUILD_TYPE:-dev}
+        BUILD_TYPE: ${FACTOTUM_WS_BUILD_TYPE:-prod}
         BRANCH: ${FACTOTUM_WS_BRANCH:-dev}
     image: factotum-ws
     restart: unless-stopped
     environment:
+      FLASK_SECRET_KEY: ${SECRET_KEY}
       FLASK_ENV: development
-      FLASK_SECRET_KEY: "${SECRET_KEY}"
-      FLASK_SQL_HOST: mysql
-      FLASK_SQL_USER: "${SQL_USER:-factotum}"
-      FLASK_SQL_PASSWORD: "${SECRET_KEY}"
-      FLASK_SQL_DATABASE: "${SQL_DATABASE:-factotum}"
-      FLASK_APPLICATION_ROOT: /app
+      FLASK_DEBUG: "true"
+      SQL_HOST: mysql
+      SQL_USER: "${SQL_USER:-factotum}"
+      SQL_PASSWORD: "${SECRET_KEY}"
+      SQL_DATABASE: "${SQL_DATABASE:-factotum}"
+      GUNICORN_CMD_ARGS: ${FACTOTUM_WS_GUNICORN_CMD_ARGS:---bind=0.0.0.0:5000 --workers=3 --forwarded-allow-ips="*"}
     ports:
       - 5000:5000
     volumes:

@@ -154,4 +154,5 @@ src/
 
 # docker
 /docker/compositions/elk/docker.settings_secret.py
+/chromedriver.exe
 /mysql.cnf

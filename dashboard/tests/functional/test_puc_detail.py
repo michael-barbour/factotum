@@ -2,8 +2,8 @@ from lxml import html
 
 from django.test import TestCase, override_settings
 
-from dashboard.models import *
-from dashboard.tests.loader import *
+from dashboard.models import PUC
+from dashboard.tests.loader import fixtures_standard
 
 
 @override_settings(ALLOWED_HOSTS=["testserver"])
@@ -38,3 +38,17 @@ class TestPUCDetail(TestCase):
         self.assertIn("/ laundry detergent", prod_type)
         kind = response_html.xpath('//*[@id="puc_kind"]/text()')
         self.assertIn("formulations", kind)
+
+    def test_puc_taxonomies(self):
+        response = self.client.get("/puc/62/").content.decode("utf8")
+        response_html = html.fromstring(response)
+        taxonomy_div = response_html.xpath('//*[@id="taxonomies"]/span/text()')
+        self.assertIn("No taxonomies are linked to this PUC", taxonomy_div)
+
+        puc = PUC.objects.get(pk=20)
+        puc_taxonomies = puc.get_linked_taxonomies()
+        response = self.client.get(puc.url).content.decode("utf8")
+        response_html = html.fromstring(response)
+        taxonomy_div = response_html.xpath('//*[@id="taxonomies"]/dl/dd/button/text()')
+        for taxonomy in puc_taxonomies:
+            self.assertInHTML(taxonomy.title, taxonomy_div)

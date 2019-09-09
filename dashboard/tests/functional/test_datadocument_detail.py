@@ -232,6 +232,33 @@ class DataDocumentDetailTest(TestCase):
             "Long DataDocument chemical names not truncated in sidebar.",
         )
 
+    def _get_icon_span(self, doc):
+        response = self.client.get("/datadocument/" + doc.split(".")[0] + "/")
+        h = html.fromstring(response.content.decode("utf8"))
+        return h.xpath("//a[contains(@href, '%s')]/span" % doc)[0].values()[0]
+
+    def test_icons(self):
+        icon_span = self._get_icon_span("173396.doc")
+        self.assertEqual("fa fa-fs fa-file-word", icon_span)
+        icon_span = self._get_icon_span("173824.jpg")
+        self.assertEqual("fa fa-fs fa-file-image", icon_span)
+        icon_span = self._get_icon_span("174238.docx")
+        self.assertEqual("fa fa-fs fa-file-word", icon_span)
+        icon_span = self._get_icon_span("176163.misc")
+        self.assertEqual("fa fa-fs fa-file", icon_span)
+        icon_span = self._get_icon_span("176257.tiff")
+        self.assertEqual("fa fa-fs fa-file-image", icon_span)
+        icon_span = self._get_icon_span("177774.xlsx")
+        self.assertEqual("fa fa-fs fa-file-excel", icon_span)
+        icon_span = self._get_icon_span("177852.csv")
+        self.assertEqual("fa fa-fs fa-file-csv", icon_span)
+        icon_span = self._get_icon_span("178456.xls")
+        self.assertEqual("fa fa-fs fa-file-excel", icon_span)
+        icon_span = self._get_icon_span("178496.txt")
+        self.assertEqual("fa fa-fs fa-file-alt", icon_span)
+        icon_span = self._get_icon_span("172462.pdf")
+        self.assertEqual("fa fa-fs fa-file-pdf", icon_span)
+
 
 class TestDynamicDetailFormsets(TestCase):
     fixtures = fixtures_standard

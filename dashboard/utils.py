@@ -102,6 +102,8 @@ class SimpleTree:
             root = next(l for l in root.leaves if l.name == name)
         return root
 
+    def n_children(self):
+	        return sum(1 for p in self.iter() if p.value) - 1
 
 def get_extracted_models(t):
     """Returns the parent model function and and the associated child model

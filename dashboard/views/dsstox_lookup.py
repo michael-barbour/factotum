@@ -11,7 +11,7 @@ from dashboard.models import DSSToxLookup, ProductDocument, PUC, ExtractedListPr
 def dsstox_lookup_detail(request, sid):
     s = get_object_or_404(DSSToxLookup, sid=sid)
     qs = ExtractedListPresence.objects.filter(dsstox=s)
-    tagDict = dict(Counter([tuple(x.tags.all()) for x in qs]))
+    tagDict = dict(Counter([tuple(x.tags.all()) for x in qs if x.tags.exists()]))
     pdocs = ProductDocument.objects.from_chemical(s)
     all_pucs = accumulate_pucs(
         PUC.objects.filter(products__in=pdocs.values("product")).distinct()

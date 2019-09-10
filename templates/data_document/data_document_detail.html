@@ -14,8 +14,9 @@
     <!-- DataDocument title -->
     <div class="col-lg-10 border-bottom"
          data-toggle="tooltip"
+         data-html="true"
          data-placement="bottom"
-         title="{{ doc.title }}"
+         title="{{ doc.title }}{% if doc.subtitle %}<br>{{ doc.subtitle }}{% endif %}"
          id="title">
         <h1>{{ doc.title|truncatechars:45 }}</h1>
         {% if doc.subtitle %}

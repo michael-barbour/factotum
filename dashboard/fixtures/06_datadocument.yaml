@@ -8468,7 +8468,8 @@
     filename: HHE_0.pdf
     title: '"Evaluation of a Medicinal Cannabis Manufacturing Facility with an Indoor
       and Outdoor Grow Operation"'
-    subtitle: null
+    subtitle: "Subtitle: Someone is having fun with Datadocument Titles! This subtitle
+      is more than 90 characters long, thereby ensuring that ellipses will be used"
     url: https://github.com/HumanExposure/factotum/files/2861896/HHE_1.pdf
     raw_category: null
     data_group: 51

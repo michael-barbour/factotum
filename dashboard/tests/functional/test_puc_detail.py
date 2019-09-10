@@ -52,3 +52,21 @@ class TestPUCDetail(TestCase):
         taxonomy_div = response_html.xpath('//*[@id="taxonomies"]/dl/dd/button/text()')
         for taxonomy in puc_taxonomies:
             self.assertInHTML(taxonomy.title, taxonomy_div)
+
+    def test_curated_chemical_count(self):
+        from dashboard.models import ExtractedChemical, DSSToxLookup, ProductDocument
+
+        puc = PUC.objects.get(pk=169)
+        self.assertEqual(puc.curated_chemical_count, 0)
+        dss = DSSToxLookup.objects.get(pk=11)
+        for chem_id in [144, 339]:
+            ec = ExtractedChemical.objects.get(pk=chem_id)
+            if ec.extracted_text.data_document.product_set.exists():
+                p = ec.extracted_text.data_document.product_set.first()
+            else:
+                doc = ec.extracted_text.data_document
+            ec.dsstox = dss
+            ec.save()
+        ProductDocument.objects.create(document=doc, product=p)
+        puc = PUC.objects.get(pk=169)
+        self.assertEqual(puc.curated_chemical_count, 1)

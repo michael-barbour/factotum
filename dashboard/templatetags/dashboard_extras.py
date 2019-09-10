@@ -15,6 +15,7 @@ ICON_MAP = {
     ".tiff": "-image",
 }
 
+
 @register.filter
 def fileicon(value):
     _, ext = os.path.splitext(value)

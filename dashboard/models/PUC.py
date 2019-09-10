@@ -102,16 +102,17 @@ class PUC(CommonInfo):
     @property
     def curated_chemical_count(self):
         docs = ProductDocument.objects.filter(product__in=self.products.all())
-        chems = (
+        return (
             RawChem.objects.filter(
                 extracted_text__data_document__in=docs.values_list(
                     "document", flat=True
-                )
+                ),
+                dsstox__isnull=False,
             )
-            .annotate(chems=Count("dsstox", distinct=True))
-            .aggregate(chem_count=Sum("chems"))
+            .values("dsstox")
+            .distinct()
+            .count()
         )
-        return chems["chem_count"] or 0
 
     @property
     def document_count(self):

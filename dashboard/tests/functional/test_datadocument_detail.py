@@ -78,6 +78,7 @@ class DataDocumentDetailTest(TestCase):
         response = self.client.get(f"/datadocument/156051/")
         self.assertIn("Download Script", response.content.decode("utf-8"))
         self.assertIn("Extraction Script", response.content.decode("utf-8"))
+        self.assertIn("Cleaning Script", response.content.decode("utf-8"))
         comptox = "https://comptox.epa.gov/dashboard/dsstoxdb/results?search="
         self.assertContains(response, comptox)
 

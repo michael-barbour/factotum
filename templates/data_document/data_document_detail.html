@@ -36,6 +36,16 @@
                href="{{ doc.pdf_url }}">
                 <span class="fa fa-fs {{ doc.pdf_url|fileicon }}"></span>
             </a>
+            {% if ingredients %}
+            {% with ingredient=ingredients.first %}
+            <a class="btn btn-outline-secondary btn-sm hover-info"
+               title="Cleaning Script"
+               data-toggle="tooltip"               
+               href="{{ ingredient.script.url }}">
+                <span class="fas fa-broom"></span>
+            </a>
+            {% endwith %}
+            {% endif %}
             <a class="btn btn-outline-secondary btn-sm hover-success"
                title="edit"
                data-toggle="tooltip"

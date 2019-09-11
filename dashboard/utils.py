@@ -103,7 +103,8 @@ class SimpleTree:
         return root
 
     def n_children(self):
-	    return sum(1 for p in self.iter() if p.value) - 1
+ 	      return sum(1 for p in self.iter() if p.value) - 1
+
 
     
 def get_extracted_models(t):

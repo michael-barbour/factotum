@@ -40,7 +40,7 @@ function renderDataTable(boolComp, boolHab, fsid) {
             return [
                 "<div class='text-center'>",
                 "<a class='btn btn-sm btn-outline-secondary hover-danger' title='Delete' ",
-                "href ='datadocument/delete/" + row.id + "/'",
+                "href ='/datadocument/delete/" + row.id + "/'",
                 ">",
                 "<span class='fa fa-trash'></span>",
                 "</a>",

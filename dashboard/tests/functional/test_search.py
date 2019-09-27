@@ -62,6 +62,10 @@ class TestSearch(TestCase):
         string = "Arts and crafts/Office supplies"
         self.assertIn(string, str(response.content))
 
+        response = self.client.get("/search/chemical/?q=" + b64)
+        string = "DTXSID6026296"
+        self.assertIn(string, str(response.content))
+
     def test_number_returned(self):
         # products
         qs = self._get_query_str("water")
@@ -82,6 +86,13 @@ class TestSearch(TestCase):
         total_took = response_html.xpath('normalize-space(//*[@id="total-took"])')
         expected_total = "11 pucs"
         self.assertIn(expected_total, total_took)
+        # chemicals
+        response = self.client.get("/search/chemical/" + qs)
+        response_html = html.fromstring(response.content.decode("utf8"))
+        total_took = response_html.xpath('normalize-space(//*[@id="total-took"])')
+        expected_total = "18 chemicals"
+        self.assertIn(expected_total, total_took)
+
 
     def test_facets(self):
         qs = self._get_query_str("water", {"product_brandname": ["3M"]})

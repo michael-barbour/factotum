@@ -160,12 +160,13 @@ class SimpleTree(MutableMapping):
     def asdict(self):
         """Return a dictionary representation of the tree.
         """
-        d = {"name": self.name}
-        if self._is_item:
-            d["value"] = self.value
-        if self.children:
-            d["children"] = [child.asdict() for child in self.children]
-        return d
+        root = self
+        for name in names:
+            root = next(l for l in root.leaves if l.name == name)
+        return root
+
+    def n_children(self):
+        return sum(1 for p in self.iter() if p.value) - 1
 
 
 def get_extracted_models(t):

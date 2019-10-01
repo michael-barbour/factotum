@@ -9,7 +9,7 @@ class CSVReader:
     """Like csv.DictReader, except includes a low memory __getitem__ and __len__."""
 
     def __init__(self, f, *args, **kwargs):
-        max_num = kwargs.pop("max_num", 2*formsets.DEFAULT_MAX_NUM)
+        max_num = kwargs.pop("max_num", 2 * formsets.DEFAULT_MAX_NUM)
         skip = kwargs.pop("skip", 0)
         fieldnames = kwargs.pop("fieldnames", None)
         if type(f.file) is io.StringIO:

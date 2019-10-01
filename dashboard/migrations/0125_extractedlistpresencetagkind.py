@@ -10,7 +10,7 @@ def insert_kinds_fwd(apps, schema_editor):
     ExtractedListPresenceTagKind = apps.get_model(
         "dashboard", "ExtractedListPresenceTagKind"
     )
-    original_merge_time = datetime.fromisoformat("2019-06-21 15:44:00.000000")
+    original_merge_time = datetime.fromtimestamp(1561146240)
     db_alias = schema_editor.connection.alias
     ExtractedListPresenceTagKind.objects.using(db_alias).bulk_create(
         [

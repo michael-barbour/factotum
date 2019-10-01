@@ -393,8 +393,6 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
         self.assertEqual(
             num_pucs, len(bubbles), ("There should be a circle" "drawn for every PUC")
         )
-        # self.browser.back()
-
 
     def test_delete_dd_from_dg(self):
         """

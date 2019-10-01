@@ -63,16 +63,22 @@ class ExtractedListPresenceToTag(TaggedItemBase, CommonInfo):
         return str(self.content_object)
 
 
+class ExtractedListPresenceTagKind(CommonInfo):
+    name = models.CharField(max_length=50, unique=True)
+
+    class Meta:
+        verbose_name = _("Extracted list presence keyword kind")
+        verbose_name_plural = _("Extracted list presence keyword kinds")
+
+    def __str__(self):
+        return str(self.name)
+
+
 class ExtractedListPresenceTag(TagBase, CommonInfo):
-
-    KIND_CHOICES = [
-        ("GU", "General use"),
-        ("PH", "Pharmaceutical"),
-        ("LP", "List presence"),
-    ]
-
     definition = models.CharField("Definition", max_length=750, null=True, blank=True)
-    kind = models.CharField(max_length=2, default="GU", choices=KIND_CHOICES)
+    kind = models.ForeignKey(
+        ExtractedListPresenceTagKind, default=1, on_delete=models.PROTECT
+    )
 
     class Meta:
 

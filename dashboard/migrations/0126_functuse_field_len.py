@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('dashboard', '0124_doc_url_length'),
+        ('dashboard', '0125_extractedlistpresencetagkind'),
     ]
 
     operations = [

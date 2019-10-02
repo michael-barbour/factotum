@@ -394,6 +394,7 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
             num_pucs, len(bubbles), ("There should be a circle" "drawn for every PUC")
         )
 
+
     def test_delete_dd_from_dg(self):
         """
         The seed data includes an unmatched data document that 

@@ -198,15 +198,17 @@ class DataDocumentDetailTest(TestCase):
         trunc_title = doc.title[: trunc_length - 1] + "…"
         html_title = response_html.xpath('//*[@id="title"]/h1')[0].text
         self.assertEqual(trunc_title, html_title, "DataDocument title not truncated.")
-
+    
     def test_subtitle_ellipsis(self):
         id = 354783
         doc = DataDocument.objects.get(id=id)
-        subtitle = doc.subtitle
+        subtitle = doc.subtitle 
         subtitle45 = subtitle[:45]
         response = self.client.get("/datadocument/%i/" % id)
         # Confirm that the displayed subtitle is truncated and ... is appended
         self.assertContains(response, "This subtitle is more than 90 c…")
+
+
 
     def test_chemname_ellipsis(self):
         """Check that DataDocument chemical names get truncated"""

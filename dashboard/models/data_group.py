@@ -198,6 +198,7 @@ class DataGroup(CommonInfo):
                 "unit_type",
                 "ingredient_rank",
                 "raw_central_comp",
+                "component",
             ]
         if self.type == "CP":
             for name in ["prod_name", "rev_num"]:

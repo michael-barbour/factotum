@@ -90,7 +90,7 @@ class TestSearch(TestCase):
         response = self.client.get("/search/chemical/" + qs)
         response_html = html.fromstring(response.content.decode("utf8"))
         total_took = response_html.xpath('normalize-space(//*[@id="total-took"])')
-        expected_total = "18 chemicals"
+        expected_total = "1 chemicals"
         self.assertIn(expected_total, total_took)
 
 
@@ -108,7 +108,7 @@ class TestSearch(TestCase):
         response = self.client.get("/search/product/" + qs)
         response_html = html.fromstring(response.content.decode("utf8"))
         total_took = response_html.xpath('normalize-space(//*[@id="total-took"])')
-        expected_total = "4 products returned"
+        expected_total = "3 products returned"
         self.assertIn(expected_total, total_took)
 
         # Test comma

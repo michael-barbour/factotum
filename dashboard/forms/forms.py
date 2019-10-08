@@ -133,7 +133,7 @@ class ExtractedTextQAForm(forms.ModelForm):
 class ProductLinkForm(forms.ModelForm):
     required_css_class = "required"  # adds to label tag
     document_type = forms.ModelChoiceField(
-        queryset=DocumentType.objects.all(), label="Data Document Type", required=False
+        queryset=DocumentType.objects.all(), label="Data Document Type", required=True
     )
 
     return_url = forms.CharField()

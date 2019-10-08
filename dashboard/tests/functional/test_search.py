@@ -93,7 +93,6 @@ class TestSearch(TestCase):
         expected_total = "1 chemicals"
         self.assertIn(expected_total, total_took)
 
-
     def test_facets(self):
         qs = self._get_query_str("water", {"product_brandname": ["3M"]})
         response = self.client.get("/search/product/" + qs)

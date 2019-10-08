@@ -15,7 +15,7 @@ class CSVReader:
         if type(f.file) is io.StringIO:
             self.f = f
         elif type(f.file) is io.BytesIO:
-            self.f = io.TextIOWrapper(f.file, encoding="utf-8", newline="")
+            self.f = io.TextIOWrapper(f.file, encoding="utf-8-sig", newline="")
         else:
             raise ValueError("Unknown file type.")
         self.reader = csv.reader(self.f, *args, **kwargs)

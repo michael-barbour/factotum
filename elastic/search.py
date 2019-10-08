@@ -89,6 +89,7 @@ FRIENDLY_FIELDS = {
 
 TOTAL_COUNT_AGG = "unique_total_count"
 
+
 class ElasticPaginator:
     """To be used with Django's paginator"""
 
@@ -215,7 +216,7 @@ def run_query(
         a.metric("unique_count", "cardinality", field=id_field)
         s.aggs.bucket(facet, a)
     # add cardinal aggregation on id_field to get unique total count
-    s.aggs.bucket(TOTAL_COUNT_AGG, A("cardinality", field=id_field))    
+    s.aggs.bucket(TOTAL_COUNT_AGG, A("cardinality", field=id_field))
     # execute the search
     response = s.execute().to_dict()
     # gather the results
@@ -251,7 +252,7 @@ def run_query(
             results_facets_list.append(results_facets_object)
         results_facets[facet] = results_facets_list
     # get unique total count
-    length = response_aggs[TOTAL_COUNT_AGG]["value"]  
+    length = response_aggs[TOTAL_COUNT_AGG]["value"]
     # replace hits with paginator
     if page is not None:
         espaginator = ElasticPaginator(

@@ -8438,7 +8438,7 @@
   fields:
     extracted_text: 127870
     raw_cas: 120-47-8
-    raw_chem_name: Ethylparaben
+    raw_chem_name: "Benzoic acid"
     temp_id: 27216
     temp_obj_name: ExtractedChemical
     rid: DTXRID0073
@@ -26137,3 +26137,13 @@
     analytical_method: " TSI DustTrak\u2122 DRX 8533 Aerosol Monitor\""
     num_measure: null
     num_nondetect: null
+- model: dashboard.rawchem
+  pk: 855
+  fields:
+    extracted_text: 127870
+    raw_cas: 50594-66-6
+    raw_chem_name: "5-(2-Chloro-alapha,alpha,alpha-trifluoro-p-tolyloxy)-2-nitrobenzoic acid"
+    temp_id: 27216
+    temp_obj_name: ExtractedChemical
+    rid: 
+    dsstox: 

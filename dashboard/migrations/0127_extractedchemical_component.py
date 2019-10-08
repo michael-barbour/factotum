@@ -6,34 +6,46 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('dashboard', '0126_functuse_field_len'),
-    ]
+    dependencies = [("dashboard", "0126_functuse_field_len")]
 
     operations = [
         migrations.AddField(
-            model_name='extractedchemical',
-            name='component',
-            field=models.CharField(blank=True, max_length=200, null=True, verbose_name='Component'),
+            model_name="extractedchemical",
+            name="component",
+            field=models.CharField(
+                blank=True, max_length=200, null=True, verbose_name="Component"
+            ),
         ),
         migrations.AlterField(
-            model_name='extractedchemical',
-            name='unit_type',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='dashboard.UnitType', verbose_name='Unit type'),
+            model_name="extractedchemical",
+            name="unit_type",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to="dashboard.UnitType",
+                verbose_name="Unit type",
+            ),
         ),
         migrations.AlterField(
-            model_name='extractedchemical',
-            name='weight_fraction_type',
-            field=models.ForeignKey(default='1', null=True, on_delete=django.db.models.deletion.PROTECT, to='dashboard.WeightFractionType', verbose_name='Weight fraction type'),
+            model_name="extractedchemical",
+            name="weight_fraction_type",
+            field=models.ForeignKey(
+                default="1",
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to="dashboard.WeightFractionType",
+                verbose_name="Weight fraction type",
+            ),
         ),
         migrations.AlterField(
-            model_name='unittype',
-            name='description',
-            field=models.TextField(blank=True, null=True, verbose_name='Unit Type'),
+            model_name="unittype",
+            name="description",
+            field=models.TextField(blank=True, null=True, verbose_name="Unit Type"),
         ),
         migrations.AlterField(
-            model_name='unittype',
-            name='title',
-            field=models.CharField(max_length=50, verbose_name='Unit Type'),
+            model_name="unittype",
+            name="title",
+            field=models.CharField(max_length=50, verbose_name="Unit Type"),
         ),
     ]

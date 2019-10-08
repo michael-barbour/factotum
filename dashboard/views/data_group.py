@@ -359,12 +359,10 @@ def download_registered_datadocuments(request, pk):
             filename=filename,
             field_header_map={"id": "DataDocument_id"},
             use_verbose_names=False,
-            encoding="utf-8"
+            encoding="utf-8",
         )
     else:
         qs = DataDocument.objects.filter(data_group_id=0).values(*columnlist)
         return render_to_csv_response(
-            qs,
-            filename="registered_documents.csv",
-            use_verbose_names=False,
+            qs, filename="registered_documents.csv", use_verbose_names=False
         )

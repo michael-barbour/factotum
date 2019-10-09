@@ -44,9 +44,7 @@ class DataGroup(CommonInfo):
     fs_id = models.UUIDField(default=uuid.uuid4, editable=False)
     csv = models.FileField(upload_to=csv_upload_path, null=True)
     zip_file = models.CharField(max_length=100)
-    group_type = models.ForeignKey(
-        GroupType, on_delete=models.SET_DEFAULT, default=1, null=True, blank=True
-    )
+    group_type = models.ForeignKey(GroupType, on_delete=models.SET_DEFAULT, default=1)
     url = models.CharField(max_length=150, blank=True, validators=[URLValidator()])
 
     tracker = FieldTracker()
@@ -198,6 +196,7 @@ class DataGroup(CommonInfo):
                 "unit_type",
                 "ingredient_rank",
                 "raw_central_comp",
+                "component",
             ]
         if self.type == "CP":
             for name in ["prod_name", "rev_num"]:

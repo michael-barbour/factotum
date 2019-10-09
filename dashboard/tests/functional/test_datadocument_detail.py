@@ -97,7 +97,7 @@ class DataDocumentDetailTest(TestCase):
         data = {
             "title": ["New Product"],
             "upc": ["stub_9860"],
-            "document_type": [""],
+            "document_type": ["29"],
             "return_url": ["/datadocument/167497/"],
         }
         response = self.client.post("/link_product_form/167497/", data=data)
@@ -112,7 +112,7 @@ class DataDocumentDetailTest(TestCase):
         data = {
             "title": ["Product Title"],
             "upc": ["stub_9100"],
-            "document_type": [""],
+            "document_type": ["29"],
             "return_url": ["/datadocument/245401/"],
         }
         response = self.client.post("/link_product_form/245401/", data=data)
@@ -125,7 +125,7 @@ class DataDocumentDetailTest(TestCase):
         data = {
             "title": ["Product Title"],
             "upc": ["stub_9101"],
-            "document_type": [""],
+            "document_type": ["29"],
             "return_url": ["/datadocument/245401/"],
         }
         response = self.client.post("/link_product_form/245401/", data=data)
@@ -385,13 +385,9 @@ class TestDynamicDetailFormsets(TestCase):
 
         # seed data should have one data document with a chemical, but no tags
         response = self.client.get(reverse("list_presence_tag_curation"))
-        self.assertContains(
-            response, 'href="/datadocument/354786/' + '"'
-        )
+        self.assertContains(response, 'href="/datadocument/354786/' + '"')
 
         # add a tag and make sure none get returned
-        ExtractedListPresenceToTag.objects.create(content_object_id=854,tag_id=323)
+        ExtractedListPresenceToTag.objects.create(content_object_id=854, tag_id=323)
         response = self.client.get(reverse("list_presence_tag_curation"))
-        self.assertNotContains(
-            response, 'href="/datadocument/354786/' + '"'
-        )
+        self.assertNotContains(response, 'href="/datadocument/354786/' + '"')

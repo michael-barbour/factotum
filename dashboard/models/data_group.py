@@ -1,9 +1,9 @@
 import os
 import uuid
-from factotum import settings
 from pathlib import PurePath
 
 from django.apps import apps
+from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from model_utils import FieldTracker

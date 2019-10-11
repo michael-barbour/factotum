@@ -167,7 +167,7 @@ class SimpleTree(MutableMapping):
             d["children"] = [child.asdict() for child in self.children]
         return d
 
-    
+
 def get_extracted_models(t):
     """Returns the parent model function and the associated child model
     based on datagroup type"""

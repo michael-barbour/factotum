@@ -8,6 +8,7 @@ from dashboard.models import (
     ExtractedText,
     ExtractedCPCat,
     ExtractedHHDoc,
+    ExtractedHHRec,
     ExtractedListPresenceToTag,
     ExtractedListPresenceTag,
     DataDocument,
@@ -391,3 +392,13 @@ class TestDynamicDetailFormsets(TestCase):
         ExtractedListPresenceToTag.objects.create(content_object_id=854, tag_id=323)
         response = self.client.get(reverse("list_presence_tag_curation"))
         self.assertNotContains(response, 'href="/datadocument/354786/' + '"')
+
+    def test_missing_raw_chem_names(self):
+        # Add new HHRec object with no raw_chem_name
+        ext = ExtractedText.objects.get(data_document_id=354782)
+        hhrec = ExtractedHHRec(
+            sampling_method="test sampling method", extracted_text=ext
+        )
+        hhrec.save()
+        response = self.client.get("/datadocument/%i/" % ext.data_document_id)
+        self.assertIn("None\n                </h3>", response.content.decode("utf-8"))

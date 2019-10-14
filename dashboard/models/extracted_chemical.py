@@ -49,9 +49,6 @@ class ExtractedChemical(CommonInfo, RawChem):
     class Meta:
         ordering = (F("ingredient_rank").asc(nulls_last=True),)
 
-    def __str__(self):
-        return str(self.raw_chem_name) if self.raw_chem_name else ""
-
     def clean(self):
         # Don't allow the unit_type to be empty if there are raw_min_comp,
         # raw_central_comp, or raw_max_comp values.

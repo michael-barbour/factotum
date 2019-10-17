@@ -24,9 +24,7 @@ from dashboard.models import (
     ExtractedListPresenceToTag,
     ExtractedListPresenceTag,
     ExtractedChemical,
-    ExtractedFunctionalUse,
     RawChem,
-    Ingredient,
 )
 
 
@@ -38,7 +36,7 @@ def data_document_detail(request, pk):
     Parent, Child = get_extracted_models(doc.data_group.group_type.code)
     ext = Parent.objects.filter(pk=doc.pk).first()
     chemicals = Child.objects.filter(extracted_text__data_document=doc)
-    ingredients = Ingredient.objects.filter(
+    ingredients = ExtractedChemical.objects.filter(
         rawchem_ptr_id__in=chemicals.values_list("pk", flat=True)
     )
     lp = ExtractedListPresence.objects.filter(

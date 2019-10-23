@@ -34,3 +34,4 @@ from .raw_chem import RawChem
 from .taxonomy import Taxonomy
 from .taxonomy_source import TaxonomySource
 from .taxonomy_to_PUC import TaxonomyToPUC
+from .audit_log import AuditLog

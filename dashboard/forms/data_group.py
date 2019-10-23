@@ -178,7 +178,7 @@ class ExtractFileFormSet(DGFormSet):
                     except Parent.DoesNotExist:
                         obj = Parent(**params)
                         obj.save()
-                    parent_collected_ids.add(params["data_document_id"])
+                    parent_collected_ids.add(obj)
             # Child create
             for f in self.forms:
                 params = clean_dict(f.cleaned_data, Child)

@@ -31,7 +31,7 @@ class DataDocumentDetailTest(TestCase):
     def test_absent_extracted_text(self):
         # Check every data document and confirm that its detail page loads,
         # with or without a detail formset
-        for dd in DataDocument.objects.all():
+        for dd in DataDocument.objects.exclude(data_group__group_type__code="SD"):
             ddid = dd.id
             resp = self.client.get("/datadocument/%s/" % ddid)
             self.assertEqual(

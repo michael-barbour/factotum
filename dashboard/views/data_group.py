@@ -48,6 +48,7 @@ def data_group_detail(request, pk, template_name="data_group/datagroup_detail.ht
         "fsid": dg.fs_id,
         "boolComp": dg.is_composition,
         "boolHab": dg.is_habits_and_practices,
+        "boolSD": dg.is_supplemental_doc,
         "numregistered": dg.registered_docs(),
         "nummatched": dg.matched_docs(),
         "numextracted": dg.extracted_docs(),
@@ -167,6 +168,8 @@ def data_group_documents_table(request, pk):
             "product_id",
             "product_title",
         )
+    elif dg.is_supplemental_doc:
+        doc_vals = docs.values("id", "title", "matched", "fileext")
     else:
         doc_vals = docs.values("id", "title", "matched", "fileext", "extracted")
     return JsonResponse({"data": list(doc_vals)})

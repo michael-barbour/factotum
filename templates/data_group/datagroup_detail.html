@@ -317,12 +317,14 @@
   <div class="col-md-4 mt-1">
     <p class="lead"><span class="font-weight-normal">{{ tabledata.nummatched }}</span><span class="text-black-50">/{{ tabledata.numregistered }}</span> matched documents</p>
   </div>
+  {% if not datagroup.is_supplemental_doc %}
   <div class="col-md-2 text-right">
     <svg width="50" height="50" id="extracteddonut"></svg>
   </div>
   <div class="col-md-4 mt-1">
     <p class="lead"><span class="font-weight-normal">{{ tabledata.numextracted }}</span><span class="text-black-50">/{{ tabledata.numregistered }}</span> extracted documents</p>
   </div>
+  {% endif %}
 </div>
 <form method="POST" id="bulkassignprod_form">
   {% csrf_token %}
@@ -330,10 +332,12 @@
 <div class="row">
   <div class="col-md-12">
     <table class="table" id="docs">
-      {% if bulkassignprod_form %}
-        <button class="btn btn-sm btn-outline-primary float-md-right" name="bulkassignprod-submit" form="bulkassignprod_form" type="submit">
-          Bulk Create {{ bulkassignprod_form.count }} Products
-        </button>
+      {% if not datagroup.is_supplemental_doc %}
+        {% if bulkassignprod_form %}
+          <button class="btn btn-sm btn-outline-primary float-md-right" name="bulkassignprod-submit" form="bulkassignprod_form" type="submit">
+            Bulk Create {{ bulkassignprod_form.count }} Products
+          </button>
+        {% endif %}
       {% endif %}
       <thead>
         <tr>
@@ -342,7 +346,9 @@
           {% if datagroup.is_habits_and_practices %}
           <th class="text-center">Edit</th>
           {% else %}
-          <th class="text-center">Extracted</th>
+            {% if not datagroup.is_supplemental_doc %}
+            <th class="text-center">Extracted</th>
+            {% endif %}
           {% endif %}
           {% if datagroup.is_composition %}
           <th class="text-center">Product</th>

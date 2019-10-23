@@ -32,6 +32,12 @@ from dashboard.models import (
 def data_document_detail(request, pk):
     template_name = "data_document/data_document_detail.html"
     doc = get_object_or_404(DataDocument, pk=pk)
+    if doc.data_group.group_type.code == "SD":
+        messages.info(
+            request,
+            f'"{doc}" has no detail page. GroupType is "{doc.data_group.group_type}"',
+        )
+        return redirect(reverse("data_group_detail", args=[doc.data_group_id]))
     ParentForm, _ = create_detail_formset(doc)
     Parent, Child = get_extracted_models(doc.data_group.group_type.code)
     ext = Parent.objects.filter(pk=doc.pk).first()

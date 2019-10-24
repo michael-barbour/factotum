@@ -199,7 +199,7 @@ class DataDocumentDetailTest(TestCase):
         trunc_title = doc.title[: trunc_length - 1] + "…"
         html_title = response_html.xpath('//*[@id="title"]/h1')[0].text
         self.assertEqual(trunc_title, html_title, "DataDocument title not truncated.")
-
+    
     def test_subtitle_ellipsis(self):
         id = 354783
         doc = DataDocument.objects.get(id=id)

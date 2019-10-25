@@ -104,11 +104,12 @@ class DataDocument(CommonInfo):
         fn = self.get_abstract_filename()
         return f"/media/{dg.fs_id}/pdf/{fn}"
 
-    def clean(self):
+    def clean(self, skip_type_check=False):
         # the document_type must be one of the children types
         # of the datadocument's parent datagroup or null
         if (
-            self.document_type
+            not skip_type_check
+            and self.document_type
             and self.document_type not in DocumentType.objects.compatible(self)
         ):
             raise ValidationError(

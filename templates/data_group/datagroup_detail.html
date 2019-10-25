@@ -158,7 +158,7 @@
                 <div class="form-group row pl-3 pr-3">
                   <select class="custom-select" name="cleancomp-script" required>
                     <option value="" selected>Choose a script...</option>
-                    {% for v, n in cleancomp_formset.header_form.fields.script.choices %}
+                    {% for v, n in cleancomp_formset.script_choices %}
                     {% if v %}
                     <option value="{{ v }}">{{ n }}</option>
                     {% endif %}
@@ -191,7 +191,7 @@
                 <div class="form-group row pl-3 pr-3">
                   <select class="custom-select" name="extfile-extraction_script" required>
                     <option selected>Choose an extraction script...</option>
-                    {% for v, n in extfile_formset.header_form.fields.extraction_script.choices %}
+                    {% for v, n in extfile_formset.extraction_script_choices %}
                     {% if v %}
                     <option value="{{ v }}">{{ n }}</option>
                     {% endif %}
@@ -203,7 +203,7 @@
                 <div class="form-group row pl-3 pr-3">
                   <select class="custom-select" name="extfile-weight_fraction_type" required>
                     <option selected>Choose a weight fraction type...</option>
-                    {% for v, n in extfile_formset.header_form.fields.weight_fraction_type.choices %}
+                    {% for v, n in extfile_formset.weight_fraction_type_choices %}
                     {% if v %}
                     <option value="{{ v }}">{{ n }}</option>
                     {% endif %}

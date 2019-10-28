@@ -135,6 +135,30 @@ class DataDocumentDetailTest(TestCase):
         new_product = Product.objects.get(upc="stub_9101")
         self.assertContains(response, f"product/%s" % new_product.id)
 
+    def test_extracted_icon(self):
+
+        doc = DataDocument.objects.get(pk=254780)
+        response = self.client.get(f"/datadocument/{doc.pk}/")
+        page = html.fromstring(response.content)
+        self.assertFalse(doc.extractedtext.qa_checked)
+        self.assertFalse(page.xpath('//*[@id="qa_icon_checked"]'))
+        self.assertTrue(page.xpath('//*[@id="qa_icon_unchecked"]'))
+        et = doc.extractedtext
+        et.qa_checked = True
+        et.save()
+        response = self.client.get(f"/datadocument/{doc.pk}/")
+        page = html.fromstring(response.content)
+        self.assertTrue(doc.extractedtext.qa_checked)
+        self.assertFalse(page.xpath('//*[@id="qa_icon_unchecked"]'))
+        self.assertTrue(page.xpath('//*[@id="qa_icon_checked"]'))
+        et.delete()
+        doc.refresh_from_db()
+        response = self.client.get(f"/datadocument/{doc.pk}/")
+        page = html.fromstring(response.content)
+        self.assertFalse(doc.is_extracted)
+        self.assertFalse(page.xpath('//*[@id="qa_icon_unchecked"]'))
+        self.assertFalse(page.xpath('//*[@id="qa_icon_checked"]'))
+
     def test_add_extracted(self):
         """Check that the user has the ability to create an extracted record
         when the document doesn't yet have an extracted record for data 

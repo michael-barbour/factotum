@@ -202,27 +202,26 @@
                 <h5 class="d-inline mr-2"
                     id="extracted-text-title">
                     <b>Extracted Text</b>
-                </h5>
-                {% if doc.is_extracted %}
-                {% if not extracted_text.qa_checked %}
-                <div class="d-inline">
-                    <a class="btn btn-sm btn-outline-secondary"
-                       title="Go to QA"
-                       href={% url "extracted_text_qa" doc.pk %}
-                       data-toggle="tooltip">
-                        <small class="m-0"><b>QA'd</b></small>
-                        <i class="far fa-square"></i></a>
-                </div>
-                {% else %}
-                <div class="d-inline border rounded border btn btn-sm"
-                     title="QA completed"
-                     data-toggle="tooltip">
-                    <small><b>QA'd</b></small>
-                    <i class="far fa-check-square"></i>
-                </div>
-                {% endif %}
-                {% endif %}
+                </h5>                
                 <div class="btn-group btn-group-sm shadow float-right">
+                    {% if doc.is_extracted %}
+                        {% if not extracted_text.qa_checked %}
+                            <a class="btn btn-sm border-secondary"
+                                title="Go to QA"
+                                id="qa_icon_unchecked"
+                                href={% url "extracted_text_qa" doc.pk %}
+                                data-toggle="tooltip">
+                                <i class="far fa-square"></i>
+                            </a>
+                        {% else %}
+                            <a class="btn btn-sm btn-secondary"
+                                title="QA Complete"
+                                id="qa_icon_checked"
+                                data-toggle="tooltip">
+                                <i class="far fa-check-square"></i>
+                            </a>
+                        {% endif %}
+                    {% endif %}
                     {% if extracted_text.extraction_script.url %}
                     <a class="btn btn-outline-secondary"
                        role="button"

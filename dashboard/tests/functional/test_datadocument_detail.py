@@ -28,6 +28,54 @@ class DataDocumentDetailTest(TestCase):
     def setUp(self):
         self.client.login(username="Karyn", password="specialP@55word")
 
+    def test_user_availability(self):
+        self.client.logout()
+        doc = DataDocument.objects.get(pk=254780)
+        response = self.client.get(f"/datadocument/{doc.pk}/")
+        self.assertEqual(
+            response.status_code, 200, "The page must return a 200 status code"
+        )
+        page = html.fromstring(response.content)
+        self.assertFalse(page.xpath('//*[@id="add_product_button"]'))
+        self.assertFalse(page.xpath('//*[@id="edit_document"]'))
+        self.assertFalse(page.xpath('//*[@id="delete_document"]'))
+        self.assertFalse(page.xpath('//*[@id="btn-add-or-edit-extracted-text"]'))
+        self.assertIsNone(page.xpath('//*[@id="qa_icon_unchecked"]')[0].get("href"))
+        self.assertFalse(page.xpath('//*[@id="chemical_edit_buttons"]'))
+        self.assertFalse(page.xpath('//*[@id="add_chemical"]'))
+        self.assertIsNone(page.xpath('//*[@id="datasource_link"]')[0].get("href"))
+        self.assertIsNone(page.xpath('//*[@id="datagroup_link"]')[0].get("href"))
+        # check that all associated links redirect to login when used
+        response = self.client.get(f"/datadocument/edit/{doc.pk}/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/", response.url)
+        response = self.client.get(f"/datadocument/delete/{doc.pk}/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/", response.url)
+        response = self.client.get(f"/link_product_form/{doc.pk}/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/", response.url)
+        response = self.client.get(f"/extractedtext/edit/{doc.pk}/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/", response.url)
+        response = self.client.get(f"/qa/extractedtext/{doc.pk}/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/", response.url)
+        response = self.client.get(f"/chemical/{doc.pk}/create/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/", response.url)
+        response = self.client.get(
+            f"/chemical/doc.extractedtext.rawchem.first().pk/edit/"
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/", response.url)
+        response = self.client.get(f"/datagroup/{doc.data_group_id}/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/", response.url)
+        response = self.client.get(f"/datasource/{doc.data_group.data_source_id}/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/", response.url)
+
     def test_absent_extracted_text(self):
         # Check every data document and confirm that its detail page loads,
         # with or without a detail formset

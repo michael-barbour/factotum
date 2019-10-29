@@ -9,7 +9,7 @@ from . import views
 urlpatterns = [
     path("", views.index, name="index"),
     path("datasources/", views.data_source_list, name="data_source_list"),
-    path("datasource/<int:pk>", views.data_source_detail, name="data_source_detail"),
+    path("datasource/<int:pk>/", views.data_source_detail, name="data_source_detail"),
     path("datasource/new/", views.data_source_create, name="data_source_new"),
     path(
         "datasource/edit/<int:pk>/", views.data_source_update, name="data_source_edit"

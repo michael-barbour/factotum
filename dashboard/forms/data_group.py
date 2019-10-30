@@ -10,9 +10,11 @@ from django.core.files import File
 from django.core.files.storage import FileSystemStorage
 from django.db import transaction
 from django.db.models import CharField, Value as V
+
 from django.db.models.functions import Cast, Concat
 
-from bulkformsets import BaseBulkFormSet, CSVReader
+from bulkformsets import BaseBulkFormSet, CSVReader, csvmodelformset_factory
+from django.forms import ModelForm
 from dashboard.models import (
     DataDocument,
     Product,
@@ -20,6 +22,7 @@ from dashboard.models import (
     Script,
     DocumentType,
     ExtractedChemical,
+    DataGroup,
     RawChem,
     ExtractedText,
     ExtractedCPCat,
@@ -32,6 +35,8 @@ from dashboard.models import (
 from dashboard.utils import (
     clean_dict,
     get_extracted_models,
+    get_form_for_models,
+    field_for_model,
     field_for_model,
     get_missing_ids,
     inheritance_bulk_create,
@@ -87,6 +92,128 @@ class UploadDocsForm(forms.Form):
                 upd_list.append(datadocument)
         DataDocument.objects.bulk_update(self.datadocuments, ["matched"])
         return self.datadocuments.count()
+
+
+class ProductCSVForm(forms.Form):
+    """ A form based on the Product object
+    but with the addition of data_document_id and 
+    data_document_filename fields
+    """
+
+    data_document_id = field_for_model(ProductDocument, "document_id")
+    data_document_filename = field_for_model(DataDocument, "filename")
+    title = field_for_model(Product, "title")
+    upc = field_for_model(Product, "upc", required=False)
+    url = field_for_model(Product, "url")
+    brand_name = field_for_model(Product, "brand_name")
+    size = field_for_model(Product, "size")
+    color = field_for_model(Product, "color")
+    item_id = field_for_model(Product, "item_id")
+    parent_item_id = field_for_model(Product, "parent_item_id")
+    short_description = field_for_model(Product, "short_description")
+    long_description = field_for_model(Product, "long_description")
+    thumb_image = field_for_model(Product, "thumb_image")
+    medium_image = field_for_model(Product, "medium_image")
+    large_image = field_for_model(Product, "large_image")
+    model_number = field_for_model(Product, "model_number")
+    manufacturer = field_for_model(Product, "manufacturer")
+
+
+class ProductBulkCSVFormSet(DGFormSet):
+    """
+    Multiple products can be created for a single document. 
+    If user attempts to upload product data for a document 
+    which already has an associated product, a new product 
+    is created with the newly uploaded data (rather than 
+    trying to insert data into the existing product record). 
+    If a user uploads a product file which includes multiple 
+    rows for a single data document ID, each row should be 
+    assumed to be a different product for that document
+    """
+
+    prefix = "products"
+    serializer = CSVReader
+    form = ProductCSVForm
+
+    def clean(self, *args, **kwargs):
+        header = list(self.bulk.fieldnames)
+        header_cols = [
+            "data_document_id",
+            "data_document_filename",
+            "title",
+            "upc",
+            "url",
+            "brand_name",
+            "size",
+            "color",
+            "item_id",
+            "parent_item_id",
+            "short_description",
+            "long_description",
+            "thumb_image",
+            "medium_image",
+            "large_image",
+            "model_number",
+            "manufacturer",
+        ]
+        if header != header_cols:
+            raise forms.ValidationError(f"CSV column titles should be {header_cols}")
+
+        # Iterate over the formset to accumulate the UPCs and check for duplicates
+        upcs = [f.cleaned_data["upc"] for f in self.forms if f.cleaned_data.get("upc")]
+
+        seen = {}
+        # The original list of duplicated UPCs should include all the ones
+        # already in the database that appear in the uploaded file. All the
+        # new UPCs are added as well in order to check for in-file duplication
+        self.dupe_upcs = list(
+            Product.objects.filter(upc__in=upcs)
+            .values_list("upc", flat=True)
+            .distinct()
+        )
+        for x in upcs:
+            if x not in seen:
+                seen[x] = 1
+            else:
+                if seen[x] == 1:
+                    self.dupe_upcs.append(x)
+                seen[x] += 1
+
+    def save(self):
+        rejected_docids = []
+        reports = ""
+        added_products = 0
+
+        for f in self.forms:
+            f.cleaned_data["created_at"] = datetime.now()
+            product_dict = clean_dict(f.cleaned_data, Product)
+            # Reject the Product if its UPC already exists in the database
+            # or if it was identified as an internal duplicate above
+            if product_dict.get("upc") in self.dupe_upcs:
+                # if the UPC is already in the database, reject
+                # this product and report it. It does not invalidate
+                # the formset, though
+                rejected_docids.append(f.cleaned_data["data_document_id"].pk)
+            else:
+                if not product_dict.get("upc"):
+                    # mint a new stub_x UPC if there was none provided
+                    product_dict["upc"] = Product.objects.next_upc()
+                # add the new product to the database
+                product = Product(**product_dict)
+                product.save()
+                # once the product is created, it can be linked to
+                # a DataDocument via the ProductDocument table
+                productdocument = ProductDocument(
+                    product=product, document=f.cleaned_data["data_document_id"]
+                )
+                productdocument.save()
+                added_products += 1
+
+        if len(rejected_docids) > 0:
+            reports = f"The following records had existing or duplicated UPCs and were not added: "
+            reports += ", ".join("%d" % i for i in rejected_docids)
+
+        return added_products, reports
 
 
 class BaseExtractFileForm(forms.Form):
@@ -468,7 +595,7 @@ class RegisterRecordsFormSet(DGFormSet):
 
     def clean(self, *args, **kwargs):
         """Errors raised here are exposed in non_form_errors() and will be rendered
-        before getting to and form-specific errors.
+        before getting to any form-specific errors.
         """
         header = list(self.bulk.fieldnames)
         header_cols = ["filename", "title", "document_type", "url", "organization"]

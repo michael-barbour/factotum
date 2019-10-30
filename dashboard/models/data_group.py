@@ -216,6 +216,29 @@ class DataGroup(CommonInfo):
     def get_clean_comp_data_fieldnames(self):
         return ["id", "lower_wf_analysis", "central_wf_analysis", "upper_wf_analysis"]
 
+    def get_product_template_fieldnames(self):
+        product_fields = [
+            "title",
+            "upc",
+            "url",
+            "brand_name",
+            "size",
+            "color",
+            "item_id",
+            "parent_item_id",
+            "short_description",
+            "long_description",
+            "thumb_image",
+            "medium_image",
+            "large_image",
+            "model_number",
+            "manufacturer",
+        ]
+        return product_fields
+
+    def include_product_upload_form(self):
+        return True
+
     def clean_fields(self, exclude=None):
         super().clean_fields(exclude=exclude)
         if self.tracker.has_changed("group_type_id") and self.extracted_docs():

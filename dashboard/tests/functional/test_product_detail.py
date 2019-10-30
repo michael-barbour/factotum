@@ -16,7 +16,10 @@ class TestProductDetail(TestCase):
         self.client.logout()
         response = self.client.get("/product/11/")
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "<title>Product 11: 3M(TM) Rubber &amp; Vinyl 80 Spray Adhesive</title>")
+        self.assertContains(
+            response,
+            "<title>Product 11: 3M(TM) Rubber &amp; Vinyl 80 Spray Adhesive</title>",
+        )
 
     def test_anonymous_edit_not_allowed(self):
         self.client.logout()

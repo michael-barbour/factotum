@@ -31,6 +31,9 @@ def csv_upload_path(instance, filename):
 
 
 class DataGroup(CommonInfo):
+    """A container for registered and extracted documents, all of which
+    share a common extraction script. Inherits from `CommonInfo`
+    """
 
     name = models.CharField(max_length=50)
     description = models.TextField(null=True, blank=True)

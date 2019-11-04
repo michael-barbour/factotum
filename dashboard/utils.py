@@ -338,13 +338,19 @@ def get_missing_ids(Model, ids):
     """Evaluate which IDs do not exist in the database
 
     Args:
-        Model: the model class to check IDs against
+        Model: the model class or queryset to check IDs against
         ids: a sequence of integers represent the IDs to look up
+    Optional args:
+        filter: 
     Returns:
         A list of IDs not in the database
     """
     ids_set = set(ids)
-    dbids_set = set(Model.objects.filter(pk__in=ids_set).values_list("id", flat=True))
+    try:
+        qs = Model.objects.all()
+    except AttributeError:
+        qs = Model
+    dbids_set = set(qs.filter(pk__in=ids_set).values_list("id", flat=True))
     return list(ids_set - dbids_set)
 
 

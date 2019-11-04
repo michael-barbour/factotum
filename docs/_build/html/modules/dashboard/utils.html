@@ -1,0 +1,397 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Dashboard Utilities &mdash; ChemExpoDB  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> ChemExpoDB
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Dashboard Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="views.html">Dashboard Views</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../bulkformsets.html">Bulkformset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../elastic.html">Elastic</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ChemExpoDB</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+      <li>Dashboard Utilities</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/modules/dashboard/utils.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-dashboard.utils">
+<span id="dashboard-utilities"></span><h1>Dashboard Utilities<a class="headerlink" href="#module-dashboard.utils" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="dashboard.utils.GroupConcat">
+<em class="property">class </em><code class="sig-prename descclassname">dashboard.utils.</code><code class="sig-name descname">GroupConcat</code><span class="sig-paren">(</span><em class="sig-param">expression</em>, <em class="sig-param">separator='</em>, <em class="sig-param">'</em>, <em class="sig-param">**extra</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.utils.GroupConcat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allows Django to use the MySQL GROUP_CONCAT aggregation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>separator</strong> (<em>str</em>) – the delimiter to use (default=’,’)</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<dl>
+<dt>Pizza.objects.annotate(</dt><dd><dl class="simple">
+<dt>topping_str=GroupConcat(</dt><dd><p>‘toppings’,
+separator=’, ‘,
+distinct=True,</p>
+</dd>
+</dl>
+<p>)</p>
+</dd>
+</dl>
+<p>)</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="dashboard.utils.SimpleTree">
+<em class="property">class </em><code class="sig-prename descclassname">dashboard.utils.</code><code class="sig-name descname">SimpleTree</code><a class="headerlink" href="#dashboard.utils.SimpleTree" title="Permalink to this definition">¶</a></dt>
+<dd><p>A simple tree data structure.</p>
+<p>This has many methods similar to a dictionary.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pizza</span> <span class="o">=</span> <span class="n">SimpleTree</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pizza</span><span class="p">[</span><span class="s2">&quot;pepperoni&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pizza</span><span class="p">[</span><span class="s2">&quot;cheese&quot;</span><span class="p">,</span> <span class="s2">&quot;no_pickles&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pizza</span><span class="p">[</span><span class="s2">&quot;cheese&quot;</span><span class="p">,</span> <span class="s2">&quot;no_mayo&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">food</span> <span class="k">for</span> <span class="n">food</span> <span class="ow">in</span> <span class="n">t</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+<span class="go">       [((&#39;pepperoni&#39;,), 5), ((&#39;cheese&#39;, &#39;no_pickles&#39;), 3), ...]</span>
+</pre></div>
+</div>
+<p>Values are returned by default. You can return the SimpleTree object by
+performing lookups on the “objects” interface. The “parent” attribute
+will refer to the original parent of the object.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">child</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="s2">&quot;pizza&quot;</span><span class="p">,</span> <span class="s2">&quot;cheese&quot;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">food</span> <span class="k">for</span> <span class="n">food</span> <span class="ow">in</span> <span class="n">child</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+<span class="go">       [((&#39;cheese&#39;, &#39;no_pickles&#39;), 5), ...]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">food</span> <span class="k">for</span> <span class="n">food</span> <span class="ow">in</span> <span class="n">child</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+<span class="go">       [((&#39;pepperoni&#39;,), 5), ((&#39;cheese&#39;, &#39;no_pickles&#39;), 3), ...]</span>
+</pre></div>
+</div>
+<p>You can return a dictionary representation with “asdict()”.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pizza</span><span class="o">.</span><span class="n">asdict</span><span class="p">()</span>
+<span class="go">        {&quot;name&quot;: &quot;root&quot;, &quot;children&quot;: [{&quot;name&quot;: &quot;pepperoni&quot;, &quot;value&quot;: 5...}]}</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="dashboard.utils.SimpleTree.objects">
+<code class="sig-name descname">objects</code><a class="headerlink" href="#dashboard.utils.SimpleTree.objects" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns SimpleTrees</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>SimpleTreeObjectInterface</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dashboard.utils.SimpleTree.parent">
+<code class="sig-name descname">parent</code><a class="headerlink" href="#dashboard.utils.SimpleTree.parent" title="Permalink to this definition">¶</a></dt>
+<dd><p>the parent SimpleTree object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#dashboard.utils.SimpleTree" title="dashboard.utils.SimpleTree">SimpleTree</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dashboard.utils.SimpleTree.name">
+<code class="sig-name descname">name</code><a class="headerlink" href="#dashboard.utils.SimpleTree.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>the node name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dashboard.utils.SimpleTree.value">
+<code class="sig-name descname">value</code><a class="headerlink" href="#dashboard.utils.SimpleTree.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>the node value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dashboard.utils.SimpleTree.children">
+<code class="sig-name descname">children</code><a class="headerlink" href="#dashboard.utils.SimpleTree.children" title="Permalink to this definition">¶</a></dt>
+<dd><p>a list of children SimpleTree objects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="dashboard.utils.SimpleTree.asdict">
+<code class="sig-name descname">asdict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.utils.SimpleTree.asdict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dictionary representation of the tree.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dashboard.utils.SimpleTree.items">
+<code class="sig-name descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; a set-like object providing a view on D's items<a class="headerlink" href="#dashboard.utils.SimpleTree.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dashboard.utils.SimpleTree.keys">
+<code class="sig-name descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; a set-like object providing a view on D's keys<a class="headerlink" href="#dashboard.utils.SimpleTree.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dashboard.utils.SimpleTree.values">
+<code class="sig-name descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; an object providing a view on D's values<a class="headerlink" href="#dashboard.utils.SimpleTree.values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="dashboard.utils.clean_dict">
+<code class="sig-prename descclassname">dashboard.utils.</code><code class="sig-name descname">clean_dict</code><span class="sig-paren">(</span><em class="sig-param">odict</em>, <em class="sig-param">model</em>, <em class="sig-param">translations={}</em>, <em class="sig-param">keep_nones=False</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.utils.clean_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cleans out key:value pairs that aren’t in the model fields</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dashboard.utils.field_for_model">
+<code class="sig-prename descclassname">dashboard.utils.</code><code class="sig-name descname">field_for_model</code><span class="sig-paren">(</span><em class="sig-param">model</em>, <em class="sig-param">field</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.utils.field_for_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a form field from a model.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dashboard.utils.gather_errors">
+<code class="sig-prename descclassname">dashboard.utils.</code><code class="sig-name descname">gather_errors</code><span class="sig-paren">(</span><em class="sig-param">form_instance</em>, <em class="sig-param">values=False</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.utils.gather_errors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gather errors for formsets or forms.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dashboard.utils.get_extracted_models">
+<code class="sig-prename descclassname">dashboard.utils.</code><code class="sig-name descname">get_extracted_models</code><span class="sig-paren">(</span><em class="sig-param">t</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.utils.get_extracted_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the parent model function and the associated child model
+based on datagroup type</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dashboard.utils.get_form_for_models">
+<code class="sig-prename descclassname">dashboard.utils.</code><code class="sig-name descname">get_form_for_models</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">fields=[]</em>, <em class="sig-param">translations={}</em>, <em class="sig-param">required=[]</em>, <em class="sig-param">skip_missing=False</em>, <em class="sig-param">formfieldkwargs={}</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.utils.get_form_for_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a form for the models and fields provided.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dashboard.utils.get_missing_ids">
+<code class="sig-prename descclassname">dashboard.utils.</code><code class="sig-name descname">get_missing_ids</code><span class="sig-paren">(</span><em class="sig-param">Model</em>, <em class="sig-param">ids</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.utils.get_missing_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate which IDs do not exist in the database</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Model</strong> – the model class or queryset to check IDs against</p></li>
+<li><p><strong>ids</strong> – a sequence of integers represent the IDs to look up</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Optional args:</dt><dd><p>filter:</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of IDs not in the database</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="dashboard.utils.inheritance_bulk_create">
+<code class="sig-prename descclassname">dashboard.utils.</code><code class="sig-name descname">inheritance_bulk_create</code><span class="sig-paren">(</span><em class="sig-param">models</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.utils.inheritance_bulk_create" title="Permalink to this definition">¶</a></dt>
+<dd><p>A workaround for <a class="reference external" href="https://code.djangoproject.com/ticket/28821">https://code.djangoproject.com/ticket/28821</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>models</strong> – a list of models to insert</p>
+</dd>
+</dl>
+<p>Note that this handles less edge cases than the official
+bulk_create. For relatively simple models this will work well though.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dashboard.utils.update_fields">
+<code class="sig-prename descclassname">dashboard.utils.</code><code class="sig-name descname">update_fields</code><span class="sig-paren">(</span><em class="sig-param">odict</em>, <em class="sig-param">model</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.utils.update_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a dict and updates the associated fields w/in the model</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, ChemExpoDB Team
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

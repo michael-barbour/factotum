@@ -1,0 +1,5 @@
+factotum
+========
+
+.. toctree::
+   :maxdepth: 4

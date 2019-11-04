@@ -1,0 +1,299 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Bulkformset &mdash; ChemExpoDB  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> ChemExpoDB
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../dashboard/models.html">Dashboard Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dashboard/views.html">Dashboard Views</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ChemExpoDB</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+      <li>Bulkformset</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/modules/bulkformsets/forms.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-bulkformsets.forms">
+<span id="bulkformset"></span><h1>Bulkformset<a class="headerlink" href="#module-bulkformsets.forms" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="bulkformsets.forms.BaseBulkFormSet">
+<em class="property">class </em><code class="sig-prename descclassname">bulkformsets.forms.</code><code class="sig-name descname">BaseBulkFormSet</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#bulkformsets.forms.BaseBulkFormSet" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="bulkformsets.forms.BaseBulkModelFormSet">
+<em class="property">class </em><code class="sig-prename descclassname">bulkformsets.forms.</code><code class="sig-name descname">BaseBulkModelFormSet</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#bulkformsets.forms.BaseBulkModelFormSet" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="bulkformsets.forms.InitBulkFormSet">
+<em class="property">class </em><code class="sig-prename descclassname">bulkformsets.forms.</code><code class="sig-name descname">InitBulkFormSet</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#bulkformsets.forms.InitBulkFormSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class used to load in our custom BulkMuxDict into Django’s FormSets</p>
+<dl class="method">
+<dt id="bulkformsets.forms.InitBulkFormSet.header_data">
+<em class="property">property </em><code class="sig-name descname">header_data</code><a class="headerlink" href="#bulkformsets.forms.InitBulkFormSet.header_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dictionary of the cleaned header data.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="bulkformsets.forms.basebulkformset_factory">
+<code class="sig-prename descclassname">bulkformsets.forms.</code><code class="sig-name descname">basebulkformset_factory</code><span class="sig-paren">(</span><em class="sig-param">typename</em>, <em class="sig-param">basefactory</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#bulkformsets.forms.basebulkformset_factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a BulkFormSet with a custom typename based on basefactory return.</p>
+<p>This probably shouldn’t be used directly. Instead use <cite>bulkformset_factory</cite>,
+<cite>csvformset_factory</cite>, <cite>bulkmodelformset_factory</cite>, or <cite>csvmodelformset_factory</cite>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="bulkformsets.forms.bulkformset_factory">
+<code class="sig-prename descclassname">bulkformsets.forms.</code><code class="sig-name descname">bulkformset_factory</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#bulkformsets.forms.bulkformset_factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a BulkFormSet.</p>
+<p>Refer to <cite>django.forms.formset_factory</cite> for an explanation on how to use. This
+provides some additional keyword arguments noted below.</p>
+<p>The serializer function is responsible for rendering the bulk file in a Python
+friendly way. It is invoked internally by
+<cite>bulk = serializer(f, *serializer_args, **serializer_kwargs)</cite>. Here, <cite>f</cite> is the
+Django <cite>UploadedFile</cite>. <cite>bulk</cite> must be represented as a list of dictionaries where
+each dictionary has keys corresponding to the field names of the <cite>form</cite> provided.</p>
+<p>It may be advantageous to return a more memory efficient immutable object from
+<cite>serializer</cite> as opposed to a list of dictionaries. An example of such an object
+can be seen with <cite>bulkformsets.utils.CSVReader</cite>.</p>
+<dl class="simple">
+<dt>Required args:</dt><dd><p><a href="#id1"><span class="problematic" id="id2">*</span></a>args, <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs: identical to the Django equivalent
+serializer: afunction that returns a list of dicts</p>
+</dd>
+<dt>Optional args:</dt><dd><p>header_fields: fields that are in the form, but not the bulk file
+serializer_args: additional positional arguments to pass to <cite>serializer</cite>
+serializer_kwargs: additional keyword arguments to pass to <cite>serializer</cite>
+filefield_kwargs: kwargs to pass to the internal FileField</p>
+</dd>
+<dt>Class Properties:</dt><dd><p>header_form: retrun the ManagementForm and the header fields as a form
+header_data: a dictionary view of cleaned data containing the header data</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a FormSet that works like a Django FormSet</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>BulkFormSet</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The <cite>serializer_kwargs</cite> will always be populated with <cite>max_num</cite>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="bulkformsets.forms.bulkmodelformset_factory">
+<code class="sig-prename descclassname">bulkformsets.forms.</code><code class="sig-name descname">bulkmodelformset_factory</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#bulkformsets.forms.bulkmodelformset_factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a BulkModelFormSet.</p>
+<p>Refer to <cite>django.forms.model.modelformset_factory</cite> for an explanation on how to use.
+This takes the same extra arguments as <cite>bulkformset_factory</cite>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="bulkformsets.forms.csvformset_factory">
+<code class="sig-prename descclassname">bulkformsets.forms.</code><code class="sig-name descname">csvformset_factory</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#bulkformsets.forms.csvformset_factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a CSVFormSet.</p>
+<p>Like <cite>bulkformset_factory</cite>, but there is no need to pass in a serializer.</p>
+<dl class="simple">
+<dt>Serializer specific arguments:</dt><dd><p>skip (int): [kwarg] number of initial lines to skip
+fieldnames (list of str): [kwarg] use these fieldnames instead of CSV header
+<a href="#id5"><span class="problematic" id="id6">*</span></a>args, <a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs: all other arguments will be passed to <cite>csv.reader</cite></p>
+</dd>
+</dl>
+<p>It may be useful to set skip = 1 and fieldnames to what your form field names are
+if the CSV header differs.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="bulkformsets.forms.csvmodelformset_factory">
+<code class="sig-prename descclassname">bulkformsets.forms.</code><code class="sig-name descname">csvmodelformset_factory</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#bulkformsets.forms.csvmodelformset_factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a BulkModelFormSet.</p>
+<p>Like <cite>bulkmodelformset_factory</cite>, but for CSVs. This takes the same extra arguments
+as <cite>csvformset_factory</cite>.</p>
+</dd></dl>
+
+<span class="target" id="module-bulkformsets.serializers"></span><dl class="class">
+<dt id="bulkformsets.serializers.CSVReader">
+<em class="property">class </em><code class="sig-prename descclassname">bulkformsets.serializers.</code><code class="sig-name descname">CSVReader</code><span class="sig-paren">(</span><em class="sig-param">f</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#bulkformsets.serializers.CSVReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like csv.DictReader, except includes a low memory __getitem__ and __len__.</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, ChemExpoDB Team
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

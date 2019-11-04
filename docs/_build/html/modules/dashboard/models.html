@@ -1,0 +1,910 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Dashboard Models &mdash; ChemExpoDB  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Dashboard Views" href="views.html" />
+    <link rel="prev" title="ChemExpoDB" href="../../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> ChemExpoDB
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Dashboard Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="views.html">Dashboard Views</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../bulkformsets.html">Bulkformset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../elastic.html">Elastic</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ChemExpoDB</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+      <li>Dashboard Models</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/modules/dashboard/models.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-dashboard.models.data_group">
+<span id="dashboard-models"></span><h1>Dashboard Models<a class="headerlink" href="#module-dashboard.models.data_group" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="dashboard.models.data_group.DataGroup">
+<em class="property">class </em><code class="sig-prename descclassname">dashboard.models.data_group.</code><code class="sig-name descname">DataGroup</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.data_group.DataGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>A container for registered and extracted documents, all of which
+share a common extraction script. Inherits from <cite>CommonInfo</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>AutoField</em>) – Id</p></li>
+<li><p><strong>created_at</strong> (<em>DateTimeField</em>) – Created at</p></li>
+<li><p><strong>updated_at</strong> (<em>DateTimeField</em>) – Updated at</p></li>
+<li><p><strong>name</strong> (<em>CharField</em>) – Name</p></li>
+<li><p><strong>description</strong> (<em>TextField</em>) – Description</p></li>
+<li><p><strong>downloaded_by_id</strong> (ForeignKey to <code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code>) – Downloaded by</p></li>
+<li><p><strong>downloaded_at</strong> (<em>DateTimeField</em>) – Downloaded at</p></li>
+<li><p><strong>download_script_id</strong> (ForeignKey to <code class="xref py py-class docutils literal notranslate"><span class="pre">Script</span></code>) – Download script</p></li>
+<li><p><strong>data_source_id</strong> (ForeignKey to <a class="reference internal" href="#dashboard.models.data_source.DataSource" title="dashboard.models.data_source.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataSource</span></code></a>) – Data source</p></li>
+<li><p><strong>fs_id</strong> (<em>UUIDField</em>) – Fs id</p></li>
+<li><p><strong>csv</strong> (<em>FileField</em>) – Csv</p></li>
+<li><p><strong>zip_file</strong> (<em>CharField</em>) – Zip file</p></li>
+<li><p><strong>group_type_id</strong> (ForeignKey to <code class="xref py py-class docutils literal notranslate"><span class="pre">GroupType</span></code>) – Group type</p></li>
+<li><p><strong>url</strong> (<em>CharField</em>) – Url</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="exception">
+<dt id="dashboard.models.data_group.DataGroup.DoesNotExist">
+<em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#dashboard.models.data_group.DataGroup.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="dashboard.models.data_group.DataGroup.MultipleObjectsReturned">
+<em class="property">exception </em><code class="sig-name descname">MultipleObjectsReturned</code><a class="headerlink" href="#dashboard.models.data_group.DataGroup.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dashboard.models.data_group.DataGroup.clean_fields">
+<code class="sig-name descname">clean_fields</code><span class="sig-paren">(</span><em class="sig-param">exclude=None</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.data_group.DataGroup.clean_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clean all fields and raise a ValidationError containing a dict
+of all validation errors if any occur.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dashboard.models.data_group.DataGroup.csv_filename">
+<code class="sig-name descname">csv_filename</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.data_group.DataGroup.csv_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used in the datagroup_form.html template to display only the filename</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dashboard.models.data_group.DataGroup.csv_url">
+<em class="property">property </em><code class="sig-name descname">csv_url</code><a class="headerlink" href="#dashboard.models.data_group.DataGroup.csv_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a “falsy” property. If the csv file cannot be found,
+dg.csv_url evaluates to boolean False</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dashboard.models.data_group.DataGroup.dg_folder">
+<em class="property">property </em><code class="sig-name descname">dg_folder</code><a class="headerlink" href="#dashboard.models.data_group.DataGroup.dg_folder" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a “falsy” property. If the folder cannot be found,
+dg.dg_folder evaluates to boolean False</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dashboard.models.data_group.DataGroup.get_extract_models">
+<code class="sig-name descname">get_extract_models</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.data_group.DataGroup.get_extract_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the parent model class and the associated child model</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dashboard.models.data_group.DataGroup.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.data_group.DataGroup.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the current instance. Override this in a subclass if you want to
+control the saving process.</p>
+<p>The ‘force_insert’ and ‘force_update’ parameters can be used to insist
+that the “save” must be an SQL insert or update (or equivalent for
+non-SQL backends), respectively. Normally, they should not be set.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dashboard.models.data_group.DataGroup.zip_url">
+<em class="property">property </em><code class="sig-name descname">zip_url</code><a class="headerlink" href="#dashboard.models.data_group.DataGroup.zip_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a “falsy” property. If the zip file cannot be found,
+dg.zip_url evaluates to boolean False</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-dashboard.models.data_source"></span><dl class="class">
+<dt id="dashboard.models.data_source.DataSource">
+<em class="property">class </em><code class="sig-prename descclassname">dashboard.models.data_source.</code><code class="sig-name descname">DataSource</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.data_source.DataSource" title="Permalink to this definition">¶</a></dt>
+<dd><p>A parent container for DataGroup objects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>AutoField</em>) – Id</p></li>
+<li><p><strong>created_at</strong> (<em>DateTimeField</em>) – Created at</p></li>
+<li><p><strong>updated_at</strong> (<em>DateTimeField</em>) – Updated at</p></li>
+<li><p><strong>title</strong> (<em>CharField</em>) – Title</p></li>
+<li><p><strong>url</strong> (<em>CharField</em>) – Url</p></li>
+<li><p><strong>estimated_records</strong> (<em>PositiveIntegerField</em>) – Estimated records</p></li>
+<li><p><strong>state</strong> (<em>CharField</em>) – The state of the DataSource indicates where it is in the workflow.</p></li>
+<li><p><strong>description</strong> (<em>TextField</em>) – Description</p></li>
+<li><p><strong>priority</strong> (<em>CharField</em>) – Priority</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="exception">
+<dt id="dashboard.models.data_source.DataSource.DoesNotExist">
+<em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#dashboard.models.data_source.DataSource.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="dashboard.models.data_source.DataSource.MultipleObjectsReturned">
+<em class="property">exception </em><code class="sig-name descname">MultipleObjectsReturned</code><a class="headerlink" href="#dashboard.models.data_source.DataSource.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-dashboard.models.data_document"></span><dl class="class">
+<dt id="dashboard.models.data_document.DataDocument">
+<em class="property">class </em><code class="sig-prename descclassname">dashboard.models.data_document.</code><code class="sig-name descname">DataDocument</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.data_document.DataDocument" title="Permalink to this definition">¶</a></dt>
+<dd><p>A DataDocument object is a single source of Factotum data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>AutoField</em>) – Id</p></li>
+<li><p><strong>created_at</strong> (<em>DateTimeField</em>) – Created at</p></li>
+<li><p><strong>updated_at</strong> (<em>DateTimeField</em>) – Updated at</p></li>
+<li><p><strong>filename</strong> (<em>CharField</em>) – The name of the document’s source file</p></li>
+<li><p><strong>title</strong> (<em>CharField</em>) – the title of the document</p></li>
+<li><p><strong>subtitle</strong> (<em>CharField</em>) – the subtitle of the document</p></li>
+<li><p><strong>url</strong> (<em>CharField</em>) – an optional URL to the document’s remote source</p></li>
+<li><p><strong>raw_category</strong> (<em>CharField</em>) – the category applied by the document’s originating dataset</p></li>
+<li><p><strong>data_group_id</strong> (ForeignKey to <a class="reference internal" href="#dashboard.models.data_group.DataGroup" title="dashboard.models.data_group.DataGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataGroup</span></code></a>) – the DataGroup object to which the document belongs. The type of the data group determines which document types the document might be among, and determines much of the available relationships and behavior associated with the document’s extracted data</p></li>
+<li><p><strong>matched</strong> (<em>BooleanField</em>) – When a source file for the document has been uploaded to the file system, the document is considered matched to that source file.</p></li>
+<li><p><strong>document_type_id</strong> (ForeignKey to <code class="xref py py-class docutils literal notranslate"><span class="pre">DocumentType</span></code>) – each type of data group may only contain certain types of data documents. The clean() method checks to make sure that the assigned document type is among the types allowed by the group type</p></li>
+<li><p><strong>organization</strong> (<em>CharField</em>) – The organization that provided the source file</p></li>
+<li><p><strong>note</strong> (<em>TextField</em>) – Long-form notes about the document</p></li>
+<li><p><strong>products</strong> (<em>ManyToManyField</em>) – Products are associated with the data document in a many-to-many relationship</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="exception">
+<dt id="dashboard.models.data_document.DataDocument.DoesNotExist">
+<em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#dashboard.models.data_document.DataDocument.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="dashboard.models.data_document.DataDocument.MultipleObjectsReturned">
+<em class="property">exception </em><code class="sig-name descname">MultipleObjectsReturned</code><a class="headerlink" href="#dashboard.models.data_document.DataDocument.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dashboard.models.data_document.DataDocument.clean">
+<code class="sig-name descname">clean</code><span class="sig-paren">(</span><em class="sig-param">skip_type_check=False</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.data_document.DataDocument.clean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook for doing any extra model-wide validation after clean() has been
+called on every field by self.clean_fields. Any ValidationError raised
+by this method will not be associated with a particular field; it will
+have a special-case association with the field defined by NON_FIELD_ERRORS.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dashboard.models.data_document.DataDocument.is_extracted">
+<em class="property">property </em><code class="sig-name descname">is_extracted</code><a class="headerlink" href="#dashboard.models.data_document.DataDocument.is_extracted" title="Permalink to this definition">¶</a></dt>
+<dd><p>When the content of a data document has been extracted by manual data entry
+or by an extraction script, a new ExtractedText record is created
+with the DataDocument’s id as its primary key.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-dashboard.models.extracted_text"></span><dl class="class">
+<dt id="dashboard.models.extracted_text.ExtractedText">
+<em class="property">class </em><code class="sig-prename descclassname">dashboard.models.extracted_text.</code><code class="sig-name descname">ExtractedText</code><span class="sig-paren">(</span><em class="sig-param">created_at</em>, <em class="sig-param">updated_at</em>, <em class="sig-param">data_document</em>, <em class="sig-param">prod_name</em>, <em class="sig-param">doc_date</em>, <em class="sig-param">rev_num</em>, <em class="sig-param">extraction_script</em>, <em class="sig-param">qa_checked</em>, <em class="sig-param">qa_edited</em>, <em class="sig-param">qa_approved_date</em>, <em class="sig-param">qa_approved_by</em>, <em class="sig-param">qa_group</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.extracted_text.ExtractedText" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>created_at</strong> (<em>DateTimeField</em>) – Created at</p></li>
+<li><p><strong>updated_at</strong> (<em>DateTimeField</em>) – Updated at</p></li>
+<li><p><strong>data_document_id</strong> (OneToOneField to <a class="reference internal" href="#dashboard.models.data_document.DataDocument" title="dashboard.models.data_document.DataDocument"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataDocument</span></code></a>) – Data document</p></li>
+<li><p><strong>prod_name</strong> (<em>CharField</em>) – Prod name</p></li>
+<li><p><strong>doc_date</strong> (<em>CharField</em>) – Doc date</p></li>
+<li><p><strong>rev_num</strong> (<em>CharField</em>) – Rev num</p></li>
+<li><p><strong>extraction_script_id</strong> (ForeignKey to <code class="xref py py-class docutils literal notranslate"><span class="pre">Script</span></code>) – Extraction script</p></li>
+<li><p><strong>qa_checked</strong> (<em>BooleanField</em>) – Qa approved</p></li>
+<li><p><strong>qa_edited</strong> (<em>BooleanField</em>) – Qa edited</p></li>
+<li><p><strong>qa_approved_date</strong> (<em>DateTimeField</em>) – Qa approval date</p></li>
+<li><p><strong>qa_approved_by_id</strong> (ForeignKey to <code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code>) – Qa approved by</p></li>
+<li><p><strong>qa_group_id</strong> (ForeignKey to <code class="xref py py-class docutils literal notranslate"><span class="pre">QAGroup</span></code>) – Qa group</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="exception">
+<dt id="dashboard.models.extracted_text.ExtractedText.DoesNotExist">
+<em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#dashboard.models.extracted_text.ExtractedText.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="dashboard.models.extracted_text.ExtractedText.MultipleObjectsReturned">
+<em class="property">exception </em><code class="sig-name descname">MultipleObjectsReturned</code><a class="headerlink" href="#dashboard.models.extracted_text.ExtractedText.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dashboard.models.extracted_text.ExtractedText.get_qa_index_path">
+<code class="sig-name descname">get_qa_index_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.extracted_text.ExtractedText.get_qa_index_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>The type of data group to which the extracted text object belongs
+determines which QA index it will use.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dashboard.models.extracted_text.ExtractedText.is_approvable">
+<code class="sig-name descname">is_approvable</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.extracted_text.ExtractedText.is_approvable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns true or false to indicate whether the ExtractedText object
+can be approved. If the object has been edited, then there must be
+some related QA Notes.</p>
+<p>Note that if the ExtractedText object is missing a related QANotes
+record, self.qanotes will not return None. Instead it returns an
+ObjectDoesNotExist error.
+<a class="reference external" href="https://stackoverflow.com/questions/3463240/check-if-onetoonefield-is-none-in-django">https://stackoverflow.com/questions/3463240/check-if-onetoonefield-is-none-in-django</a></p>
+<p>The hasattr() method is the correct way to test for the presence of
+a related record.</p>
+<p>It is not enough to test for the related record, though, because an empty
+qa_notes field is functionally equivalent to a missing QANotes record.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dashboard.models.extracted_text.ExtractedText.one_to_one_check">
+<code class="sig-name descname">one_to_one_check</code><span class="sig-paren">(</span><em class="sig-param">odict</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.extracted_text.ExtractedText.one_to_one_check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used in the upload of extracted text in the data_group_detail view, this
+returns a boolean to assure that there is a 1:1 relationship w/
+the Extracted{parent}, i.e. (Text/CPCat), and the DataDocument</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="dashboard.models.extracted_text.get_next_or_prev">
+<code class="sig-prename descclassname">dashboard.models.extracted_text.</code><code class="sig-name descname">get_next_or_prev</code><span class="sig-paren">(</span><em class="sig-param">models</em>, <em class="sig-param">item</em>, <em class="sig-param">direction</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.extracted_text.get_next_or_prev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the next or previous item of
+a query-set for ‘item’.</p>
+<p>‘models’ is a query-set containing all
+items of which ‘item’ is a part of.</p>
+<p>direction is ‘next’ or ‘prev’</p>
+</dd></dl>
+
+<span class="target" id="module-dashboard.models.extracted_chemical"></span><dl class="class">
+<dt id="dashboard.models.extracted_chemical.ExtractedChemical">
+<em class="property">class </em><code class="sig-prename descclassname">dashboard.models.extracted_chemical.</code><code class="sig-name descname">ExtractedChemical</code><span class="sig-paren">(</span><em class="sig-param">id</em>, <em class="sig-param">extracted_text</em>, <em class="sig-param">raw_cas</em>, <em class="sig-param">raw_chem_name</em>, <em class="sig-param">temp_id</em>, <em class="sig-param">temp_obj_name</em>, <em class="sig-param">rid</em>, <em class="sig-param">dsstox</em>, <em class="sig-param">rawchem_ptr</em>, <em class="sig-param">created_at</em>, <em class="sig-param">updated_at</em>, <em class="sig-param">raw_min_comp</em>, <em class="sig-param">raw_max_comp</em>, <em class="sig-param">unit_type</em>, <em class="sig-param">report_funcuse</em>, <em class="sig-param">weight_fraction_type</em>, <em class="sig-param">ingredient_rank</em>, <em class="sig-param">raw_central_comp</em>, <em class="sig-param">lower_wf_analysis</em>, <em class="sig-param">central_wf_analysis</em>, <em class="sig-param">upper_wf_analysis</em>, <em class="sig-param">script</em>, <em class="sig-param">component</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.extracted_chemical.ExtractedChemical" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>AutoField</em>) – Id</p></li>
+<li><p><strong>extracted_text_id</strong> (ForeignKey to <a class="reference internal" href="#dashboard.models.extracted_text.ExtractedText" title="dashboard.models.extracted_text.ExtractedText"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtractedText</span></code></a>) – Extracted text</p></li>
+<li><p><strong>raw_cas</strong> (<em>CharField</em>) – Raw CAS</p></li>
+<li><p><strong>raw_chem_name</strong> (<em>CharField</em>) – Raw chemical name</p></li>
+<li><p><strong>temp_id</strong> (<em>IntegerField</em>) – Temp id</p></li>
+<li><p><strong>temp_obj_name</strong> (<em>CharField</em>) – Temp obj name</p></li>
+<li><p><strong>rid</strong> (<em>CharField</em>) – RID</p></li>
+<li><p><strong>dsstox_id</strong> (ForeignKey to <code class="xref py py-class docutils literal notranslate"><span class="pre">DSSToxLookup</span></code>) – Dsstox</p></li>
+<li><p><strong>rawchem_ptr_id</strong> (OneToOneField to <code class="xref py py-class docutils literal notranslate"><span class="pre">RawChem</span></code>) – Rawchem ptr</p></li>
+<li><p><strong>created_at</strong> (<em>DateTimeField</em>) – Created at</p></li>
+<li><p><strong>updated_at</strong> (<em>DateTimeField</em>) – Updated at</p></li>
+<li><p><strong>raw_min_comp</strong> (<em>CharField</em>) – minimum composition</p></li>
+<li><p><strong>raw_max_comp</strong> (<em>CharField</em>) – maximum composition</p></li>
+<li><p><strong>unit_type_id</strong> (ForeignKey to <code class="xref py py-class docutils literal notranslate"><span class="pre">UnitType</span></code>) – Unit type</p></li>
+<li><p><strong>report_funcuse</strong> (<em>CharField</em>) – functional use</p></li>
+<li><p><strong>weight_fraction_type_id</strong> (ForeignKey to <code class="xref py py-class docutils literal notranslate"><span class="pre">WeightFractionType</span></code>) – Weight fraction type</p></li>
+<li><p><strong>ingredient_rank</strong> (<em>PositiveIntegerField</em>) – ingredient rank</p></li>
+<li><p><strong>raw_central_comp</strong> (<em>CharField</em>) – central composition</p></li>
+<li><p><strong>lower_wf_analysis</strong> (<em>DecimalField</em>) – minimum weight fraction</p></li>
+<li><p><strong>central_wf_analysis</strong> (<em>DecimalField</em>) – central weight fraction</p></li>
+<li><p><strong>upper_wf_analysis</strong> (<em>DecimalField</em>) – maximum weight fraction</p></li>
+<li><p><strong>script_id</strong> (ForeignKey to <code class="xref py py-class docutils literal notranslate"><span class="pre">Script</span></code>) – Script</p></li>
+<li><p><strong>component</strong> (<em>CharField</em>) – product component</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="exception">
+<dt id="dashboard.models.extracted_chemical.ExtractedChemical.DoesNotExist">
+<em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#dashboard.models.extracted_chemical.ExtractedChemical.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="dashboard.models.extracted_chemical.ExtractedChemical.MultipleObjectsReturned">
+<em class="property">exception </em><code class="sig-name descname">MultipleObjectsReturned</code><a class="headerlink" href="#dashboard.models.extracted_chemical.ExtractedChemical.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dashboard.models.extracted_chemical.ExtractedChemical.clean">
+<code class="sig-name descname">clean</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.extracted_chemical.ExtractedChemical.clean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook for doing any extra model-wide validation after clean() has been
+called on every field by self.clean_fields. Any ValidationError raised
+by this method will not be associated with a particular field; it will
+have a special-case association with the field defined by NON_FIELD_ERRORS.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dashboard.models.extracted_chemical.ExtractedChemical.sid">
+<em class="property">property </em><code class="sig-name descname">sid</code><a class="headerlink" href="#dashboard.models.extracted_chemical.ExtractedChemical.sid" title="Permalink to this definition">¶</a></dt>
+<dd><p>If there is no DSSToxLookup record via the
+curated_chemical relationship, it evaluates to boolean False</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-dashboard.models.extracted_cpcat"></span><dl class="class">
+<dt id="dashboard.models.extracted_cpcat.ExtractedCPCat">
+<em class="property">class </em><code class="sig-prename descclassname">dashboard.models.extracted_cpcat.</code><code class="sig-name descname">ExtractedCPCat</code><span class="sig-paren">(</span><em class="sig-param">created_at</em>, <em class="sig-param">updated_at</em>, <em class="sig-param">data_document</em>, <em class="sig-param">prod_name</em>, <em class="sig-param">doc_date</em>, <em class="sig-param">rev_num</em>, <em class="sig-param">extraction_script</em>, <em class="sig-param">qa_checked</em>, <em class="sig-param">qa_edited</em>, <em class="sig-param">qa_approved_date</em>, <em class="sig-param">qa_approved_by</em>, <em class="sig-param">qa_group</em>, <em class="sig-param">extractedtext_ptr</em>, <em class="sig-param">cat_code</em>, <em class="sig-param">description_cpcat</em>, <em class="sig-param">cpcat_code</em>, <em class="sig-param">cpcat_sourcetype</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.extracted_cpcat.ExtractedCPCat" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>created_at</strong> (<em>DateTimeField</em>) – Created at</p></li>
+<li><p><strong>updated_at</strong> (<em>DateTimeField</em>) – Updated at</p></li>
+<li><p><strong>data_document_id</strong> (OneToOneField to <a class="reference internal" href="#dashboard.models.data_document.DataDocument" title="dashboard.models.data_document.DataDocument"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataDocument</span></code></a>) – Data document</p></li>
+<li><p><strong>prod_name</strong> (<em>CharField</em>) – Prod name</p></li>
+<li><p><strong>doc_date</strong> (<em>CharField</em>) – Doc date</p></li>
+<li><p><strong>rev_num</strong> (<em>CharField</em>) – Rev num</p></li>
+<li><p><strong>extraction_script_id</strong> (ForeignKey to <code class="xref py py-class docutils literal notranslate"><span class="pre">Script</span></code>) – Extraction script</p></li>
+<li><p><strong>qa_checked</strong> (<em>BooleanField</em>) – Qa approved</p></li>
+<li><p><strong>qa_edited</strong> (<em>BooleanField</em>) – Qa edited</p></li>
+<li><p><strong>qa_approved_date</strong> (<em>DateTimeField</em>) – Qa approval date</p></li>
+<li><p><strong>qa_approved_by_id</strong> (ForeignKey to <code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code>) – Qa approved by</p></li>
+<li><p><strong>qa_group_id</strong> (ForeignKey to <code class="xref py py-class docutils literal notranslate"><span class="pre">QAGroup</span></code>) – Qa group</p></li>
+<li><p><strong>extractedtext_ptr_id</strong> (OneToOneField to <a class="reference internal" href="#dashboard.models.extracted_text.ExtractedText" title="dashboard.models.extracted_text.ExtractedText"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtractedText</span></code></a>) – Extractedtext ptr</p></li>
+<li><p><strong>cat_code</strong> (<em>CharField</em>) – Cat code</p></li>
+<li><p><strong>description_cpcat</strong> (<em>CharField</em>) – Cpcat cassette</p></li>
+<li><p><strong>cpcat_code</strong> (<em>CharField</em>) – Actor snaid</p></li>
+<li><p><strong>cpcat_sourcetype</strong> (<em>CharField</em>) – Cpcat source</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="exception">
+<dt id="dashboard.models.extracted_cpcat.ExtractedCPCat.DoesNotExist">
+<em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#dashboard.models.extracted_cpcat.ExtractedCPCat.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="dashboard.models.extracted_cpcat.ExtractedCPCat.MultipleObjectsReturned">
+<em class="property">exception </em><code class="sig-name descname">MultipleObjectsReturned</code><a class="headerlink" href="#dashboard.models.extracted_cpcat.ExtractedCPCat.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dashboard.models.extracted_cpcat.ExtractedCPCat.prep_cp_for_qa">
+<code class="sig-name descname">prep_cp_for_qa</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.extracted_cpcat.ExtractedCPCat.prep_cp_for_qa" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an ExtractedCPCat object, select a sample of its
+ExtractedListPresence children for QA review.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-dashboard.models.extracted_functional_use"></span><dl class="class">
+<dt id="dashboard.models.extracted_functional_use.ExtractedFunctionalUse">
+<em class="property">class </em><code class="sig-prename descclassname">dashboard.models.extracted_functional_use.</code><code class="sig-name descname">ExtractedFunctionalUse</code><span class="sig-paren">(</span><em class="sig-param">id</em>, <em class="sig-param">extracted_text</em>, <em class="sig-param">raw_cas</em>, <em class="sig-param">raw_chem_name</em>, <em class="sig-param">temp_id</em>, <em class="sig-param">temp_obj_name</em>, <em class="sig-param">rid</em>, <em class="sig-param">dsstox</em>, <em class="sig-param">rawchem_ptr</em>, <em class="sig-param">created_at</em>, <em class="sig-param">updated_at</em>, <em class="sig-param">report_funcuse</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.extracted_functional_use.ExtractedFunctionalUse" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>AutoField</em>) – Id</p></li>
+<li><p><strong>extracted_text_id</strong> (ForeignKey to <a class="reference internal" href="#dashboard.models.extracted_text.ExtractedText" title="dashboard.models.extracted_text.ExtractedText"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtractedText</span></code></a>) – Extracted text</p></li>
+<li><p><strong>raw_cas</strong> (<em>CharField</em>) – Raw CAS</p></li>
+<li><p><strong>raw_chem_name</strong> (<em>CharField</em>) – Raw chemical name</p></li>
+<li><p><strong>temp_id</strong> (<em>IntegerField</em>) – Temp id</p></li>
+<li><p><strong>temp_obj_name</strong> (<em>CharField</em>) – Temp obj name</p></li>
+<li><p><strong>rid</strong> (<em>CharField</em>) – RID</p></li>
+<li><p><strong>dsstox_id</strong> (ForeignKey to <code class="xref py py-class docutils literal notranslate"><span class="pre">DSSToxLookup</span></code>) – Dsstox</p></li>
+<li><p><strong>rawchem_ptr_id</strong> (OneToOneField to <code class="xref py py-class docutils literal notranslate"><span class="pre">RawChem</span></code>) – Rawchem ptr</p></li>
+<li><p><strong>created_at</strong> (<em>DateTimeField</em>) – Created at</p></li>
+<li><p><strong>updated_at</strong> (<em>DateTimeField</em>) – Updated at</p></li>
+<li><p><strong>report_funcuse</strong> (<em>CharField</em>) – Reported functional use</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="exception">
+<dt id="dashboard.models.extracted_functional_use.ExtractedFunctionalUse.DoesNotExist">
+<em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#dashboard.models.extracted_functional_use.ExtractedFunctionalUse.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="dashboard.models.extracted_functional_use.ExtractedFunctionalUse.MultipleObjectsReturned">
+<em class="property">exception </em><code class="sig-name descname">MultipleObjectsReturned</code><a class="headerlink" href="#dashboard.models.extracted_functional_use.ExtractedFunctionalUse.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-dashboard.models.extracted_habits_and_practices"></span><dl class="class">
+<dt id="dashboard.models.extracted_habits_and_practices.ExtractedHabitsAndPractices">
+<em class="property">class </em><code class="sig-prename descclassname">dashboard.models.extracted_habits_and_practices.</code><code class="sig-name descname">ExtractedHabitsAndPractices</code><span class="sig-paren">(</span><em class="sig-param">id</em>, <em class="sig-param">created_at</em>, <em class="sig-param">updated_at</em>, <em class="sig-param">extracted_text</em>, <em class="sig-param">product_surveyed</em>, <em class="sig-param">mass</em>, <em class="sig-param">mass_unit</em>, <em class="sig-param">frequency</em>, <em class="sig-param">frequency_unit</em>, <em class="sig-param">duration</em>, <em class="sig-param">duration_unit</em>, <em class="sig-param">prevalence</em>, <em class="sig-param">notes</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.extracted_habits_and_practices.ExtractedHabitsAndPractices" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>AutoField</em>) – Id</p></li>
+<li><p><strong>created_at</strong> (<em>DateTimeField</em>) – Created at</p></li>
+<li><p><strong>updated_at</strong> (<em>DateTimeField</em>) – Updated at</p></li>
+<li><p><strong>extracted_text_id</strong> (ForeignKey to <a class="reference internal" href="#dashboard.models.extracted_text.ExtractedText" title="dashboard.models.extracted_text.ExtractedText"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtractedText</span></code></a>) – Extracted text</p></li>
+<li><p><strong>product_surveyed</strong> (<em>CharField</em>) – Product surveyed</p></li>
+<li><p><strong>mass</strong> (<em>DecimalField</em>) – Mass</p></li>
+<li><p><strong>mass_unit</strong> (<em>CharField</em>) – Units for mass</p></li>
+<li><p><strong>frequency</strong> (<em>DecimalField</em>) – Frequency</p></li>
+<li><p><strong>frequency_unit</strong> (<em>CharField</em>) – Units for frequency</p></li>
+<li><p><strong>duration</strong> (<em>DecimalField</em>) – Duration</p></li>
+<li><p><strong>duration_unit</strong> (<em>CharField</em>) – Units for duration</p></li>
+<li><p><strong>prevalence</strong> (<em>CharField</em>) – Prevalence</p></li>
+<li><p><strong>notes</strong> (<em>TextField</em>) – Notes</p></li>
+<li><p><strong>PUCs</strong> (<em>ManyToManyField</em>) – Pucs</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="exception">
+<dt id="dashboard.models.extracted_habits_and_practices.ExtractedHabitsAndPractices.DoesNotExist">
+<em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#dashboard.models.extracted_habits_and_practices.ExtractedHabitsAndPractices.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="dashboard.models.extracted_habits_and_practices.ExtractedHabitsAndPractices.MultipleObjectsReturned">
+<em class="property">exception </em><code class="sig-name descname">MultipleObjectsReturned</code><a class="headerlink" href="#dashboard.models.extracted_habits_and_practices.ExtractedHabitsAndPractices.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dashboard.models.extracted_habits_and_practices.ExtractedHabitsAndPractices.clean">
+<code class="sig-name descname">clean</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.extracted_habits_and_practices.ExtractedHabitsAndPractices.clean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook for doing any extra model-wide validation after clean() has been
+called on every field by self.clean_fields. Any ValidationError raised
+by this method will not be associated with a particular field; it will
+have a special-case association with the field defined by NON_FIELD_ERRORS.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-dashboard.models.extracted_hhdoc"></span><dl class="class">
+<dt id="dashboard.models.extracted_hhdoc.ExtractedHHDoc">
+<em class="property">class </em><code class="sig-prename descclassname">dashboard.models.extracted_hhdoc.</code><code class="sig-name descname">ExtractedHHDoc</code><span class="sig-paren">(</span><em class="sig-param">created_at</em>, <em class="sig-param">updated_at</em>, <em class="sig-param">data_document</em>, <em class="sig-param">prod_name</em>, <em class="sig-param">doc_date</em>, <em class="sig-param">rev_num</em>, <em class="sig-param">extraction_script</em>, <em class="sig-param">qa_checked</em>, <em class="sig-param">qa_edited</em>, <em class="sig-param">qa_approved_date</em>, <em class="sig-param">qa_approved_by</em>, <em class="sig-param">qa_group</em>, <em class="sig-param">extractedtext_ptr</em>, <em class="sig-param">hhe_report_number</em>, <em class="sig-param">study_location</em>, <em class="sig-param">naics_code</em>, <em class="sig-param">sampling_date</em>, <em class="sig-param">population_gender</em>, <em class="sig-param">population_age</em>, <em class="sig-param">population_other</em>, <em class="sig-param">occupation</em>, <em class="sig-param">facility</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.extracted_hhdoc.ExtractedHHDoc" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>created_at</strong> (<em>DateTimeField</em>) – Created at</p></li>
+<li><p><strong>updated_at</strong> (<em>DateTimeField</em>) – Updated at</p></li>
+<li><p><strong>data_document_id</strong> (OneToOneField to <a class="reference internal" href="#dashboard.models.data_document.DataDocument" title="dashboard.models.data_document.DataDocument"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataDocument</span></code></a>) – Data document</p></li>
+<li><p><strong>prod_name</strong> (<em>CharField</em>) – Prod name</p></li>
+<li><p><strong>doc_date</strong> (<em>CharField</em>) – Doc date</p></li>
+<li><p><strong>rev_num</strong> (<em>CharField</em>) – Rev num</p></li>
+<li><p><strong>extraction_script_id</strong> (ForeignKey to <code class="xref py py-class docutils literal notranslate"><span class="pre">Script</span></code>) – Extraction script</p></li>
+<li><p><strong>qa_checked</strong> (<em>BooleanField</em>) – Qa approved</p></li>
+<li><p><strong>qa_edited</strong> (<em>BooleanField</em>) – Qa edited</p></li>
+<li><p><strong>qa_approved_date</strong> (<em>DateTimeField</em>) – Qa approval date</p></li>
+<li><p><strong>qa_approved_by_id</strong> (ForeignKey to <code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code>) – Qa approved by</p></li>
+<li><p><strong>qa_group_id</strong> (ForeignKey to <code class="xref py py-class docutils literal notranslate"><span class="pre">QAGroup</span></code>) – Qa group</p></li>
+<li><p><strong>extractedtext_ptr_id</strong> (OneToOneField to <a class="reference internal" href="#dashboard.models.extracted_text.ExtractedText" title="dashboard.models.extracted_text.ExtractedText"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtractedText</span></code></a>) – Extractedtext ptr</p></li>
+<li><p><strong>hhe_report_number</strong> (<em>CharField</em>) – Hhe report number</p></li>
+<li><p><strong>study_location</strong> (<em>CharField</em>) – Study location</p></li>
+<li><p><strong>naics_code</strong> (<em>CharField</em>) – Naics code</p></li>
+<li><p><strong>sampling_date</strong> (<em>CharField</em>) – Date of sampling</p></li>
+<li><p><strong>population_gender</strong> (<em>CharField</em>) – Gender of population</p></li>
+<li><p><strong>population_age</strong> (<em>CharField</em>) – Age of population</p></li>
+<li><p><strong>population_other</strong> (<em>CharField</em>) – Other description of population</p></li>
+<li><p><strong>occupation</strong> (<em>CharField</em>) – Occupation</p></li>
+<li><p><strong>facility</strong> (<em>CharField</em>) – Facility</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="exception">
+<dt id="dashboard.models.extracted_hhdoc.ExtractedHHDoc.DoesNotExist">
+<em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#dashboard.models.extracted_hhdoc.ExtractedHHDoc.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="dashboard.models.extracted_hhdoc.ExtractedHHDoc.MultipleObjectsReturned">
+<em class="property">exception </em><code class="sig-name descname">MultipleObjectsReturned</code><a class="headerlink" href="#dashboard.models.extracted_hhdoc.ExtractedHHDoc.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-dashboard.models.extracted_hhrec"></span><dl class="class">
+<dt id="dashboard.models.extracted_hhrec.ExtractedHHRec">
+<em class="property">class </em><code class="sig-prename descclassname">dashboard.models.extracted_hhrec.</code><code class="sig-name descname">ExtractedHHRec</code><span class="sig-paren">(</span><em class="sig-param">id</em>, <em class="sig-param">extracted_text</em>, <em class="sig-param">raw_cas</em>, <em class="sig-param">raw_chem_name</em>, <em class="sig-param">temp_id</em>, <em class="sig-param">temp_obj_name</em>, <em class="sig-param">rid</em>, <em class="sig-param">dsstox</em>, <em class="sig-param">rawchem_ptr</em>, <em class="sig-param">created_at</em>, <em class="sig-param">updated_at</em>, <em class="sig-param">media</em>, <em class="sig-param">sampling_method</em>, <em class="sig-param">analytical_method</em>, <em class="sig-param">num_measure</em>, <em class="sig-param">num_nondetect</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.extracted_hhrec.ExtractedHHRec" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>AutoField</em>) – Id</p></li>
+<li><p><strong>extracted_text_id</strong> (ForeignKey to <a class="reference internal" href="#dashboard.models.extracted_text.ExtractedText" title="dashboard.models.extracted_text.ExtractedText"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtractedText</span></code></a>) – Extracted text</p></li>
+<li><p><strong>raw_cas</strong> (<em>CharField</em>) – Raw CAS</p></li>
+<li><p><strong>raw_chem_name</strong> (<em>CharField</em>) – Raw chemical name</p></li>
+<li><p><strong>temp_id</strong> (<em>IntegerField</em>) – Temp id</p></li>
+<li><p><strong>temp_obj_name</strong> (<em>CharField</em>) – Temp obj name</p></li>
+<li><p><strong>rid</strong> (<em>CharField</em>) – RID</p></li>
+<li><p><strong>dsstox_id</strong> (ForeignKey to <code class="xref py py-class docutils literal notranslate"><span class="pre">DSSToxLookup</span></code>) – Dsstox</p></li>
+<li><p><strong>rawchem_ptr_id</strong> (OneToOneField to <code class="xref py py-class docutils literal notranslate"><span class="pre">RawChem</span></code>) – Rawchem ptr</p></li>
+<li><p><strong>created_at</strong> (<em>DateTimeField</em>) – Created at</p></li>
+<li><p><strong>updated_at</strong> (<em>DateTimeField</em>) – Updated at</p></li>
+<li><p><strong>media</strong> (<em>CharField</em>) – Media</p></li>
+<li><p><strong>sampling_method</strong> (<em>TextField</em>) – Sampling method</p></li>
+<li><p><strong>analytical_method</strong> (<em>TextField</em>) – Analytical method</p></li>
+<li><p><strong>num_measure</strong> (<em>CharField</em>) – Numeric measure</p></li>
+<li><p><strong>num_nondetect</strong> (<em>CharField</em>) – Numeric nondetect</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="exception">
+<dt id="dashboard.models.extracted_hhrec.ExtractedHHRec.DoesNotExist">
+<em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#dashboard.models.extracted_hhrec.ExtractedHHRec.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="dashboard.models.extracted_hhrec.ExtractedHHRec.MultipleObjectsReturned">
+<em class="property">exception </em><code class="sig-name descname">MultipleObjectsReturned</code><a class="headerlink" href="#dashboard.models.extracted_hhrec.ExtractedHHRec.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-dashboard.models.extracted_list_presence"></span><dl class="class">
+<dt id="dashboard.models.extracted_list_presence.ExtractedListPresence">
+<em class="property">class </em><code class="sig-prename descclassname">dashboard.models.extracted_list_presence.</code><code class="sig-name descname">ExtractedListPresence</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.extracted_list_presence.ExtractedListPresence" title="Permalink to this definition">¶</a></dt>
+<dd><p>A record of a chemical’s presence in a CPCat list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>qa_flag</strong> (<em>BooleanField</em>) – whether a record has been QA approved</p></li>
+<li><p><strong>report_funcuse</strong> (<em>CharField</em>) – the reported functional use of a list record</p></li>
+<li><p><strong>id</strong> (<em>AutoField</em>) – Id</p></li>
+<li><p><strong>extracted_text_id</strong> (ForeignKey to <a class="reference internal" href="#dashboard.models.extracted_text.ExtractedText" title="dashboard.models.extracted_text.ExtractedText"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtractedText</span></code></a>) – Extracted text</p></li>
+<li><p><strong>raw_cas</strong> (<em>CharField</em>) – Raw CAS</p></li>
+<li><p><strong>raw_chem_name</strong> (<em>CharField</em>) – Raw chemical name</p></li>
+<li><p><strong>temp_id</strong> (<em>IntegerField</em>) – Temp id</p></li>
+<li><p><strong>temp_obj_name</strong> (<em>CharField</em>) – Temp obj name</p></li>
+<li><p><strong>rid</strong> (<em>CharField</em>) – RID</p></li>
+<li><p><strong>dsstox_id</strong> (ForeignKey to <code class="xref py py-class docutils literal notranslate"><span class="pre">DSSToxLookup</span></code>) – Dsstox</p></li>
+<li><p><strong>rawchem_ptr_id</strong> (OneToOneField to <code class="xref py py-class docutils literal notranslate"><span class="pre">RawChem</span></code>) – Rawchem ptr</p></li>
+<li><p><strong>created_at</strong> (<em>DateTimeField</em>) – Created at</p></li>
+<li><p><strong>updated_at</strong> (<em>DateTimeField</em>) – Updated at</p></li>
+<li><p><strong>qa_flag</strong> – Qa flag</p></li>
+<li><p><strong>report_funcuse</strong> – Reported functional use</p></li>
+<li><p><strong>tags</strong> (<em>TaggableManager</em>) – A comma-separated list of tags.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="exception">
+<dt id="dashboard.models.extracted_list_presence.ExtractedListPresence.DoesNotExist">
+<em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#dashboard.models.extracted_list_presence.ExtractedListPresence.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="dashboard.models.extracted_list_presence.ExtractedListPresence.MultipleObjectsReturned">
+<em class="property">exception </em><code class="sig-name descname">MultipleObjectsReturned</code><a class="headerlink" href="#dashboard.models.extracted_list_presence.ExtractedListPresence.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dashboard.models.extracted_list_presence.ExtractedListPresence.detail_fields">
+<em class="property">classmethod </em><code class="sig-name descname">detail_fields</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.extracted_list_presence.ExtractedListPresence.detail_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lists the fields to be displayed on a detail form</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list – a list of field names</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="dashboard.models.extracted_list_presence.ExtractedListPresence.get_datadocument_url">
+<code class="sig-name descname">get_datadocument_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.extracted_list_presence.ExtractedListPresence.get_datadocument_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Traverses the relationship to the DataDocument model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>URL</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="dashboard.models.extracted_list_presence.ExtractedListPresenceTag">
+<em class="property">class </em><code class="sig-prename descclassname">dashboard.models.extracted_list_presence.</code><code class="sig-name descname">ExtractedListPresenceTag</code><span class="sig-paren">(</span><em class="sig-param">id</em>, <em class="sig-param">created_at</em>, <em class="sig-param">updated_at</em>, <em class="sig-param">name</em>, <em class="sig-param">slug</em>, <em class="sig-param">definition</em>, <em class="sig-param">kind</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.extracted_list_presence.ExtractedListPresenceTag" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>AutoField</em>) – Id</p></li>
+<li><p><strong>created_at</strong> (<em>DateTimeField</em>) – Created at</p></li>
+<li><p><strong>updated_at</strong> (<em>DateTimeField</em>) – Updated at</p></li>
+<li><p><strong>name</strong> (<em>CharField</em>) – Name</p></li>
+<li><p><strong>slug</strong> (<em>SlugField</em>) – Slug</p></li>
+<li><p><strong>definition</strong> (<em>CharField</em>) – Definition</p></li>
+<li><p><strong>kind_id</strong> (ForeignKey to <a class="reference internal" href="#dashboard.models.extracted_list_presence.ExtractedListPresenceTagKind" title="dashboard.models.extracted_list_presence.ExtractedListPresenceTagKind"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtractedListPresenceTagKind</span></code></a>) – Kind</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="exception">
+<dt id="dashboard.models.extracted_list_presence.ExtractedListPresenceTag.DoesNotExist">
+<em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#dashboard.models.extracted_list_presence.ExtractedListPresenceTag.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="dashboard.models.extracted_list_presence.ExtractedListPresenceTag.MultipleObjectsReturned">
+<em class="property">exception </em><code class="sig-name descname">MultipleObjectsReturned</code><a class="headerlink" href="#dashboard.models.extracted_list_presence.ExtractedListPresenceTag.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="dashboard.models.extracted_list_presence.ExtractedListPresenceTagKind">
+<em class="property">class </em><code class="sig-prename descclassname">dashboard.models.extracted_list_presence.</code><code class="sig-name descname">ExtractedListPresenceTagKind</code><span class="sig-paren">(</span><em class="sig-param">id</em>, <em class="sig-param">created_at</em>, <em class="sig-param">updated_at</em>, <em class="sig-param">name</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.extracted_list_presence.ExtractedListPresenceTagKind" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>AutoField</em>) – Id</p></li>
+<li><p><strong>created_at</strong> (<em>DateTimeField</em>) – Created at</p></li>
+<li><p><strong>updated_at</strong> (<em>DateTimeField</em>) – Updated at</p></li>
+<li><p><strong>name</strong> (<em>CharField</em>) – Name</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="exception">
+<dt id="dashboard.models.extracted_list_presence.ExtractedListPresenceTagKind.DoesNotExist">
+<em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#dashboard.models.extracted_list_presence.ExtractedListPresenceTagKind.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="dashboard.models.extracted_list_presence.ExtractedListPresenceTagKind.MultipleObjectsReturned">
+<em class="property">exception </em><code class="sig-name descname">MultipleObjectsReturned</code><a class="headerlink" href="#dashboard.models.extracted_list_presence.ExtractedListPresenceTagKind.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="dashboard.models.extracted_list_presence.ExtractedListPresenceToTag">
+<em class="property">class </em><code class="sig-prename descclassname">dashboard.models.extracted_list_presence.</code><code class="sig-name descname">ExtractedListPresenceToTag</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.extracted_list_presence.ExtractedListPresenceToTag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Many-to-many relationship between ExtractedListPresence and Tag</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>{</strong><strong>[</strong><strong>type</strong><strong>]</strong><strong>} --</strong><strong> [</strong><strong>description</strong><strong>]</strong> (<em>CommonInfo</em>) – </p></li>
+<li><p><strong>{</strong><strong>[</strong><strong>type</strong><strong>]</strong><strong>} --</strong><strong> [</strong><strong>description</strong><strong>]</strong> – </p></li>
+<li><p><strong>id</strong> (<em>AutoField</em>) – Id</p></li>
+<li><p><strong>created_at</strong> (<em>DateTimeField</em>) – Created at</p></li>
+<li><p><strong>updated_at</strong> (<em>DateTimeField</em>) – Updated at</p></li>
+<li><p><strong>content_object_id</strong> (ForeignKey to <a class="reference internal" href="#dashboard.models.extracted_list_presence.ExtractedListPresence" title="dashboard.models.extracted_list_presence.ExtractedListPresence"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtractedListPresence</span></code></a>) – Content object</p></li>
+<li><p><strong>tag_id</strong> (ForeignKey to <a class="reference internal" href="#dashboard.models.extracted_list_presence.ExtractedListPresenceTag" title="dashboard.models.extracted_list_presence.ExtractedListPresenceTag"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtractedListPresenceTag</span></code></a>) – Tag</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>[type] – [description]</p>
+</dd>
+</dl>
+<dl class="exception">
+<dt id="dashboard.models.extracted_list_presence.ExtractedListPresenceToTag.DoesNotExist">
+<em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#dashboard.models.extracted_list_presence.ExtractedListPresenceToTag.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="dashboard.models.extracted_list_presence.ExtractedListPresenceToTag.MultipleObjectsReturned">
+<em class="property">exception </em><code class="sig-name descname">MultipleObjectsReturned</code><a class="headerlink" href="#dashboard.models.extracted_list_presence.ExtractedListPresenceToTag.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-dashboard.models.product"></span><dl class="class">
+<dt id="dashboard.models.product.Product">
+<em class="property">class </em><code class="sig-prename descclassname">dashboard.models.product.</code><code class="sig-name descname">Product</code><span class="sig-paren">(</span><em class="sig-param">id</em>, <em class="sig-param">created_at</em>, <em class="sig-param">updated_at</em>, <em class="sig-param">source_category</em>, <em class="sig-param">title</em>, <em class="sig-param">manufacturer</em>, <em class="sig-param">upc</em>, <em class="sig-param">url</em>, <em class="sig-param">brand_name</em>, <em class="sig-param">size</em>, <em class="sig-param">model_number</em>, <em class="sig-param">color</em>, <em class="sig-param">item_id</em>, <em class="sig-param">parent_item_id</em>, <em class="sig-param">short_description</em>, <em class="sig-param">long_description</em>, <em class="sig-param">thumb_image</em>, <em class="sig-param">medium_image</em>, <em class="sig-param">large_image</em><span class="sig-paren">)</span><a class="headerlink" href="#dashboard.models.product.Product" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>AutoField</em>) – Id</p></li>
+<li><p><strong>created_at</strong> (<em>DateTimeField</em>) – Created at</p></li>
+<li><p><strong>updated_at</strong> (<em>DateTimeField</em>) – Updated at</p></li>
+<li><p><strong>source_category_id</strong> (ForeignKey to <code class="xref py py-class docutils literal notranslate"><span class="pre">SourceCategory</span></code>) – The category assigned in the product’s data source</p></li>
+<li><p><strong>title</strong> (<em>CharField</em>) – Title</p></li>
+<li><p><strong>manufacturer</strong> (<em>CharField</em>) – title</p></li>
+<li><p><strong>upc</strong> (<em>CharField</em>) – UPC</p></li>
+<li><p><strong>url</strong> (<em>CharField</em>) – URL</p></li>
+<li><p><strong>brand_name</strong> (<em>CharField</em>) – brand name</p></li>
+<li><p><strong>size</strong> (<em>CharField</em>) – size</p></li>
+<li><p><strong>model_number</strong> (<em>CharField</em>) – model number</p></li>
+<li><p><strong>color</strong> (<em>CharField</em>) – color</p></li>
+<li><p><strong>item_id</strong> (<em>IntegerField</em>) – item ID</p></li>
+<li><p><strong>parent_item_id</strong> (<em>IntegerField</em>) – parent item ID</p></li>
+<li><p><strong>short_description</strong> (<em>TextField</em>) – short description</p></li>
+<li><p><strong>long_description</strong> (<em>TextField</em>) – long description</p></li>
+<li><p><strong>thumb_image</strong> (<em>CharField</em>) – thumbnail image</p></li>
+<li><p><strong>medium_image</strong> (<em>CharField</em>) – medium image</p></li>
+<li><p><strong>large_image</strong> (<em>CharField</em>) – large image</p></li>
+<li><p><strong>documents</strong> (<em>ManyToManyField</em>) – Data Documents related to this Product</p></li>
+<li><p><strong>tags</strong> (<em>TaggableManager</em>) – A set of PUC Tags applicable to this Product</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="exception">
+<dt id="dashboard.models.product.Product.DoesNotExist">
+<em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#dashboard.models.product.Product.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="dashboard.models.product.Product.MultipleObjectsReturned">
+<em class="property">exception </em><code class="sig-name descname">MultipleObjectsReturned</code><a class="headerlink" href="#dashboard.models.product.Product.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dashboard.models.product.Product.rawchems">
+<em class="property">property </em><code class="sig-name descname">rawchems</code><a class="headerlink" href="#dashboard.models.product.Product.rawchems" title="Permalink to this definition">¶</a></dt>
+<dd><p>A generator of all RawChem objects in this product</p>
+<dl class="simple">
+<dt>It’s recommended to first “prefetch_related” the RawChem objects:</dt><dd><p>Product.objecs.prefetch_related(“datadocument_set__extractedtext__rawchem”)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="views.html" class="btn btn-neutral float-right" title="Dashboard Views" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../../index.html" class="btn btn-neutral float-left" title="ChemExpoDB" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, ChemExpoDB Team
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

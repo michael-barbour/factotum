@@ -1,4 +1,6 @@
 import base64
+from elastic.search import run_query, FACETS
+from django.shortcuts import render
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -9,7 +11,6 @@ from elastic.search import run_query, FACETS
 from elastic.models import QueryLog
 
 
-@login_required()
 def search_model(request, model, template_name="search/base.html"):
     page = request.GET.get("page", 1)
     encoded_q = request.GET.get("q", "")
@@ -27,7 +28,8 @@ def search_model(request, model, template_name="search/base.html"):
             facet_strs = []
             for s in request.GET[f].split(","):
                 try:
-                    facet_strs.append(base64.b64decode(s).decode("unicode_escape"))
+                    facet_strs.append(base64.b64decode(
+                        s).decode("unicode_escape"))
                 except:
                     pass
             if facet_strs:

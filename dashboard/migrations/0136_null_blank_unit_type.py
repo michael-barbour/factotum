@@ -19,6 +19,6 @@ def null_blank_chems(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [("dashboard", "0135_auto_20191031_1351")]
+    dependencies = [("dashboard", "0135_audit_rid_trigger")]
 
     operations = [migrations.RunPython(null_blank_chems)]

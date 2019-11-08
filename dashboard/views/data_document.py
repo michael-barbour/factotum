@@ -40,7 +40,11 @@ def data_document_detail(request, pk):
     ParentForm, _ = create_detail_formset(doc)
     Parent, Child = get_extracted_models(doc.data_group.group_type.code)
     ext = Parent.objects.filter(pk=doc.pk).first()
-    chemicals = Child.objects.filter(extracted_text__data_document=doc)
+    chemicals = Child.objects.filter(
+        extracted_text__data_document=doc
+    ).prefetch_related("dsstox")
+    if Child == ExtractedListPresence:
+        chemicals = chemicals.prefetch_related("tags")
     ingredients = ExtractedChemical.objects.filter(
         rawchem_ptr_id__in=chemicals.values_list("pk", flat=True)
     )

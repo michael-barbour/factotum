@@ -405,7 +405,7 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
         num_pucs = self._n_children(pucs)
         bubbles = self.browser.find_elements_by_class_name("bubble")
         self.assertEqual(
-            num_pucs, len(bubbles), ("There should be a circle" "drawn for every PUC")
+            num_pucs, len(bubbles), ("There should be a circle drawn for every PUC")
         )
 
     def test_delete_dd_from_dg(self):

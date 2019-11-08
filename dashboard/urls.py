@@ -259,6 +259,11 @@ urlpatterns = [
         name="list_presence_tag_delete",
     ),
     path("search/<str:model>/", views.search_model, name="search-model"),
+    path(
+        "keywordset_documents/<int:pk>/",
+        views.keywordset_documents,
+        name="keywordset_documents",
+    ),
 ]
 
 if settings.DEBUG is True:

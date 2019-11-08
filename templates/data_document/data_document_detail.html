@@ -6,7 +6,9 @@
 
 {% block title %}Data Document {{ doc.id }}: {{ doc.title }}{% endblock %}
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard/datadocument_detail.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard/full_width_container.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard/anchored_footer.css' %}">
+
 {% endblock %}
 {% block content %}
 
@@ -276,9 +278,7 @@
                 {% for field in edit_text_form.visible_fields %}
                 <dl class="mb-0">
                     <dt>
-                        <u>
-                            {{ field.label }}
-                        </u>
+                        {{ field.label }}
                     </dt>
                     <dd class="pl-4 mb-0"
                         id={{ field.id_for_label }}>

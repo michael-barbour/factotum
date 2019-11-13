@@ -89,17 +89,17 @@ urlpatterns = [
         "link_product_form/<int:pk>/", views.link_product_form, name="link_product_form"
     ),
     path(
-        "qa/extractionscript/",
+        "qa/compextractionscript/",
         views.qa_extractionscript_index,
         name="qa_extractionscript_index",
     ),
     path(
-        "qa/extractionscript/<int:pk>/",
+        "qa/compextractionscript/<int:pk>/",
         dashboard.views.qa.qa_extraction_script,
         name="qa_extraction_script",
     ),
     path(
-        "qa/extractionscript/<int:pk>/summary",
+        "qa/compextractionscript/<int:pk>/summary",
         dashboard.views.qa.qa_extraction_script_summary,
         name="qa_extraction_script_summary",
     ),

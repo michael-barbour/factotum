@@ -19,11 +19,14 @@ class ExtractedText(CommonInfo):
         "DataDocument", on_delete=models.CASCADE, primary_key=True
     )
     prod_name = models.CharField(
-        "Product name", max_length=500, null=True, blank=True, help_text="The name of the product according to the extracted document")
-    doc_date = models.CharField(
-        "Document date", max_length=25, null=True, blank=True)
-    rev_num = models.CharField(
-        "Revision number", max_length=50, null=True, blank=True)
+        "Product name",
+        max_length=500,
+        null=True,
+        blank=True,
+        help_text="The name of the product according to the extracted document",
+    )
+    doc_date = models.CharField("Document date", max_length=25, null=True, blank=True)
+    rev_num = models.CharField("Revision number", max_length=50, null=True, blank=True)
     extraction_script = models.ForeignKey(
         "Script", on_delete=models.CASCADE, limit_choices_to={"script_type": "EX"}
     )
@@ -58,8 +61,7 @@ class ExtractedText(CommonInfo):
         # next document is drawn from that group. If it is a CPCat
         # or HHE record, there is no next document
         extextnext = get_next_or_prev(
-            ExtractedText.objects.filter(
-                qa_group=self.qa_group, qa_checked=False),
+            ExtractedText.objects.filter(qa_group=self.qa_group, qa_checked=False),
             self,
             "next",
         )

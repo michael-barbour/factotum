@@ -5,24 +5,32 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('dashboard', '0137_help_text'),
-    ]
+    dependencies = [("dashboard", "0137_help_text")]
 
     operations = [
         migrations.AlterField(
-            model_name='extractedtext',
-            name='doc_date',
-            field=models.CharField(blank=True, max_length=25, null=True, verbose_name='Document date'),
+            model_name="extractedtext",
+            name="doc_date",
+            field=models.CharField(
+                blank=True, max_length=25, null=True, verbose_name="Document date"
+            ),
         ),
         migrations.AlterField(
-            model_name='extractedtext',
-            name='prod_name',
-            field=models.CharField(blank=True, help_text='The name of the product according to the extracted document', max_length=500, null=True, verbose_name='Product name'),
+            model_name="extractedtext",
+            name="prod_name",
+            field=models.CharField(
+                blank=True,
+                help_text="The name of the product according to the extracted document",
+                max_length=500,
+                null=True,
+                verbose_name="Product name",
+            ),
         ),
         migrations.AlterField(
-            model_name='extractedtext',
-            name='rev_num',
-            field=models.CharField(blank=True, max_length=50, null=True, verbose_name='Revision number'),
+            model_name="extractedtext",
+            name="rev_num",
+            field=models.CharField(
+                blank=True, max_length=50, null=True, verbose_name="Revision number"
+            ),
         ),
     ]

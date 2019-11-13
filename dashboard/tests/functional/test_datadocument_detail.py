@@ -126,7 +126,7 @@ class DataDocumentDetailTest(TestCase):
         # response = self.client.get(f'/datadocument/{doc.pk}/')
         response = self.client.get(f"/datadocument/156051/")
         self.assertIn("Download Script", response.content.decode("utf-8"))
-        self.assertIn("Extraction Script", response.content.decode("utf-8"))
+        self.assertIn("Extraction script", response.content.decode("utf-8"))
         self.assertIn("Cleaning Script", response.content.decode("utf-8"))
         comptox = "https://comptox.epa.gov/dashboard/dsstoxdb/results?search="
         self.assertContains(response, comptox)
@@ -233,7 +233,10 @@ class DataDocumentDetailTest(TestCase):
         """
         post_uri = "/datadocument/delete/"
         pk = 354784
-        doc_exists = lambda: DataDocument.objects.filter(pk=pk).exists()
+
+        def doc_exists():
+            return DataDocument.objects.filter(pk=pk).exists()
+
         self.assertTrue(
             doc_exists(), "Document does not exist prior to delete attempt."
         )

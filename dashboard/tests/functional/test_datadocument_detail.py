@@ -483,3 +483,16 @@ class TestDynamicDetailFormsets(TestCase):
         page = html.fromstring(response.content)
         chem_name = page.xpath('//*[@id="chem_name-' + str(hhrec.id) + '"]')[0].text
         self.assertIn("None", chem_name)
+
+    def test_datadoc_datasource_url_links(self):
+        # Check data document with datadoc and datasource URL links
+        response = self.client.get("/datadocument/179486/")
+        self.assertIn(
+            "View source document (external)", response.content.decode("utf-8")
+        )
+        datadocURL = "http://airgas.com/msds/001088.pdf"
+        self.assertContains(response, datadocURL)
+
+        self.assertIn("View data source (external)", response.content.decode("utf-8"))
+        datasourceURL = "http://www.airgas.com/sds-search"
+        self.assertContains(response, datasourceURL)

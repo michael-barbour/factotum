@@ -41,6 +41,15 @@
                    href="{{ doc.pdf_url }}">
                     <span class="fa fa-fs {{ doc.pdf_url|fileicon }}"></span>
                 </a>
+                {% if doc.url %}
+                    <a class="btn btn-sm btn-outline-secondary hover-info"
+                        title="View source document (external)"
+                        data-toggle="tooltip"
+                        target="_blank"
+                        href="{{ doc.url }}">
+                        <span class="fa fa-fs fa-external-link-alt"></span>
+                    </a>
+                {% endif %}
                 {% if ingredients %}
                     {% with ingredient=ingredients.first %}
                         <a class="btn btn-outline-secondary btn-sm hover-info"
@@ -82,7 +91,18 @@
                href="{% url 'data_source_detail' doc.data_group.data_source.id %}"
                     {% endif %}
             >
-                <h5>{{ doc.data_group.data_source }}</h5>
+                <h5>{{ doc.data_group.data_source }}
+                    {% if doc.data_group.data_source.url %}
+                        <a class="btn btn-outline-secondary btn-sm hover-success"
+                            title="View data source (external)"
+                            id="datasource_url"
+                            data-toggle="tooltip"
+                            target="_blank"
+                            href="{{ doc.data_group.data_source.url }}">
+                            <span class="fa fa-fs fa-external-link-alt"></span>
+                        </a>
+                    {% endif %}
+                </h5>
             </a>
             <a id="datagroup_link"
                title="DataGroup"

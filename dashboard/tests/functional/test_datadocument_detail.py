@@ -17,7 +17,6 @@ from dashboard.models import (
 from dashboard.forms import create_detail_formset
 from factotum.settings import EXTRA
 from dashboard.tests.loader import fixtures_standard, datadocument_models
-from django.db.models import F, Min
 from dashboard.utils import get_extracted_models
 
 
@@ -120,6 +119,14 @@ class DataDocumentDetailTest(TestCase):
             card_chemname == nav_chemname,
             "The card and the scrollspy should show different chem names",
         )
+
+        # Test presence of necessary display attributes
+        raw_comp = page.xpath('//*[@id="raw_comp"]')[0].text
+        self.assertIn("4 - 7 weight fraction", raw_comp)
+        report_funcuse = page.xpath('//*[@id="report_funcuse"]')[0].text
+        self.assertIn("swell", report_funcuse)
+        ingredient_rank = page.xpath('//*[@id="ingredient_rank"]')[0].text
+        self.assertIn("1", ingredient_rank)
 
     def test_script_links(self):
         DataDocument.objects.first()
@@ -277,9 +284,6 @@ class DataDocumentDetailTest(TestCase):
 
     def test_subtitle_ellipsis(self):
         id = 354783
-        doc = DataDocument.objects.get(id=id)
-        subtitle = doc.subtitle
-        subtitle45 = subtitle[:45]
         response = self.client.get("/datadocument/%i/" % id)
         # Confirm that the displayed subtitle is truncated and ... is appended
         self.assertContains(response, "This subtitle is more than 90 c…")
@@ -476,4 +480,6 @@ class TestDynamicDetailFormsets(TestCase):
         )
         hhrec.save()
         response = self.client.get("/datadocument/%i/" % ext.data_document_id)
-        self.assertIn("None\n                </h3>", response.content.decode("utf-8"))
+        page = html.fromstring(response.content)
+        chem_name = page.xpath('//*[@id="chem_name-' + str(hhrec.id) + '"]')[0].text
+        self.assertIn("None", chem_name)

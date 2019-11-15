@@ -215,3 +215,19 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
             )
         except NoSuchElementException:
             self.fail("Link does not exist.")
+
+    def test_co_clean_comp_slider(self):
+        dd_pk = 156051
+        list_url = self.live_server_url + f"/datadocument/{dd_pk}/"
+        self.browser.get(list_url)
+
+        # Verify that the sliders have been generated for extracted chemicals in this datadocument
+        try:
+            slider = WebDriverWait(self.browser, 5).until(
+                ec.visibility_of_element_located((By.XPATH, '//*[@id="slider856"]'))
+            )
+            slider2 = WebDriverWait(self.browser, 5).until(
+                ec.visibility_of_element_located((By.XPATH, '//*[@id="slider2"]'))
+            )
+        except NoSuchElementException:
+            self.fail("Sliders should exist on this page, but does not.")

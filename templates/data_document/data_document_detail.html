@@ -233,7 +233,7 @@
                     <div class="btn-group btn-group-sm shadow float-right">
                         {% if doc.is_extracted %}
                             {% if not extracted_text.qa_checked %}
-                                <a class="btn btn-sm border-secondary"
+                                <a class="btn btn-outline-secondary"
                                    id="qa_icon_unchecked"
                                         {% if request.user.is_authenticated %}
                                    title="Go to QA"
@@ -242,14 +242,14 @@
                                            title="Not checked in QA"
                                         {% endif %}
                                 data-toggle="tooltip">
-                                <i class="far fa-square"></i>
+                                <i class="far fa-check-square"></i>
                                 </a>
                             {% else %}
-                                <a class="btn btn-sm btn-secondary"
+                                <a class="btn border-secondary"
                                    title="QA Complete"
                                    id="qa_icon_checked"
                                    data-toggle="tooltip">
-                                    <i class="far fa-check-square"></i>
+                                    <i class="fas fa-check-square"></i>
                                 </a>
                             {% endif %}
                         {% endif %}

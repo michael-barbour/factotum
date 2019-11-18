@@ -11,33 +11,33 @@
     {% for chemical in chemicals %}
         <div class="card mt-2 big-bottom"
              id="chem-{{ chemical.pk }}">
-            {% if chemical.dsstox %}
-                <div class="row">
-                    <div class="col-6 text-center">
-                        <small class="text-muted">
-                            <a title="go to substance"
-                               href={% url 'chemical' chemical.dsstox.sid %}>
-                                True Name: {{ chemical.dsstox.true_chemname|truncatechars:45 }}
-                            </a>
-                        </small>
-                    </div>
-                    <div class="col-6 text-center">
-                        <small class="text-muted">
-                            True CAS: {{ chemical.dsstox.true_cas }}
-                        </small>
-                    </div>
+            <div class="row">
+                <div class="col-6 text-center">
+                    <h5 class="text-muted">
+                        {{ chemical.raw_chem_name|truncatechars:45 }}
+                    </h5>
                 </div>
-            {% endif %}
+                <div class="col-6 text-center">
+                    <h5 class="text-muted">
+                        {{ chemical.raw_cas }}
+                    </h5>
+                </div>
+            </div>
             <div class="card-body shadow rounded"
                  id="chem-click-{{ chemical.pk }}"
                  data-chem-id="{{ chemical.pk }}">
                 <div class="card-title border-bottom">
                     <h3 class="d-inline"
                         id="chem_name-{{ chemical.pk }}"
-                        title="{{ chemical.raw_chem_name.value }}"
+                        title="{{ chemical.dsstox.true_chemname }}"
                         data-toggle="tooltip"
                         data-placement="bottom">
-                        {{ chemical.raw_chem_name|truncatechars:45 }}
+                        {% if chemical.dsstox.true_chemname %}
+                            <a title="go to substance"
+                                href={% url 'chemical' chemical.dsstox.sid %}>
+                                {{ chemical.dsstox.true_chemname|truncatechars:45 }}
+                            </a>
+                        {% endif %}
                     </h3>
                     {% if doc.detail_page_editable and request.user.is_authenticated %}
                         <div class="btn-group btn-group-sm float-right"
@@ -61,9 +61,11 @@
                         </div>
                     {% endif %}
                     <div>
-                        <h4 class="d-inline" title="raw cas">
-                            {{ chemical.raw_cas }}
-                        </h4>
+                        {% if chemical.dsstox.true_cas %}
+                            <h4 class="d-inline" title="true cas">
+                                {{ chemical.dsstox.true_cas }}
+                            </h4>
+                        {% endif%}
                         {% if chemical.dsstox %} <h4
                                 class="float-right">
                             <a href="https://comptox.epa.gov/dashboard/dsstoxdb/results?search={{ chemical.dsstox.sid }}"

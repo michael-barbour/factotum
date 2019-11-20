@@ -9,6 +9,8 @@ from dashboard.models import (
     ExtractedCPCat,
     ExtractedHHDoc,
     ExtractedHHRec,
+    ExtractedChemical,
+    ExtractedListPresence,
     ExtractedListPresenceToTag,
     ExtractedListPresenceTag,
     DataDocument,
@@ -129,14 +131,19 @@ class DataDocumentDetailTest(TestCase):
         self.assertIn("1", ingredient_rank)
 
     def test_script_links(self):
-        DataDocument.objects.first()
-        # response = self.client.get(f'/datadocument/{doc.pk}/')
-        response = self.client.get(f"/datadocument/156051/")
-        self.assertIn("Download Script", response.content.decode("utf-8"))
-        self.assertIn("Extraction script", response.content.decode("utf-8"))
-        self.assertIn("Cleaning Script", response.content.decode("utf-8"))
+        doc = DataDocument.objects.get(pk=156051)
+        response = self.client.get(doc.get_absolute_url())
+        self.assertContains(response, "Extraction script")
+        self.assertContains(response, "Download Script")
+        self.assertContains(response, "Cleaning Script")
         comptox = "https://comptox.epa.gov/dashboard/dsstoxdb/results?search="
         self.assertContains(response, comptox)
+        chems = doc.extractedtext.rawchem.all().select_subclasses()
+        for chem in chems:
+            chem.script = None
+            chem.save()
+        response = self.client.get(doc.get_absolute_url())
+        self.assertNotContains(response, "Cleaning Script")
 
     def test_product_card_location(self):
         response = self.client.get("/datadocument/179486/")
@@ -357,6 +364,22 @@ class DataDocumentDetailTest(TestCase):
         self.assertEqual("fa fa-fs fa-file-alt", icon_span)
         icon_span = self._get_icon_span("172462.pdf")
         self.assertEqual("fa fa-fs fa-file-pdf", icon_span)
+
+    def test_last_updated(self):
+        doc = (
+            ExtractedChemical.objects.filter(updated_at__isnull=False)
+            .first()
+            .extracted_text.data_document
+        )
+        response = self.client.get(doc.get_absolute_url())
+        self.assertContains(response, "Last updated:")
+        doc = (
+            ExtractedListPresence.objects.filter(updated_at__isnull=False)
+            .first()
+            .extracted_text.data_document
+        )
+        response = self.client.get(doc.get_absolute_url())
+        self.assertContains(response, "Last updated:")
 
 
 class TestDynamicDetailFormsets(TestCase):

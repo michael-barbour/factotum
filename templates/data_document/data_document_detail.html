@@ -50,15 +50,13 @@
                         <span class="fa fa-fs fa-external-link-alt"></span>
                     </a>
                 {% endif %}
-                {% if ingredients %}
-                    {% with ingredient=ingredients.first %}
-                        <a class="btn btn-outline-secondary btn-sm hover-info"
-                           title="Cleaning Script"
-                           data-toggle="tooltip"
-                           href="{{ ingredient.script.url }}">
-                            <span class="fas fa-broom"></span>
-                        </a>
-                    {% endwith %}
+                {% if cleaning_script %}
+                    <a class="btn btn-outline-secondary btn-sm hover-info"
+                        title="Cleaning Script"
+                        data-toggle="tooltip"
+                        href="{{ cleaning_script.url }}">
+                        <span class="fas fa-broom"></span>
+                    </a>
                 {% endif %}
                 {% if request.user.is_authenticated %}
                     <a class="btn btn-outline-secondary btn-sm hover-success"

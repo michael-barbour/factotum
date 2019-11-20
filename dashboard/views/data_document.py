@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.http import HttpResponse
+from django.db.models import OuterRef, Subquery
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import CreateView, UpdateView
@@ -17,6 +18,7 @@ from dashboard.forms import (
     ExtractedListPresenceForm,
 )
 from dashboard.models import (
+    AuditLog,
     DataDocument,
     ExtractedListPresence,
     ExtractedText,
@@ -45,9 +47,6 @@ def data_document_detail(request, pk):
     ).prefetch_related("dsstox")
     if Child == ExtractedListPresence:
         chemicals = chemicals.prefetch_related("tags")
-    ingredients = ExtractedChemical.objects.filter(
-        rawchem_ptr_id__in=chemicals.values_list("pk", flat=True)
-    )
     lp = ExtractedListPresence.objects.filter(
         extracted_text=ext if ext else None
     ).first()
@@ -56,10 +55,12 @@ def data_document_detail(request, pk):
         "doc": doc,
         "extracted_text": ext,
         "chemicals": chemicals,
-        "ingredients": ingredients,
         "edit_text_form": ParentForm(instance=ext),  # empty form if ext is None
         "list_presence_tag_form": tag_form if lp else None,
     }
+    if doc.data_group.group_type.code == "CO":
+        script_chem = chemicals.filter(script__isnull=False).first()
+        context["cleaning_script"] = script_chem.script if script_chem else None
     return render(request, template_name, context)
 
 

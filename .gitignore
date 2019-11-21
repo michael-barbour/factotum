@@ -155,3 +155,5 @@ src/
 /chromedriver.exe
 /mysql.cnf
 /chromedriver.exe
+
+/collected_static

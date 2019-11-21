@@ -34,7 +34,7 @@ class MetaEnv(type):
 
     @property
     def MAX_UPLOAD_SIZE(cls):
-        default = "2621440"
+        default = "5242880"
         return cls._get("MAX_UPLOAD_SIZE", default)
 
     @property

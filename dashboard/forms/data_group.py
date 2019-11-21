@@ -315,7 +315,8 @@ class ExtractFileFormSet(DGFormSet):
             self.form = ChemicalPresenceExtractFileForm
         # For the template render
         self.extraction_script_choices = [
-            (str(s.pk), str(s)) for s in Script.objects.filter(script_type="EX")
+            (str(s.pk), str(s))
+            for s in Script.objects.filter(script_type="EX").filter(qa_begun=False)
         ]
         super().__init__(*args, **kwargs)
 

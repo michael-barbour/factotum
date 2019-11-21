@@ -77,7 +77,7 @@ def qa_extraction_script(request, pk, template_name="qa/extraction_script.html")
     script = get_object_or_404(Script, pk=pk)
     # If the Script has no related ExtractedText objects, redirect back to the QA index
     if ExtractedText.objects.filter(extraction_script=script).count() == 0:
-        return redirect("/qa/extractionscript/")
+        return redirect("/qa/compextractionscript/")
     qa_group = script.get_or_create_qa_group()
     texts = ExtractedText.objects.filter(qa_group=qa_group, qa_checked=False)
     return render(

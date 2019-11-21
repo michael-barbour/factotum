@@ -195,3 +195,39 @@ class TestEditsWithSeedData(StaticLiveServerTestCase):
             self.browser.find_element_by_xpath('//td[text()="Supplemental Memo"]')
         except NoSuchElementException:
             self.fail("Label for SU title does not exist.")
+
+    def test_cp_keyword_docs(self):
+        """
+        Test that a CP keyword/tag set contains a doc table with links to docs
+        """
+        chem_url = self.live_server_url + "/chemical/DTXSID9020584/"
+        self.browser.get(chem_url)
+        # import ipdb; ipdb.set_trace()
+        wait = WebDriverWait(self.browser, 10)
+        testKeywordSet = self.browser.find_element_by_xpath('//*[@id="keywords-4"]')
+
+        try:
+            testKeywordSet.click()
+            wait.until(
+                ec.element_to_be_clickable(
+                    (By.XPATH, "//*[@href='/datadocument/354787']")
+                )
+            )
+        except NoSuchElementException:
+            self.fail("Link does not exist.")
+
+    def test_co_clean_comp_slider(self):
+        dd_pk = 156051
+        list_url = self.live_server_url + f"/datadocument/{dd_pk}/"
+        self.browser.get(list_url)
+
+        # Verify that the sliders have been generated for extracted chemicals in this datadocument
+        try:
+            slider = WebDriverWait(self.browser, 5).until(
+                ec.visibility_of_element_located((By.XPATH, '//*[@id="slider856"]'))
+            )
+            slider2 = WebDriverWait(self.browser, 5).until(
+                ec.visibility_of_element_located((By.XPATH, '//*[@id="slider2"]'))
+            )
+        except NoSuchElementException:
+            self.fail("Sliders should exist on this page, but does not.")

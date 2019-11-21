@@ -8,7 +8,6 @@ volumes:
 
 services:
   elasticsearch:
-    build: https://github.com/HumanExposure/factotum_elastic.git#${FACTOTUM_ELASTIC_BRANCH:-master}:elasticsearch
     image: factotum-elasticsearch
     restart: unless-stopped
     environment:
@@ -20,7 +19,6 @@ services:
       xpack.monitoring.enabled: "false"
       xpack.security.enabled: "false"
       xpack.watcher.enabled: "false"
-      ES_JAVA_OPTS: -Xms${ES_MEMORY_LIMIT:-5g} -Xmx${ES_MEMORY_LIMIT:-5g} -Des.enforce.bootstrap.checks=true
     ulimits:
       memlock:
         soft: -1
@@ -29,20 +27,13 @@ services:
       - esdata:/usr/share/elasticsearch/data
 
   logstash:
-    build: https://github.com/HumanExposure/factotum_elastic.git#${FACTOTUM_ELASTIC_BRANCH:-master}:logstash
     image: factotum-logstash
     restart: unless-stopped
     environment:
       DELETE_INDEX_SCHEDULE: ${DELETE_INDEX_SCHEDULE:-25 1 * * * America/New_York}
       ELASTICSEARCH_HOST: elasticsearch
       ELASTICSEARCH_PORT: ${ELASTICSEARCH_PORT:-9200}
-      LS_JAVA_OPTS: -Xms${LS_MEMORY_LIMIT:-5g} -Xmx${LS_MEMORY_LIMIT:-5g}
-      REINDEX_SCHEDULE: ${REINDEX_SCHEDULE:-30 1 * * * America/New_York}
-      SQL_DATABASE: ${SQL_DATABASE:-}
-      SQL_HOST: ${SQL_HOST:-}
-      SQL_PASSWORD: ${SQL_PASSWORD:-}
       SQL_PORT: ${SQL_PORT:-3306}
-      SQL_USER: ${SQL_USER:-}
       XPACK_MONITORING_ENABLED: "false"
     volumes:
       - lsdata:/usr/share/logstash/data

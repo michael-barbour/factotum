@@ -16,7 +16,6 @@ services:
       http.port: ${ELASTICSEARCH_PORT:-9200}
       xpack.graph.enabled: "false"
       xpack.monitoring.enabled: "false"
-      xpack.monitoring.enabled: "false"
       xpack.security.enabled: "false"
       xpack.watcher.enabled: "false"
     ulimits:

@@ -29,7 +29,16 @@
         {% endif %}
         {% endfor %}
 
-
+{% if not hit.highlights|dict_key:'True chemical name'%}
+       <div class="row">
+            <div class="col-lg-3 border-right">
+                <small class="text-muted">True chemical name:</small>
+            </div>
+            <div class="col-lg-9">
+                <small class="text-muted">{{ hit.source|dict_key:"truechem_name" }}</small>
+            </div>
+        </div>
+{% endif%}
 {% if not hit.highlights|dict_key:'True chemical CAS'%}
        <div class="row">
             <div class="col-lg-3 border-right">

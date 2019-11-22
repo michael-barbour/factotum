@@ -87,15 +87,6 @@ FRIENDLY_FIELDS = {
     "puc_description": "Description",
 }
 
-# some fields should always be shown, whether
-# or not they are in the highlighted fields
-FORCE_FIELDS = {
-    "truechem_dtxsid": (
-        "rawchem_cas",
-        "truechem_cas",
-    ),
-}
-
 VALID_MODELS = {"product", "datadocument", "puc", "chemical"}
 
 TOTAL_COUNT_AGG = "unique_total_count"
@@ -139,31 +130,21 @@ class ElasticPaginator:
                 hit["chemsearch"] = False
         # patch html
         for hit in result:
-            # Add the FORCE_FIELDS to the highlights if they are
-            # not already among the highlighted fields
-            for force_field in set(FORCE_FIELDS["truechem_dtxsid"]):
-                if hit["source"][force_field]:
-                    hit["highlights"].update(
-                        {force_field: [hit["source"][force_field]]})
-
             for source_field, highlights in hit["highlights"].items():
-                for highlight in highlights:
+                for hightlight in highlights:
                     stripped_highlight = re.escape(
-                        re.sub(r"(<em>)|(</em>)", "", highlight)
+                        re.sub(r"(<em>)|(</em>)", "", hightlight)
                     )
                     original_field = hit["source"][source_field]
                     hit["source"][source_field] = html.mark_safe(
-                        re.sub(stripped_highlight, highlight, original_field)
+                        re.sub(stripped_highlight, hightlight, original_field)
                     )
         # patch friendly name
         for hit in result:
-            print(hit["highlights"])
             for source_field in hit["highlights"]:
                 if source_field in FRIENDLY_FIELDS:
                     friendly = FRIENDLY_FIELDS[source_field]
-                    hit["highlights"][friendly] = hit["highlights"].pop(
-                        source_field)
-            print(hit["highlights"])
+                    hit["highlights"][friendly] = hit["highlights"].pop(source_field)
         return result
 
 
@@ -178,9 +159,9 @@ def run_query(
         size (int): the number of objects to return
         offset (optional int): the value to start at [default=0]
         page (optional int): the Django paginator page to return [default=None]
-        facets (optional dict): a key, value pair to filter on. value can be a str or a list of strings
+        facets (optional dict): a key, value pair to filter on. value can be a str or a list of strings 
 
-            [default={}] e.g. {'datadocument_grouptype': 'CO'} or
+            [default={}] e.g. {'datadocument_grouptype': 'CO'} or 
             {'datadocument_grouptype': ['CO', 'FU']}
         fuzzy (optional bool): enable fuzzy search [default=False]
         connection (optional str): which Elasticsearch instance to use [default="default"]
@@ -221,8 +202,7 @@ def run_query(
     inner_hits = []
     for f in list(FIELD_DICT.keys()) + ["rawchem_id"]:
         inner_hits.append({"name": f, "collapse": {"field": f}, "size": 0})
-    dict_update.update(
-        {"collapse": {"field": id_field, "inner_hits": inner_hits}})
+    dict_update.update({"collapse": {"field": id_field, "inner_hits": inner_hits}})
     # set the size of the result
     if page is not None:
         dict_update.update({"size": 0, "from": 0})
@@ -322,3 +302,5 @@ def validate_model(model):
 
 def get_id_field(model):
     return model + "_id" if model != "chemical" else "truechem_dtxsid"
+
+

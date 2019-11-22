@@ -302,5 +302,3 @@ def validate_model(model):
 
 def get_id_field(model):
     return model + "_id" if model != "chemical" else "truechem_dtxsid"
-
-

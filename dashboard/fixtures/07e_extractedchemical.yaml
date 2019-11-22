@@ -1,8 +1,8 @@
 - model: dashboard.extractedchemical
   pk: 2
   fields:
-    created_at: null
-    updated_at: null
+    created_at: !!timestamp '2019-04-08 07:01:07.897509'
+    updated_at: !!timestamp '2019-04-08 07:01:07.897509'
     raw_min_comp: '.0047'
     raw_max_comp: '.0074'
     unit_type: 1

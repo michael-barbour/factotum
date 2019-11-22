@@ -3,6 +3,7 @@ import uuid
 import zipfile
 from pathlib import Path
 from datetime import datetime
+from django.utils import timezone
 
 from django import forms
 from django.conf import settings
@@ -477,10 +478,10 @@ class ExtractFileFormSet(DGFormSet):
             # Update DataDocument and Parent
             for objs in (datadocuments, parents):
                 updated_objs = [o for o in objs if o._meta.updated_fields]
-                updated_fields = set(("updated_at",))
+                updated_fields = {"updated_at"}
                 for obj in updated_objs:
                     updated_fields |= set(obj._meta.updated_fields.keys())
-                    obj.updated_at = now
+                    obj.updated_at = timezone.now()
                 if updated_objs:
                     model = updated_objs[0]._meta.model
                     model.objects.bulk_update(updated_objs, updated_fields)
@@ -499,7 +500,6 @@ class ExtractFileFormSet(DGFormSet):
 
 
 class CleanCompForm(forms.ModelForm):
-
     ExtractedChemical_id = forms.IntegerField(required=True)
     script_id = forms.IntegerField(required=True)
 
@@ -573,7 +573,7 @@ class CleanCompFormSet(DGFormSet):
                 chem.central_wf_analysis = form.cleaned_data.get("central_wf_analysis")
                 chem.lower_wf_analysis = form.cleaned_data.get("lower_wf_analysis")
                 chem.script_id = form.cleaned_data["script_id"]
-                chem.updated_at = now
+                chem.updated_at = timezone.now()
                 chems.append(chem)
             ExtractedChemical.objects.bulk_update(
                 chems,

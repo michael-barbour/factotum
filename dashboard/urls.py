@@ -254,6 +254,9 @@ urlpatterns = [
     ),
     path("chemical/<pk>/edit/", views.ChemUpdateView.as_view(), name="chemical_update"),
     path(
+        "chemical/<pk>/auditlog/", views.chemical_audit_log, name="chemical_audit_log"
+    ),
+    path(
         "list_presence_tag/delete/<int:doc_pk>/<int:chem_pk>/<int:tag_pk>/",
         views.list_presence_tag_delete,
         name="list_presence_tag_delete",

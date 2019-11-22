@@ -11,16 +11,18 @@
     {% for chemical in chemicals %}
         <div class="card mt-2 big-bottom"
              id="chem-{{ chemical.pk }}">
-            <div class="row">
-                <div class="col-6 text-center">
-                    <h5 class="text-muted">
-                        {{ chemical.raw_chem_name|truncatechars:45 }}
-                    </h5>
-                </div>
-                <div class="col-6 text-center">
-                    <h5 class="text-muted">
-                        {{ chemical.raw_cas }}
-                    </h5>
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-6 text-left" id="raw_chem_name-{{ chemical.pk }}">
+                        <h5 class="text-muted">
+                            {{ chemical.raw_chem_name|truncatechars:45 }}
+                        </h5>
+                    </div>
+                    <div class="col-6 text-right" id="raw_cas-{{ chemical.pk }}">
+                        <h5 class="text-muted">
+                            {{ chemical.raw_cas }}
+                        </h5>
+                    </div>
                 </div>
             </div>
             <div class="card-body shadow rounded"
@@ -34,7 +36,7 @@
                         data-placement="bottom">
                         {% if chemical.dsstox.true_chemname %}
                             <a title="go to substance"
-                                href={% url 'chemical' chemical.dsstox.sid %}>
+                               href={% url 'chemical' chemical.dsstox.sid %}>
                                 {{ chemical.dsstox.true_chemname|truncatechars:45 }}
                             </a>
                         {% endif %}
@@ -43,12 +45,13 @@
                         <div class="btn-group btn-group-sm float-right"
                              id="chemical_edit_buttons">
                             <button class="btn btn-outline-secondary hover-success"
-
+                                    id="chemical-update-{{ chemical.pk }}"
                                     title="edit"
                                     href="{% url 'chemical_update' chemical.pk %}"
                                     data-toggle="modal"
                                     data-target="#chemical-update-modal"
-                                    value={{ chemical.pk }}>
+                                    value="{{ chemical.pk }}"
+                                    style="z-index: 290;"> <!-- z-index workaround for selenium/webdriver bug -->
                                 <span class="fa fa-fs fa-edit"></span>
                             </button>
                             <button class="btn btn-outline-secondary hover-danger"
@@ -65,7 +68,7 @@
                             <h4 class="d-inline" title="true cas">
                                 {{ chemical.dsstox.true_cas }}
                             </h4>
-                        {% endif%}
+                        {% endif %}
                         {% if chemical.dsstox %} <h4
                                 class="float-right">
                             <a href="https://comptox.epa.gov/dashboard/dsstoxdb/results?search={{ chemical.dsstox.sid }}"
@@ -88,7 +91,7 @@
                                         <div class="col-6 text-right pr-2"><b>1</b></div>
                                     </div>
                                     <input class="wf-analysis"
-                                           style="width: 100%; display: none"
+                                           style="width: 100%; display: none;"
                                            type="text"
                                            id="wf_slider_{{ chemical.pk }}"
                                            data-chemical-pk="{{ chemical.pk }}"
@@ -97,8 +100,10 @@
                                            data-upper-wf-analysis="{{ chemical.upper_wf_analysis | default:"" }}">
                                 {% else %}
                                     <span id="raw_comp">
-                                    {% if chemical.raw_central_comp %}{{ chemical.raw_central_comp }} {{ chemical.unit_type }}
-                                    {% elif chemical.raw_min_comp %}{{ chemical.raw_min_comp }} - {{ chemical.raw_max_comp }} {{ chemical.unit_type }}
+                                    {% if chemical.raw_central_comp %}{{ chemical.raw_central_comp }}
+                                        {{ chemical.unit_type }}
+                                        {% elif chemical.raw_min_comp %}{{ chemical.raw_min_comp }} -
+                                        {{ chemical.raw_max_comp }} {{ chemical.unit_type }}
                                     {% endif %}
                                     </span>
                                 {% endif %}
@@ -155,13 +160,20 @@
                             {% endif %}
                         </div>
                     {% endif %}
-                    {% if chemical.updated_at and doc.data_group.is_composition or doc.data_group.is_chemical_presence %}
-                    <small class="text-muted float-right">
-                        <i>
-                            Last updated: {{ chemical.updated_at|timesince }} ago
-                        </i>
-                    </small>
-                    {% endif %} 
+                    {% if doc.data_group.is_composition or doc.data_group.is_chemical_presence and request.user.is_authenticated %}
+                        <small class="text-muted float-right font-italic">
+                            <a id="chemical-audit-log-{{ chemical.pk }}"
+                               {% if doc.data_group.is_composition %}
+                               title="audit log"
+                               href="{% url 'chemical_audit_log' chemical.pk %}"
+                               data-toggle="modal"
+                               data-target="#chemical-audit-log-modal"
+                               {% endif %}
+                               >
+                                Last updated: {{ chemical.updated_at|timesince }} ago
+                            </a>
+                        </small>
+                    {% endif %}
                 </div>
             </div>
             <div class="modal fade"
@@ -205,26 +217,24 @@
             </div>
         </div>
     {% endfor %}
-    {% if doc.is_extracted and doc.detail_page_editable %}
+    {% if doc.is_extracted and doc.detail_page_editable and request.user.is_authenticated %}
         <!-- add chemical -->
-        {% if request.user.is_authenticated %}
-            <div class="card m-4 p-0"
-                 id="add_chemical">
-                <button class="btn m-0 p-0 btn-outline-secondary hover-success"
-                        href="{% url 'chemical_create' doc.pk %}"
-                        data-toggle="modal"
-                        data-target="#chemical-add-modal">
-                    <div class="card-body shadow rounded p-0 m-0 text-center"
-                         data-toggle="tooltip"
-                         title="Add chemical">
-                        <span class="fa fa-fs fa-plus"></span>
-                    </div>
-                </button>
-            </div>
-        {% endif %}
+        <div class="card m-4 p-0"
+             id="add_chemical">
+            <button class="btn m-0 p-0 btn-outline-secondary hover-success"
+                    data-toggle="modal"
+                    data-target="#chemical-add-modal">
+                <div class="card-body shadow rounded p-0 m-0 text-center"
+                     data-toggle="tooltip"
+                     title="Add chemical">
+                    <span class="fa fa-fs fa-plus"></span>
+                </div>
+            </button>
+        </div>
         <div class="modal" id="chemical-add-modal" data-backdrop="static"
              data-url="{% url 'chemical_create' doc.pk %}"></div>
         <div class="modal" id="chemical-update-modal" data-backdrop="static"
              data-url="{% url 'chemical_update' 47 %}"></div>
+        <div class="modal" id="chemical-audit-log-modal" data-backdrop="static"></div>
     {% endif %}
 </div>

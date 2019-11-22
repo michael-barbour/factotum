@@ -124,7 +124,7 @@ class DataDocumentDetailTest(TestCase):
 
         # Test presence of necessary display attributes
         raw_comp = page.xpath('//*[@id="raw_comp"]')[0].text
-        self.assertIn("4 - 7 weight fraction", raw_comp)
+        self.assertInHTML("4 - 7 weight fraction", raw_comp)
         report_funcuse = page.xpath('//*[@id="report_funcuse"]')[0].text
         self.assertIn("swell", report_funcuse)
         ingredient_rank = page.xpath('//*[@id="ingredient_rank"]')[0].text
@@ -323,7 +323,7 @@ class DataDocumentDetailTest(TestCase):
         response_html = html.fromstring(response.content)
         trunc_rc_name = rc.raw_chem_name[: trunc_length - 1] + "…"
         trunc_side_rc_name = rc.raw_chem_name[: trunc_side_length - 1] + "…"
-        path = '//*[@id="chem-%i"]/div/div[1]/h3' % rc.id
+        path = '//*[@id="chem-%i"]/div/div/div[1]/h5' % rc.id
         side_path = "//*[@id=\"chem-scrollspy\"]/ul/li/a[@href='#chem-%i']/p" % rc.id
         html_rc_name = response_html.xpath(path)[0].text
         html_side_rc_name = response_html.xpath(side_path)[0].text
@@ -504,8 +504,12 @@ class TestDynamicDetailFormsets(TestCase):
         hhrec.save()
         response = self.client.get("/datadocument/%i/" % ext.data_document_id)
         page = html.fromstring(response.content)
-        chem_name = page.xpath('//*[@id="chem_name-' + str(hhrec.id) + '"]')[0].text
-        self.assertIn("None", chem_name)
+        raw_chem_name = page.xpath('//*[@id="raw_chem_name-' + str(hhrec.id) + '"]/h5')[
+            0
+        ].text
+        self.assertIn("None", raw_chem_name)
+        raw_cas = page.xpath('//*[@id="raw_cas-' + str(hhrec.id) + '"]/h5')[0].text
+        self.assertIn("None", raw_cas)
 
     def test_datadoc_datasource_url_links(self):
         # Check data document with datadoc and datasource URL links

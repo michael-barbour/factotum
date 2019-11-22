@@ -27,6 +27,7 @@ from dashboard.models import (
     ExtractedListPresenceTag,
     ExtractedChemical,
     RawChem,
+    AuditLog,
 )
 
 
@@ -260,3 +261,31 @@ def list_presence_tag_delete(request, doc_pk, chem_pk, tag_pk):
     url = reverse("data_document", args=[doc_pk])
     url += card
     return redirect(url)
+
+
+@login_required
+def chemical_audit_log(request, pk):
+    chemical = get_object_or_404(ExtractedChemical, pk=pk)
+    auditlog = AuditLog.objects.filter(
+        object_key=pk,
+        model_name__in=["extractedchemical", "rawchem"],
+        field_name__in=[
+            "raw_min_comp",
+            "raw_max_comp",
+            "raw_central_comp",
+            "unit_type_id",
+            "report_funcuse",
+            "ingredient_rank",
+            "lower_wf_analysis",
+            "central_wf_analysis",
+            "upper_wf_analysis",
+            "raw_cas",
+            "raw_chem_name",
+            "rid",
+        ],
+    ).order_by("-date_created")
+    return render(
+        request,
+        "chemicals/chemical_audit_log.html",
+        {"chemical": chemical, "auditlog": auditlog},
+    )

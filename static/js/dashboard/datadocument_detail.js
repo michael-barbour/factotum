@@ -17,7 +17,8 @@ $(document).ready(function () {
             value = [parseFloat(central), parseFloat(central)];
         } else {
             range = true;
-            value = [parseFloat(lower), parseFloat(upper)];
+            value = [parseFloat(lower.length === 0 ? '0' : lower),
+                     parseFloat(upper.length === 0 ? '0' : upper)];
         }
         $('#' + input_id)
             .slider({
@@ -80,6 +81,20 @@ $('#chemical-update-modal').on('show.bs.modal', function (event) {
     $.ajax({
         url: modal.attr('data-url').replace(/47/, chem_pk.toString()),
         context: document.body
+    }).done(function (response) {
+        modal.html(response);
+    });
+});
+
+$('#chemical-audit-log-modal').on('show.bs.modal', function (event) {
+    var modal = $(this);
+    $.ajax({
+        url: event.relatedTarget.href,
+        context: document.body,
+        error: function (response) {
+            alert(response.responseText);
+        }
+
     }).done(function (response) {
         modal.html(response);
     });
